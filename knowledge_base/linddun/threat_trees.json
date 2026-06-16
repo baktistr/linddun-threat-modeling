@@ -1,0 +1,93 @@
+{
+  "_meta": {
+    "source": "LINDDUN PRO Privacy Threat Modeling Tutorial v0.1, April 2023, DistriNet KU Leuven",
+    "source_url": "https://downloads.linddun.org/tutorials/pro/v0/tutorial.pdf",
+    "citation": "Laurens Sion and Wouter Joosen, LINDDUN PRO privacy threat modeling tutorial, Technical Report, Department of Computer Science, KU Leuven, April 2023",
+    "note": "Threat tree nodes transcribed from the official tutorial. Trees shown in the v0.1 tutorial are partial (Linking, Data Disclosure, Detecting fully shown; others summarized from type definitions). Node IDs follow the tutorial's notation. Verify against latest trees at https://downloads.linddun.org before final use."
+  },
+  "threat_types": {
+    "L": {
+      "name": "Linking",
+      "definition": "Associating data items or actions to learn more about an individual or group. Linking typically relies on a recurring identifier, a combination of attributes (quasi-identifiers), or a profile that allows data to be singled out.",
+      "nodes": {
+        "L.1": {"title": "Linked data", "description": "Linking through identifiers."},
+        "L.1.1": {"title": "Unique identifier", "description": "Linking based on an identifier that is unique (globally or locally, within the system or across the context boundary)."},
+        "L.2": {"title": "Linkable data", "description": "Linking through the combination or analysis of data."},
+        "L.2.1": {"title": "Through combination", "description": "Linking through combination."},
+        "L.2.1.1": {"title": "Quasi-identifier combining data of a single individual", "description": "Linking through a set of attributes that can serve as a quasi-identifier."},
+        "L.2.1.2": {"title": "Combining data of different individuals", "description": "Linking through combining data of different individuals."},
+        "L.2.2": {"title": "Through profiling, derivation, or inference", "description": "Linking through derivation or inference."},
+        "L.2.2.1": {"title": "Profiling an individual", "description": "Personal data of an individual can be analyzed for patterns to link data to that individual. Association is performed on the basis of the data or user actions."},
+        "L.2.2.2": {"title": "Profiling a group of individuals", "description": "Data of a single individual leads to insights about a larger group. Knowledge transfers to other individuals through known relations of group membership or similarity."},
+        "L.2.2.3": {"title": "Profiling an individual through (dis)similarity", "description": "Applying methods to assess uniqueness or similarity to predict relevant properties."}
+      }
+    },
+    "I": {
+      "name": "Identifying",
+      "definition": "Situations in which the identity of the data subject can be learned through leaks, deduction, or inference when this is unwanted and to be prevented.",
+      "nodes": {
+        "I.1": {"title": "Identified data", "description": "The identity of a data subject is directly revealed through identifying data (e.g. name, government ID, email)."},
+        "I.2": {"title": "Identifiable data", "description": "The identity can be deduced or inferred from data that is not directly an identifier (e.g. via combination, context, or metadata)."}
+      },
+      "_note": "The v0.1 tutorial summarizes Identifying via its type definition rather than a full printed tree. Node breakdown approximated from the type definition; replace with official tree nodes when transcribed."
+    },
+    "Nr": {
+      "name": "Non-repudiation",
+      "definition": "Outcomes in which an individual is unable to deny certain claims about their involvement in the system, as a consequence of collected/shared data or actions taken. Involves (i) strength of evidence for the claim and (ii) strength of attributability to an individual.",
+      "nodes": {
+        "Nr.1": {"title": "Evidence of involvement", "description": "The system retains attributable evidence (e.g. logs, signed actions, persistent identifiers) that prevents the individual from plausibly denying an action or claim."}
+      },
+      "_note": "v0.1 tutorial summarizes Non-repudiation via type definition. Replace with official tree nodes when transcribed."
+    },
+    "D": {
+      "name": "Detecting",
+      "definition": "Becoming aware of data-subject involvement, membership, or participation by observing the existence of relevant information. Does NOT require access to the data itself.",
+      "nodes": {
+        "D.1": {"title": "Observed communications", "description": "Detecting through observed communications. An adversary observing requests/flows can detect involvement even when content is encrypted."},
+        "D.2": {"title": "Application side-effect", "description": "Detecting through (trans)action side-effects (e.g. temporary files in the file system, URL preview fetches, scanners triggering requests)."},
+        "D.3": {"title": "System responses", "description": "The existence of an item of interest is revealed in a system response, which can be evoked deliberately (probing) or given accidentally."}
+      }
+    },
+    "Dd": {
+      "name": "Data Disclosure",
+      "definition": "Cases in which explicit (intended/designed) or implicit (unintended/consequential) disclosure of personal data across a boundary is considered avoidable. The minimality principle is key: only collect, process, store, and share strictly required personal data.",
+      "nodes": {
+        "Dd.1": {"title": "Unnecessary data types", "description": "Data can be highly sensitive depending on context and should only be collected/processed when strictly required."},
+        "Dd.1.1": {"title": "Data type sensitivity", "description": "More sensitive data types are collected than functionally required by the system."},
+        "Dd.1.2": {"title": "Data type granularity", "description": "Disclosed personal data is of a more fine-grained level of granularity than needed."},
+        "Dd.1.3": {"title": "Data type encoding", "description": "The encoding of the data includes additional personal data that is not functionally needed."},
+        "Dd.2": {"title": "Excessive volume", "description": "Concerns the volume of personal data collected and processed."},
+        "Dd.2.1": {"title": "Amount", "description": "An excessive amount of personal data is processed beyond what is functionally needed."},
+        "Dd.2.2": {"title": "Frequency", "description": "Personal data is processed more frequently than functionally needed."},
+        "Dd.2.3": {"title": "Involved data subjects", "description": "Personal data is processed of more data subjects than functionally needed."},
+        "Dd.3": {"title": "Unnecessary processing", "description": "Whether the processing and treatment of personal data is actually necessary for the functional goals."},
+        "Dd.3.1": {"title": "Treatment, analysis, enrichment, transformation", "description": "Personal data is further treated, analyzed, and enriched in a way not necessary to achieve the functionality."},
+        "Dd.3.2": {"title": "Propagation", "description": "Data is accessible by or propagated to other services where it is not needed."},
+        "Dd.3.3": {"title": "Implicit data disclosure", "description": "Data is implicitly collected as a side-effect of explicit data disclosures or data flows (e.g. unencrypted transmission exposing data to network observers)."},
+        "Dd.3.4": {"title": "Duration/retention", "description": "Personal data is processed or kept longer than functionally needed."},
+        "Dd.4": {"title": "Involved parties and exposure", "description": "Distinction between exposure to known/anticipated external parties versus data published or broadcast broadly (which amplifies risk)."},
+        "Dd.4.1": {"title": "Involved parties", "description": "Personal data made accessible to more parties than functionally necessary."},
+        "Dd.4.1.1": {"title": "Predetermined set of parties", "description": "Parties with whom data is shared are known up front; the set is static and fixed."},
+        "Dd.4.1.2": {"title": "Dynamic set of parties", "description": "Parties with whom data is shared are determined dynamically and may change frequently."},
+        "Dd.4.2": {"title": "Availability/accessibility of data", "description": "Personal data is published more broadly than necessary."}
+      }
+    },
+    "U": {
+      "name": "Unawareness and unintervenability",
+      "definition": "Lack of support offered to involved/affected individuals: insufficiently informing, involving, or empowering the data subject in relation to the system.",
+      "nodes": {
+        "U.1": {"title": "Lack of transparency", "description": "Not properly informing data subjects about the collection of data and what happens with that data in the system."},
+        "U.2": {"title": "Lack of user feedback / intervenability", "description": "Insufficiently making users aware of potential privacy harm, and not providing the controls or means to influence how their data is handled."}
+      },
+      "_note": "v0.1 tutorial summarizes Unawareness via type definition (three lacks: transparency, user feedback, controls/intervenability). Node breakdown approximated; replace with official tree nodes when transcribed."
+    },
+    "Nc": {
+      "name": "Non-compliance",
+      "definition": "Lack of adherence to legislation, regulation, standards, and best practices, leading to incomplete management of risk. Focuses on the intersection between identified privacy threats and broader risk notions (legal, cybersecurity, organizational).",
+      "nodes": {
+        "Nc.1": {"title": "Compliance-related problem", "description": "A compliance problem deriving from applicable Linking, Identifying, Non-repudiation, Data Disclosure, or Unawareness threats; translating these into legal/regulatory risk (e.g. GDPR, COPPA, CCPA violations)."}
+      },
+      "_note": "v0.1 tutorial summarizes Non-compliance via type definition. Replace with official tree nodes when transcribed."
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "source": "LINDDUN PRO Tutorial v0.1, Table 4.1 (Threat Type Mapping)",
+    "source_url": "https://downloads.linddun.org/tutorials/pro/v0/tutorial.pdf",
+    "description": "For each valid DFD interaction (source -- dataflow --> destination), the table indicates which LINDDUN threat types apply and at which position (S=source, fl=flow, D=destination). In the v0.1 tutorial every listed threat type applies at all three positions (S, fl, D) for every valid interaction. Invalid combinations (DataStore-flow-DataStore, ExternalEntity-flow-ExternalEntity) are excluded.",
+    "positions": {"S": "source element (sends/shares data)", "fl": "the data flow itself (data in transit)", "D": "destination element (receives/stores/processes data)"},
+    "threat_type_order": ["L", "I", "Nr", "D", "Dd", "U", "Nc"]
+  },
+  "interactions": [
+    {
+      "source": "Process", "destination": "Process",
+      "applicable_threats": {
+        "L":  ["S", "fl", "D"], "I":  ["S", "fl", "D"], "Nr": ["S", "fl", "D"],
+        "D":  ["S", "fl", "D"], "Dd": ["S", "fl", "D"], "U":  ["S", "fl", "D"], "Nc": ["S", "fl", "D"]
+      }
+    },
+    {
+      "source": "Process", "destination": "DataStore",
+      "applicable_threats": {
+        "L":  ["S", "fl", "D"], "I":  ["S", "fl", "D"], "Nr": ["S", "fl", "D"],
+        "D":  ["S", "fl", "D"], "Dd": ["S", "fl", "D"], "U":  ["S", "fl", "D"], "Nc": ["S", "fl", "D"]
+      }
+    },
+    {
+      "source": "Process", "destination": "ExternalEntity",
+      "applicable_threats": {
+        "L":  ["S", "fl", "D"], "I":  ["S", "fl", "D"], "Nr": ["S", "fl", "D"],
+        "D":  ["S", "fl", "D"], "Dd": ["S", "fl", "D"], "U":  ["S", "fl", "D"], "Nc": ["S", "fl", "D"]
+      }
+    },
+    {
+      "source": "DataStore", "destination": "Process",
+      "applicable_threats": {
+        "L":  ["S", "fl", "D"], "I":  ["S", "fl", "D"], "Nr": ["S", "fl", "D"],
+        "D":  ["S", "fl", "D"], "Dd": ["S", "fl", "D"], "U":  ["S", "fl", "D"], "Nc": ["S", "fl", "D"]
+      }
+    },
+    {
+      "source": "ExternalEntity", "destination": "Process",
+      "applicable_threats": {
+        "L":  ["S", "fl", "D"], "I":  ["S", "fl", "D"], "Nr": ["S", "fl", "D"],
+        "D":  ["S", "fl", "D"], "Dd": ["S", "fl", "D"], "U":  ["S", "fl", "D"], "Nc": ["S", "fl", "D"]
+      }
+    }
+  ],
+  "invalid_interactions": [
+    {"source": "DataStore", "destination": "DataStore", "reason": "Data stores do not directly exchange data without a process."},
+    {"source": "ExternalEntity", "destination": "ExternalEntity", "reason": "External entities outside the system do not have modeled flows between each other."}
+  ]
+}

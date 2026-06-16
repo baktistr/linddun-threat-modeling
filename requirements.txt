@@ -1,0 +1,9 @@
+# Core (required) — week 1 RAG knowledge base
+numpy>=1.24
+scikit-learn>=1.3
+
+# Optional: better semantic embeddings (EMBEDDING_BACKEND=sbert)
+# sentence-transformers>=2.2
+
+# Optional: Claude-grounded answer layer (cli.py ask) and later threat generation
+# anthropic>=0.39
