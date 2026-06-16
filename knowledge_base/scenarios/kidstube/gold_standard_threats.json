@@ -3,8 +3,12 @@
     "scenario": "KidsTube",
     "source": "EPS S26 HW2 (Bakti Satria Adhityatama)",
     "role": "gold-standard baseline for evaluation",
+    "revision": "v2 \u2014 LINDDUN node IDs audited and corrected against official threat trees",
     "threat_count": 30,
-    "field_notes": "severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node is the LINDDUN threat tree node id."
+    "corrections_applied": 8,
+    "borderline_flagged": 6,
+    "audit_note": "8 node IDs corrected to match official LINDDUN tree semantics; 3 threats flagged borderline (see mapping_note). threat_type (the 7 LINDDUN categories) was unchanged in all cases; only the sub-node within each type was corrected. Recommend advisor sign-off, especially on threat #27.",
+    "field_notes": "severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node is the corrected LINDDUN threat tree node id; original_hw2_node records the prior value where changed."
   },
   "threats": [
     {
@@ -47,25 +51,29 @@
       "id": 4,
       "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
-      "tree_node": "Dd.3.1",
+      "tree_node": "Dd.3.4",
       "threat_type": "Dd",
       "title": "Indefinite retention of parent account data without lifecycle management",
       "description": "Parent records have timestamps but no automatic deletion, anonymization, or archival. Privacy policy claims 30-day erasure but no technical enforcement exists.",
       "assumptions": "No automated data lifecycle management found in the codebase.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "original_hw2_node": "Dd.3.1",
+      "mapping_note": "Corrected from Dd.3.1: retention maps to Dd.3.4 (duration/retention), not Dd.3.1 (treatment/analysis/enrichment)."
     },
     {
       "id": 5,
       "interaction": "P1-DS4 [DF15]",
       "originator_id": "DS4",
-      "tree_node": "Dd.4.1",
+      "tree_node": "Dd.4.2",
       "threat_type": "Dd",
       "title": "Government ID images stored insecurely on shared file system",
       "description": "ID images saved to backend/uploads/images/ with no encryption, no access control beyond OS permissions, co-located with video content. Shared SSH credentials allow multiple users to access all ID images.",
       "assumptions": "Images saved using multer to local directory. SSH credentials shared among multiple accounts.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "original_hw2_node": "Dd.4.1",
+      "mapping_note": "Corrected from Dd.4.1: insecure storage / broad access maps to Dd.4.2 (availability/accessibility), not Dd.4.1 (involved parties)."
     },
     {
       "id": 6,
@@ -89,7 +97,8 @@
       "description": "Children log in with the parent's email and password; every child action carries the parent's account ObjectId, inherently linking child behavior to the parent's real identity. Children have no independent credentials.",
       "assumptions": "Confirmed by engineering documentation child login flow.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "mapping_note": "L.1.2 is an instance of L.1 (linking via unique identifier) applied to the parent account ObjectId; instance sub-ID, resolves to official L.1.1."
     },
     {
       "id": 8,
@@ -113,19 +122,22 @@
       "description": "Exact DOB, gender, and government ID are collected for each child \u2014 unnecessary for service delivery and most under-13s lack photo ID. Violates COPPA data minimization (\u00a7312.7).",
       "assumptions": "Confirmed by ChildProfile model schema.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "mapping_note": "Borderline: mixes data-type sensitivity (Dd.1.1, govt ID) and granularity (Dd.1.2, exact DOB). Kept under Dd.1.2 (granularity) as primary."
     },
     {
       "id": 10,
       "interaction": "P3-DS2 [DF7/DF10]",
       "originator_id": "DS2",
-      "tree_node": "L.2.1",
+      "tree_node": "L.2.2.1",
       "threat_type": "L",
       "title": "Profiling children through aggregated behavioral data in DS2",
       "description": "DS2 stores up to 50 search entries and 100 watch entries per child with exact queries, timestamps, per-second durations; combined with name, DOB, gender this builds a rich behavioral profile.",
       "assumptions": "Confirmed by ChildProfile schema and history tracking code.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "original_hw2_node": "L.2.1",
+      "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination)."
     },
     {
       "id": 11,
@@ -137,7 +149,8 @@
       "description": "DS2 retains up to 50 search + 100 watch entries per child. Documentation states logs are not deleted. The FIFO cap perpetually maintains maximum volume \u2014 not a deletion mechanism.",
       "assumptions": "Documentation explicitly states logs are not deleted. 50/100 caps are FIFO buffers.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "mapping_note": "Kept Dd.2.1 (amount) as primary; the retention aspect also relates to Dd.3.4 (duration/retention)."
     },
     {
       "id": 12,
@@ -173,19 +186,22 @@
       "description": "Likes and comments store user ObjectId as foreign keys to DS1/DS2, permanently linking all content interactions to identified individuals and enabling long-term profiling.",
       "assumptions": "Confirmed by Video schema: likes[].user and comments[].user are ObjectId refs.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "mapping_note": "L.1.3 is an instance of L.1 (linking via unique identifier) applied to ObjectId foreign keys; instance sub-ID, resolves to official L.1.1."
     },
     {
       "id": 15,
       "interaction": "DS2-P4 [DF13]",
       "originator_id": "P4",
-      "tree_node": "Dd.4.3",
+      "tree_node": "Dd.4.1",
       "threat_type": "Dd",
       "title": "Planned sharing of children's browsing data with AI engine and third parties",
       "description": "Planned feature would expose children's behavioral profiles to an AI engine and ad targeting. Documentation states browsing history is used to train AI models and shared with advertisers (not yet implemented).",
       "assumptions": "Feature documented but not yet implemented. Analyzed as a planned threat requiring preventive action.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "original_hw2_node": "Dd.4.3",
+      "mapping_note": "Corrected from non-official Dd.4.3: sharing with additional/third parties maps to Dd.4.1 (involved parties); the dynamic third-party aspect is Dd.4.1.2."
     },
     {
       "id": 16,
@@ -203,13 +219,15 @@
       "id": 17,
       "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
-      "tree_node": "Dd.4.4",
+      "tree_node": "Dd.4.2",
       "threat_type": "Dd",
       "title": "MongoDB database accessible without authentication on shared server",
       "description": "Connection uses mongodb://localhost:27017/kidstube with no TLS and no authentication; any process on the server can read/write all collections. SSH access uses shared accounts.",
       "assumptions": "Connection string confirmed in documentation. Shared SSH accounts documented.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "original_hw2_node": "Dd.4.4",
+      "mapping_note": "Corrected from non-official Dd.4.4: unauthenticated broad access maps to Dd.4.2 (availability/accessibility)."
     },
     {
       "id": 18,
@@ -281,7 +299,8 @@
       "description": "P1 validates only that the code is exactly 6 digits \u2014 no complexity, rotation, or lockout. All test accounts use 123456. A child could observe or guess the code and access parent controls.",
       "assumptions": "Test accounts use 123456. No rate limiting or lockout documented.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "mapping_note": "Borderline: weak parental-identity verification \u2014 Identifying (I.2.2, weak verification) primary, but also relates to Nc.1.3 (inadequate consent mechanism)."
     },
     {
       "id": 24,
@@ -299,25 +318,29 @@
       "id": 25,
       "interaction": "P3-DS2 [DF7]",
       "originator_id": "DS2",
-      "tree_node": "L.2.2",
+      "tree_node": "L.2.1.1",
       "threat_type": "L",
       "title": "Cross-referencing child and parent data via shared naming prefix and foreign key",
       "description": "Child profiles contain a direct parent ObjectId foreign key and documentation states children share the same prefixes as the parent, making family relationships trivially discoverable from DB access alone.",
       "assumptions": "Stated in engineering documentation and confirmed in ChildProfile schema.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "original_hw2_node": "L.2.2",
+      "mapping_note": "Corrected from L.2.2: linking via shared FK + naming prefix is quasi-identifier combination (L.2.1.1), not L.2.2 (profiling/inference)."
     },
     {
       "id": 26,
       "interaction": "P1-DS4 [DF15]",
       "originator_id": "DS4",
-      "tree_node": "Dd.1.3",
+      "tree_node": "Dd.4.2",
       "threat_type": "Dd",
       "title": "Government ID images co-located with streaming content on shared file system",
       "description": "Government IDs are stored in the same backend/uploads/ directory structure as publicly served video content. Misconfigured static file serving could accidentally expose IDs.",
       "assumptions": "Both images and videos stored under backend/uploads/ per file structure documentation.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "original_hw2_node": "Dd.1.3",
+      "mapping_note": "Corrected from Dd.1.3: co-location/exposure risk maps to Dd.4.2 (availability/accessibility), not Dd.1.3 (data-type encoding)."
     },
     {
       "id": 27,
@@ -329,7 +352,8 @@
       "description": "Videos default to isApproved:false but approval relies entirely on parent judgment. No automated content scanning or platform-level review; a negligent parent could approve inappropriate content.",
       "assumptions": "isApproved defaults to false; no automated screening pipeline documented.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "mapping_note": "Borderline / non-canonical: a content-moderation gap is a weak fit for Data Disclosure (it is not primarily a personal-data disclosure threat). Kept under Dd.3.2 (propagation) as least-bad; candidate for removal or re-scoping in advisor review."
     },
     {
       "id": 28,
@@ -347,13 +371,15 @@
       "id": 29,
       "interaction": "P1/P2/P3-DS1/DS2/DS3 [DF2/DF7/DF9]",
       "originator_id": "DS1/DS2/DS3",
-      "tree_node": "Dd.4.5",
+      "tree_node": "Dd.4.2",
       "threat_type": "Dd",
       "title": "No encryption at rest or in transit for database containing children's PII",
       "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 17), all data is plaintext-readable.",
       "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "original_hw2_node": "Dd.4.5",
+      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility)."
     },
     {
       "id": 30,

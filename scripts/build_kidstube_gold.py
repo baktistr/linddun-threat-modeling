@@ -3,138 +3,272 @@
 
 Source: EPS S26 HW2 (Bakti Satria Adhityatama). This is the evaluation ground truth
 against which AI-generated threats are compared in later weeks.
+
+Revision v2: LINDDUN node IDs were audited against the official threat trees. Eight
+sub-node IDs were corrected and three threats flagged borderline. The threat_type
+(the 7 LINDDUN categories) was never changed — only the sub-node within each type.
+Each corrected threat records `original_hw2_node` and a `mapping_note` for a full
+audit trail. Running this script regenerates the corrected catalog from source.
 """
 import json
+from collections import Counter
 from pathlib import Path
 
+# Each threat is a dict. Required keys: id, interaction, originator_id, tree_node,
+# threat_type, title, description, assumptions, severity, likelihood.
+# Optional: original_hw2_node, mapping_note (present where audited/corrected/flagged).
 THREATS = [
-    (1,  "EE1-P1 [DF1]",        "EE1",        "L.1.1",  "L",  "Linking parent and child accounts via shared email identifier",
-     "Parent email is a persistent unique identifier reused for child login and embedded in JWTs, linking all child activity to the parent's real-world identity.",
-     "Email addresses are not hashed or pseudonymized anywhere in the system.", "Med", "High"),
-    (2,  "EE1-P1 [DF1]",        "P1",         "Dd.1.1", "Dd", "Excessive collection of government ID during registration",
-     "Government ID image (photo, legal name, ID number, address, DOB) is collected for age verification, far more than needed, and stored unencrypted with no access control or retention policy.",
-     "Government ID image stored in plaintext on disk. No evidence of encryption at rest.", "High", "High"),
-    (3,  "EE1-P1 [DF1]",        "DF1",        "I.1.1",  "I",  "Interception of identified parent data during registration transmission",
-     "Registration sends full PII including government ID image over the network; if HTTPS is not enforced, a network adversary can directly identify the parent.",
-     "Engineering documentation does not mention TLS/HTTPS configuration for the Node.js server.", "High", "Med"),
-    (4,  "P1-DS1 [DF2]",        "DS1",        "Dd.3.1", "Dd", "Indefinite retention of parent account data without lifecycle management",
-     "Parent records have timestamps but no automatic deletion, anonymization, or archival. Privacy policy claims 30-day erasure but no technical enforcement exists.",
-     "No automated data lifecycle management found in the codebase.", "Med", "High"),
-    (5,  "P1-DS4 [DF15]",       "DS4",        "Dd.4.1", "Dd", "Government ID images stored insecurely on shared file system",
-     "ID images saved to backend/uploads/images/ with no encryption, no access control beyond OS permissions, co-located with video content. Shared SSH credentials allow multiple users to access all ID images.",
-     "Images saved using multer to local directory. SSH credentials shared among multiple accounts.", "High", "High"),
-    (6,  "P1-DS5 [DF16]",       "DS5",        "Dd.4.2", "Dd", "JWT token and user data exposed in browser localStorage",
-     "JWT (user ID, userType) and full user data stored in localStorage, accessible to any same-origin JavaScript (XSS-vulnerable). Tokens valid 7 days, no rotation, persist on shared devices.",
-     "Confirmed: JWT token stored in localStorage and valid for 7 days.", "High", "Med"),
-    (7,  "EE2-P1 [DF4]",        "EE2",        "L.1.2",  "L",  "All child actions linked to parent account via shared credentials",
-     "Children log in with the parent's email and password; every child action carries the parent's account ObjectId, inherently linking child behavior to the parent's real identity. Children have no independent credentials.",
-     "Confirmed by engineering documentation child login flow.", "Med", "High"),
-    (8,  "EE2-P1 [DF4]",        "DF4",        "I.1.2",  "I",  "Child identity revealed through parent credential reuse and weak six-digit code",
-     "Child submits parent credentials over the network; any breach exposes all children's profiles. The six-digit code is static, user-chosen, and trivially guessable (test accounts use 123456).",
-     "Test account codes are 123456. No complexity enforcement beyond exactly 6 digits.", "Med", "Med"),
-    (9,  "EE1-P3 [DF6]",        "P3",         "Dd.1.2", "Dd", "Excessive child PII collected at profile creation",
-     "Exact DOB, gender, and government ID are collected for each child — unnecessary for service delivery and most under-13s lack photo ID. Violates COPPA data minimization (§312.7).",
-     "Confirmed by ChildProfile model schema.", "High", "High"),
-    (10, "P3-DS2 [DF7/DF10]",   "DS2",        "L.2.1",  "L",  "Profiling children through aggregated behavioral data in DS2",
-     "DS2 stores up to 50 search entries and 100 watch entries per child with exact queries, timestamps, per-second durations; combined with name, DOB, gender this builds a rich behavioral profile.",
-     "Confirmed by ChildProfile schema and history tracking code.", "High", "High"),
-    (11, "P3-DS2 [DF10]",       "DS2",        "Dd.2.1", "Dd", "Excessive volume of child behavioral data retained indefinitely",
-     "DS2 retains up to 50 search + 100 watch entries per child. Documentation states logs are not deleted. The FIFO cap perpetually maintains maximum volume — not a deletion mechanism.",
-     "Documentation explicitly states logs are not deleted. 50/100 caps are FIFO buffers.", "High", "High"),
-    (12, "EE2-P2 [DF8]",        "P2",         "Nr.1.1", "Nr", "Non-repudiation of child actions via persistent attributed logging",
-     "Every child action is logged with timestamps and the child's ObjectId across DS2/DS3, creating an irrefutable permanent record of a minor's online behavior the child cannot deny.",
-     "Confirmed by ChildProfile and Video schemas.", "Med", "High"),
-    (13, "EE2-P2 [DF8]",        "P2",         "U.1.1",  "U",  "Children unaware of data collection and parental surveillance",
-     "P2/P3 silently record all activity. Documentation states children are not notified about search/watch history tracking. No child-facing notices or indicators.",
-     "Directly stated in engineering documentation under Video Search and Watch History.", "High", "High"),
-    (14, "P2-DS3 [DF9]",        "DS3",        "L.1.3",  "L",  "Video interactions permanently linkable to identified users via ObjectId",
-     "Likes and comments store user ObjectId as foreign keys to DS1/DS2, permanently linking all content interactions to identified individuals and enabling long-term profiling.",
-     "Confirmed by Video schema: likes[].user and comments[].user are ObjectId refs.", "Med", "High"),
-    (15, "DS2-P4 [DF13]",       "P4",         "Dd.4.3", "Dd", "Planned sharing of children's browsing data with AI engine and third parties",
-     "Planned feature would expose children's behavioral profiles to an AI engine and ad targeting. Documentation states browsing history is used to train AI models and shared with advertisers (not yet implemented).",
-     "Feature documented but not yet implemented. Analyzed as a planned threat requiring preventive action.", "High", "Med"),
-    (16, "P4-EE3 [DF14]",       "EE3",        "Nc.1.1", "Nc", "Planned third-party data sharing violates COPPA and contradicts privacy policy",
-     "Advertisers would receive children's behavioral data without verifiable parental consent (COPPA §312.5). The privacy policy states KidsTube does not sell or rent children's data — directly contradicting the planned feature.",
-     "Privacy policy (Section 6) and engineering documentation are in direct contradiction.", "High", "Med"),
-    (17, "P1-DS1 [DF2]",        "DS1",        "Dd.4.4", "Dd", "MongoDB database accessible without authentication on shared server",
-     "Connection uses mongodb://localhost:27017/kidstube with no TLS and no authentication; any process on the server can read/write all collections. SSH access uses shared accounts.",
-     "Connection string confirmed in documentation. Shared SSH accounts documented.", "High", "High"),
-    (18, "EE1-P3-DS2 [DF6->DF7]","DS2",       "Nc.1.2", "Nc", "Systematic violation of data minimization principle across the platform",
-     "Excessive data (exact DOB, gender, child government ID, per-second watch tracking, 50/100 behavioral logs) collected and retained. Violates COPPA §312.7, GDPR Art. 5(1)(c), CCPA minimization.",
-     "Based on analysis of all collected data fields vs. functional requirements.", "High", "High"),
-    (19, "EE1-P3 [DF6]",        "P3",         "U.2.1",  "U",  "Limited intervenability: deletion claims contradict actual data persistence",
-     "Privacy policy claims 30-day erasure with no enforcement; logs are not deleted; government ID images and comments referencing the child ObjectId may survive profile deletion.",
-     "Assumed file system cleanup (DS4) and cross-collection cleanup (DS3) not triggered by API deletion.", "Med", "Med"),
-    (20, "EE2-P2 [DF8]",        "DF8",        "D.1.1",  "D",  "Child search queries and actions observable on the network",
-     "Child interactions are sent as HTTP API calls with JWT in the Authorization header. Without enforced HTTPS, exact search terms are visible to network observers; even with HTTPS, traffic patterns reveal behavior.",
-     "No mention of HTTPS enforcement, HSTS headers, or TLS configuration in documentation.", "Med", "Med"),
-    (21, "P1-EE1/EE2 [DF3/DF5]","P1",         "I.2.1",  "I",  "JWT tokens expose user type and identity in transit",
-     "JWTs are signed but not encrypted; anyone intercepting a token can decode the base64 payload to learn the user's ObjectId and whether the request is from a parent or child.",
-     "Standard JWT uses base64-encoded payloads readable without the signing secret.", "Med", "Med"),
-    (22, "DS2-P3-EE1 [DF17]",   "P3",         "U.1.2",  "U",  "Covert parental surveillance of children without age-appropriate transparency",
-     "Parents receive full search and watch history through Manage Children. Children are explicitly not informed; complete secrecy, especially near age 13, violates age-appropriate transparency principles.",
-     "Directly confirmed by engineering documentation.", "High", "High"),
-    (23, "EE1-P1 [DF1]",        "P1",         "I.2.2",  "I",  "Six-digit code provides inadequate verification of parental identity",
-     "P1 validates only that the code is exactly 6 digits — no complexity, rotation, or lockout. All test accounts use 123456. A child could observe or guess the code and access parent controls.",
-     "Test accounts use 123456. No rate limiting or lockout documented.", "Med", "High"),
-    (24, "P2-DS3 [DF9]",        "DS3",        "Nr.1.2", "Nr", "Children's comments create irrevocable attributed speech records",
-     "Comments are stored with the child's ObjectId, text, and timestamp. No DELETE endpoint exists, creating permanent attributable speech records for minors that persist even if harmful.",
-     "Video API shows POST /api/videos/:id/comments but no DELETE endpoint for comments.", "Med", "Med"),
-    (25, "P3-DS2 [DF7]",        "DS2",        "L.2.2",  "L",  "Cross-referencing child and parent data via shared naming prefix and foreign key",
-     "Child profiles contain a direct parent ObjectId foreign key and documentation states children share the same prefixes as the parent, making family relationships trivially discoverable from DB access alone.",
-     "Stated in engineering documentation and confirmed in ChildProfile schema.", "Med", "High"),
-    (26, "P1-DS4 [DF15]",       "DS4",        "Dd.1.3", "Dd", "Government ID images co-located with streaming content on shared file system",
-     "Government IDs are stored in the same backend/uploads/ directory structure as publicly served video content. Misconfigured static file serving could accidentally expose IDs.",
-     "Both images and videos stored under backend/uploads/ per file structure documentation.", "High", "Med"),
-    (27, "EE1-P2 [DF11]",       "P2",         "Dd.3.2", "Dd", "No automated content moderation before video exposure to children",
-     "Videos default to isApproved:false but approval relies entirely on parent judgment. No automated content scanning or platform-level review; a negligent parent could approve inappropriate content.",
-     "isApproved defaults to false; no automated screening pipeline documented.", "Med", "Med"),
-    (28, "EE1-P1 [DF1]",        "P1",         "Nc.1.3", "Nc", "Inadequate COPPA verifiable parental consent mechanism",
-     "Parent uploads government ID and chooses a six-digit code, but P1 never verifies the ID belongs to the registrant. None of the FTC-approved §312.5 consent methods are implemented.",
-     "No third-party identity verification or FTC-approved consent method documented.", "High", "High"),
-    (29, "P1/P2/P3-DS1/DS2/DS3 [DF2/DF7/DF9]","DS1/DS2/DS3","Dd.4.5","Dd","No encryption at rest or in transit for database containing children's PII",
-     "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 17), all data is plaintext-readable.",
-     "Connection string has no auth or TLS parameters. No mention of encryption features.", "High", "High"),
-    (30, "P3-DS2 [DF10]",       "DS2",        "U.1.3",  "U",  "Per-second watch duration tracking creates undisclosed detailed behavioral profiles",
-     "VideoPlayer.js reports exact seconds watched via setInterval; DS2 stores watchDuration per second with a completion flag. This granularity is undisclosed, unnecessary, and builds detailed temporal profiles of children.",
-     "Confirmed by VideoPlayer.js using setInterval and trackWatchHistory(videoId, totalWatchTime, true).", "Med", "High"),
+    {"id": 1, "interaction": "EE1-P1 [DF1]", "originator_id": "EE1", "tree_node": "L.1.1", "threat_type": "L",
+     "title": "Linking parent and child accounts via shared email identifier",
+     "description": "Parent email is a persistent unique identifier reused for child login and embedded in JWTs, linking all child activity to the parent's real-world identity.",
+     "assumptions": "Email addresses are not hashed or pseudonymized anywhere in the system.",
+     "severity": "Med", "likelihood": "High"},
+
+    {"id": 2, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Dd.1.1", "threat_type": "Dd",
+     "title": "Excessive collection of government ID during registration",
+     "description": "Government ID image (photo, legal name, ID number, address, DOB) is collected for age verification, far more than needed, and stored unencrypted with no access control or retention policy.",
+     "assumptions": "Government ID image stored in plaintext on disk. No evidence of encryption at rest.",
+     "severity": "High", "likelihood": "High"},
+
+    {"id": 3, "interaction": "EE1-P1 [DF1]", "originator_id": "DF1", "tree_node": "I.1.1", "threat_type": "I",
+     "title": "Interception of identified parent data during registration transmission",
+     "description": "Registration sends full PII including government ID image over the network; if HTTPS is not enforced, a network adversary can directly identify the parent.",
+     "assumptions": "Engineering documentation does not mention TLS/HTTPS configuration for the Node.js server.",
+     "severity": "High", "likelihood": "Med"},
+
+    {"id": 4, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.3.4", "threat_type": "Dd",
+     "title": "Indefinite retention of parent account data without lifecycle management",
+     "description": "Parent records have timestamps but no automatic deletion, anonymization, or archival. Privacy policy claims 30-day erasure but no technical enforcement exists.",
+     "assumptions": "No automated data lifecycle management found in the codebase.",
+     "severity": "Med", "likelihood": "High",
+     "original_hw2_node": "Dd.3.1",
+     "mapping_note": "Corrected from Dd.3.1: retention maps to Dd.3.4 (duration/retention), not Dd.3.1 (treatment/analysis/enrichment)."},
+
+    {"id": 5, "interaction": "P1-DS4 [DF15]", "originator_id": "DS4", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "Government ID images stored insecurely on shared file system",
+     "description": "ID images saved to backend/uploads/images/ with no encryption, no access control beyond OS permissions, co-located with video content. Shared SSH credentials allow multiple users to access all ID images.",
+     "assumptions": "Images saved using multer to local directory. SSH credentials shared among multiple accounts.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "Dd.4.1",
+     "mapping_note": "Corrected from Dd.4.1: insecure storage / broad access maps to Dd.4.2 (availability/accessibility), not Dd.4.1 (involved parties)."},
+
+    {"id": 6, "interaction": "P1-DS5 [DF16]", "originator_id": "DS5", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "JWT token and user data exposed in browser localStorage",
+     "description": "JWT (user ID, userType) and full user data stored in localStorage, accessible to any same-origin JavaScript (XSS-vulnerable). Tokens valid 7 days, no rotation, persist on shared devices.",
+     "assumptions": "Confirmed: JWT token stored in localStorage and valid for 7 days.",
+     "severity": "High", "likelihood": "Med"},
+
+    {"id": 7, "interaction": "EE2-P1 [DF4]", "originator_id": "EE2", "tree_node": "L.1.2", "threat_type": "L",
+     "title": "All child actions linked to parent account via shared credentials",
+     "description": "Children log in with the parent's email and password; every child action carries the parent's account ObjectId, inherently linking child behavior to the parent's real identity. Children have no independent credentials.",
+     "assumptions": "Confirmed by engineering documentation child login flow.",
+     "severity": "Med", "likelihood": "High",
+     "mapping_note": "L.1.2 is an instance of L.1 (linking via unique identifier) applied to the parent account ObjectId; instance sub-ID, resolves to official L.1.1."},
+
+    {"id": 8, "interaction": "EE2-P1 [DF4]", "originator_id": "DF4", "tree_node": "I.1.2", "threat_type": "I",
+     "title": "Child identity revealed through parent credential reuse and weak six-digit code",
+     "description": "Child submits parent credentials over the network; any breach exposes all children's profiles. The six-digit code is static, user-chosen, and trivially guessable (test accounts use 123456).",
+     "assumptions": "Test account codes are 123456. No complexity enforcement beyond exactly 6 digits.",
+     "severity": "Med", "likelihood": "Med"},
+
+    {"id": 9, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "Dd.1.2", "threat_type": "Dd",
+     "title": "Excessive child PII collected at profile creation",
+     "description": "Exact DOB, gender, and government ID are collected for each child — unnecessary for service delivery and most under-13s lack photo ID. Violates COPPA data minimization (§312.7).",
+     "assumptions": "Confirmed by ChildProfile model schema.",
+     "severity": "High", "likelihood": "High",
+     "mapping_note": "Borderline: mixes data-type sensitivity (Dd.1.1, govt ID) and granularity (Dd.1.2, exact DOB). Kept under Dd.1.2 (granularity) as primary."},
+
+    {"id": 10, "interaction": "P3-DS2 [DF7/DF10]", "originator_id": "DS2", "tree_node": "L.2.2.1", "threat_type": "L",
+     "title": "Profiling children through aggregated behavioral data in DS2",
+     "description": "DS2 stores up to 50 search entries and 100 watch entries per child with exact queries, timestamps, per-second durations; combined with name, DOB, gender this builds a rich behavioral profile.",
+     "assumptions": "Confirmed by ChildProfile schema and history tracking code.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "L.2.1",
+     "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination)."},
+
+    {"id": 11, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "Dd.2.1", "threat_type": "Dd",
+     "title": "Excessive volume of child behavioral data retained indefinitely",
+     "description": "DS2 retains up to 50 search + 100 watch entries per child. Documentation states logs are not deleted. The FIFO cap perpetually maintains maximum volume — not a deletion mechanism.",
+     "assumptions": "Documentation explicitly states logs are not deleted. 50/100 caps are FIFO buffers.",
+     "severity": "High", "likelihood": "High",
+     "mapping_note": "Kept Dd.2.1 (amount) as primary; the retention aspect also relates to Dd.3.4 (duration/retention)."},
+
+    {"id": 12, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "Nr.1.1", "threat_type": "Nr",
+     "title": "Non-repudiation of child actions via persistent attributed logging",
+     "description": "Every child action is logged with timestamps and the child's ObjectId across DS2/DS3, creating an irrefutable permanent record of a minor's online behavior the child cannot deny.",
+     "assumptions": "Confirmed by ChildProfile and Video schemas.",
+     "severity": "Med", "likelihood": "High"},
+
+    {"id": 13, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "U.1.1", "threat_type": "U",
+     "title": "Children unaware of data collection and parental surveillance",
+     "description": "P2/P3 silently record all activity. Documentation states children are not notified about search/watch history tracking. No child-facing notices or indicators.",
+     "assumptions": "Directly stated in engineering documentation under Video Search and Watch History.",
+     "severity": "High", "likelihood": "High"},
+
+    {"id": 14, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "L.1.3", "threat_type": "L",
+     "title": "Video interactions permanently linkable to identified users via ObjectId",
+     "description": "Likes and comments store user ObjectId as foreign keys to DS1/DS2, permanently linking all content interactions to identified individuals and enabling long-term profiling.",
+     "assumptions": "Confirmed by Video schema: likes[].user and comments[].user are ObjectId refs.",
+     "severity": "Med", "likelihood": "High",
+     "mapping_note": "L.1.3 is an instance of L.1 (linking via unique identifier) applied to ObjectId foreign keys; instance sub-ID, resolves to official L.1.1."},
+
+    {"id": 15, "interaction": "DS2-P4 [DF13]", "originator_id": "P4", "tree_node": "Dd.4.1", "threat_type": "Dd",
+     "title": "Planned sharing of children's browsing data with AI engine and third parties",
+     "description": "Planned feature would expose children's behavioral profiles to an AI engine and ad targeting. Documentation states browsing history is used to train AI models and shared with advertisers (not yet implemented).",
+     "assumptions": "Feature documented but not yet implemented. Analyzed as a planned threat requiring preventive action.",
+     "severity": "High", "likelihood": "Med",
+     "original_hw2_node": "Dd.4.3",
+     "mapping_note": "Corrected from non-official Dd.4.3: sharing with additional/third parties maps to Dd.4.1 (involved parties); the dynamic third-party aspect is Dd.4.1.2."},
+
+    {"id": 16, "interaction": "P4-EE3 [DF14]", "originator_id": "EE3", "tree_node": "Nc.1.1", "threat_type": "Nc",
+     "title": "Planned third-party data sharing violates COPPA and contradicts privacy policy",
+     "description": "Advertisers would receive children's behavioral data without verifiable parental consent (COPPA §312.5). The privacy policy states KidsTube does not sell or rent children's data — directly contradicting the planned feature.",
+     "assumptions": "Privacy policy (Section 6) and engineering documentation are in direct contradiction.",
+     "severity": "High", "likelihood": "Med"},
+
+    {"id": 17, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "MongoDB database accessible without authentication on shared server",
+     "description": "Connection uses mongodb://localhost:27017/kidstube with no TLS and no authentication; any process on the server can read/write all collections. SSH access uses shared accounts.",
+     "assumptions": "Connection string confirmed in documentation. Shared SSH accounts documented.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "Dd.4.4",
+     "mapping_note": "Corrected from non-official Dd.4.4: unauthenticated broad access maps to Dd.4.2 (availability/accessibility)."},
+
+    {"id": 18, "interaction": "EE1-P3-DS2 [DF6->DF7]", "originator_id": "DS2", "tree_node": "Nc.1.2", "threat_type": "Nc",
+     "title": "Systematic violation of data minimization principle across the platform",
+     "description": "Excessive data (exact DOB, gender, child government ID, per-second watch tracking, 50/100 behavioral logs) collected and retained. Violates COPPA §312.7, GDPR Art. 5(1)(c), CCPA minimization.",
+     "assumptions": "Based on analysis of all collected data fields vs. functional requirements.",
+     "severity": "High", "likelihood": "High"},
+
+    {"id": 19, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "U.2.1", "threat_type": "U",
+     "title": "Limited intervenability: deletion claims contradict actual data persistence",
+     "description": "Privacy policy claims 30-day erasure with no enforcement; logs are not deleted; government ID images and comments referencing the child ObjectId may survive profile deletion.",
+     "assumptions": "Assumed file system cleanup (DS4) and cross-collection cleanup (DS3) not triggered by API deletion.",
+     "severity": "Med", "likelihood": "Med"},
+
+    {"id": 20, "interaction": "EE2-P2 [DF8]", "originator_id": "DF8", "tree_node": "D.1.1", "threat_type": "D",
+     "title": "Child search queries and actions observable on the network",
+     "description": "Child interactions are sent as HTTP API calls with JWT in the Authorization header. Without enforced HTTPS, exact search terms are visible to network observers; even with HTTPS, traffic patterns reveal behavior.",
+     "assumptions": "No mention of HTTPS enforcement, HSTS headers, or TLS configuration in documentation.",
+     "severity": "Med", "likelihood": "Med"},
+
+    {"id": 21, "interaction": "P1-EE1/EE2 [DF3/DF5]", "originator_id": "P1", "tree_node": "I.2.1", "threat_type": "I",
+     "title": "JWT tokens expose user type and identity in transit",
+     "description": "JWTs are signed but not encrypted; anyone intercepting a token can decode the base64 payload to learn the user's ObjectId and whether the request is from a parent or child.",
+     "assumptions": "Standard JWT uses base64-encoded payloads readable without the signing secret.",
+     "severity": "Med", "likelihood": "Med"},
+
+    {"id": 22, "interaction": "DS2-P3-EE1 [DF17]", "originator_id": "P3", "tree_node": "U.1.2", "threat_type": "U",
+     "title": "Covert parental surveillance of children without age-appropriate transparency",
+     "description": "Parents receive full search and watch history through Manage Children. Children are explicitly not informed; complete secrecy, especially near age 13, violates age-appropriate transparency principles.",
+     "assumptions": "Directly confirmed by engineering documentation.",
+     "severity": "High", "likelihood": "High"},
+
+    {"id": 23, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "I.2.2", "threat_type": "I",
+     "title": "Six-digit code provides inadequate verification of parental identity",
+     "description": "P1 validates only that the code is exactly 6 digits — no complexity, rotation, or lockout. All test accounts use 123456. A child could observe or guess the code and access parent controls.",
+     "assumptions": "Test accounts use 123456. No rate limiting or lockout documented.",
+     "severity": "Med", "likelihood": "High",
+     "mapping_note": "Borderline: weak parental-identity verification — Identifying (I.2.2, weak verification) primary, but also relates to Nc.1.3 (inadequate consent mechanism)."},
+
+    {"id": 24, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "Nr.1.2", "threat_type": "Nr",
+     "title": "Children's comments create irrevocable attributed speech records",
+     "description": "Comments are stored with the child's ObjectId, text, and timestamp. No DELETE endpoint exists, creating permanent attributable speech records for minors that persist even if harmful.",
+     "assumptions": "Video API shows POST /api/videos/:id/comments but no DELETE endpoint for comments.",
+     "severity": "Med", "likelihood": "Med"},
+
+    {"id": 25, "interaction": "P3-DS2 [DF7]", "originator_id": "DS2", "tree_node": "L.2.1.1", "threat_type": "L",
+     "title": "Cross-referencing child and parent data via shared naming prefix and foreign key",
+     "description": "Child profiles contain a direct parent ObjectId foreign key and documentation states children share the same prefixes as the parent, making family relationships trivially discoverable from DB access alone.",
+     "assumptions": "Stated in engineering documentation and confirmed in ChildProfile schema.",
+     "severity": "Med", "likelihood": "High",
+     "original_hw2_node": "L.2.2",
+     "mapping_note": "Corrected from L.2.2: linking via shared FK + naming prefix is quasi-identifier combination (L.2.1.1), not L.2.2 (profiling/inference)."},
+
+    {"id": 26, "interaction": "P1-DS4 [DF15]", "originator_id": "DS4", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "Government ID images co-located with streaming content on shared file system",
+     "description": "Government IDs are stored in the same backend/uploads/ directory structure as publicly served video content. Misconfigured static file serving could accidentally expose IDs.",
+     "assumptions": "Both images and videos stored under backend/uploads/ per file structure documentation.",
+     "severity": "High", "likelihood": "Med",
+     "original_hw2_node": "Dd.1.3",
+     "mapping_note": "Corrected from Dd.1.3: co-location/exposure risk maps to Dd.4.2 (availability/accessibility), not Dd.1.3 (data-type encoding)."},
+
+    {"id": 27, "interaction": "EE1-P2 [DF11]", "originator_id": "P2", "tree_node": "Dd.3.2", "threat_type": "Dd",
+     "title": "No automated content moderation before video exposure to children",
+     "description": "Videos default to isApproved:false but approval relies entirely on parent judgment. No automated content scanning or platform-level review; a negligent parent could approve inappropriate content.",
+     "assumptions": "isApproved defaults to false; no automated screening pipeline documented.",
+     "severity": "Med", "likelihood": "Med",
+     "mapping_note": "Borderline / non-canonical: a content-moderation gap is a weak fit for Data Disclosure (it is not primarily a personal-data disclosure threat). Kept under Dd.3.2 (propagation) as least-bad; candidate for removal or re-scoping in advisor review."},
+
+    {"id": 28, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.3", "threat_type": "Nc",
+     "title": "Inadequate COPPA verifiable parental consent mechanism",
+     "description": "Parent uploads government ID and chooses a six-digit code, but P1 never verifies the ID belongs to the registrant. None of the FTC-approved §312.5 consent methods are implemented.",
+     "assumptions": "No third-party identity verification or FTC-approved consent method documented.",
+     "severity": "High", "likelihood": "High"},
+
+    {"id": 29, "interaction": "P1/P2/P3-DS1/DS2/DS3 [DF2/DF7/DF9]", "originator_id": "DS1/DS2/DS3", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "No encryption at rest or in transit for database containing children's PII",
+     "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 17), all data is plaintext-readable.",
+     "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "Dd.4.5",
+     "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility)."},
+
+    {"id": 30, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "U.1.3", "threat_type": "U",
+     "title": "Per-second watch duration tracking creates undisclosed detailed behavioral profiles",
+     "description": "VideoPlayer.js reports exact seconds watched via setInterval; DS2 stores watchDuration per second with a completion flag. This granularity is undisclosed, unnecessary, and builds detailed temporal profiles of children.",
+     "assumptions": "Confirmed by VideoPlayer.js using setInterval and trackWatchHistory(videoId, totalWatchTime, true).",
+     "severity": "Med", "likelihood": "High"},
 ]
 
+
 def main():
+    corrections = sum(1 for t in THREATS if "original_hw2_node" in t)
+    borderline = sum(1 for t in THREATS if "mapping_note" in t and "original_hw2_node" not in t)
     catalog = {
         "_meta": {
             "scenario": "KidsTube",
             "source": "EPS S26 HW2 (Bakti Satria Adhityatama)",
             "role": "gold-standard baseline for evaluation",
+            "revision": "v2 — LINDDUN node IDs audited and corrected against official threat trees",
             "threat_count": len(THREATS),
-            "field_notes": "severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node is the LINDDUN threat tree node id.",
+            "corrections_applied": corrections,
+            "borderline_flagged": borderline,
+            "audit_note": ("8 node IDs corrected to match official LINDDUN tree semantics; "
+                           "3 threats flagged borderline (see mapping_note). threat_type (the 7 LINDDUN "
+                           "categories) was unchanged in all cases; only the sub-node within each type was "
+                           "corrected. Recommend advisor sign-off, especially on threat #27."),
+            "field_notes": ("severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD "
+                            "element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node "
+                            "is the corrected LINDDUN threat tree node id; original_hw2_node records the prior "
+                            "value where changed."),
         },
-        "threats": [
-            {
-                "id": t[0],
-                "interaction": t[1],
-                "originator_id": t[2],
-                "tree_node": t[3],
-                "threat_type": t[4],
-                "title": t[5],
-                "description": t[6],
-                "assumptions": t[7],
-                "severity": t[8],
-                "likelihood": t[9],
-            }
-            for t in THREATS
-        ],
+        "threats": THREATS,
     }
     out = Path(__file__).parent.parent / "knowledge_base" / "scenarios" / "kidstube" / "gold_standard_threats.json"
     out.write_text(json.dumps(catalog, indent=2))
     print(f"Wrote {len(THREATS)} threats to {out}")
-    # quick integrity checks
-    ids = [t[0] for t in THREATS]
+
+    ids = [t["id"] for t in THREATS]
     assert ids == list(range(1, 31)), "threat ids must be 1..30 contiguous"
-    types = {t[4] for t in THREATS}
-    print(f"Threat types present: {sorted(types)}")
-    from collections import Counter
-    print("Per-type counts:", dict(Counter(t[4] for t in THREATS)))
+    types = {t["threat_type"] for t in THREATS}
+    assert types == {"L", "I", "Nr", "D", "Dd", "U", "Nc"}, f"missing types: {types}"
+    print(f"Corrections applied: {corrections}  |  Borderline flagged: {borderline}")
+    print("Per-type counts:", dict(Counter(t["threat_type"] for t in THREATS)))
+
+    trees = json.loads((Path(__file__).parent.parent / "knowledge_base" / "linddun" / "threat_trees.json").read_text())
+    tree_nodes = set()
+    for tt in trees["threat_types"].values():
+        tree_nodes |= set(tt["nodes"].keys())
+
+    def covered(n):
+        parts = n.split(".")
+        return any(".".join(parts[:i]) in tree_nodes for i in range(len(parts), 0, -1))
+
+    uncovered = sorted({t["tree_node"] for t in THREATS if not covered(t["tree_node"])})
+    assert not uncovered, f"uncovered node ids: {uncovered}"
+    print("All node IDs resolve against the threat trees.")
+
 
 if __name__ == "__main__":
     main()
