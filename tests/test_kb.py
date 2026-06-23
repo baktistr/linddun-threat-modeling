@@ -35,6 +35,8 @@ def test_kb_files_exist():
         "regulations/regulations.md",
         "scenarios/kidstube/system_description.md",
         "scenarios/kidstube/gold_standard_threats.json",
+        "scenarios/genomic/system_description.md",
+        "scenarios/genomic/gold_standard_threats.json",
     ]:
         check((kb / rel).exists(), f"exists: {rel}")
 
@@ -50,6 +52,39 @@ def test_gold_standard_integrity():
     check(types == {"L", "I", "Nr", "D", "Dd", "U", "Nc"}, f"all 7 LINDDUN types present (got {sorted(types)})")
     check(all(t["tree_node"] for t in threats), "every threat has a tree node")
     check(all(t["assumptions"] for t in threats), "every threat has assumptions documented")
+
+
+def test_genomic_gold_standard_integrity():
+    print("\n[genomic gold standard integrity]")
+    gs = json.loads((config.KB_DIR / "scenarios/genomic/gold_standard_threats.json").read_text())
+    threats = gs["threats"]
+    check(len(threats) == 99, f"99 threats / complete example (got {len(threats)})")
+    ids = [t["id"] for t in threats]
+    check(ids == list(range(1, 100)), "ids contiguous 1..99")
+    types = {t["threat_type"] for t in threats}
+    # the complete example exercises all 7 LINDDUN types
+    check(types == {"L", "I", "Nr", "D", "Dd", "U", "Nc"}, f"all 7 LINDDUN types present (got {sorted(types)})")
+    check(sum(t.get("in_core_example") for t in threats) == 10, "10 threats tagged in_core_example")
+    check(all(t.get("nist_node") for t in threats), "every threat keeps its verbatim NIST node")
+    check(all(t.get("impacted_peos") for t in threats), "every threat records impacted PEOs")
+    check(all(t.get("ranking_value") is not None for t in threats), "every threat has a NIST ranking value")
+    # cross-check against the NIST source (Figure 24 + ranking formula Tables 18/19)
+    from scripts.verify_genomic import audit, formula_failures
+    corroborated, flagged = audit(threats)
+    fails = formula_failures(flagged)
+    check(not fails, f"all rows satisfy NIST's ranking formula (violations: {[t[0] for t in fails]})")
+    check(corroborated >= 97, f">=97/99 rows corroborated by two independent figures (got {corroborated})")
+    # tree nodes must resolve against the official trees (prefix fallback for re-maps)
+    trees = json.loads((config.KB_DIR / "linddun/threat_trees.json").read_text())
+    tree_nodes = set()
+    for tt in trees["threat_types"].values():
+        tree_nodes |= set(tt["nodes"].keys())
+
+    def covered(n):
+        p = n.split(".")
+        return any(".".join(p[:i]) in tree_nodes for i in range(len(p), 0, -1))
+
+    check(all(covered(t["tree_node"]) for t in threats), "every tree node resolves against the trees")
 
 
 def test_chunks():
@@ -83,6 +118,7 @@ def test_retrieval_quality():
 def main():
     test_kb_files_exist()
     test_gold_standard_integrity()
+    test_genomic_gold_standard_integrity()
     test_chunks()
     test_retrieval_quality()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")

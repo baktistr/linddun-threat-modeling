@@ -1,0 +1,2645 @@
+{
+  "_meta": {
+    "scenario": "Genomic Sequencing (NIST SP 1800-43C complete example)",
+    "source": "NIST SP 1800-43C (DRAFT, August 2025), 'Genomic Data Threat Modeling: Privacy \u2014 An Implementation for Genomic Data Sequencing and Analysis', NCCoE. Complete-example threats transcribed (vision OCR) from Appendix G Figures 20 (validations) and 24 (ranked threats): https://pages.nist.gov/nccoe-genomic-data-threat-modeling/Vol_C/Appendix/appendixG.html",
+    "role": "authoritative gold-standard baseline for evaluation (second scenario alongside KidsTube)",
+    "revision": "v2 \u2014 complete example (~99 itemized LINDDUN threats); supersedes the v1 10-threat core-example subset",
+    "threat_count": 99,
+    "core_example_count": 10,
+    "node_remaps": 25,
+    "low_confidence_rows": 0,
+    "provenance_note": "The complete example is published by NIST ONLY as raster figures in the external HTML appendices (no machine-readable table exists). These threats were transcribed by vision-reading Figures 20 and 24, which were transcribed independently and cross-checked. Raw transcription: scripts/data/genomic_complete_raw.json. TREAT PER-THREAT DETAILS AS TRANSCRIPTION-CONFIDENCE (OCR of a DRAFT figure), not authoritative; verify against the source figures before relying on a single row. scripts/verify_genomic.py cross-checks every row against Figure 24 + NIST's ranking formula (Tables 18/19): 97/99 corroborated, all 99 formula-consistent. Rows 23/24 feasibility and #27's description were corrected against the source; the only cell not independently re-confirmed is #24's node (I.1.2).",
+    "node_mapping_note": "NIST's LINDDUN tree is a newer/deeper revision than this repo's threat_trees.json. nist_node is the verbatim NIST node; tree_node is the nearest ancestor present in this repo's tree (I.2.3->I.2, I.2.1.1->I.2.1, U.2.2/U.2.3->U.2, Nr.2->Nr.1, Nc.2/Nc.4->Nc.1, DD->Dd). A follow-up could instead extend the canonical tree with the missing official nodes.",
+    "field_notes": "interaction/scenario_id is the NIST PANOPTIC scenario id (the per-threat DFD source/destination live in NIST Figure 11 and were not transcribed at high confidence, so originator_id is left blank). feasibility, difficulty, ranking_value, panoptic_actions, and impacted_peos are the NIST values. severity and likelihood are convenience projections: likelihood<-feasibility (Plausible=High, Indeterminate=Med, Implausible=Low); severity<-difficulty per NIST Table 16 data-state sensitivity (Negligible/Minor=High, Moderate=Med, Significant/Severe=Low). in_core_example flags the NIST core-example subset. title is synthesized from the LINDDUN node title + analysis."
+  },
+  "threats": [
+    {
+      "id": 1,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Sending the group of X samples together to the freezers around the same time as a\u2026",
+      "description": "Sending the group of X samples together to the freezers around the same time as a project known to be doing Y disease research could link the samples to Y disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11",
+        "PA08.01.01",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 2,
+      "interaction": "S1.2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Samples that are put into the LIMS around the same time could receive IDs with\u2026",
+      "description": "Samples that are put into the LIMS around the same time could receive IDs with linkable characteristics, which then allows linkage of the sample group to a study around the same time, unless the LIMS is cautious of this",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S1.2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.02",
+        "PA08.02.02",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.28,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 3,
+      "interaction": "S1.2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Samples that are put into the cluster filesystem around the same time could be\u2026",
+      "description": "Samples that are put into the cluster filesystem around the same time could be interpreted as being linked to a study about Y disease around the same time",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.02",
+        "PA08.02.02",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 4,
+      "interaction": "S1.2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Samples sent to the compute nodes around the same time could be interpreted as being\u2026",
+      "description": "Samples sent to the compute nodes around the same time could be interpreted as being linked to a study about Y disease around the same time",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.02",
+        "PA08.02.02",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 5,
+      "interaction": "S1.2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Samples that are put into the data delivery DMZ around the same time could be\u2026",
+      "description": "Samples that are put into the data delivery DMZ around the same time could be interpreted as being linked to a study about Y disease around the same time",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S1.2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.02",
+        "PA08.02.02",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.56,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 6,
+      "interaction": "S2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Requesting X samples with the same known predisposition links other samples",
+      "description": "Requesting X samples with the same known predisposition links other samples",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.02",
+        "PA08.02.02",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.28,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 7,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Retrieving the group of X samples together from the freezers around the same time as a\u2026",
+      "description": "Retrieving the group of X samples together from the freezers around the same time as a project known to be doing Y disease research is starting could link the samples to Y disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11",
+        "PA08.02.02",
+        "PA10.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 8,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Sending the group of X samples together to be sent to the sequencing lab around the\u2026",
+      "description": "Sending the group of X samples together to be sent to the sequencing lab around the same time as a project known to be doing Y disease research could link the samples to Y disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.11",
+        "PA03.09",
+        "PA08.01.01",
+        "PA10.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 9,
+      "interaction": "S3",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Requesting X samples with the same known predisposition links other samples",
+      "description": "Requesting X samples with the same known predisposition links other samples",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S3",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.01",
+        "PA08.01.01",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.28,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 10,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Retrieving the group of X samples together from the freezers around the same time as a\u2026",
+      "description": "Retrieving the group of X samples together from the freezers around the same time as a project known to be doing Y disease research is starting could link the samples to Y disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.11",
+        "PA03.09",
+        "PA08.01.01",
+        "PA10.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 11,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Sending the group of X samples together to be sent to the receiving clerk around the\u2026",
+      "description": "Sending the group of X samples together to be sent to the receiving clerk around the same time as a project known to be doing Y disease research could link the sample to Y disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.11",
+        "PA03.09",
+        "PA08.01.01",
+        "PA10.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 12,
+      "interaction": "S2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Requesting X samples with the same known predisposition links other samples",
+      "description": "Requesting X samples with the same known predisposition links other samples",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA05.02.02",
+        "PA08.02.02",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.28,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 13,
+      "interaction": "S2.2",
+      "originator_id": "",
+      "tree_node": "L.2.1.2",
+      "nist_node": "L.2.1.2",
+      "threat_type": "L",
+      "title": "Combining data of different individuals: Retrieving the group of X digital sample data together around the same time as a\u2026",
+      "description": "Retrieving the group of X digital sample data together around the same time as a project known to be doing Y disease research could link the samples to Y disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S2.2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA08.02.02",
+        "PA10.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 14,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.2.1",
+      "nist_node": "L.2.2.1",
+      "threat_type": "L",
+      "title": "Profiling an individual: Sending samples to the technician known to be researching a specific disease could\u2026",
+      "description": "Sending samples to the technician known to be researching a specific disease could link the samples to that disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11",
+        "PA08.01.01",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 15,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "L.2.2.1",
+      "nist_node": "L.2.2.1",
+      "threat_type": "L",
+      "title": "Profiling an individual: Sending samples to the wet lab known to be researching a specific disease at that time\u2026",
+      "description": "Sending samples to the wet lab known to be researching a specific disease at that time could link the samples to that disease",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11",
+        "PA08.01.01",
+        "PA10.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.42,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 16,
+      "interaction": "S4",
+      "originator_id": "",
+      "tree_node": "L.2.2.2",
+      "nist_node": "L.2.2.2",
+      "threat_type": "L",
+      "title": "Profiling a group of individuals: The Patient's findings can provide insights into the genetic health of the Patient's\u2026",
+      "description": "The Patient's findings can provide insights into the genetic health of the Patient's family",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S4",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA08.01.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Negligible",
+      "ranking_value": 0.7,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 17,
+      "interaction": "S4",
+      "originator_id": "",
+      "tree_node": "L.2.2.2",
+      "nist_node": "L.2.2.2",
+      "threat_type": "L",
+      "title": "Profiling a group of individuals: The Patient's findings can provide insights into the genetic health of the Patient's\u2026",
+      "description": "The Patient's findings can provide insights into the genetic health of the Patient's family",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S4",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA08.01.01",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Negligible",
+      "ranking_value": 0.7,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 18,
+      "interaction": "S2.1",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified before being received",
+      "description": "Data sample is not de-identified before being received",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S2.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 19,
+      "interaction": "S5",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified before being received",
+      "description": "Data sample is not de-identified before being received",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "Low",
+      "scenario_id": "S5",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.34,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 20,
+      "interaction": "S2.1",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified before being received",
+      "description": "Data sample is not de-identified before being received",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S2.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 21,
+      "interaction": "S2.1",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Samples that are sent to the clinical result generation step could include\u2026",
+      "description": "Samples that are sent to the clinical result generation step could include identifiable information to a Patient as no de-identification is being performed and the Patient is not de-identified",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S2.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 22,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Patient's identity information (e.g., name) is included in the documents shared with\u2026",
+      "description": "Patient's identity information (e.g., name) is included in the documents shared with the 3rd Party Previous Enrollment Entity",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 23,
+      "interaction": "S1.2",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified within the data delivery DMZ",
+      "description": "Data sample is not de-identified within the data delivery DMZ",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.2",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 24,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "I.1.2",
+      "nist_node": "I.1.2",
+      "threat_type": "I",
+      "title": "Identifying through credential or identity reuse: The Patient's name accompanies the sequence data so that it can be tied to the correct\u2026",
+      "description": "The Patient's name accompanies the sequence data so that it can be tied to the correct Patient throughout processing",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "Low",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.34,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 25,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "I.2.1",
+      "nist_node": "I.2.1.1",
+      "threat_type": "I",
+      "title": "Identifying through identity-revealing content or metadata: Full de-identification is difficult to guarantee",
+      "description": "Full de-identification is difficult to guarantee",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1."
+    },
+    {
+      "id": 26,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "I.2.1",
+      "nist_node": "I.2.1.1",
+      "threat_type": "I",
+      "title": "Identifying through identity-revealing content or metadata: Some of the Patient's other identifiable information, such as date of birth, accompany\u2026",
+      "description": "Some of the Patient's other identifiable information, such as date of birth, accompany the sequence data",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": true,
+      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1."
+    },
+    {
+      "id": 27,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "I.2.1",
+      "nist_node": "I.2.1.1",
+      "threat_type": "I",
+      "title": "Identifying through identity-revealing content or metadata: Some of the Patient's other identifiable information, such as date of birth, accompany\u2026",
+      "description": "Some of the Patient's other identifiable information, such as date of birth, accompany the sequence data",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1."
+    },
+    {
+      "id": 28,
+      "interaction": "S7.1",
+      "originator_id": "",
+      "tree_node": "I.2",
+      "nist_node": "I.2.3",
+      "threat_type": "I",
+      "title": "Identifiable data: Re-identification from research data group",
+      "description": "Re-identification from research data group",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S7.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.68,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+    },
+    {
+      "id": 29,
+      "interaction": "S7.1",
+      "originator_id": "",
+      "tree_node": "I.2",
+      "nist_node": "I.2.3",
+      "threat_type": "I",
+      "title": "Identifiable data: Re-identification from research data group",
+      "description": "Re-identification from research data group",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S7.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.68,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+    },
+    {
+      "id": 30,
+      "interaction": "S7.1",
+      "originator_id": "",
+      "tree_node": "I.2",
+      "nist_node": "I.2.3",
+      "threat_type": "I",
+      "title": "Identifiable data: Re-identification from research data group",
+      "description": "Re-identification from research data group",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S7.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.68,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+    },
+    {
+      "id": 31,
+      "interaction": "S7.1",
+      "originator_id": "",
+      "tree_node": "I.2",
+      "nist_node": "I.2.3",
+      "threat_type": "I",
+      "title": "Identifiable data: Re-identification from research data group",
+      "description": "Re-identification from research data group",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S7.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.68,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+    },
+    {
+      "id": 32,
+      "interaction": "S8",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: Data subject could be tied back to the research study",
+      "description": "Data subject could be tied back to the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "Low",
+      "scenario_id": "S8",
+      "panoptic_actions": [
+        "PA11.01"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.04,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 33,
+      "interaction": "S9",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: The Patient provides identifying information, such as their name and date of birth, to\u2026",
+      "description": "The Patient provides identifying information, such as their name and date of birth, to identify themself; the Genetic Counselor then authenticates the Patient and determines that they are authorized to receive the relevant test results and interpretation, which removes the ability for the Patient to repudiate that they have received the results and the Genetic Counselor's interpretations",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S9",
+      "panoptic_actions": [
+        "PA11.02.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.04,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 34,
+      "interaction": "S9",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: The Patient provides identifying information, such as their name and date of birth, to\u2026",
+      "description": "The Patient provides identifying information, such as their name and date of birth, to identify themself; the Genetic Physician then authenticates the Patient and determines that they are authorized to receive the relevant test results and interpretation, which removes the ability for the Patient to repudiate that they have received the results and the Genetic Physician's interpretations",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S9",
+      "panoptic_actions": [
+        "PA11.02.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.04,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 35,
+      "interaction": "S7",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: Data subject (the Patient) could be tied back to the research study",
+      "description": "Data subject (the Patient) could be tied back to the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S7",
+      "panoptic_actions": [
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.08,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 36,
+      "interaction": "S9",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: If the Patient has met the Genetic Counselor in-person, the data that is the Patient's\u2026",
+      "description": "If the Patient has met the Genetic Counselor in-person, the data that is the Patient's physical appearance in the office may remove the ability for the Patient to repudiate that they have seen the Genetic Counselor and have received the results and the Genetic Counselor's interpretations",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S9",
+      "panoptic_actions": [
+        "PA11.02.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.04,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 37,
+      "interaction": "S9",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: If the Patient has met the Genetic Physician in-person, the data that is the Patient's\u2026",
+      "description": "If the Patient has met the Genetic Physician in-person, the data that is the Patient's physical appearance in the office may remove the ability for the Patient to repudiate that they have seen the Genetic Physician and have received the results and the Genetic Physician's interpretations",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S9",
+      "panoptic_actions": [
+        "PA11.02.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.04,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 38,
+      "interaction": "S7",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: Data subject could be tied back to the research study",
+      "description": "Data subject could be tied back to the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S7",
+      "panoptic_actions": [
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.08,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 39,
+      "interaction": "S7",
+      "originator_id": "",
+      "tree_node": "Nr.1.1",
+      "nist_node": "Nr.1.1",
+      "threat_type": "Nr",
+      "title": "Attributable persistent logging: Data subject could be tied back to the research study",
+      "description": "Data subject could be tied back to the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S7",
+      "panoptic_actions": [
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.08,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 40,
+      "interaction": "S10",
+      "originator_id": "",
+      "tree_node": "Nr.1",
+      "nist_node": "Nr.2",
+      "threat_type": "Nr",
+      "title": "Retained evidence of a claim/action: If the Genetic Counselor sends the Patient a copy of the final clinical report over\u2026",
+      "description": "If the Genetic Counselor sends the Patient a copy of the final clinical report over encrypted email and uses a read receipt, this removes the ability for the Patient to repudiate that they have received the final clinical report",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "Low",
+      "scenario_id": "S10",
+      "panoptic_actions": [
+        "PA11.02.01"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.0,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nr.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nr.1."
+    },
+    {
+      "id": 41,
+      "interaction": "S10",
+      "originator_id": "",
+      "tree_node": "Nr.1",
+      "nist_node": "Nr.2",
+      "threat_type": "Nr",
+      "title": "Retained evidence of a claim/action: If the Genetic Physician sends the Patient a copy of the final clinical report over\u2026",
+      "description": "If the Genetic Physician sends the Patient a copy of the final clinical report over encrypted email and uses a read receipt, this removes the ability for the Patient to repudiate that they have received the final clinical report",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "Low",
+      "scenario_id": "S10",
+      "panoptic_actions": [
+        "PA11.02.01"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.0,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nr.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nr.1."
+    },
+    {
+      "id": 42,
+      "interaction": "S8",
+      "originator_id": "",
+      "tree_node": "D.1",
+      "nist_node": "D.1",
+      "threat_type": "D",
+      "title": "Observed communications: Observing that the Patient communicates with a Genetic Counselor implies that the\u2026",
+      "description": "Observing that the Patient communicates with a Genetic Counselor implies that the Patient is likely receiving their own results or is being communicated interpretations relevant to them regarding a consenting family member's test results",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S8",
+      "panoptic_actions": [
+        "PA03.07"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 43,
+      "interaction": "S8",
+      "originator_id": "",
+      "tree_node": "D.1",
+      "nist_node": "D.1",
+      "threat_type": "D",
+      "title": "Observed communications: Observing that the Patient communicates with a Genetic Physician implies that the\u2026",
+      "description": "Observing that the Patient communicates with a Genetic Physician implies that the Patient is likely receiving their own results or is being communicated interpretations relevant to them regarding a consenting family member's test results",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S8",
+      "panoptic_actions": [
+        "PA03.07"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 44,
+      "interaction": "S11",
+      "originator_id": "",
+      "tree_node": "D.1",
+      "nist_node": "D.1",
+      "threat_type": "D",
+      "title": "Observed communications: If the 3rd Party Previous Enrollment Entity sends an outreach attempt using outdated\u2026",
+      "description": "If the 3rd Party Previous Enrollment Entity sends an outreach attempt using outdated contact information from their files that now belongs to an individual other than the Patient, the unintended recipient can infer that the previous individual with their contact information was involved with the 3rd Party Previous Enrollment Entity",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "Low",
+      "scenario_id": "S11",
+      "panoptic_actions": [
+        "PA03.07"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.0,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 45,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "D.2",
+      "nist_node": "D.2",
+      "threat_type": "D",
+      "title": "Application side-effect: Side effects such as logs or the creation of revealing filenames (e.g.,",
+      "description": "Side effects such as logs or the creation of revealing filenames (e.g., [PatientName]_[DateOfBirth].txt) can cause the Patient privacy harm",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.01",
+        "PA03.12"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 46,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "D.2",
+      "nist_node": "D.2",
+      "threat_type": "D",
+      "title": "Application side-effect: Application side effects of generating the final clinical report with the Clinical\u2026",
+      "description": "Application side effects of generating the final clinical report with the Clinical Result Generation App may provide unintended information (such as generated filenames including Patient names, log files including the types of variants detected, etc.) if not generated with privacy in mind",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.01",
+        "PA03.12"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 47,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "D.2",
+      "nist_node": "D.2",
+      "threat_type": "D",
+      "title": "Application side-effect: Application side effects of generating the final clinical report with the Clinical\u2026",
+      "description": "Application side effects of generating the final clinical report with the Clinical Result Generation App may provide unintended information if not generated with privacy in mind",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.01",
+        "PA03.12"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 48,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "D.2",
+      "nist_node": "D.2",
+      "threat_type": "D",
+      "title": "Application side-effect: Application side effects of sending data to the External EMR may provide unintended\u2026",
+      "description": "Application side effects of sending data to the External EMR may provide unintended information if not generated with privacy in mind",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.01",
+        "PA03.12"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 49,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "D.2",
+      "nist_node": "D.2",
+      "threat_type": "D",
+      "title": "Application side-effect: Application side effects of sending data to the Internal EMR may provide unintended\u2026",
+      "description": "Application side effects of sending data to the Internal EMR may provide unintended information if not generated with privacy in mind",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.01",
+        "PA03.12"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.12,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 50,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "Dd.2.1",
+      "nist_node": "Dd.2.1",
+      "threat_type": "Dd",
+      "title": "Amount: More sequence information than is minimally necessary for the case at hand may be\u2026",
+      "description": "More sequence information than is minimally necessary for the case at hand may be generated during sequencing",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA09.01.01",
+        "PA09.01.03",
+        "PA09.01.04",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.6,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 51,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "Dd.3.1",
+      "nist_node": "Dd.3.1",
+      "threat_type": "Dd",
+      "title": "Treatment, analysis, enrichment, transformation: It is possible for more analysis tools to be run than are strictly necessary for the case",
+      "description": "It is possible for more analysis tools to be run than are strictly necessary for the case",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA09.01.01",
+        "PA09.01.03",
+        "PA09.01.04",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.8,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 52,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "Dd.3.4",
+      "nist_node": "Dd.3.4",
+      "threat_type": "Dd",
+      "title": "Duration/retention: Physical samples can be stored longer than necessary for processing or retention\u2026",
+      "description": "Physical samples can be stored longer than necessary for processing or retention requirements",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.6,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 53,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "Dd.3.4",
+      "nist_node": "Dd.3.4",
+      "threat_type": "Dd",
+      "title": "Duration/retention: Physical samples can be stored longer than necessary for processing or retention\u2026",
+      "description": "Physical samples can be stored longer than necessary for processing or retention requirements",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.6,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 54,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "Dd.3.4",
+      "nist_node": "Dd.3.4",
+      "threat_type": "Dd",
+      "title": "Duration/retention: Physical sample remnants can be kept longer than necessary (as they should be removed\u2026",
+      "description": "Physical sample remnants can be kept longer than necessary (as they should be removed immediately upon completion of a sequencing run)",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA03.11"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.6,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 55,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "Dd.4.1.2",
+      "nist_node": "Dd.4.1.2",
+      "threat_type": "Dd",
+      "title": "Dynamic set of parties: Bioinformatics tools used can come from a variety of publishers, including open\u2026",
+      "description": "Bioinformatics tools used can come from a variety of publishers, including open source, and this array of publishers can change over time as new tools are adopted; corruption within this supply chain could result in Patient data being disclosed to the tool publishers",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA09.01.01",
+        "PA09.01.03",
+        "PA09.01.04",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.8,
+      "impacted_peos": [
+        "Predictability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 56,
+      "interaction": "S12",
+      "originator_id": "",
+      "tree_node": "Dd.4.2",
+      "nist_node": "Dd.4.2",
+      "threat_type": "Dd",
+      "title": "Availability/accessibility of data: Results are being published",
+      "description": "Results are being published",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S12",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA09.01.01",
+        "PA09.01.03",
+        "PA09.01.04",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.8,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 57,
+      "interaction": "S12.1",
+      "originator_id": "",
+      "tree_node": "Dd.4.2",
+      "nist_node": "Dd.4.2",
+      "threat_type": "Dd",
+      "title": "Availability/accessibility of data: Results are being published",
+      "description": "Results are being published",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S12.1",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA09.01.01",
+        "PA09.01.03",
+        "PA09.01.04",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.8,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 58,
+      "interaction": "S12.2",
+      "originator_id": "",
+      "tree_node": "Dd.4.2",
+      "nist_node": "Dd.4.2",
+      "threat_type": "Dd",
+      "title": "Availability/accessibility of data: Results are being published",
+      "description": "Results are being published",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S12.2",
+      "panoptic_actions": [
+        "PA03.09",
+        "PA09.01.01",
+        "PA09.01.03",
+        "PA09.01.04",
+        "PA11.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.8,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 59,
+      "interaction": "S13",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not always know who their data is going to",
+      "description": "Data subject does not always know who their data is going to",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S13",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.1,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 60,
+      "interaction": "S14",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: NCCoE-trusted data recipient may not be from NCCoE directly and may have been added\u2026",
+      "description": "NCCoE-trusted data recipient may not be from NCCoE directly and may have been added after a data subject already provided consent",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S14",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.1,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 61,
+      "interaction": "S15",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not always know who their data is going to",
+      "description": "Data subject does not always know who their data is going to",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S15",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.1,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 62,
+      "interaction": "S14",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: The Patient's de-identified data is being shared with a party likely determined after\u2026",
+      "description": "The Patient's de-identified data is being shared with a party likely determined after the Patient's consent for use of their de-identified data in research has been provided (i.e., the Patient may not have known the identity of the Trusted Research Data Recipient at the time of providing consent)",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S14",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.1,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 63,
+      "interaction": "S16",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not always know what kinds of datasets results from their data will\u2026",
+      "description": "Data subject does not always know what kinds of datasets results from their data will go into",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S16",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.1,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 64,
+      "interaction": "S16",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not always know what kinds of datasets results from their data will\u2026",
+      "description": "Data subject does not always know what kinds of datasets results from their data will go into",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S16",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Severe",
+      "ranking_value": 0.1,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 65,
+      "interaction": "S17",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not know up-front what data actions trusted tools along the analysis\u2026",
+      "description": "Data subject does not know up-front what data actions trusted tools along the analysis pipeline will perform on their data",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S17",
+      "panoptic_actions": [
+        "PA02.02",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": true
+    },
+    {
+      "id": 66,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not know about all third party bioinformatics tools being used",
+      "description": "Data subject does not know about all third party bioinformatics tools being used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 67,
+      "interaction": "S17",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Patient may not know the analysis tools will be used on their data",
+      "description": "Patient may not know the analysis tools will be used on their data",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S17",
+      "panoptic_actions": [
+        "PA02.02",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 68,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Patient may not know how the Clinical Result Generation App will be utilized",
+      "description": "Patient may not know how the Clinical Result Generation App will be utilized",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 69,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Patient may not know how the Clinical Result Generation App will be utilized",
+      "description": "Patient may not know how the Clinical Result Generation App will be utilized",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 70,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Patient may not know about the 3rd Party Portal being used",
+      "description": "Patient may not know about the 3rd Party Portal being used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 71,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Patient may not know about the 3rd Party Portal being used",
+      "description": "Patient may not know about the 3rd Party Portal being used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 72,
+      "interaction": "S17",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: The Patient does not know how data sharing tools will be utilized",
+      "description": "The Patient does not know how data sharing tools will be utilized",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S17",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 73,
+      "interaction": "S17",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: The Patient does not know how data sharing tools will be utilized",
+      "description": "The Patient does not know how data sharing tools will be utilized",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S17",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 74,
+      "interaction": "S17",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: The Patient does not know how data sharing tools will be utilized",
+      "description": "The Patient does not know how data sharing tools will be utilized",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S17",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 75,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject (the Patient) does not know about all third party bioinformatics tools\u2026",
+      "description": "Data subject (the Patient) does not know about all third party bioinformatics tools being used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 76,
+      "interaction": "S14",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not always know who their data is going to",
+      "description": "Data subject does not always know who their data is going to",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S14",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 77,
+      "interaction": "S16",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not always know what kinds of datasets results from their data will\u2026",
+      "description": "Data subject does not always know what kinds of datasets results from their data will go into",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S16",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 78,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not know about all third party bioinformatics tools being used",
+      "description": "Data subject does not know about all third party bioinformatics tools being used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 79,
+      "interaction": "S19",
+      "originator_id": "",
+      "tree_node": "U.1.1",
+      "nist_node": "U.1.1",
+      "threat_type": "U",
+      "title": "No notice of data collection: Data subject does not know about all third party bioinformatics tools being used",
+      "description": "Data subject does not know about all third party bioinformatics tools being used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S19",
+      "panoptic_actions": [
+        "PA02.04",
+        "PA07.04"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 80,
+      "interaction": "S18",
+      "originator_id": "",
+      "tree_node": "U.1.2",
+      "nist_node": "U.1.2",
+      "threat_type": "U",
+      "title": "Covert processing / surveillance without transparency: Family members do not know and cannot consent when a data subject's data is used",
+      "description": "Family members do not know and cannot consent when a data subject's data is used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S18",
+      "panoptic_actions": [
+        "PA01.01",
+        "PA01.04",
+        "PA02.03",
+        "PA07.01",
+        "PA07.02",
+        "PA07.03",
+        "PA07.04",
+        "PA07.05",
+        "PA07.06",
+        "PA07.09"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Negligible",
+      "ranking_value": 0.5,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 81,
+      "interaction": "S18",
+      "originator_id": "",
+      "tree_node": "U.1.2",
+      "nist_node": "U.1.2",
+      "threat_type": "U",
+      "title": "Covert processing / surveillance without transparency: Family members do not know and cannot consent when a data subject's data is used",
+      "description": "Family members do not know and cannot consent when a data subject's data is used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S18",
+      "panoptic_actions": [
+        "PA01.01",
+        "PA01.04",
+        "PA02.03",
+        "PA07.01",
+        "PA07.02",
+        "PA07.03",
+        "PA07.04",
+        "PA07.05",
+        "PA07.06",
+        "PA07.09"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Negligible",
+      "ranking_value": 0.5,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 82,
+      "interaction": "S18",
+      "originator_id": "",
+      "tree_node": "U.1.2",
+      "nist_node": "U.1.2",
+      "threat_type": "U",
+      "title": "Covert processing / surveillance without transparency: Family members do not know and cannot consent when a data subject's data is used",
+      "description": "Family members do not know and cannot consent when a data subject's data is used",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S18",
+      "panoptic_actions": [
+        "PA01.01",
+        "PA01.04",
+        "PA02.03",
+        "PA07.01",
+        "PA07.02",
+        "PA07.03",
+        "PA07.04",
+        "PA07.05",
+        "PA07.06",
+        "PA07.09"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Negligible",
+      "ranking_value": 0.5,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 83,
+      "interaction": "S17",
+      "originator_id": "",
+      "tree_node": "U.2.1",
+      "nist_node": "U.2.1",
+      "threat_type": "U",
+      "title": "Insufficient or contradicted controls: The Patient may not be able to consent to all of the data actions analysis tools\u2026",
+      "description": "The Patient may not be able to consent to all of the data actions analysis tools performed in processing their data",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S17",
+      "panoptic_actions": [
+        "PA02.02",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false
+    },
+    {
+      "id": 84,
+      "interaction": "S20",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.2",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject may not be able to access the results of the research study",
+      "description": "Data subject may not be able to access the results of the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S20",
+      "panoptic_actions": [
+        "PA07.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 85,
+      "interaction": "S20",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.2",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject (the Patient) may not be able to access the results of the research study",
+      "description": "Data subject (the Patient) may not be able to access the results of the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S20",
+      "panoptic_actions": [
+        "PA07.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 86,
+      "interaction": "S20",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.2",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject may not be able to access the results of the research study",
+      "description": "Data subject may not be able to access the results of the research study",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S20",
+      "panoptic_actions": [
+        "PA07.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 87,
+      "interaction": "S21",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.3",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject cannot choose to withdraw consent after this point",
+      "description": "Data subject cannot choose to withdraw consent after this point",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S21",
+      "panoptic_actions": [
+        "PA07.03",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 88,
+      "interaction": "S21",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.3",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject (the Patient) cannot choose to withdraw consent after this point",
+      "description": "Data subject (the Patient) cannot choose to withdraw consent after this point",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S21",
+      "panoptic_actions": [
+        "PA07.03",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 89,
+      "interaction": "S21",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.3",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject cannot choose to withdraw consent after this point",
+      "description": "Data subject cannot choose to withdraw consent after this point",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S21",
+      "panoptic_actions": [
+        "PA07.03",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 90,
+      "interaction": "S21",
+      "originator_id": "",
+      "tree_node": "U.2",
+      "nist_node": "U.2.3",
+      "threat_type": "U",
+      "title": "Lack of intervenability / control: Data subject cannot choose to withdraw consent after this point",
+      "description": "Data subject cannot choose to withdraw consent after this point",
+      "assumptions": "",
+      "severity": "Low",
+      "likelihood": "High",
+      "scenario_id": "S21",
+      "panoptic_actions": [
+        "PA07.03",
+        "PA07.04",
+        "PA07.05"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Significant",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+    },
+    {
+      "id": 91,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.2",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for physical samples to be stored longer than is necessary according to\u2026",
+      "description": "It is possible for physical samples to be stored longer than is necessary according to project specifications",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA12.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.3,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 92,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.2",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for physical samples to be stored longer than is necessary",
+      "description": "It is possible for physical samples to be stored longer than is necessary",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA12.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.3,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 93,
+      "interaction": "S1.1",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.2",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for physical sample remnants to be kept longer than is necessary (as\u2026",
+      "description": "It is possible for physical sample remnants to be kept longer than is necessary (as they should be removed immediately upon completion of a sequencing run)",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.1",
+      "panoptic_actions": [
+        "PA12.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.3,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 94,
+      "interaction": "S1.2",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.2",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: The Patient's data could be retained for longer than is necessary due to an absence of\u2026",
+      "description": "The Patient's data could be retained for longer than is necessary due to an absence of governing bodies and procedures",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S1.2",
+      "panoptic_actions": [
+        "PA12.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.3,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 95,
+      "interaction": "S22",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.2",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: If the Patient's sequence data and any shared accompanying data used for their initial\u2026",
+      "description": "If the Patient's sequence data and any shared accompanying data used for their initial clinical case was not sufficiently de-identified, the Patient could be re-identified by the Trusted Research Data Recipient from the shared data",
+      "assumptions": "",
+      "severity": "High",
+      "likelihood": "High",
+      "scenario_id": "S22",
+      "panoptic_actions": [
+        "PA13.02"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Minor",
+      "ranking_value": 0.4,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability",
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 96,
+      "interaction": "S23.1",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.4",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for physical samples to be disposed of incorrectly",
+      "description": "It is possible for physical samples to be disposed of incorrectly",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "Low",
+      "scenario_id": "S23.1",
+      "panoptic_actions": [
+        "PA12.02"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 97,
+      "interaction": "S23.2",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.4",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for digital data to be disposed of incorrectly",
+      "description": "It is possible for digital data to be disposed of incorrectly",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S23.2",
+      "panoptic_actions": [
+        "PA12.02"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.3,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 98,
+      "interaction": "S23.2",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.4",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for digital data to be disposed of incorrectly",
+      "description": "It is possible for digital data to be disposed of incorrectly",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S23.2",
+      "panoptic_actions": [
+        "PA12.02"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.3,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    },
+    {
+      "id": 99,
+      "interaction": "S23.1",
+      "originator_id": "",
+      "tree_node": "Nc.1",
+      "nist_node": "Nc.4",
+      "threat_type": "Nc",
+      "title": "Compliance-related problem: It is possible for physical sample remnants to be left over",
+      "description": "It is possible for physical sample remnants to be left over",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "Low",
+      "scenario_id": "S23.1",
+      "panoptic_actions": [
+        "PA12.02"
+      ],
+      "feasibility": "Implausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.2,
+      "impacted_peos": [
+        "Predictability",
+        "Manageability"
+      ],
+      "in_core_example": false,
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+    }
+  ]
+}

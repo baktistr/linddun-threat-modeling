@@ -1,0 +1,992 @@
+[
+ {
+  "attack_no": 1,
+  "panoptic": "PA03.09, PA03.11, PA08.01.01, PA10.01, PA11.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.1.2",
+  "analysis": "Sending the group of X samples together to the freezers around the same time as a project known to be doing Y disease research could link the samples to Y disease",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 2,
+  "panoptic": "PA03.09, PA05.02.02, PA08.02.02, PA10.01, PA11.01",
+  "scenario_id": "S1.2",
+  "node": "L.2.1.2",
+  "analysis": "Samples that are put into the LIMS around the same time could receive IDs with linkable characteristics, which then allows linkage of the sample group to a study around the same time, unless the LIMS is cautious of this",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 3,
+  "panoptic": "PA03.09, PA05.02.02, PA08.02.02, PA10.01, PA11.01",
+  "scenario_id": "S1.2",
+  "node": "L.2.1.2",
+  "analysis": "Samples that are put into the cluster filesystem around the same time could be interpreted as being linked to a study about Y disease around the same time",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 4,
+  "panoptic": "PA03.09, PA05.02.02, PA08.02.02, PA10.01, PA11.01",
+  "scenario_id": "S1.2",
+  "node": "L.2.1.2",
+  "analysis": "Samples sent to the compute nodes around the same time could be interpreted as being linked to a study about Y disease around the same time",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 5,
+  "panoptic": "PA03.09, PA05.02.02, PA08.02.02, PA10.01, PA11.01",
+  "scenario_id": "S1.2",
+  "node": "L.2.1.2",
+  "analysis": "Samples that are put into the data delivery DMZ around the same time could be interpreted as being linked to a study about Y disease around the same time",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 6,
+  "panoptic": "PA03.09, PA05.02.02, PA08.02.02, PA10.01, PA11.01",
+  "scenario_id": "S2",
+  "node": "L.2.1.2",
+  "analysis": "Requesting X samples with the same known predisposition links other samples",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 7,
+  "panoptic": "PA03.09, PA03.11, PA08.02.02, PA10.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.1.2",
+  "analysis": "Retrieving the group of X samples together from the freezers around the same time as a project known to be doing Y disease research is starting could link the samples to Y disease",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 8,
+  "panoptic": "PA03.11, PA03.09, PA08.01.01, PA10.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.1.2",
+  "analysis": "Sending the group of X samples together to be sent to the sequencing lab around the same time as a project known to be doing Y disease research could link the samples to Y disease",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 9,
+  "panoptic": "PA03.09, PA05.02.01, PA08.01.01, PA10.01, PA11.01",
+  "scenario_id": "S3",
+  "node": "L.2.1.2",
+  "analysis": "Requesting X samples with the same known predisposition links other samples",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 10,
+  "panoptic": "PA03.11, PA03.09, PA08.01.01, PA10.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.1.2",
+  "analysis": "Retrieving the group of X samples together from the freezers around the same time as a project known to be doing Y disease research is starting could link the samples to Y disease",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 11,
+  "panoptic": "PA03.11, PA03.09, PA08.01.01, PA10.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.1.2",
+  "analysis": "Sending the group of X samples together to be sent to the receiving clerk around the same time as a project known to be doing Y disease research could link the sample to Y disease",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 12,
+  "panoptic": "PA03.09, PA05.02.02, PA08.02.02, PA10.01, PA11.01",
+  "scenario_id": "S2",
+  "node": "L.2.1.2",
+  "analysis": "Requesting X samples with the same known predisposition links other samples",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 13,
+  "panoptic": "PA03.09, PA08.02.02, PA10.01",
+  "scenario_id": "S2.2",
+  "node": "L.2.1.2",
+  "analysis": "Retrieving the group of X digital sample data together around the same time as a project known to be doing Y disease research could link the samples to Y disease",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 14,
+  "panoptic": "PA03.09, PA03.11, PA08.01.01, PA10.01, PA11.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.2.1",
+  "analysis": "Sending samples to the technician known to be researching a specific disease could link the samples to that disease",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 15,
+  "panoptic": "PA03.09, PA03.11, PA08.01.01, PA10.01, PA11.01",
+  "scenario_id": "S1.1",
+  "node": "L.2.2.1",
+  "analysis": "Sending samples to the wet lab known to be researching a specific disease at that time could link the samples to that disease",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 16,
+  "panoptic": "PA03.09, PA08.01.01, PA11.01",
+  "scenario_id": "S4",
+  "node": "L.2.2.2",
+  "analysis": "The Patient's findings can provide insights into the genetic health of the Patient's family",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Negligible"
+ },
+ {
+  "attack_no": 17,
+  "panoptic": "PA03.09, PA08.01.01, PA11.01",
+  "scenario_id": "S4",
+  "node": "L.2.2.2",
+  "analysis": "The Patient's findings can provide insights into the genetic health of the Patient's family",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Negligible"
+ },
+ {
+  "attack_no": 18,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S2.1",
+  "node": "I.1.1",
+  "analysis": "Data sample is not de-identified before being received",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 19,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S5",
+  "node": "I.1.1",
+  "analysis": "Data sample is not de-identified before being received",
+  "peos": "Disassociability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 20,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S2.1",
+  "node": "I.1.1",
+  "analysis": "Data sample is not de-identified before being received",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 21,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S2.1",
+  "node": "I.1.1",
+  "analysis": "Samples that are sent to the clinical result generation step could include identifiable information to a Patient as no de-identification is being performed and the Patient is not de-identified",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 22,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S6",
+  "node": "I.1.1",
+  "analysis": "Patient's identity information (e.g., name) is included in the documents shared with the 3rd Party Previous Enrollment Entity",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 23,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S1.2",
+  "node": "I.1.1",
+  "analysis": "Data sample is not de-identified within the data delivery DMZ",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 24,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S6",
+  "node": "I.1.2",
+  "analysis": "The Patient's name accompanies the sequence data so that it can be tied to the correct Patient throughout processing",
+  "peos": "Disassociability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 25,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S6",
+  "node": "I.2.1.1",
+  "analysis": "Full de-identification is difficult to guarantee",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 26,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S6",
+  "node": "I.2.1.1",
+  "analysis": "Some of the Patient's other identifiable information, such as date of birth, accompany the sequence data",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 27,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S6",
+  "node": "I.2.1.1",
+  "analysis": "Some of the Patient's other identifiable information, such as date of birth, accompany the sequence data",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 28,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S7.1",
+  "node": "I.2.3",
+  "analysis": "Re-identification from research data group",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 29,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S7.1",
+  "node": "I.2.3",
+  "analysis": "Re-identification from research data group",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 30,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S7.1",
+  "node": "I.2.3",
+  "analysis": "Re-identification from research data group",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 31,
+  "panoptic": "PA05.01.01",
+  "scenario_id": "S7.1",
+  "node": "I.2.3",
+  "analysis": "Re-identification from research data group",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 32,
+  "panoptic": "PA11.01",
+  "scenario_id": "S8",
+  "node": "Nr.1.1",
+  "analysis": "Data subject could be tied back to the research study",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 33,
+  "panoptic": "PA11.02.01",
+  "scenario_id": "S9",
+  "node": "Nr.1.1",
+  "analysis": "The Patient provides identifying information, such as their name and date of birth, to identify themself; the Genetic Counselor then authenticates the Patient and determines that they are authorized to receive the relevant test results and interpretation, which removes the ability for the Patient to repudiate that they have received the results and the Genetic Counselor's interpretations",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 34,
+  "panoptic": "PA11.02.01",
+  "scenario_id": "S9",
+  "node": "Nr.1.1",
+  "analysis": "The Patient provides identifying information, such as their name and date of birth, to identify themself; the Genetic Physician then authenticates the Patient and determines that they are authorized to receive the relevant test results and interpretation, which removes the ability for the Patient to repudiate that they have received the results and the Genetic Physician's interpretations",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 35,
+  "panoptic": "PA11.01",
+  "scenario_id": "S7",
+  "node": "Nr.1.1",
+  "analysis": "Data subject (the Patient) could be tied back to the research study",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 36,
+  "panoptic": "PA11.02.01",
+  "scenario_id": "S9",
+  "node": "Nr.1.1",
+  "analysis": "If the Patient has met the Genetic Counselor in-person, the data that is the Patient's physical appearance in the office may remove the ability for the Patient to repudiate that they have seen the Genetic Counselor and have received the results and the Genetic Counselor's interpretations",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 37,
+  "panoptic": "PA11.02.01",
+  "scenario_id": "S9",
+  "node": "Nr.1.1",
+  "analysis": "If the Patient has met the Genetic Physician in-person, the data that is the Patient's physical appearance in the office may remove the ability for the Patient to repudiate that they have seen the Genetic Physician and have received the results and the Genetic Physician's interpretations",
+  "peos": "Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 38,
+  "panoptic": "PA11.01",
+  "scenario_id": "S7",
+  "node": "Nr.1.1",
+  "analysis": "Data subject could be tied back to the research study",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 39,
+  "panoptic": "PA11.01",
+  "scenario_id": "S7",
+  "node": "Nr.1.1",
+  "analysis": "Data subject could be tied back to the research study",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 40,
+  "panoptic": "PA11.02.01",
+  "scenario_id": "S10",
+  "node": "Nr.2",
+  "analysis": "If the Genetic Counselor sends the Patient a copy of the final clinical report over encrypted email and uses a read receipt, this removes the ability for the Patient to repudiate that they have received the final clinical report",
+  "peos": "Disassociability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 41,
+  "panoptic": "PA11.02.01",
+  "scenario_id": "S10",
+  "node": "Nr.2",
+  "analysis": "If the Genetic Physician sends the Patient a copy of the final clinical report over encrypted email and uses a read receipt, this removes the ability for the Patient to repudiate that they have received the final clinical report",
+  "peos": "Disassociability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 42,
+  "panoptic": "PA03.07",
+  "scenario_id": "S8",
+  "node": "D.1",
+  "analysis": "Observing that the Patient communicates with a Genetic Counselor implies that the Patient is likely receiving their own results or is being communicated interpretations relevant to them regarding a consenting family member's test results",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 43,
+  "panoptic": "PA03.07",
+  "scenario_id": "S8",
+  "node": "D.1",
+  "analysis": "Observing that the Patient communicates with a Genetic Physician implies that the Patient is likely receiving their own results or is being communicated interpretations relevant to them regarding a consenting family member's test results",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 44,
+  "panoptic": "PA03.07",
+  "scenario_id": "S11",
+  "node": "D.1",
+  "analysis": "If the 3rd Party Previous Enrollment Entity sends an outreach attempt using outdated contact information from their files that now belongs to an individual other than the Patient, the unintended recipient can infer that the previous individual with their contact information was involved with the 3rd Party Previous Enrollment Entity",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 45,
+  "panoptic": "PA03.01, PA03.12",
+  "scenario_id": "S6",
+  "node": "D.2",
+  "analysis": "Side effects such as logs or the creation of revealing filenames (e.g., [PatientName]_[DateOfBirth].txt) can cause the Patient privacy harm",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 46,
+  "panoptic": "PA03.01, PA03.12",
+  "scenario_id": "S6",
+  "node": "D.2",
+  "analysis": "Application side effects of generating the final clinical report with the Clinical Result Generation App may provide unintended information (such as generated filenames including Patient names, log files including the types of variants detected, etc.) if not generated with privacy in mind",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 47,
+  "panoptic": "PA03.01, PA03.12",
+  "scenario_id": "S6",
+  "node": "D.2",
+  "analysis": "Application side effects of generating the final clinical report with the Clinical Result Generation App may provide unintended information if not generated with privacy in mind",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 48,
+  "panoptic": "PA03.01, PA03.12",
+  "scenario_id": "S6",
+  "node": "D.2",
+  "analysis": "Application side effects of sending data to the External EMR may provide unintended information if not generated with privacy in mind",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 49,
+  "panoptic": "PA03.01, PA03.12",
+  "scenario_id": "S6",
+  "node": "D.2",
+  "analysis": "Application side effects of sending data to the Internal EMR may provide unintended information if not generated with privacy in mind",
+  "peos": "Predictability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 50,
+  "panoptic": "PA03.09, PA09.01.01, PA09.01.03, PA09.01.04, PA11.01",
+  "scenario_id": "S6",
+  "node": "Dd.2.1",
+  "analysis": "More sequence information than is minimally necessary for the case at hand may be generated during sequencing",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 51,
+  "panoptic": "PA03.09, PA09.01.01, PA09.01.03, PA09.01.04, PA11.01",
+  "scenario_id": "S6",
+  "node": "Dd.3.1",
+  "analysis": "It is possible for more analysis tools to be run than are strictly necessary for the case",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 52,
+  "panoptic": "PA03.09, PA03.11",
+  "scenario_id": "S1.1",
+  "node": "Dd.3.4",
+  "analysis": "Physical samples can be stored longer than necessary for processing or retention requirements",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 53,
+  "panoptic": "PA03.09, PA03.11",
+  "scenario_id": "S1.1",
+  "node": "Dd.3.4",
+  "analysis": "Physical samples can be stored longer than necessary for processing or retention requirements",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 54,
+  "panoptic": "PA03.09, PA03.11",
+  "scenario_id": "S1.1",
+  "node": "Dd.3.4",
+  "analysis": "Physical sample remnants can be kept longer than necessary (as they should be removed immediately upon completion of a sequencing run)",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 55,
+  "panoptic": "PA03.09, PA09.01.01, PA09.01.03, PA09.01.04, PA11.01",
+  "scenario_id": "S6",
+  "node": "Dd.4.1.2",
+  "analysis": "Bioinformatics tools used can come from a variety of publishers, including open source, and this array of publishers can change over time as new tools are adopted; corruption within this supply chain could result in Patient data being disclosed to the tool publishers",
+  "peos": "Predictability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 56,
+  "panoptic": "PA03.09, PA09.01.01, PA09.01.03, PA09.01.04, PA11.01",
+  "scenario_id": "S12",
+  "node": "Dd.4.2",
+  "analysis": "Results are being published",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 57,
+  "panoptic": "PA03.09, PA09.01.01, PA09.01.03, PA09.01.04, PA11.01",
+  "scenario_id": "S12.1",
+  "node": "Dd.4.2",
+  "analysis": "Results are being published",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 58,
+  "panoptic": "PA03.09, PA09.01.01, PA09.01.03, PA09.01.04, PA11.01",
+  "scenario_id": "S12.2",
+  "node": "Dd.4.2",
+  "analysis": "Results are being published",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 59,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S13",
+  "node": "U.1.1",
+  "analysis": "Data subject does not always know who their data is going to",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 60,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S14",
+  "node": "U.1.1",
+  "analysis": "NCCoE-trusted data recipient may not be from NCCoE directly and may have been added after a data subject already provided consent",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 61,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S15",
+  "node": "U.1.1",
+  "analysis": "Data subject does not always know who their data is going to",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 62,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S14",
+  "node": "U.1.1",
+  "analysis": "The Patient's de-identified data is being shared with a party likely determined after the Patient's consent for use of their de-identified data in research has been provided (i.e., the Patient may not have known the identity of the Trusted Research Data Recipient at the time of providing consent)",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 63,
+  "panoptic": "PA02.04, PA07.05",
+  "scenario_id": "S16",
+  "node": "U.1.1",
+  "analysis": "Data subject does not always know what kinds of datasets results from their data will go into",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 64,
+  "panoptic": "PA02.04, PA07.05",
+  "scenario_id": "S16",
+  "node": "U.1.1",
+  "analysis": "Data subject does not always know what kinds of datasets results from their data will go into",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Severe"
+ },
+ {
+  "attack_no": 65,
+  "panoptic": "PA02.02, PA07.05",
+  "scenario_id": "S17",
+  "node": "U.1.1",
+  "analysis": "Data subject does not know up-front what data actions trusted tools along the analysis pipeline will perform on their data",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 66,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Data subject does not know about all third party bioinformatics tools being used",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 67,
+  "panoptic": "PA02.02, PA07.05",
+  "scenario_id": "S17",
+  "node": "U.1.1",
+  "analysis": "Patient may not know the analysis tools will be used on their data",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 68,
+  "panoptic": "PA02.04, PA07.05",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Patient may not know how the Clinical Result Generation App will be utilized",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 69,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Patient may not know how the Clinical Result Generation App will be utilized",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 70,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Patient may not know about the 3rd Party Portal being used",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 71,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Patient may not know about the 3rd Party Portal being used",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 72,
+  "panoptic": "PA02.04, PA07.04, PA07.05",
+  "scenario_id": "S17",
+  "node": "U.1.1",
+  "analysis": "The Patient does not know how data sharing tools will be utilized",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 73,
+  "panoptic": "PA02.04, PA07.04, PA07.05",
+  "scenario_id": "S17",
+  "node": "U.1.1",
+  "analysis": "The Patient does not know how data sharing tools will be utilized",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 74,
+  "panoptic": "PA02.04, PA07.04, PA07.05",
+  "scenario_id": "S17",
+  "node": "U.1.1",
+  "analysis": "The Patient does not know how data sharing tools will be utilized",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 75,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Data subject (the Patient) does not know about all third party bioinformatics tools being used",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 76,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S14",
+  "node": "U.1.1",
+  "analysis": "Data subject does not always know who their data is going to",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 77,
+  "panoptic": "PA02.04, PA07.04, PA07.05",
+  "scenario_id": "S16",
+  "node": "U.1.1",
+  "analysis": "Data subject does not always know what kinds of datasets results from their data will go into",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 78,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Data subject does not know about all third party bioinformatics tools being used",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 79,
+  "panoptic": "PA02.04, PA07.04",
+  "scenario_id": "S19",
+  "node": "U.1.1",
+  "analysis": "Data subject does not know about all third party bioinformatics tools being used",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 80,
+  "panoptic": "PA01.01, PA01.04, PA02.03, PA07.01, PA07.02, PA07.03, PA07.04, PA07.05, PA07.06, PA07.09",
+  "scenario_id": "S18",
+  "node": "U.1.2",
+  "analysis": "Family members do not know and cannot consent when a data subject's data is used",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Negligible"
+ },
+ {
+  "attack_no": 81,
+  "panoptic": "PA01.01, PA01.04, PA02.03, PA07.01, PA07.02, PA07.03, PA07.04, PA07.05, PA07.06, PA07.09",
+  "scenario_id": "S18",
+  "node": "U.1.2",
+  "analysis": "Family members do not know and cannot consent when a data subject's data is used",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Negligible"
+ },
+ {
+  "attack_no": 82,
+  "panoptic": "PA01.01, PA01.04, PA02.03, PA07.01, PA07.02, PA07.03, PA07.04, PA07.05, PA07.06, PA07.09",
+  "scenario_id": "S18",
+  "node": "U.1.2",
+  "analysis": "Family members do not know and cannot consent when a data subject's data is used",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Negligible"
+ },
+ {
+  "attack_no": 83,
+  "panoptic": "PA02.02, PA07.05",
+  "scenario_id": "S17",
+  "node": "U.2.1",
+  "analysis": "The Patient may not be able to consent to all of the data actions analysis tools performed in processing their data",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 84,
+  "panoptic": "PA07.01",
+  "scenario_id": "S20",
+  "node": "U.2.2",
+  "analysis": "Data subject may not be able to access the results of the research study",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 85,
+  "panoptic": "PA07.01",
+  "scenario_id": "S20",
+  "node": "U.2.2",
+  "analysis": "Data subject (the Patient) may not be able to access the results of the research study",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 86,
+  "panoptic": "PA07.01",
+  "scenario_id": "S20",
+  "node": "U.2.2",
+  "analysis": "Data subject may not be able to access the results of the research study",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 87,
+  "panoptic": "PA07.03, PA07.04, PA07.05",
+  "scenario_id": "S21",
+  "node": "U.2.3",
+  "analysis": "Data subject cannot choose to withdraw consent after this point",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 88,
+  "panoptic": "PA07.03, PA07.04, PA07.05",
+  "scenario_id": "S21",
+  "node": "U.2.3",
+  "analysis": "Data subject (the Patient) cannot choose to withdraw consent after this point",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 89,
+  "panoptic": "PA07.03, PA07.04, PA07.05",
+  "scenario_id": "S21",
+  "node": "U.2.3",
+  "analysis": "Data subject cannot choose to withdraw consent after this point",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 90,
+  "panoptic": "PA07.03, PA07.04, PA07.05",
+  "scenario_id": "S21",
+  "node": "U.2.3",
+  "analysis": "Data subject cannot choose to withdraw consent after this point",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Significant"
+ },
+ {
+  "attack_no": 91,
+  "panoptic": "PA12.01",
+  "scenario_id": "S1.1",
+  "node": "Nc.2",
+  "analysis": "It is possible for physical samples to be stored longer than is necessary according to project specifications",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 92,
+  "panoptic": "PA12.01",
+  "scenario_id": "S1.1",
+  "node": "Nc.2",
+  "analysis": "It is possible for physical samples to be stored longer than is necessary",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 93,
+  "panoptic": "PA12.01",
+  "scenario_id": "S1.1",
+  "node": "Nc.2",
+  "analysis": "It is possible for physical sample remnants to be kept longer than is necessary (as they should be removed immediately upon completion of a sequencing run)",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 94,
+  "panoptic": "PA12.01",
+  "scenario_id": "S1.2",
+  "node": "Nc.2",
+  "analysis": "The Patient's data could be retained for longer than is necessary due to an absence of governing bodies and procedures",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 95,
+  "panoptic": "PA13.02",
+  "scenario_id": "S22",
+  "node": "Nc.2",
+  "analysis": "If the Patient's sequence data and any shared accompanying data used for their initial clinical case was not sufficiently de-identified, the Patient could be re-identified by the Trusted Research Data Recipient from the shared data",
+  "peos": "Predictability, Manageability, Disassociability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Minor"
+ },
+ {
+  "attack_no": 96,
+  "panoptic": "PA12.02",
+  "scenario_id": "S23.1",
+  "node": "Nc.4",
+  "analysis": "It is possible for physical samples to be disposed of incorrectly",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 97,
+  "panoptic": "PA12.02",
+  "scenario_id": "S23.2",
+  "node": "Nc.4",
+  "analysis": "It is possible for digital data to be disposed of incorrectly",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 98,
+  "panoptic": "PA12.02",
+  "scenario_id": "S23.2",
+  "node": "Nc.4",
+  "analysis": "It is possible for digital data to be disposed of incorrectly",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Plausible",
+  "attack_difficulty": "Moderate"
+ },
+ {
+  "attack_no": 99,
+  "panoptic": "PA12.02",
+  "scenario_id": "S23.1",
+  "node": "Nc.4",
+  "analysis": "It is possible for physical sample remnants to be left over",
+  "peos": "Predictability, Manageability",
+  "feasibility": "Implausible",
+  "attack_difficulty": "Moderate"
+ }
+]
