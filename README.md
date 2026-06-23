@@ -133,7 +133,36 @@ references/nist-sp-1800-43c/   NIST report PDF + appendix figures/sources (prove
 - **Pluggable embeddings.** Starts dependency-free for a reproducible demo; upgrades to semantic embeddings with one env var.
 - **Backend-agnostic content.** If we adopt the partner's Qdrant/reranker stack, only `retrieval/` changes — the knowledge base and gold standard move over unchanged.
 
-## How this connects to threat generation
+## Target pipeline (end-to-end goal)
 
-`retrieval/interaction_context.py` is the handoff. Given a DFD interaction (e.g. `ExternalEntity -> Process`), it returns the applicable threat types, their positions (S/fl/D), and the relevant tree nodes — exactly the context the per-interaction threat-generation prompt consumes. The next stage wires this into prompt construction + Claude generation and compares output against the gold standard.
+The end goal is an LLM assistant that performs LINDDUN Pro threat modeling from a real-world input — either a **DFD** the user provides or the **source code** of an app — grounded in this knowledge base and graded against the gold standards.
+
 ```
+INPUT                     PIVOT                  GROUNDED ELICITATION           OUTPUT
+─────                     ─────                  ────────────────────           ──────
+DFD (provided) ──┐
+                 ├─► canonical DFD ──► per-interaction LINDDUN ──► threats ──► regulatory ──► threat model
+source code ─────┘    (elements +      elicitation grounded         (LLM)      mapping        (scored vs gold)
+                       interactions)    in the KB
+```
+
+The **canonical DFD is the pivot**: both inputs converge on one structured representation (elements, flows, trust boundaries, interactions), and everything downstream consumes it. This is the shared schema to align with the `RAG-MCP-system` backend.
+
+### Stage status
+
+| Stage | Component | Status |
+|---|---|---|
+| Knowledge base (LINDDUN trees, mapping table, regulations) | `knowledge_base/`, `ingestion/`, `retrieval/` | ✅ built |
+| Evaluation ground truth (KidsTube 36 + genomic 99) | `knowledge_base/scenarios/`, `scripts/verify_genomic.py` | ✅ built |
+| Methodology handoff (DFD interaction → applicable types/positions/nodes) | `retrieval/interaction_context.py` | ✅ built |
+| **Input front-end** — DFD ingestion / **source-code → DFD synthesis** | — | ⬜ not built (the largest piece; code→DFD is the research-hard part) |
+| Canonical DFD schema (the pivot representation) | — | ⬜ not built (formalize first) |
+| Threat generation (LLM emits structured threats per interaction) | — | ⬜ Week 3 |
+| Regulatory mapping on generated threats | — | ⬜ not built |
+| Eval harness (generated vs gold; retrieval excludes the answer key) | `eval/` | ⬜ not built |
+
+### Notes on evaluation
+
+- `retrieval/interaction_context.py` is the current handoff: given a DFD interaction (e.g. `ExternalEntity -> Process`) it returns the applicable threat types, their S/fl/D positions, and the relevant tree nodes — exactly the context the per-interaction generation prompt will consume.
+- **Avoid leakage:** the gold-standard threats are in the index today (over half the chunks). At generation time, retrieval must be restricted to methodology (`--source linddun` / `regulations` + the scenario's `system_description.md`) and the gold held out as the grader only.
+- **Gold suits input modes differently:** KidsTube is anchored per DFD interaction (good for a per-interaction pipeline) and is a real React/Node app — the one scenario that can test the full **code → DFD → threats** chain end to end. Genomic has no codebase and no per-threat DFD anchor; it evaluates "for this system, did you find these threats" at a coarser grain, with NIST's native prioritization/PEO fields enabling a richer scoring metric.
