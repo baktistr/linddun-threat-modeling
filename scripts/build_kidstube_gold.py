@@ -1,8 +1,18 @@
 #!/usr/bin/env python3
-"""Generate the KidsTube gold-standard threat catalog (30 threats) as structured JSON.
+"""Generate the KidsTube gold-standard threat catalog as structured JSON.
 
-Source: EPS S26 HW2 (Bakti Satria Adhityatama). This is the evaluation ground truth
-against which AI-generated threats are compared in later weeks.
+Primary source: EPS S26 HW2 (Bakti Satria Adhityatama) — threats 1–30. This is the
+evaluation ground truth against which AI-generated threats are compared in later weeks.
+
+Revision v3 (current): Six additional threats (31–36) were merged in from EPS S26 HW2
+(Bilal) covering coverage gaps in the primary catalog — weak password hashing, inference
+of sensitive child characteristics from watch patterns, broken object-level
+authorization (BOLA), missing privacy notice at registration, AB 2273 (AADC)
+privacy-by-default, and CCPA/CPRA published-policy + DSAR obligations. Threats 13 and
+16 were lightly enhanced with AB 2273 and CCPA "Do Not Sell" cross-references. Bilal's
+informal LINDDUN sub-node IDs (L.1, Nc.3, Nc.2.1, etc.) were re-mapped to official
+tree nodes; each merged threat carries `source: bilal_hw2` and a `mapping_note`
+documenting the re-mapping.
 
 Revision v2: LINDDUN node IDs were audited against the official threat trees. Eight
 sub-node IDs were corrected and three threats flagged borderline. The threat_type
@@ -101,9 +111,10 @@ THREATS = [
 
     {"id": 13, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "U.1.1", "threat_type": "U",
      "title": "Children unaware of data collection and parental surveillance",
-     "description": "P2/P3 silently record all activity. Documentation states children are not notified about search/watch history tracking. No child-facing notices or indicators.",
+     "description": "P2/P3 silently record all activity. Documentation states children are not notified about search/watch history tracking. No child-facing notices or indicators. California AB 2273 (AADC) specifically prohibits collecting data from minors without age-appropriate transparency.",
      "assumptions": "Directly stated in engineering documentation under Video Search and Watch History.",
-     "severity": "High", "likelihood": "High"},
+     "severity": "High", "likelihood": "High",
+     "mapping_note": "v3: added AB 2273 (AADC) cross-reference from Bilal HW2 #8 (age-appropriate transparency for child users)."},
 
     {"id": 14, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "L.1.3", "threat_type": "L",
      "title": "Video interactions permanently linkable to identified users via ObjectId",
@@ -122,9 +133,10 @@ THREATS = [
 
     {"id": 16, "interaction": "P4-EE3 [DF14]", "originator_id": "EE3", "tree_node": "Nc.1.1", "threat_type": "Nc",
      "title": "Planned third-party data sharing violates COPPA and contradicts privacy policy",
-     "description": "Advertisers would receive children's behavioral data without verifiable parental consent (COPPA §312.5). The privacy policy states KidsTube does not sell or rent children's data — directly contradicting the planned feature.",
+     "description": "Advertisers would receive children's behavioral data without verifiable parental consent (COPPA §312.5). Sharing personal information with third parties also triggers CCPA/CPRA §1798.135 \"Do Not Sell or Share\" disclosure and opt-out obligations. The privacy policy states KidsTube does not sell or rent children's data — directly contradicting the planned feature.",
      "assumptions": "Privacy policy (Section 6) and engineering documentation are in direct contradiction.",
-     "severity": "High", "likelihood": "Med"},
+     "severity": "High", "likelihood": "Med",
+     "mapping_note": "v3: added CCPA/CPRA §1798.135 \"Do Not Sell or Share\" cross-reference from Bilal HW2 #20."},
 
     {"id": 17, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
      "title": "MongoDB database accessible without authentication on shared server",
@@ -219,29 +231,98 @@ THREATS = [
      "description": "VideoPlayer.js reports exact seconds watched via setInterval; DS2 stores watchDuration per second with a completion flag. This granularity is undisclosed, unnecessary, and builds detailed temporal profiles of children.",
      "assumptions": "Confirmed by VideoPlayer.js using setInterval and trackWatchHistory(videoId, totalWatchTime, true).",
      "severity": "Med", "likelihood": "High"},
+
+    # --- v3 additions merged from EPS S26 HW2 (Bilal) ---
+
+    {"id": 31, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "Insecure credential storage: weak or unverified password hashing",
+     "description": "Parent passwords flow from P1 into DS1. If the hashing algorithm is weak (MD5/SHA-1), uses no per-user salt, or passwords are stored in plaintext, a single DS1 breach exposes every parent credential — which in turn unlocks every child profile because children authenticate with the parent's credentials (see threat 7).",
+     "assumptions": "Codebase was not audited to confirm Argon2id/bcrypt is in use. Node.js applications frequently default to weak hashing without explicit enforcement.",
+     "severity": "High", "likelihood": "Med",
+     "source": "bilal_hw2",
+     "original_hw2_node": "Dd.2",
+     "mapping_note": "Added from Bilal HW2 #3 (Insecure Credential Storage). Re-mapped from Bilal's informal Dd.2 to official Dd.4.2 (availability/accessibility — broken protection of stored credentials)."},
+
+    {"id": 32, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "D.2", "threat_type": "D",
+     "title": "Inference of sensitive child characteristics from watch patterns",
+     "description": "DS2 watch and search history can be analyzed to infer sensitive attributes about the child even without explicit identifiers: repeated medical content reveals health conditions, minority-language videos reveal ethnicity, family-separation content may reveal custody situations. CCPA/CPRA classifies such inferences as personal information.",
+     "assumptions": "No policy or technical control prohibits analytics or admin processes from running pattern analysis over DS2 history fields.",
+     "severity": "High", "likelihood": "Med",
+     "source": "bilal_hw2",
+     "original_hw2_node": "D.1",
+     "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) — the threat is inference from patterns, not direct observation. Distinct from threat 10 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction."},
+
+    {"id": 33, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "Unauthorized cross-account access via missing object-level authorization (BOLA)",
+     "description": "API endpoints exposing /api/children/:id, /api/users/:id, and history routes do not verify that the authenticated parent owns the child profile being requested. Any logged-in parent can retrieve another family's child data, search history, or watch history by manipulating the id path parameter. This is OWASP API Security #1: Broken Object-Level Authorization.",
+     "assumptions": "Standard Express.js route handlers without ownership-check middleware. No authorization integration tests verifying cross-account requests return 403.",
+     "severity": "High", "likelihood": "High",
+     "source": "bilal_hw2",
+     "original_hw2_node": "Dd.1",
+     "mapping_note": "Added from Bilal HW2 #11 (BOLA). Re-mapped from Bilal's Dd.1 (data-type sensitivity) to Dd.4.2 (availability/accessibility — too easy for an unauthorized data subject to access another's data). Distinct from threat 17 (database-level no-auth): this is application-layer authorization missing on otherwise authenticated requests."},
+
+    {"id": 34, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.1", "threat_type": "Nc",
+     "title": "No privacy notice presented to parent at point of registration",
+     "description": "COPPA 16 CFR §312.4 and CCPA §1798.100(a) both require a clear privacy notice at the point of collection. P1 collects parent PII (email, password, name, government ID, six-digit code) and creates child profiles before any privacy notice or link to a privacy policy is shown to the registering parent.",
+     "assumptions": "No privacy-notice screen or policy link was observed at registration. Distinct from threat 19 (intervenability after the fact) — this is the up-front notice obligation.",
+     "severity": "High", "likelihood": "High",
+     "source": "bilal_hw2",
+     "original_hw2_node": "U.1.2",
+     "mapping_note": "Added from Bilal HW2 #13 (No Privacy Notice at Point of Registration). Re-mapped from Bilal's U.1.2 (which is already used in threat 22 for covert parental surveillance) to Nc.1.1 since the primary frame here is a regulatory notice violation. Sibling to threat 13 (child-facing notice gap) but for the parent-facing path."},
+
+    {"id": 35, "interaction": "P3-EE2 [DF12]", "originator_id": "P3", "tree_node": "Nc.1.2", "threat_type": "Nc",
+     "title": "AB 2273 (AADC) violation: no privacy-by-default configuration for minor users",
+     "description": "California AB 2273 (Age-Appropriate Design Code) requires services likely accessed by minors to default to the most privacy-protective settings. KidsTube collects watch/search history, per-second viewing telemetry, and likes/comments by default for every child profile, with no opt-out and no setting that disables behavioral collection. All collection defaults are on for child accounts.",
+     "assumptions": "No privacy-by-default configuration or opt-out toggle for behavioral collection was observed in the engineering documentation or schemas.",
+     "severity": "High", "likelihood": "High",
+     "source": "bilal_hw2",
+     "original_hw2_node": "Nc.3",
+     "mapping_note": "Added from Bilal HW2 #19 (AADC: No Privacy-by-Default for Minor Users). Re-mapped from Bilal's informal Nc.3 to Nc.1.2 (data-minimization-adjacent regulatory non-compliance) — Nc.1.2 is already used in threat 18 (COPPA/GDPR/CCPA minimization) and the AB 2273 default-settings violation is the same regulatory family. Mapping_note documents the shared sub-node."},
+
+    {"id": 36, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.1", "threat_type": "Nc",
+     "title": "CCPA/CPRA non-compliance: no published privacy policy, Do Not Sell, or DSAR workflow",
+     "description": "CCPA/CPRA requires covered California businesses to publish a privacy policy (§1798.130), provide a \"Do Not Sell or Share My Personal Information\" link if data is sold or shared (§1798.135), and operate a Data Subject Access Request workflow for access/deletion/correction requests (§1798.105, §1798.110, §1798.106). No published privacy policy URL, opt-out link, or DSAR intake endpoint is documented for KidsTube.",
+     "assumptions": "No privacy policy URL was observed in the engineering documentation; threat 16 documents the contradiction between the policy's stated position and the planned advertiser-sharing feature, but this threat covers the broader publication and DSAR-workflow obligation.",
+     "severity": "High", "likelihood": "High",
+     "source": "bilal_hw2",
+     "original_hw2_node": "Nc.2.1",
+     "mapping_note": "Added from Bilal HW2 #20 (CCPA: No Privacy Policy or Do Not Sell Opt-Out). Re-mapped from Bilal's informal Nc.2.1 to official Nc.1.1. Shares Nc.1.1 with threat 16 — both are COPPA/CCPA disclosure-regime violations; this threat is the platform-wide publication-and-DSAR gap, threat 16 is the specific advertiser-sharing contradiction."},
 ]
 
 
 def main():
     corrections = sum(1 for t in THREATS if "original_hw2_node" in t)
     borderline = sum(1 for t in THREATS if "mapping_note" in t and "original_hw2_node" not in t)
+    bilal_additions = sum(1 for t in THREATS if t.get("source") == "bilal_hw2")
     catalog = {
         "_meta": {
             "scenario": "KidsTube",
-            "source": "EPS S26 HW2 (Bakti Satria Adhityatama)",
+            "source": "EPS S26 HW2 (Bakti Satria Adhityatama) primary; EPS S26 HW2 (Bilal) supplementary additions on threats 31–36",
             "role": "gold-standard baseline for evaluation",
-            "revision": "v2 — LINDDUN node IDs audited and corrected against official threat trees",
+            "revision": "v3 — merged Bilal HW2 coverage gaps (BOLA, weak hashing, sensitive-attribute inference, AB 2273 AADC, CCPA published-policy/DSAR, registration-time privacy notice)",
             "threat_count": len(THREATS),
             "corrections_applied": corrections,
             "borderline_flagged": borderline,
-            "audit_note": ("8 node IDs corrected to match official LINDDUN tree semantics; "
-                           "3 threats flagged borderline (see mapping_note). threat_type (the 7 LINDDUN "
-                           "categories) was unchanged in all cases; only the sub-node within each type was "
-                           "corrected. Recommend advisor sign-off, especially on threat #27."),
+            "bilal_additions": bilal_additions,
+            "audit_note": ("v2: 8 node IDs corrected to match official LINDDUN tree semantics; 3 threats flagged "
+                           "borderline (see mapping_note). threat_type (the 7 LINDDUN categories) was unchanged "
+                           "in all cases; only the sub-node within each type was corrected. "
+                           "v3: 6 additional threats merged in from Bilal HW2 (ids 31–36) covering primary-catalog "
+                           "gaps — Insecure password hashing (Dd), inference of sensitive child characteristics "
+                           "from watch patterns (D), broken object-level authorization / BOLA (Dd), no privacy "
+                           "notice at registration (Nc), AB 2273 (AADC) privacy-by-default (Nc), CCPA/CPRA "
+                           "published-policy + DSAR + Do Not Sell obligations (Nc). Bilal's informal sub-node "
+                           "IDs (e.g. L.1, Nc.3, Nc.2.1) were re-mapped to official tree nodes; each merged "
+                           "threat records source=\"bilal_hw2\", original_hw2_node, and a mapping_note. "
+                           "Threats 13 and 16 received minor description enhancements adding AB 2273 and "
+                           "CCPA §1798.135 cross-references respectively. Recommend advisor sign-off, "
+                           "especially on threats #27 and #32–35."),
             "field_notes": ("severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD "
                             "element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node "
                             "is the corrected LINDDUN threat tree node id; original_hw2_node records the prior "
-                            "value where changed."),
+                            "value where changed. source=\"bilal_hw2\" marks threats merged in during the v3 "
+                            "supplementary pass; absence of that field means the threat originates from the "
+                            "primary HW2 (Bakti)."),
         },
         "threats": THREATS,
     }
@@ -250,10 +331,10 @@ def main():
     print(f"Wrote {len(THREATS)} threats to {out}")
 
     ids = [t["id"] for t in THREATS]
-    assert ids == list(range(1, 31)), "threat ids must be 1..30 contiguous"
+    assert ids == list(range(1, len(THREATS) + 1)), "threat ids must be 1..N contiguous"
     types = {t["threat_type"] for t in THREATS}
     assert types == {"L", "I", "Nr", "D", "Dd", "U", "Nc"}, f"missing types: {types}"
-    print(f"Corrections applied: {corrections}  |  Borderline flagged: {borderline}")
+    print(f"Corrections applied: {corrections}  |  Borderline flagged: {borderline}  |  Bilal additions: {bilal_additions}")
     print("Per-type counts:", dict(Counter(t["threat_type"] for t in THREATS)))
 
     trees = json.loads((Path(__file__).parent.parent / "knowledge_base" / "linddun" / "threat_trees.json").read_text())
