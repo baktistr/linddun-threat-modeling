@@ -203,6 +203,25 @@ def test_llm_backend_routing():
     finally:
         config.OPENAI_API_KEY = saved_key
 
+    saved_key, saved_endpoint = config.AZURE_AI_API_KEY, config.AZURE_AI_ENDPOINT
+    config.AZURE_AI_API_KEY = ""
+    try:
+        get_llm_backend("azure")
+        check(False, "missing AZURE_AI_API_KEY raises RuntimeError")
+    except RuntimeError:
+        check(True, "missing AZURE_AI_API_KEY raises RuntimeError")
+    finally:
+        config.AZURE_AI_API_KEY = saved_key
+
+    config.AZURE_AI_ENDPOINT = ""
+    try:
+        get_llm_backend("azure")
+        check(False, "missing AZURE_AI_ENDPOINT raises RuntimeError")
+    except RuntimeError:
+        check(True, "missing AZURE_AI_ENDPOINT raises RuntimeError")
+    finally:
+        config.AZURE_AI_ENDPOINT = saved_endpoint
+
 
 def test_matcher_genomic_location_based():
     print("\n[matcher: genomic uses dfd_source_id/dfd_destination_id, not flow_id string]")

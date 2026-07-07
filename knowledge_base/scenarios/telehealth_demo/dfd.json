@@ -1,0 +1,39 @@
+{
+  "_meta": {
+    "scenario": "Telehealth Remote Monitoring (demo)",
+    "source": "Hand-authored dummy scenario for the Week 4 progress demo -- not a gold-standard-backed evaluation scenario (no gold_standard_threats.json). Deliberately mirrors the genomic scenario's structural pattern (internal staff typed as ExternalEntity, one genuinely external party) at a small, presentable scale.",
+    "purpose": "Designed to demonstrate two Week 4 changes live: (1) the internal_staff role/effective_type reclassification recovering otherwise-unreachable flows, and (2) grounded citations against the newly-added HIPAA/GINA/Common Rule regulations.",
+    "demo_notes": "DF3 (Nurse->EHR Database), DF4 (Attending Physician->Patient), and DF5 (Genetic Testing Lab Courier->Genetic Test Results Store) are EE-involved interactions only reachable because Nurse/Attending Physician/Genetic Testing Lab Courier carry role=internal_staff below -- remove their `role` field to show these flows getting skipped instead, for a before/after demo. DF9 (EHR Database->External Insurance Auditor) intentionally stays unreachable either way: External Insurance Auditor is role=external_party, same as genomic's remaining 27 stuck threats."
+  },
+  "elements": [
+    {"id": "EE1", "type": "ExternalEntity", "name": "Patient", "role": "external_party"},
+    {"id": "EE2", "type": "ExternalEntity", "name": "Nurse", "role": "internal_staff"},
+    {"id": "EE3", "type": "ExternalEntity", "name": "Attending Physician", "role": "internal_staff"},
+    {"id": "EE4", "type": "ExternalEntity", "name": "Genetic Testing Lab Courier", "role": "internal_staff"},
+    {"id": "EE5", "type": "ExternalEntity", "name": "External Insurance Auditor", "role": "external_party"},
+    {"id": "P1", "type": "Process", "name": "Remote Monitoring Platform"},
+    {"id": "P2", "type": "Process", "name": "Clinical Decision Support App"},
+    {"id": "DS1", "type": "DataStore", "name": "EHR Database"},
+    {"id": "DS2", "type": "DataStore", "name": "Genetic Test Results Store"}
+  ],
+  "flows": [
+    {"id": "DF1", "source": "EE1", "destination": "P1",
+     "description": "Patient submits daily vitals (heart rate, blood pressure) from a wearable device"},
+    {"id": "DF2", "source": "P1", "destination": "DS1",
+     "description": "Remote Monitoring Platform stores incoming vitals in the EHR database"},
+    {"id": "DF3", "source": "EE2", "destination": "DS1",
+     "description": "Nurse directly reviews and annotates a patient's vitals in the EHR database during rounds"},
+    {"id": "DF4", "source": "EE3", "destination": "EE1",
+     "description": "Attending Physician calls the patient directly to relay genetic test results and next steps"},
+    {"id": "DF5", "source": "EE4", "destination": "DS2",
+     "description": "Genetic Testing Lab Courier physically delivers a sequencing report and uploads results to the store"},
+    {"id": "DF6", "source": "DS2", "destination": "P2",
+     "description": "Clinical Decision Support App pulls genetic test results to screen for risk flags"},
+    {"id": "DF7", "source": "P2", "destination": "EE3",
+     "description": "Clinical Decision Support App sends a flagged high-risk alert to the Attending Physician"},
+    {"id": "DF8", "source": "DS1", "destination": "P2",
+     "description": "Clinical Decision Support App reads recent vitals history from the EHR database"},
+    {"id": "DF9", "source": "DS1", "destination": "EE5",
+     "description": "External Insurance Auditor pulls EHR records directly during a billing/coverage audit"}
+  ]
+}

@@ -14,14 +14,14 @@ RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the cura
 | `knowledge_base/linddun/threat_trees.json` | All 7 LINDDUN threat types + tree nodes (structured) | Each node is independently retrievable for grounded elicitation |
 | `knowledge_base/linddun/mapping_table.json` | LINDDUN Pro Table 4.1 — which types apply at S/fl/D per interaction | Drives which threats to check for each DFD interaction |
 | `knowledge_base/linddun/threat_types_and_methodology.md` | Type definitions + S/fl/D interpretation + iteration strategy | Prose context for the model |
-| `knowledge_base/regulations/regulations.md` | COPPA, GDPR, CCPA provisions mapped to LINDDUN types | Enables regulatory citation on threats |
+| `knowledge_base/regulations/regulations.md` | COPPA, GDPR, CCPA (KidsTube) + HIPAA, GINA, Common Rule, CLIA (genomic, added Week 4) mapped to LINDDUN types | Enables regulatory citation on threats |
 | `knowledge_base/scenarios/kidstube/system_description.md` | KidsTube DFD, assets, flows | Primary evaluation scenario |
 | `knowledge_base/scenarios/kidstube/gold_standard_threats.json` | **36-threat gold standard** | Ground truth for all evaluation |
 | `knowledge_base/scenarios/genomic/system_description.md` | Genomic sequencing DFD, assets, flows | Second evaluation scenario |
 | `knowledge_base/scenarios/genomic/gold_standard_threats.json` | **99-threat gold standard** (NIST complete example; 10 tagged as the core-example subset); each threat now also carries `dfd_source_id`/`dfd_destination_id` (97/99 resolved, Week 3) | Authoritative ground truth — NIST's own LINDDUN analysis, transcribed from Appendix G figures |
 | `knowledge_base/scenarios/genomic/dfd.json` | Structured DFD: **32 elements, 39 flows** across the shared + clinical + research pipelines (Week 3) | Lets generation iterate over concrete named flows, same as KidsTube |
 
-Sources: LINDDUN Pro Tutorial v0.1 (KU Leuven, downloads.linddun.org); eCFR Title 16 Part 312; GDPR (EU 2016/679); CCPA (Cal. Civ. Code §1798.100+); NIST SP 1800-43C DRAFT, *Genomic Data Threat Modeling: Privacy* (NCCoE, Aug 2025).
+Sources: LINDDUN Pro Tutorial v0.1 (KU Leuven, downloads.linddun.org); eCFR Title 16 Part 312; GDPR (EU 2016/679); CCPA (Cal. Civ. Code §1798.100+); 45 CFR Parts 160/164 (HIPAA); GINA (2008); 45 CFR 46 (Common Rule); 42 CFR Part 493 (CLIA); NIST SP 1800-43C DRAFT, *Genomic Data Threat Modeling: Privacy* (NCCoE, Aug 2025).
 
 ## Evaluation scenarios
 
@@ -127,7 +127,7 @@ python cli.py build                    # rebuild after changing the backend
 ```
 knowledge_base/        curated source-of-truth documents (the durable asset)
   linddun/             methodology: trees, mapping table, definitions
-  regulations/         COPPA / GDPR / CCPA excerpts
+  regulations/         COPPA / GDPR / CCPA + HIPAA / GINA / Common Rule / CLIA excerpts
   scenarios/kidstube/  system description + dfd.json (12 elements, 17 flows) + 36-threat gold standard (primary)
   scenarios/genomic/   system description + dfd.json (32 elements, 39 flows, all 4 pipelines) + 99-threat gold standard
 

@@ -13,6 +13,24 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+
+
+def _load_dotenv(path: Path) -> None:
+    """Minimal .env loader: KEY=value lines, '#' comments, blank lines skipped. Real shell/CI
+    env vars always win -- this only fills in what isn't already set."""
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        if key and key not in os.environ:
+            os.environ[key] = value.strip()
+
+
+_load_dotenv(ROOT / ".env")
 KB_DIR = ROOT / "knowledge_base"
 STORE_DIR = ROOT / "storage" / "index"
 STORE_DIR.mkdir(parents=True, exist_ok=True)
@@ -36,7 +54,7 @@ EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "tfidf").lower()
 
 # LLM generation layer (cli.py ask, generation/). Not required for retrieval.
 # Provider is pluggable so threat generation isn't locked to one vendor -- see generation/llm_backend.py.
-LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "anthropic").lower()  # anthropic | openai
+LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "anthropic").lower()  # anthropic | openai | azure
 
 # Anthropic (Claude)
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
@@ -47,3 +65,15 @@ CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o")
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "") or None
+
+# Azure AI Foundry (Azure OpenAI-compatible route on an AIServices resource). AZURE_AI_ENDPOINT
+# is the resource root (e.g. "https://<resource>.services.ai.azure.com/") -- if a full Foundry
+# project endpoint ("https://<resource>.services.ai.azure.com/api/projects/<project>") is set
+# instead, AzureFoundryBackend strips the "/api/projects/..." suffix automatically.
+# AZURE_AI_MODEL is the deployment name (not necessarily the underlying model family's public
+# name). Newer deployments (this project's "gpt-5.4") reject `max_tokens` in favor of
+# `max_completion_tokens`; AzureFoundryBackend always uses the latter.
+AZURE_AI_ENDPOINT = os.environ.get("AZURE_AI_ENDPOINT", "")
+AZURE_AI_API_KEY = os.environ.get("AZURE_AI_API_KEY", "")
+AZURE_AI_MODEL = os.environ.get("AZURE_AI_MODEL", "gpt-4o")
+AZURE_AI_API_VERSION = os.environ.get("AZURE_AI_API_VERSION", "2024-12-01-preview")

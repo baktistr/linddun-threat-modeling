@@ -82,9 +82,55 @@ class OpenAIBackend(LLMBackend):
         return {"threats": []}
 
 
+class AzureFoundryBackend(LLMBackend):
+    """Azure AI Foundry, via the Azure-OpenAI-compatible /chat/completions route on an AIServices
+    resource. AZURE_AI_MODEL is a deployment name, not a public model name. Newer deployments
+    (e.g. this project's "gpt-5.4") reject `max_tokens`, requiring `max_completion_tokens`
+    instead -- the one real difference from OpenAIBackend beyond auth/endpoint shape."""
+    name = "azure"
+
+    def __init__(self):
+        if not config.AZURE_AI_API_KEY:
+            raise RuntimeError("AZURE_AI_API_KEY not set (see .env.example).")
+        if not config.AZURE_AI_ENDPOINT:
+            raise RuntimeError("AZURE_AI_ENDPOINT not set (see .env.example).")
+        import openai
+        # Accept either a bare resource root or a full Foundry project endpoint
+        # (".../api/projects/<project>") -- the chat-completions route lives at the resource root.
+        endpoint = config.AZURE_AI_ENDPOINT.split("/api/projects/")[0]
+        self.client = openai.AzureOpenAI(
+            azure_endpoint=endpoint,
+            api_key=config.AZURE_AI_API_KEY,
+            api_version=config.AZURE_AI_API_VERSION,
+        )
+
+    def generate_threats(self, prompt: str) -> dict:
+        tool = {
+            "type": "function",
+            "function": {
+                "name": TOOL_NAME,
+                "description": THREAT_TOOL_SCHEMA["description"],
+                "parameters": THREAT_TOOL_SCHEMA["input_schema"],
+            },
+        }
+        resp = self.client.chat.completions.create(
+            model=config.AZURE_AI_MODEL,
+            tools=[tool],
+            tool_choice={"type": "function", "function": {"name": TOOL_NAME}},
+            messages=[{"role": "user", "content": prompt}],
+            max_completion_tokens=2000,
+        )
+        tool_calls = resp.choices[0].message.tool_calls or []
+        for call in tool_calls:
+            if call.function.name == TOOL_NAME:
+                return json.loads(call.function.arguments)
+        return {"threats": []}
+
+
 _BACKENDS: dict[str, type[LLMBackend]] = {
     "anthropic": AnthropicBackend,
     "openai": OpenAIBackend,
+    "azure": AzureFoundryBackend,
 }
 
 

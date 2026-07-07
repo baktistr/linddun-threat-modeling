@@ -1,0 +1,64 @@
+# Week 4 Progress Report
+
+**Project:** AI-Assisted Privacy Threat Modeling — Grounded LINDDUN Pro
+**Week:** 4
+**Author:** Bakti Satria Adhityatama
+
+## Goal for Week 4
+
+Two items carried over from advisor discussion of the abstract draft: (1) the regulatory knowledge base only covered COPPA/GDPR/CCPA, which matches the KidsTube scenario but not genomic's actual regulatory environment (HIPAA, GINA, CLIA, Common Rule — flagged as a gap back in `REFERENCES.md` §H since Week 1 but never closed); and (2) Week 3's open decision on the mapping-table coverage ceiling (only 17/99 genomic gold threats structurally reachable, see `WEEK3_REPORT.md` open item #1) needed a concrete proposal, not just three abstract options.
+
+## Completed
+
+**Regulatory knowledge base extended to genomic's actual regulatory environment.** `knowledge_base/regulations/regulations.md` now has HIPAA Privacy Rule (45 CFR 160/164), GINA (2008), the Common Rule (45 CFR 46), and CLIA (42 CFR 493) sections, in the same `§-provision → LINDDUN relevance` format as the existing COPPA/GDPR/CCPA entries — 21 new provisions total (6 HIPAA, 3 GINA, 4 Common Rule, 3 CLIA sections retrieval-chunked individually). `REFERENCES.md` §H and `README.md`'s KB table/sources line updated to match. Retrieval index rebuilt (`Retriever.build()`); chunk count 252 → 265, all `test_kb.py` retrieval-quality checks still pass.
+
+**Mapping-table reachability: proposed and implemented an `effective_type` reinterpretation, not a mapping-table extension.** Instead of adding rows to `mapping_table.json` (Week 3 option (a), which would mean inventing pairs not in the official LINDDUN Pro tutorial and would also change KidsTube's semantics), the fix targets *why* NIST's DFD has so many EE-involving interactions in the first place: NIST's SP 1800-43C follows PANOPTIC's convention of typing every human actor as `ExternalEntity`, regardless of whether they're a genuine outside party or internal organizational staff. LINDDUN Pro's own Table 4.1 restricts every valid interaction pair to one with a Process on at least one side specifically because "ExternalEntity" is defined as *outside the system* — internal staff performing data transformation as part of the org's workflow don't fit that definition.
+
+Quantified before implementing: of the genomic DFD's 15 `ExternalEntity` elements, 11 are internal-staff-type roles (Receiving Clerk, Lab Technician, Physical/Digital Sample Management Technicians, Device Decommissioning/Acquisition Specialists, Clinician, Genetic Counselor, Genetic Physician, Bioinformaticist, NCCoE Researcher) and 4 are genuinely external (Patient, Trusted Research Data Recipient, 3rd Party Previous Enrollment Entity, NCCoE-trusted Data Recipient). Simulating "treat the 11 as Process for reachability purposes only" against all 80 previously-unreachable threats: **53 become reachable, 27 stay stuck** — and every one of the 27 stuck threats is a genuine cross-organization exchange (`Data Delivery DMZ` ↔ external data recipients/publishing locations, `3rd Party Previous Enrollment Entity` ↔ `Patient`). The clean split (100% of recovered threats involve internal roles, 100% of still-stuck threats involve genuinely external ones) is itself evidence the internal/external distinction is principled rather than a post-hoc fit to the metric.
+
+Implemented as an additive, provenance-preserving layer, not a destructive retype:
+- `scripts/build_genomic_dfd.py`: each `ExternalEntity` element in `ELEMENTS` now carries a `role` (`internal_staff` / `external_party`) alongside its unchanged NIST-transcribed `type`. `dfd.json`'s `_meta.known_gap` field documents the rationale and the recovery numbers inline.
+- `retrieval/interaction_context.py`: new `effective_type(element)` — returns `"Process"` for `role == "internal_staff"` elements, otherwise the element's real `type`. `element["type"]` itself is never overwritten.
+- `generation/generate.py` and `generation/verify.py`: both now call `get_interaction_context(effective_type(src), effective_type(dst))` instead of reading `type` directly. `verify.py`'s failure-reason string notes when the effective type differed from the raw type, so a verification failure is never silently attributed to the wrong classification.
+- Regenerated `dfd.json` (`scripts/build_genomic_dfd.py`, no mismatches against gold) and confirmed via the real pipeline code (not a standalone estimate): **genomic reachability goes from 17/99 to 70/99.**
+
+**Full test suite re-run, nothing regressed.** `test_kb.py` (33 checks) and `test_generation.py` (139 checks) both pass unchanged in count and content — no test hardcoded the old 17/99 figure or asserted on raw element `type`, so this was a clean addition.
+
+**Live generation unblocked.** An Azure AI Foundry endpoint (`gpt-5.4` deployment) was wired in as a third provider (`generation/llm_backend.py`'s `AzureFoundryBackend`, alongside the existing Anthropic/OpenAI backends), selected via `LLM_PROVIDER=azure` in `.env`. This also surfaced and fixed a real gap: nothing in the repo was actually loading `.env` into the process environment before now (`config.py` had no dotenv step at all) — a minimal loader was added so `AZURE_AI_*`/`ANTHROPIC_API_KEY`/`OPENAI_API_KEY` all work from `.env` as originally intended. `generate_for_scenario()` also now prints per-flow progress (`[i/n] flow_id: N threat(s)`), since a multi-minute run with zero output is indistinguishable from a hang. KidsTube's grounded generation has been run live (119 threats, 17 flows, ~3 min); the ungrounded ablation and genomic held-out runs are still outstanding.
+
+## How grounded regulation citation actually works
+
+Worth documenting precisely, since it's the abstract's central traceability claim made concrete, and this week produced clean live evidence that it matters.
+
+**Prompt side** (`generation/prompt.py`): for each flow, the flow's own description is used as a retrieval query, filtered to `source="regulations"` and excluding `gold_threat` chunks. The top-3 hits get inlined into the grounded prompt as an explicit, labeled block (`- [§ 312.5 — Verifiable parental consent] Operators must obtain...`), and the instructions tell the model to cite the *exact* bracketed section label if a threat implicates it, or leave `regulatory_citation` empty otherwise. The model only ever sees 3 candidate provisions per flow — it is never shown the whole regulatory corpus — and is explicitly told abstention is an option. The ungrounded prompt gets none of this: no retrieved text, no candidate citations, just the bare flow description.
+
+**Verification side** (`generation/verify.py`), independent of retrieval — it re-parses `regulations.md` from disk directly, not the RAG chunks, so a retrieval/chunking bug can't make a fabricated citation look valid:
+1. `_parse_regulations()` turns every `###` heading in `regulations.md` into a `Provision` record: a `citation_id` (e.g. `"§ 312.5"`) and a `relevant_types` set parsed from that section's own `**LINDDUN relevance:**` line (matching either a category name like "Non-compliance" or a bare code token like `Nc`).
+2. **`regulation_valid`**: `_find_provision()` extracts the numeric token(s) from each provision's `citation_id` (compound headings like `"§ 1798.110 / .115"` split into `["1798.110", "1798.115"]`) and checks whether that token appears in the model's citation string, digit-bounded (regex lookaround so `"5"` can't spuriously match inside `"312.5"`). This is deliberately heuristic string-matching, not legal-citation parsing, so `"COPPA §312.5"`, `"16 CFR 312.5"`, and `"§ 312.5"` all resolve to the same provision — but a citation whose number doesn't appear anywhere in `regulations.md` fails outright.
+3. **`regulation_relevant`**: once a provision resolves, this is a set-membership check — is the threat's own `threat_type` in that provision's `relevant_types`? A citation can be `regulation_valid` (the section is real) but not `regulation_relevant` (that section's own annotation doesn't cover this threat category) — e.g. a threat tagged `U` (Unawareness) citing COPPA §312.5, which is real but tagged `Nc`-only.
+4. An empty `regulatory_citation` sets both flags `True` — nothing was asserted, so nothing can be false.
+
+**Live evidence this matters** (`smart_home` scenario, both variants run against `gpt-5.4`, 54 threats each):
+
+| | Grounded | Ungrounded |
+|---|---|---|
+| Cites a regulation at all | 24% (13/54) | 80% (43/54) |
+| ...citation is real (`regulation_valid`) | 77% (10/13) | 5% (2/43) |
+| ...real *and* correctly typed (`regulation_relevant`) | 69% (9/13) | 5% (2/43) |
+
+Grounding doesn't just add citations — it makes the model *more conservative* about when to assert one (24% vs. 80%), while making the citations it does assert far more likely to survive independent verification (77% vs. 5% valid). The ungrounded model, with nothing retrieved to ground it, falls back on confident-sounding recall from its own training data: it cites *more* often, with equal confidence, and is wrong almost every time (41 of 43 ungrounded citations are fabricated or mistyped). This is the exact "opaque, unverifiable recommendation" failure mode the abstract argues against, now with a concrete number behind it.
+
+## Open items / caveats — flagged for advisor sign-off
+
+1. **The `effective_type` reclassification changes a reported evaluation number and should not be treated as final without sign-off.** It doesn't touch NIST's authoritative DFD (`type` is untouched, `role` is clearly labeled as our own interpretive layer), but it does change what "held-out generalization test" recall means for the genomic scenario — reviewers could reasonably ask whether relabeling entities to fit the tool's mediation rule is principled methodology or metric-shopping. The 53/27 recovery split (clean internal/external separation, not partial/mixed) is the strongest evidence for "principled," but this is exactly the kind of decision Week 3 flagged as needing advisor input rather than a unilateral call.
+2. **The remaining 29/99 unreachable threats (27 stuck + 2 `dfd_location_confidence: unresolved`) are a real ceiling, not a bug.** All 27 stuck threats are cross-organization exchanges that LINDDUN Pro's Process-mediation rule genuinely excludes; reporting genomic recall should state this ceiling (70/99, not 99/99) up front rather than let a reviewer discover it.
+3. **Regulatory-citation coverage for genomic is still bounded by which of the 70 reachable threats are compliance-flavored.** Adding HIPAA/GINA/CLIA/Common Rule raises the ceiling on how many threats *could* carry a correct regulatory citation, but citation-correctness recall should be read per-category (Nc especially) rather than as one aggregate number, since most reachable threats aren't Nc-type.
+4. **Live generation is unblocked as of this week** (Azure Foundry `gpt-5.4`, see above) — the regulatory-KB and `effective_type` work above didn't themselves need a live call (regulations are static KB content, reachability was verified via the real `effective_type`/`get_interaction_context` code path against the gold standard's stored locations), but KidsTube grounded generation has now actually been run. The ungrounded ablation and genomic held-out runs are still outstanding, so the open item #1 sign-off is still pending real genomic numbers to react to.
+
+## Still pending with advisor (carried from Weeks 1–3)
+
+Target paper/workshop venue; IP/publication scope; API budget confirmation; partner coordination on the shared canonical-DFD schema; an actual API key for this environment; **and now, explicitly: sign-off on the `effective_type` internal-staff reclassification (open item #1 above) before the 70/99 genomic reachability number is used in any paper claim.**
+
+## Plan for Week 5
+
+KidsTube grounded generation is done (119 threats). Remaining: KidsTube ungrounded ablation, and genomic held-out (now against a 70/99 ceiling instead of 17/99), plus `cli.py eval` against both to get real P/R/F1 and citation-correctness numbers instead of the `smart_home`/`telehealth_demo` demo-scenario proxies used above. Read the genomic ceiling number back to the advisor for the sign-off in open item #1 before treating those results as final; if declined, the `effective_type` layer can be disabled by clearing `role` from `dfd.json`'s elements without touching any other code.

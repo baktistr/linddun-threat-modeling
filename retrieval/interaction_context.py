@@ -77,6 +77,18 @@ def get_interaction_context(source_type: str, dest_type: str) -> InteractionCont
 ELEMENT_TYPES = {"ExternalEntity", "Process", "DataStore"}
 
 
+def effective_type(element: dict) -> str:
+    """Type to use for mapping-table lookups. LINDDUN Pro Table 4.1 requires a Process to
+    mediate any DataStore/ExternalEntity exchange (an ExternalEntity is defined as outside the
+    system). NIST's own DFDs type every human actor as ExternalEntity regardless of whether
+    they're internal staff or a genuinely external party. Elements with role=="internal_staff"
+    (an annotation we add, not part of NIST's diagram -- see scripts/build_genomic_dfd.py) are
+    treated as Process here; `element["type"]` itself is left untouched for provenance."""
+    if element.get("type") == "ExternalEntity" and element.get("role") == "internal_staff":
+        return "Process"
+    return element.get("type")
+
+
 if __name__ == "__main__":
     # demo: the EE->P interaction that DF1 (parent registration) belongs to
     ctx = get_interaction_context("ExternalEntity", "Process")

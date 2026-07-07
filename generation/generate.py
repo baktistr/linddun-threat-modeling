@@ -10,7 +10,7 @@ from pathlib import Path
 
 import config
 from retrieval.index import Retriever
-from retrieval.interaction_context import get_interaction_context
+from retrieval.interaction_context import get_interaction_context, effective_type
 from generation.schema import GeneratedThreat
 from generation.prompt import build_grounded_prompt, build_ungrounded_prompt
 from generation.llm_backend import get_llm_backend
@@ -22,21 +22,25 @@ def _load_dfd(scenario: str) -> dict:
     return json.loads((config.KB_DIR / "scenarios" / scenario / "dfd.json").read_text())
 
 
-def generate_for_scenario(scenario: str, grounded: bool = True, provider: str | None = None
-                          ) -> list[GeneratedThreat]:
+def generate_for_scenario(scenario: str, grounded: bool = True, provider: str | None = None,
+                          progress: bool = True) -> list[GeneratedThreat]:
     backend = get_llm_backend(provider)
     dfd = _load_dfd(scenario)
     elements_by_id = {e["id"]: e for e in dfd["elements"]}
     retriever = Retriever.load() if grounded else None
 
     all_threats: list[GeneratedThreat] = []
-    for flow in dfd["flows"]:
+    n_flows = len(dfd["flows"])
+    for i, flow in enumerate(dfd["flows"], 1):
         src = elements_by_id[flow["source"]]
         dst = elements_by_id[flow["destination"]]
+        tag = f"[{i}/{n_flows}] {flow['id']}"
 
         if grounded:
-            ctx = get_interaction_context(src["type"], dst["type"])
+            ctx = get_interaction_context(effective_type(src), effective_type(dst))
             if not ctx.valid:
+                if progress:
+                    print(f"{tag}: skipped (invalid interaction, no Process mediates)", flush=True)
                 continue
             reg_hits = retriever.search(flow["description"], k=3, source="regulations",
                                          exclude_kinds=["gold_threat"])
@@ -45,11 +49,14 @@ def generate_for_scenario(scenario: str, grounded: bool = True, provider: str | 
             prompt = build_ungrounded_prompt(flow, elements_by_id)
 
         payload = backend.generate_threats(prompt)
+        n_before = len(all_threats)
         for t in payload.get("threats", []):
             t = dict(t)
             t["flow_id"] = flow["id"]
             t["grounded"] = grounded
             all_threats.append(GeneratedThreat.from_dict(t))
+        if progress:
+            print(f"{tag}: {len(all_threats) - n_before} threat(s)", flush=True)
 
     return all_threats
 

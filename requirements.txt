@@ -8,4 +8,4 @@ scikit-learn>=1.3
 # Optional: LLM generation layer (cli.py ask always uses Anthropic; cli.py generate is
 # pluggable via LLM_PROVIDER in .env -- install whichever provider(s) you use)
 # anthropic>=0.39
-# openai>=1.50
+# openai>=1.50   # also covers LLM_PROVIDER=azure (openai.AzureOpenAI client)

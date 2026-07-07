@@ -18,7 +18,7 @@ import re
 from dataclasses import dataclass, field
 
 import config
-from retrieval.interaction_context import get_interaction_context
+from retrieval.interaction_context import get_interaction_context, effective_type
 from generation.schema import GeneratedThreat
 
 _CATEGORY_TO_CODE = {
@@ -153,11 +153,14 @@ def verify_threat(threat: GeneratedThreat, dfd: dict) -> VerificationResult:
         src = elements_by_id.get(flow["source"])
         dst = elements_by_id.get(flow["destination"])
         if src and dst:
-            ctx = get_interaction_context(src["type"], dst["type"])
+            src_eff, dst_eff = effective_type(src), effective_type(dst)
+            ctx = get_interaction_context(src_eff, dst_eff)
             type_applicable = ctx.valid and threat.threat_type in ctx.applicable
             if not type_applicable:
+                note = "" if (src_eff, dst_eff) == (src["type"], dst["type"]) \
+                    else f" (effective, via role=internal_staff: {src_eff}->{dst_eff})"
                 reasons.append(f"threat_type '{threat.threat_type}' not applicable at "
-                                f"{src['type']}->{dst['type']} per mapping_table.json")
+                                f"{src['type']}->{dst['type']}{note} per mapping_table.json")
 
     location_valid = threat.originator_id in elements_by_id
     if not location_valid and flow is not None:

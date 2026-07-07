@@ -5,18 +5,20 @@
     "purpose": "Structured DFD (elements + flows) covering the full complete example (shared + clinical + research pipelines), superseding the Week 3 version that only covered the 9-flow shared-pipeline subset.",
     "flow_count": 39,
     "element_count": 32,
-    "known_gap": "mapping_table.json (LINDDUN Pro Table 4.1, sourced from the official tutorial) only covers 5 interaction pairs, all routed through a Process (Process<->Process/DataStore/ExternalEntity). NIST's diagrams routinely show entities and stores talking DIRECTLY to each other with no Process in between, which the tutorial's table doesn't model at all. Of the 97 gold threats with a resolved DFD location, only 17 sit on one of the 5 valid pairs and are reachable by the current per-flow generation loop; the other 80 break down as ExternalEntity->DataStore (39, e.g. a researcher requesting a sample directly from a store), ExternalEntity->ExternalEntity (23, e.g. Clinician->Patient), DataStore->ExternalEntity (17), and DataStore->DataStore (1) -- none of which the mapping table covers, so none can be generated no matter how good the model is, until this is addressed. This is a real, permanent coverage gap versus NIST's broader PANOPTIC-style contextual mapping (which models these directly), not a bug -- see WEEK3_REPORT.md."
+    "known_gap": "mapping_table.json (LINDDUN Pro Table 4.1, sourced from the official tutorial) only covers 5 interaction pairs, all routed through a Process (Process<->Process/DataStore/ExternalEntity). NIST's diagrams routinely show entities and stores talking DIRECTLY to each other with no Process in between, which the tutorial's table doesn't model at all. Of the 97 gold threats with a resolved DFD location, only 17 sit on one of the 5 valid pairs by raw `type` alone; the other 80 break down as ExternalEntity->DataStore (39), ExternalEntity->ExternalEntity (23), DataStore->ExternalEntity (17), and DataStore->DataStore (1). Week 4: each ExternalEntity element now also carries a `role` (internal_staff/external_party) -- an interpretive annotation, not part of NIST's own diagram -- and `effective_type()` (retrieval/interaction_context.py) treats internal_staff EEs (lab technicians, clinicians, genetic counselors/physicians, bioinformaticists, researchers) as Process for mapping-table lookups only, since they perform data transformation as part of the org's workflow rather than sitting genuinely outside it (only Patient, 3rd Party Previous Enrollment Entity, and the two Trusted/-trusted Data Recipient roles keep role=external_party). This recovers 53 of the 80 previously-unreachable threats (17/99 -> 70/99 reachable); the remaining 27 are all genuinely cross-organization exchanges (Data Delivery DMZ <-> external data recipients/publishing locations, 3rd Party Previous Enrollment Entity <-> Patient) that stay unreachable under LINDDUN Pro's own Process-mediation rule. `type` is left untouched as a faithful transcription of NIST's figure -- this is a per-project reinterpretation layered on top, flagged for advisor sign-off before the 70/99 number is treated as final. See WEEK3_REPORT.md (original finding) and WEEK4_REPORT.md (this change)."
   },
   "elements": [
     {
       "id": "S1-PH",
       "name": "Receiving Clerk",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "S2-A",
       "name": "Lab Technician",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "S3-PH",
@@ -51,22 +53,26 @@
     {
       "id": "S7-PH",
       "name": "Physical Sample Management Technician",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "S8-A",
       "name": "Digital Data Management Technician",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "S9-PH",
       "name": "Device Decommissioning Specialist",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "S10-PH",
       "name": "Device Acquisition Specialist",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "S11-PH",
@@ -86,12 +92,14 @@
     {
       "id": "C1-A",
       "name": "Patient",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "external_party"
     },
     {
       "id": "C2-A",
       "name": "Clinician",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "C3-A",
@@ -101,27 +109,32 @@
     {
       "id": "C4-A",
       "name": "Genetic Counselor",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "C5-A",
       "name": "Genetic Physician",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "C6-A",
       "name": "Bioinformaticist",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "C7-CR",
       "name": "Trusted Research Data Recipient",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "external_party"
     },
     {
       "id": "C8-A",
       "name": "3rd Party Previous Enrollment Entity",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "external_party"
     },
     {
       "id": "C9-A",
@@ -141,7 +154,8 @@
     {
       "id": "R1-A",
       "name": "NCCoE Researcher",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "internal_staff"
     },
     {
       "id": "R2-RP",
@@ -151,7 +165,8 @@
     {
       "id": "R3-A",
       "name": "NCCoE-trusted Data Recipient",
-      "type": "ExternalEntity"
+      "type": "ExternalEntity",
+      "role": "external_party"
     },
     {
       "id": "R4-RD",

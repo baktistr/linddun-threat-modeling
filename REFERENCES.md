@@ -56,11 +56,11 @@ In the knowledge base (KidsTube):
 - GDPR — Regulation (EU) 2016/679. <https://eur-lex.europa.eu/eli/reg/2016/679/oj>
 - CCPA/CPRA — Cal. Civ. Code §1798.100 et seq. <https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?division=3.&part=4.&lawCode=CIV&title=1.81.5>
 
-Needed for genomic grounding (currently absent from `regulations.md`):
-- HIPAA Privacy Rule — 45 CFR Parts 160 & 164.
-- Genetic Information Nondiscrimination Act (GINA), 2008.
-- Common Rule — 45 CFR 46.
-- Clinical Laboratory Improvement Amendments (CLIA).
+In the knowledge base (genomic, added Week 4):
+- HIPAA Privacy Rule — 45 CFR Parts 160 & 164. <https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html>
+- Genetic Information Nondiscrimination Act (GINA), 2008. <https://www.eeoc.gov/genetic-information-discrimination>
+- Common Rule — 45 CFR 46. <https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46>
+- Clinical Laboratory Improvement Amendments (CLIA) — 42 CFR Part 493. <https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493>
 
 ## Notes on positioning
 

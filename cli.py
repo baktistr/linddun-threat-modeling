@@ -6,7 +6,7 @@ Usage:
   python cli.py search "QUERY" [--source S] [-k N]
   python cli.py ask "QUESTION"                # retrieve + Claude answer (needs ANTHROPIC_API_KEY)
   python cli.py stats                         # corpus statistics
-  python cli.py generate --scenario kidstube [--ungrounded] [--provider anthropic|openai]   # LLM threat generation
+  python cli.py generate --scenario kidstube [--ungrounded] [--provider anthropic|openai|azure]   # LLM threat generation
   python cli.py eval --scenario kidstube --generated storage/generated/kidstube_grounded.json [--strict]
 """
 from __future__ import annotations
@@ -108,15 +108,15 @@ def main():
     sa.set_defaults(func=cmd_ask)
 
     sg = sub.add_parser("generate")
-    sg.add_argument("--scenario", required=True, choices=["kidstube", "genomic"])
+    sg.add_argument("--scenario", required=True, choices=["kidstube", "genomic", "smart_home", "telehealth_demo"])
     sg.add_argument("--ungrounded", action="store_true",
                      help="Ablation baseline: no interaction-context/regulatory retrieval.")
-    sg.add_argument("--provider", choices=["anthropic", "openai"], default=None,
+    sg.add_argument("--provider", choices=["anthropic", "openai", "azure"], default=None,
                      help="Override LLM_PROVIDER from config/.env for this run.")
     sg.set_defaults(func=cmd_generate)
 
     se = sub.add_parser("eval")
-    se.add_argument("--scenario", required=True, choices=["kidstube", "genomic"])
+    se.add_argument("--scenario", required=True, choices=["kidstube", "genomic", "smart_home", "telehealth_demo"])
     se.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
     se.add_argument("--strict", action="store_true", help="Also require exact tree_node match.")
     se.set_defaults(func=cmd_eval)

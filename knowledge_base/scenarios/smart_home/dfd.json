@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "scenario": "Smart Home Security System (demo)",
+    "source": "Hand-authored dummy scenario for the Week 4 progress demo -- not a gold-standard-backed evaluation scenario (no gold_standard_threats.json). Shows grounded generation on a novel system, all flows Process-mediated so every interaction is reachable with no caveats.",
+    "purpose": "Small, general-purpose demo DFD: a homeowner's smart camera/hub system with a cloud backend and a third-party analytics vendor."
+  },
+  "elements": [
+    {"id": "EE1", "type": "ExternalEntity", "name": "Homeowner"},
+    {"id": "EE2", "type": "ExternalEntity", "name": "Guest User"},
+    {"id": "EE3", "type": "ExternalEntity", "name": "Cloud Analytics Vendor"},
+    {"id": "P1", "type": "Process", "name": "Home Hub"},
+    {"id": "P2", "type": "Process", "name": "Mobile App Backend"},
+    {"id": "DS1", "type": "DataStore", "name": "Local Event Log"},
+    {"id": "DS2", "type": "DataStore", "name": "Cloud Video Storage"}
+  ],
+  "flows": [
+    {"id": "DF1", "source": "EE1", "destination": "P1",
+     "description": "Homeowner registers account and enrolls cameras/sensors on the Home Hub"},
+    {"id": "DF2", "source": "EE2", "destination": "P1",
+     "description": "Guest enters a temporary access code at the Home Hub to unlock the front door"},
+    {"id": "DF3", "source": "P1", "destination": "DS1",
+     "description": "Home Hub writes motion/door/sensor events to the local event log"},
+    {"id": "DF4", "source": "P1", "destination": "DS2",
+     "description": "Home Hub uploads recorded camera clips to cloud video storage"},
+    {"id": "DF5", "source": "P1", "destination": "P2",
+     "description": "Home Hub forwards a real-time motion alert to the mobile app backend"},
+    {"id": "DF6", "source": "P2", "destination": "EE1",
+     "description": "Mobile app backend pushes a motion-detected notification to the homeowner's phone"},
+    {"id": "DF7", "source": "P2", "destination": "EE3",
+     "description": "Mobile app backend shares aggregated device-usage analytics with the cloud analytics vendor"},
+    {"id": "DF8", "source": "DS2", "destination": "P2",
+     "description": "Mobile app backend retrieves a stored video clip for the homeowner to play back"}
+  ]
+}

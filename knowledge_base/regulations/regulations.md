@@ -105,3 +105,91 @@ Consumers may direct a business not to sell or share their personal information.
 ### § 1798.140 — Sensitive personal information (CPRA)
 Defines sensitive personal information (government IDs, precise geolocation, etc.) with additional use-limitation rights.
 **LINDDUN relevance:** Data Disclosure (Dd.1.1 sensitivity).
+
+---
+
+## HIPAA — Health Insurance Portability and Accountability Act, Privacy Rule (45 CFR Parts 160 & 164)
+
+Source: 45 CFR Parts 160 and 164, Subpart E. https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html
+
+### § 164.502 — Uses and disclosures of PHI, general rule
+A covered entity or business associate may not use or disclose protected health information (PHI) except as permitted or required by the Privacy Rule (e.g., treatment, payment, healthcare operations, or authorization).
+**LINDDUN relevance:** Non-compliance (Nc) — disclosure without a permitted basis; Data Disclosure (Dd.4) — unauthorized recipients.
+
+### § 164.502(b) — Minimum necessary
+Covered entities must make reasonable efforts to limit PHI use, disclosure, and requests to the minimum necessary to accomplish the intended purpose.
+**LINDDUN relevance:** Data Disclosure (Dd.1, Dd.2) — collecting or forwarding more PHI (e.g., full genomic sequence, identifiers) than the task requires.
+
+### § 164.508 — Authorization for uses and disclosures
+Uses/disclosures not otherwise permitted by the Privacy Rule (e.g., research uses of PHI, most marketing) require a valid, specific written authorization from the individual.
+**LINDDUN relevance:** Non-compliance (Nc) — a research recipient or third party receiving PHI without documented authorization.
+
+### § 164.514 — De-identification
+PHI is no longer subject to the Privacy Rule once de-identified per the Safe Harbor (removal of 18 identifier categories) or Expert Determination method. Re-identification risk from combined data elements is the operative test.
+**LINDDUN relevance:** Linking (L) — re-identification of "de-identified" genomic/sample data via auxiliary datasets or rare-variant combinations; Identifying (I).
+
+### § 164.524 — Right of access
+Individuals have a right to inspect and obtain a copy of their PHI, generally within 30 days.
+**LINDDUN relevance:** Unawareness/unintervenability (U) — no mechanism for a patient to access their own genomic results or lab records.
+
+### § 164.530(c) — Safeguards
+Covered entities must implement appropriate administrative, technical, and physical safeguards to protect PHI, including against incidental disclosure.
+**LINDDUN relevance:** Data Disclosure (Dd.4) — insecure storage/transmission of samples, sequence data, or results.
+
+---
+
+## GINA — Genetic Information Nondiscrimination Act (2008)
+
+Source: Pub. L. 110-233, 122 Stat. 881 (2008); 29 CFR Part 1635 (EEOC), 45 CFR Parts 144/146/148 (HHS/DOL/Treasury). https://www.eeoc.gov/genetic-information-discrimination
+
+### Title I — Health insurance
+Health insurers/group health plans may not use genetic information (including family medical history and results of genetic tests) to make eligibility, coverage, or premium/contribution decisions, and generally may not request or require genetic testing.
+**LINDDUN relevance:** Non-compliance (Nc) — an insurer or payer data flow that ingests genetic results triggers this prohibition even absent an actual denial.
+
+### Title II — Employment
+Employers may not use genetic information in employment decisions (hiring, firing, promotion) and may not request, require, or purchase genetic information about employees or their family members, with narrow exceptions (e.g., inadvertent acquisition, voluntary wellness programs with safeguards).
+**LINDDUN relevance:** Data Disclosure (Dd.4) — genetic/sequence data reaching an employer-linked system; Non-compliance (Nc).
+
+### § 202/§ 206 — Confidentiality of genetic information
+Genetic information held by a covered entity must be maintained as a confidential medical record, kept separate from personnel files where applicable, with disclosure limited to narrow permitted circumstances.
+**LINDDUN relevance:** Data Disclosure (Dd.4) — comingling genetic data with general records or sharing beyond permitted recipients (e.g., a "3rd Party Previous Enrollment Entity" or employer-adjacent system).
+
+---
+
+## Common Rule — Federal Policy for the Protection of Human Subjects (45 CFR 46)
+
+Source: 45 CFR Part 46, Subpart A. https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46
+
+### § 46.111 — Criteria for IRB approval of research
+An Institutional Review Board (IRB) must find that risks to subjects are minimized and reasonable relative to benefits, and that, where appropriate, there are adequate provisions to protect privacy and maintain confidentiality of data.
+**LINDDUN relevance:** cross-cutting — a research data flow (e.g., to an "NCCoE Researcher" or "Trusted Research Data Recipient") lacking documented IRB-reviewed privacy/confidentiality provisions maps here as Non-compliance (Nc).
+
+### § 46.116 — General requirements for informed consent
+Subjects (or their legally authorized representatives) must give informed consent, including what identifiable private information will be collected, how it will be used/shared, and whether future unspecified research use is possible.
+**LINDDUN relevance:** Unawareness (U) — a patient/participant not informed that samples or sequence data may be reused for research beyond the original clinical purpose.
+
+### § 46.117 — Documentation of informed consent
+Informed consent must generally be documented via a signed consent form retained by the institution.
+**LINDDUN relevance:** Non-compliance (Nc) — research use or re-enrollment flows (e.g., linking back to a prior-enrollment entity) proceeding without documented consent on file.
+
+### Subpart D — Additional protections for children
+Extra safeguards apply for research involving children as subjects (parental permission plus, where appropriate, the child's assent).
+**LINDDUN relevance:** Non-compliance (Nc) — pediatric genomic samples/data entering a research pipeline without the added Subpart D protections.
+
+---
+
+## CLIA — Clinical Laboratory Improvement Amendments (42 U.S.C. § 263a; 42 CFR Part 493)
+
+Source: 42 CFR Part 493. https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493
+
+### § 493.1291 — Test report requirements
+Clinical laboratory test reports must be released only to authorized persons (and, where applicable, the individual or their legal representative), with results traceable to the patient and test performed.
+**LINDDUN relevance:** Data Disclosure (Dd.4) — a lab (e.g., "LIMS", "Wet Lab") releasing results/reports to a recipient outside the authorized chain.
+
+### § 493.1105 / § 493.1231 — Records and specimen retention
+Laboratories must retain patient test records and, for a defined period, specimens/slides, under conditions that protect their integrity and confidentiality.
+**LINDDUN relevance:** Data Disclosure (Dd.3.4 retention) — indefinite or unsecured retention of physical samples/derived data (e.g., "Physical Sample Storage", "Cluster Filesystem") beyond or without documented retention controls.
+
+### § 493.1231 — Confidentiality of patient information
+Laboratories must have a policy to protect patient confidentiality and ensure only authorized personnel have access to patient information.
+**LINDDUN relevance:** Non-compliance (Nc) — absence of an access-control/confidentiality policy for lab personnel (receiving clerks, technicians) handling identifiable samples or results.
