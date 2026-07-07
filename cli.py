@@ -6,6 +6,8 @@ Usage:
   python cli.py search "QUERY" [--source S] [-k N]
   python cli.py ask "QUESTION"                # retrieve + Claude answer (needs ANTHROPIC_API_KEY)
   python cli.py stats                         # corpus statistics
+  python cli.py generate --scenario kidstube [--ungrounded] [--provider anthropic|openai]   # LLM threat generation
+  python cli.py eval --scenario kidstube --generated storage/generated/kidstube_grounded.json [--strict]
 """
 from __future__ import annotations
 import argparse
@@ -41,6 +43,20 @@ def cmd_stats(_):
     print(f"Backend: {r.backend.name}")
     print(f"By source: {dict(by_source)}")
     print(f"By kind:   {dict(by_kind)}")
+
+
+def cmd_generate(args):
+    from generation.generate import generate_for_scenario, save_generated
+    grounded = not args.ungrounded
+    threats = generate_for_scenario(args.scenario, grounded=grounded, provider=args.provider)
+    path = save_generated(args.scenario, grounded, threats)
+    label = "grounded" if grounded else "ungrounded"
+    print(f"Generated {len(threats)} threats ({label}) for scenario '{args.scenario}' -> {path}")
+
+
+def cmd_eval(args):
+    from eval.run_eval import run_eval
+    print(run_eval(args.scenario, args.generated, strict=args.strict))
 
 
 def cmd_ask(args):
@@ -90,6 +106,20 @@ def main():
     sa = sub.add_parser("ask")
     sa.add_argument("query")
     sa.set_defaults(func=cmd_ask)
+
+    sg = sub.add_parser("generate")
+    sg.add_argument("--scenario", required=True, choices=["kidstube", "genomic"])
+    sg.add_argument("--ungrounded", action="store_true",
+                     help="Ablation baseline: no interaction-context/regulatory retrieval.")
+    sg.add_argument("--provider", choices=["anthropic", "openai"], default=None,
+                     help="Override LLM_PROVIDER from config/.env for this run.")
+    sg.set_defaults(func=cmd_generate)
+
+    se = sub.add_parser("eval")
+    se.add_argument("--scenario", required=True, choices=["kidstube", "genomic"])
+    se.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
+    se.add_argument("--strict", action="store_true", help="Also require exact tree_node match.")
+    se.set_defaults(func=cmd_eval)
 
     args = p.parse_args()
     args.func(args)

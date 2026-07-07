@@ -132,6 +132,8 @@ def load_corpus() -> list[Chunk]:
         for path in sorted(directory.rglob("*")):
             if path.is_dir():
                 continue
+            if path.name == "dfd.json":
+                continue  # generation-time structure only; not retrieval content (see generation/)
             doc = str(path.relative_to(directory))
             if path.suffix.lower() in {".md", ".txt"}:
                 all_chunks.extend(_split_markdown(path.read_text(), doc, source))

@@ -1,0 +1,408 @@
+{
+  "_meta": {
+    "scenario": "Genomic Sequencing (NIST SP 1800-43C) -- complete example",
+    "source": "Appendix E Figures 4-7 (elements) + Appendix F Figure 11 'Task 4: Assess System Design' (flows), references/nist-sp-1800-43c/appendix/media/. Figure 11 was vision-transcribed row-by-row and cross-checked against gold_standard_threats.json's existing nist_node per row (see scripts/build_genomic_dfd.py:verify_against_existing_gold).",
+    "purpose": "Structured DFD (elements + flows) covering the full complete example (shared + clinical + research pipelines), superseding the Week 3 version that only covered the 9-flow shared-pipeline subset.",
+    "flow_count": 39,
+    "element_count": 32,
+    "known_gap": "mapping_table.json (LINDDUN Pro Table 4.1, sourced from the official tutorial) only covers 5 interaction pairs, all routed through a Process (Process<->Process/DataStore/ExternalEntity). NIST's diagrams routinely show entities and stores talking DIRECTLY to each other with no Process in between, which the tutorial's table doesn't model at all. Of the 97 gold threats with a resolved DFD location, only 17 sit on one of the 5 valid pairs and are reachable by the current per-flow generation loop; the other 80 break down as ExternalEntity->DataStore (39, e.g. a researcher requesting a sample directly from a store), ExternalEntity->ExternalEntity (23, e.g. Clinician->Patient), DataStore->ExternalEntity (17), and DataStore->DataStore (1) -- none of which the mapping table covers, so none can be generated no matter how good the model is, until this is addressed. This is a real, permanent coverage gap versus NIST's broader PANOPTIC-style contextual mapping (which models these directly), not a bug -- see WEEK3_REPORT.md."
+  },
+  "elements": [
+    {
+      "id": "S1-PH",
+      "name": "Receiving Clerk",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "S2-A",
+      "name": "Lab Technician",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "S3-PH",
+      "name": "Wet Lab",
+      "type": "Process"
+    },
+    {
+      "id": "S3.1-PH",
+      "name": "Privacy-Relevant Wet Lab Devices",
+      "type": "DataStore"
+    },
+    {
+      "id": "S3.2-PH",
+      "name": "Used Flow Cell",
+      "type": "DataStore"
+    },
+    {
+      "id": "S4-PH",
+      "name": "LIMS",
+      "type": "DataStore"
+    },
+    {
+      "id": "S5-A",
+      "name": "Compute Nodes",
+      "type": "Process"
+    },
+    {
+      "id": "S6-A",
+      "name": "Cluster Filesystem",
+      "type": "DataStore"
+    },
+    {
+      "id": "S7-PH",
+      "name": "Physical Sample Management Technician",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "S8-A",
+      "name": "Digital Data Management Technician",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "S9-PH",
+      "name": "Device Decommissioning Specialist",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "S10-PH",
+      "name": "Device Acquisition Specialist",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "S11-PH",
+      "name": "Physical Sample Storage",
+      "type": "DataStore"
+    },
+    {
+      "id": "S12-PH",
+      "name": "Sample Disposal Item",
+      "type": "DataStore"
+    },
+    {
+      "id": "S13-A",
+      "name": "Data Delivery DMZ",
+      "type": "DataStore"
+    },
+    {
+      "id": "C1-A",
+      "name": "Patient",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C2-A",
+      "name": "Clinician",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C3-A",
+      "name": "Clinical Result Generation App",
+      "type": "Process"
+    },
+    {
+      "id": "C4-A",
+      "name": "Genetic Counselor",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C5-A",
+      "name": "Genetic Physician",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C6-A",
+      "name": "Bioinformaticist",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C7-CR",
+      "name": "Trusted Research Data Recipient",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C8-A",
+      "name": "3rd Party Previous Enrollment Entity",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "C9-A",
+      "name": "3rd Party Portal",
+      "type": "DataStore"
+    },
+    {
+      "id": "C10-A",
+      "name": "Internal EMR",
+      "type": "DataStore"
+    },
+    {
+      "id": "C11-CT",
+      "name": "External EMR",
+      "type": "DataStore"
+    },
+    {
+      "id": "R1-A",
+      "name": "NCCoE Researcher",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "R2-RP",
+      "name": "DNA Store",
+      "type": "DataStore"
+    },
+    {
+      "id": "R3-A",
+      "name": "NCCoE-trusted Data Recipient",
+      "type": "ExternalEntity"
+    },
+    {
+      "id": "R4-RD",
+      "name": "Digital Sample Data Store",
+      "type": "DataStore"
+    },
+    {
+      "id": "R5-A",
+      "name": "NCCoE-Managed Publishing Location",
+      "type": "DataStore"
+    },
+    {
+      "id": "R6-A",
+      "name": "Externally-Managed Publishing Location",
+      "type": "DataStore"
+    }
+  ],
+  "flows": [
+    {
+      "id": "GF1",
+      "source": "S3-PH",
+      "destination": "S11-PH",
+      "description": "Physical Sample: Send the physical sample to be stored in the appropriate freezers"
+    },
+    {
+      "id": "GF2",
+      "source": "S4-PH",
+      "destination": "S3-PH",
+      "description": "Sample Metadata: Send back to the wet lab the de-identified ID to be used for the sample"
+    },
+    {
+      "id": "GF3",
+      "source": "S3-PH",
+      "destination": "S6-A",
+      "description": "Sequence Data: Send the digital raw sequence data to be stored"
+    },
+    {
+      "id": "GF4",
+      "source": "S6-A",
+      "destination": "S5-A",
+      "description": "Sequence Data: Send digital raw sequence data to Compute Nodes to operate on the data to transform it into objective-specific data"
+    },
+    {
+      "id": "GF5",
+      "source": "S6-A",
+      "destination": "S13-A",
+      "description": "Context-relevant Research Data: Send the generated context-relevant research data to the data delivery DMZ for making it available for delivery"
+    },
+    {
+      "id": "GF6",
+      "source": "R1-A",
+      "destination": "R2-RP",
+      "description": "Physical Sample Request: NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab"
+    },
+    {
+      "id": "GF7",
+      "source": "R2-RP",
+      "destination": "R1-A",
+      "description": "Physical Sample: NCCoE Researcher retrieves the physical sample referenced by the physical sample request from the DNA Store"
+    },
+    {
+      "id": "GF8",
+      "source": "R1-A",
+      "destination": "S1-PH",
+      "description": "Physical Sample: NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data"
+    },
+    {
+      "id": "GF9",
+      "source": "C2-A",
+      "destination": "C1-A",
+      "description": "Physical Sample Request: Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab"
+    },
+    {
+      "id": "GF10",
+      "source": "C1-A",
+      "destination": "C2-A",
+      "description": "Physical Sample: Clinician retrieves the physical sample referenced by the physical sample request"
+    },
+    {
+      "id": "GF11",
+      "source": "C2-A",
+      "destination": "S1-PH",
+      "description": "Physical Sample: Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data"
+    },
+    {
+      "id": "GF12",
+      "source": "R1-A",
+      "destination": "R4-RD",
+      "description": "Digital Sample Data Request: NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab"
+    },
+    {
+      "id": "GF13",
+      "source": "R4-RD",
+      "destination": "R1-A",
+      "description": "Digital Sample Data: NCCoE Researcher retrieves the digital sample data referenced by the digital sample data request from the Digital Sample Data Store"
+    },
+    {
+      "id": "GF14",
+      "source": "S1-PH",
+      "destination": "S2-A",
+      "description": "Physical Sample: Send the physical sample to the lab technician working on the relevant research project"
+    },
+    {
+      "id": "GF15",
+      "source": "S2-A",
+      "destination": "S3-PH",
+      "description": "Physical Sample: Send the physical sample to the wet lab to be sequenced"
+    },
+    {
+      "id": "GF16",
+      "source": "C4-A",
+      "destination": "C1-A",
+      "description": "Interpreted Clinical Results and Professional Recommendations: Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results"
+    },
+    {
+      "id": "GF17",
+      "source": "C5-A",
+      "destination": "C1-A",
+      "description": "Interpreted Clinical Results and Professional Recommendations: Genetic Physician provides patient with their results and professional recommendations"
+    },
+    {
+      "id": "GF18",
+      "source": "S6-A",
+      "destination": "C3-A",
+      "description": "Context-relevant Research Data: Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report"
+    },
+    {
+      "id": "GF19",
+      "source": "C4-A",
+      "destination": "C8-A",
+      "description": "Patient Re-identification Request: Genetic Counselor provides the results to the 3rd Party Previous Enrollment Entity to update their records for any studies the Patient is involved in"
+    },
+    {
+      "id": "GF20",
+      "source": "C6-A",
+      "destination": "S6-A",
+      "description": "Sequence Data: Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues."
+    },
+    {
+      "id": "GF21",
+      "source": "S3-PH",
+      "destination": "S4-PH",
+      "description": "Sample Metadata: Generate the de-identified ID to be used for the sample"
+    },
+    {
+      "id": "GF22",
+      "source": "S13-A",
+      "destination": "R3-A",
+      "description": "Context-relevant Research Data: Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ"
+    },
+    {
+      "id": "GF23",
+      "source": "S13-A",
+      "destination": "C7-CR",
+      "description": "Context-relevant Research Data: Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ"
+    },
+    {
+      "id": "GF24",
+      "source": "R3-A",
+      "destination": "R5-A",
+      "description": "Context-relevant Research Data: Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve"
+    },
+    {
+      "id": "GF25",
+      "source": "R3-A",
+      "destination": "R6-A",
+      "description": "Context-relevant Research Data: Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location"
+    },
+    {
+      "id": "GF26",
+      "source": "C8-A",
+      "destination": "C1-A",
+      "description": "Outreach Attempt: 3rd Party Previous Enrollment Entity informs Patient that a new record has been added to their file"
+    },
+    {
+      "id": "GF27",
+      "source": "C6-A",
+      "destination": "S5-A",
+      "description": "Tool Selection and Job Queue: Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes."
+    },
+    {
+      "id": "GF28",
+      "source": "C6-A",
+      "destination": "C3-A",
+      "description": "Final Clinical Report: Bioinformaticist pulls the final clinical report from the Clinical Result Generation App"
+    },
+    {
+      "id": "GF29",
+      "source": "C5-A",
+      "destination": "C11-CT",
+      "description": "Context-relevant Research Data: Genetic Physician logs the professional recommendations and clinical next steps in the External EMR"
+    },
+    {
+      "id": "GF30",
+      "source": "C5-A",
+      "destination": "C10-A",
+      "description": "Context-relevant Research Data: Genetic Physician logs the professional recommendations and clinical next steps in the Internal EMR"
+    },
+    {
+      "id": "GF31",
+      "source": "S7-PH",
+      "destination": "S11-PH",
+      "description": "Physical Sample: Retrieve the remainder of the physical sample once contextual retention requirements have been met"
+    },
+    {
+      "id": "GF32",
+      "source": "S7-PH",
+      "destination": "S12-PH",
+      "description": "Physical Sample: Dispose of the remainder of the physical sample once contextual retention requirements have been met"
+    },
+    {
+      "id": "GF33",
+      "source": "S7-PH",
+      "destination": "S3.2-PH",
+      "description": "Physical Sample Remnants: Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run."
+    },
+    {
+      "id": "GF34",
+      "source": "S5-A",
+      "destination": "S6-A",
+      "description": "Sequence Data, Context-relevant Research Data: Operate on the raw sequence data to create context-relevant research data"
+    },
+    {
+      "id": "GF35",
+      "source": "C6-A",
+      "destination": "C9-A",
+      "description": "Final Clinical Report: Bioinformaticist uploads the final clinical report onto the 3rd Party Portal"
+    },
+    {
+      "id": "GF36",
+      "source": "C9-A",
+      "destination": "C4-A",
+      "description": "Final Clinical Report: Genetic Counselor downloads the final clinical report from the 3rd Party Portal"
+    },
+    {
+      "id": "GF37",
+      "source": "C4-A",
+      "destination": "C2-A",
+      "description": "Context-relevant Research Data: Genetic Counselor makes the context-relevant clinical data available for the Clinician to retrieve with additional input and analysis"
+    },
+    {
+      "id": "GF38",
+      "source": "S9-PH",
+      "destination": "S3.1-PH",
+      "description": "Digital Data: Devices used to process genomic data should be decommissioned according to privacy best practices to avoid unintentional data leakage/disclosure when the device(s) are resold"
+    },
+    {
+      "id": "GF39",
+      "source": "S10-PH",
+      "destination": "S3.1-PH",
+      "description": "Digital Data: Devices used to process genomic data should be acquired from the manufacturer or should be acquired after being refurbished according to privacy best practices to avoid unintentional data leakage/disclosure when the device(s) are purchased"
+    }
+  ]
+}

@@ -3,7 +3,7 @@
     "scenario": "Genomic Sequencing (NIST SP 1800-43C complete example)",
     "source": "NIST SP 1800-43C (DRAFT, August 2025), 'Genomic Data Threat Modeling: Privacy \u2014 An Implementation for Genomic Data Sequencing and Analysis', NCCoE. Complete-example threats transcribed (vision OCR) from Appendix G Figures 20 (validations) and 24 (ranked threats): https://pages.nist.gov/nccoe-genomic-data-threat-modeling/Vol_C/Appendix/appendixG.html",
     "role": "authoritative gold-standard baseline for evaluation (second scenario alongside KidsTube)",
-    "revision": "v2 \u2014 complete example (~99 itemized LINDDUN threats); supersedes the v1 10-threat core-example subset",
+    "revision": "v2 \u2014 complete example (~99 itemized LINDDUN threats); supersedes the v1 10-threat core-example subset + Week 3: dfd_source_id/dfd_destination_id added from Appendix F Figure 11 ('Task 4: Assess System Design'), cross-checked against nist_node; 2 ids ([20, 23]) left unresolved (dfd_location_confidence=unresolved), 4 ids ([18, 19, 26, 27]) resolved via ambiguous/duplicate content-match (dfd_location_confidence=low) -- see scripts/build_genomic_dfd.py. + Week 3: dfd_source_id/dfd_destination_id added from Appendix F Figure 11 ('Task 4: Assess System Design'), cross-checked against nist_node; 2 ids ([20, 23]) left unresolved (dfd_location_confidence=unresolved), 4 ids ([18, 19, 26, 27]) resolved via ambiguous/duplicate content-match (dfd_location_confidence=low) -- see scripts/build_genomic_dfd.py. + Week 3: dfd_source_id/dfd_destination_id added from Appendix F Figure 11 ('Task 4: Assess System Design'), cross-checked against nist_node; 2 ids ([20, 23]) left unresolved (dfd_location_confidence=unresolved), 4 ids ([18, 19, 26, 27]) resolved via ambiguous/duplicate content-match (dfd_location_confidence=low) -- see scripts/build_genomic_dfd.py.",
     "threat_count": 99,
     "core_example_count": 10,
     "node_remaps": 25,
@@ -39,7 +39,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S3-PH",
+      "dfd_destination_id": "S11-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Send the physical sample to be stored in the appropriate freezers",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 2,
@@ -67,7 +72,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S4-PH",
+      "dfd_destination_id": "S3-PH",
+      "dfd_dataflow_type": "Sample Metadata",
+      "dfd_context": "Send back to the wet lab the de-identified ID to be used for the sample",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 3,
@@ -95,7 +105,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S3-PH",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Send the digital raw sequence data to be stored",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 4,
@@ -123,7 +138,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S6-A",
+      "dfd_destination_id": "S5-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Send digital raw sequence data to Compute Nodes to operate on the data to transform it into objective-specific data",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 5,
@@ -151,7 +171,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S6-A",
+      "dfd_destination_id": "S13-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Send the generated context-relevant research data to the data delivery DMZ for making it available for delivery",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 6,
@@ -179,7 +204,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R2-RP",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 7,
@@ -206,7 +236,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R2-RP",
+      "dfd_destination_id": "R1-A",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "NCCoE Researcher retrieves the physical sample referenced by the physical sample request from the DNA Store",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 8,
@@ -233,7 +268,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "S1-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 9,
@@ -261,7 +301,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 10,
@@ -288,7 +333,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C1-A",
+      "dfd_destination_id": "C2-A",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Clinician retrieves the physical sample referenced by the physical sample request",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 11,
@@ -315,7 +365,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "S1-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 12,
@@ -343,7 +398,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R4-RD",
+      "dfd_dataflow_type": "Digital Sample Data Request",
+      "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 13,
@@ -369,7 +429,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R4-RD",
+      "dfd_destination_id": "R1-A",
+      "dfd_dataflow_type": "Digital Sample Data",
+      "dfd_context": "NCCoE Researcher retrieves the digital sample data referenced by the digital sample data request from the Digital Sample Data Store",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 14,
@@ -398,7 +463,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S1-PH",
+      "dfd_destination_id": "S2-A",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Send the physical sample to the lab technician working on the relevant research project",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 15,
@@ -427,7 +497,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S2-A",
+      "dfd_destination_id": "S3-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Send the physical sample to the wet lab to be sequenced",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 16,
@@ -454,7 +529,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 17,
@@ -481,7 +561,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 18,
@@ -505,7 +590,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "S1-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data",
+      "dfd_location_confidence": "low"
     },
     {
       "id": 19,
@@ -529,7 +619,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "S1-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data",
+      "dfd_location_confidence": "low"
     },
     {
       "id": 20,
@@ -553,7 +648,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": null,
+      "dfd_destination_id": null,
+      "dfd_dataflow_type": null,
+      "dfd_context": null,
+      "dfd_location_confidence": "unresolved"
     },
     {
       "id": 21,
@@ -577,7 +677,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S6-A",
+      "dfd_destination_id": "C3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 22,
@@ -601,7 +706,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C8-A",
+      "dfd_dataflow_type": "Patient Re-identification Request",
+      "dfd_context": "Genetic Counselor provides the results to the 3rd Party Previous Enrollment Entity to update their records for any studies the Patient is involved in",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 23,
@@ -625,7 +735,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": null,
+      "dfd_destination_id": null,
+      "dfd_dataflow_type": null,
+      "dfd_context": null,
+      "dfd_location_confidence": "unresolved"
     },
     {
       "id": 24,
@@ -649,7 +764,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 25,
@@ -675,7 +795,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1."
+      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1.",
+      "dfd_source_id": "S3-PH",
+      "dfd_destination_id": "S4-PH",
+      "dfd_dataflow_type": "Sample Metadata",
+      "dfd_context": "Generate the de-identified ID to be used for the sample",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 26,
@@ -700,7 +825,12 @@
         "Disassociability"
       ],
       "in_core_example": true,
-      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1."
+      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1.",
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
+      "dfd_location_confidence": "low"
     },
     {
       "id": 27,
@@ -725,7 +855,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1."
+      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1.",
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
+      "dfd_location_confidence": "low"
     },
     {
       "id": 28,
@@ -751,7 +886,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 29,
@@ -776,7 +916,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 30,
@@ -801,7 +946,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.",
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R5-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 31,
@@ -826,7 +976,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2."
+      "mapping_note": "NIST node I.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.",
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R6-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 32,
@@ -851,7 +1006,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 33,
@@ -875,7 +1035,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 34,
@@ -899,7 +1064,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 35,
@@ -924,7 +1094,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 36,
@@ -948,7 +1123,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 37,
@@ -972,7 +1152,12 @@
       "impacted_peos": [
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 38,
@@ -997,7 +1182,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R5-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 39,
@@ -1022,7 +1212,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R6-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 40,
@@ -1047,7 +1242,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nr.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nr.1."
+      "mapping_note": "NIST node Nr.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nr.1.",
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 41,
@@ -1072,7 +1272,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nr.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nr.1."
+      "mapping_note": "NIST node Nr.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nr.1.",
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 42,
@@ -1097,7 +1302,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 43,
@@ -1122,7 +1332,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
+      "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 44,
@@ -1147,7 +1362,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C8-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Outreach Attempt",
+      "dfd_context": "3rd Party Previous Enrollment Entity informs Patient that a new record has been added to their file",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 45,
@@ -1173,7 +1393,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S5-A",
+      "dfd_dataflow_type": "Tool Selection and Job Queue",
+      "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 46,
@@ -1199,7 +1424,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S6-A",
+      "dfd_destination_id": "C3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 47,
@@ -1225,7 +1455,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "C3-A",
+      "dfd_dataflow_type": "Final Clinical Report",
+      "dfd_context": "Bioinformaticist pulls the final clinical report from the Clinical Result Generation App",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 48,
@@ -1251,7 +1486,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C11-CT",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the External EMR",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 49,
@@ -1277,7 +1517,12 @@
         "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C10-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the Internal EMR",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 50,
@@ -1306,7 +1551,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 51,
@@ -1335,7 +1585,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S5-A",
+      "dfd_dataflow_type": "Tool Selection and Job Queue",
+      "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 52,
@@ -1361,7 +1616,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S11-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Retrieve the remainder of the physical sample once contextual retention requirements have been met",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 53,
@@ -1387,7 +1647,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S12-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Dispose of the remainder of the physical sample once contextual retention requirements have been met",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 54,
@@ -1413,7 +1678,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S3.2-PH",
+      "dfd_dataflow_type": "Physical Sample Remnants",
+      "dfd_context": "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 55,
@@ -1441,7 +1711,12 @@
       "impacted_peos": [
         "Predictability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S5-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data, Context-relevant Research Data",
+      "dfd_context": "Operate on the raw sequence data to create context-relevant research data",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 56,
@@ -1471,7 +1746,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 57,
@@ -1501,7 +1781,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R5-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 58,
@@ -1531,7 +1816,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R6-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 59,
@@ -1557,7 +1847,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R2-RP",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 60,
@@ -1583,7 +1878,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 61,
@@ -1609,7 +1909,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 62,
@@ -1635,7 +1940,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 63,
@@ -1662,7 +1972,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R2-RP",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 64,
@@ -1689,7 +2004,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 65,
@@ -1715,7 +2035,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": true
+      "in_core_example": true,
+      "dfd_source_id": "S5-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data, Context-relevant Research Data",
+      "dfd_context": "Operate on the raw sequence data to create context-relevant research data",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 66,
@@ -1741,7 +2066,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 67,
@@ -1767,7 +2097,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S5-A",
+      "dfd_dataflow_type": "Tool Selection and Job Queue",
+      "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 68,
@@ -1793,7 +2128,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S6-A",
+      "dfd_destination_id": "C3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 69,
@@ -1819,7 +2159,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "C3-A",
+      "dfd_dataflow_type": "Final Clinical Report",
+      "dfd_context": "Bioinformaticist pulls the final clinical report from the Clinical Result Generation App",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 70,
@@ -1845,7 +2190,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "C9-A",
+      "dfd_dataflow_type": "Final Clinical Report",
+      "dfd_context": "Bioinformaticist uploads the final clinical report onto the 3rd Party Portal",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 71,
@@ -1871,7 +2221,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C9-A",
+      "dfd_destination_id": "C4-A",
+      "dfd_dataflow_type": "Final Clinical Report",
+      "dfd_context": "Genetic Counselor downloads the final clinical report from the 3rd Party Portal",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 72,
@@ -1898,7 +2253,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C4-A",
+      "dfd_destination_id": "C2-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Genetic Counselor makes the context-relevant clinical data available for the Clinician to retrieve with additional input and analysis",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 73,
@@ -1925,7 +2285,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C11-CT",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the External EMR",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 74,
@@ -1952,7 +2317,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C5-A",
+      "dfd_destination_id": "C10-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the Internal EMR",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 75,
@@ -1978,7 +2348,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 76,
@@ -2004,7 +2379,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R4-RD",
+      "dfd_dataflow_type": "Digital Sample Data Request",
+      "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 77,
@@ -2031,7 +2411,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R4-RD",
+      "dfd_dataflow_type": "Digital Sample Data Request",
+      "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 78,
@@ -2057,7 +2442,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R5-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 79,
@@ -2083,7 +2473,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R6-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 80,
@@ -2118,7 +2513,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R2-RP",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 81,
@@ -2153,7 +2553,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "C1-A",
+      "dfd_dataflow_type": "Physical Sample Request",
+      "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 82,
@@ -2188,7 +2593,12 @@
         "Manageability",
         "Disassociability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "R1-A",
+      "dfd_destination_id": "R4-RD",
+      "dfd_dataflow_type": "Digital Sample Data Request",
+      "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 83,
@@ -2214,7 +2624,12 @@
         "Predictability",
         "Manageability"
       ],
-      "in_core_example": false
+      "in_core_example": false,
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S5-A",
+      "dfd_dataflow_type": "Tool Selection and Job Queue",
+      "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 84,
@@ -2240,7 +2655,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 85,
@@ -2266,7 +2686,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 86,
@@ -2292,7 +2717,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R5-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 87,
@@ -2320,7 +2750,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "R3-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 88,
@@ -2348,7 +2783,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 89,
@@ -2376,7 +2816,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R5-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 90,
@@ -2404,7 +2849,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2."
+      "mapping_note": "NIST node U.2.3 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor U.2.",
+      "dfd_source_id": "R3-A",
+      "dfd_destination_id": "R6-A",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 91,
@@ -2430,7 +2880,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S11-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Retrieve the remainder of the physical sample once contextual retention requirements have been met",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 92,
@@ -2456,7 +2911,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S12-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Dispose of the remainder of the physical sample once contextual retention requirements have been met",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 93,
@@ -2482,7 +2942,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S3.2-PH",
+      "dfd_dataflow_type": "Physical Sample Remnants",
+      "dfd_context": "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 94,
@@ -2508,7 +2973,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "C6-A",
+      "dfd_destination_id": "S6-A",
+      "dfd_dataflow_type": "Sequence Data",
+      "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 95,
@@ -2535,7 +3005,12 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.2 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S13-A",
+      "dfd_destination_id": "C7-CR",
+      "dfd_dataflow_type": "Context-relevant Research Data",
+      "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 96,
@@ -2561,7 +3036,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S12-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Dispose of the remainder of the physical sample once contextual retention requirements have been met",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 97,
@@ -2587,7 +3067,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S9-PH",
+      "dfd_destination_id": "S3.1-PH",
+      "dfd_dataflow_type": "Digital Data",
+      "dfd_context": "Devices used to process genomic data should be decommissioned according to privacy best practices to avoid unintentional data leakage/disclosure when the device(s) are resold",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 98,
@@ -2613,7 +3098,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S10-PH",
+      "dfd_destination_id": "S3.1-PH",
+      "dfd_dataflow_type": "Digital Data",
+      "dfd_context": "Devices used to process genomic data should be acquired from the manufacturer or should be acquired after being refurbished according to privacy best practices to avoid unintentional data leakage/disclosure when the device(s) are purchased",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 99,
@@ -2639,7 +3129,12 @@
         "Manageability"
       ],
       "in_core_example": false,
-      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1."
+      "mapping_note": "NIST node Nc.4 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor Nc.1.",
+      "dfd_source_id": "S7-PH",
+      "dfd_destination_id": "S3.2-PH",
+      "dfd_dataflow_type": "Physical Sample Remnants",
+      "dfd_context": "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run.",
+      "dfd_location_confidence": "high"
     }
   ]
 }

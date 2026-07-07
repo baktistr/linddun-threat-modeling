@@ -1,0 +1,76 @@
+"""Match generated threats against a gold-standard catalog.
+
+KidsTube gold threats are anchored to a DFD flow id embedded in `interaction` (e.g.
+"EE1-P1 [DF1]"), so matching there requires the same flow. Genomic gold threats instead carry
+explicit `dfd_source_id`/`dfd_destination_id` fields (added in Week 3 from Appendix F Figure 11 --
+see scripts/build_genomic_dfd.py), so matching there requires the generated threat's flow to
+resolve to that same (source, destination) pair via the scenario's dfd.json. A small number of
+genomic gold threats (dfd_location_confidence == "unresolved") have no transcribed location at
+all and can never be matched on location -- this is intentional (see WEEK3_REPORT.md), not a bug.
+"""
+from __future__ import annotations
+import re
+from dataclasses import dataclass, field
+
+from generation.schema import GeneratedThreat
+
+FLOW_ID_RE = re.compile(r"\[(DF\d+)\]")
+
+
+def gold_flow_id(gold_threat: dict) -> str | None:
+    m = FLOW_ID_RE.search(gold_threat.get("interaction", ""))
+    return m.group(1) if m else None
+
+
+@dataclass
+class MatchResult:
+    gen_to_gold: dict[int, int]       # generated list index -> matched gold threat id
+    matched_gold_ids: set[int]
+    tp: int
+    fp: int
+    fn: int
+
+
+def match_threats(generated: list[GeneratedThreat], gold: list[dict], scenario: str,
+                   dfd: dict | None = None, strict: bool = False) -> MatchResult:
+    """strict=True additionally requires exact tree_node agreement (the stricter eval tier).
+
+    `dfd` (the scenario's parsed dfd.json) is required for genomic's location-based matching;
+    without it, genomic falls back to threat-type-only matching (coarser, but still usable for a
+    quick check)."""
+    flow_anchored = scenario == "kidstube"
+    location_anchored = scenario != "kidstube" and dfd is not None
+    flows_by_id = {f["id"]: f for f in dfd["flows"]} if dfd else {}
+
+    matched_gold_ids: set[int] = set()
+    gen_to_gold: dict[int, int] = {}
+
+    for gi, g in enumerate(generated):
+        gen_flow = flows_by_id.get(g.flow_id)
+        for gold_t in gold:
+            if gold_t["id"] in matched_gold_ids:
+                continue
+            if g.threat_type != gold_t["threat_type"]:
+                continue
+            if flow_anchored:
+                gflow = gold_flow_id(gold_t)
+                if gflow is None or gflow != g.flow_id:
+                    continue
+            elif location_anchored:
+                gsrc = gold_t.get("dfd_source_id")
+                gdst = gold_t.get("dfd_destination_id")
+                if gsrc is None or gdst is None:
+                    continue  # unresolved gold location -- cannot be matched, by design
+                if gen_flow is None or gen_flow["source"] != gsrc or gen_flow["destination"] != gdst:
+                    continue
+            if strict and g.tree_node != gold_t["tree_node"]:
+                continue
+            matched_gold_ids.add(gold_t["id"])
+            gen_to_gold[gi] = gold_t["id"]
+            break
+
+    tp = len(gen_to_gold)
+    fp = len(generated) - tp
+    fn = len(gold) - len(matched_gold_ids)
+    return MatchResult(gen_to_gold=gen_to_gold, matched_gold_ids=matched_gold_ids,
+                        tp=tp, fp=fp, fn=fn)

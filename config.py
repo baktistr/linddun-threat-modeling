@@ -34,6 +34,16 @@ TOP_K = int(os.environ.get("TOP_K", "5"))
 # Embedding backend
 EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "tfidf").lower()
 
-# Anthropic (used only for the optional generation layer, not required for retrieval)
+# LLM generation layer (cli.py ask, generation/). Not required for retrieval.
+# Provider is pluggable so threat generation isn't locked to one vendor -- see generation/llm_backend.py.
+LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "anthropic").lower()  # anthropic | openai
+
+# Anthropic (Claude)
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
+
+# OpenAI, or any provider exposing an OpenAI-compatible /chat/completions endpoint
+# (Groq, Together, Ollama, etc.) via OPENAI_BASE_URL.
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o")
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "") or None

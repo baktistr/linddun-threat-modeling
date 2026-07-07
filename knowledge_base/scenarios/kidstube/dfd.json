@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "scenario": "KidsTube",
+    "source": "Transcribed from knowledge_base/scenarios/kidstube/system_description.md",
+    "purpose": "Minimal structured DFD (elements + named flows) so per-flow threat generation can anchor to concrete element ids, matching the gold standard's originator_id/interaction fields. Not the general canonical-DFD pivot schema."
+  },
+  "elements": [
+    {"id": "EE1", "type": "ExternalEntity", "name": "Parent User"},
+    {"id": "EE2", "type": "ExternalEntity", "name": "Child User"},
+    {"id": "EE3", "type": "ExternalEntity", "name": "Third-Party Advertisers"},
+    {"id": "P1", "type": "Process", "name": "Authentication Service"},
+    {"id": "P2", "type": "Process", "name": "Video Management Service"},
+    {"id": "P3", "type": "Process", "name": "Child Profile Management"},
+    {"id": "P4", "type": "Process", "name": "AI Recommendation Engine"},
+    {"id": "DS1", "type": "DataStore", "name": "MongoDB users collection"},
+    {"id": "DS2", "type": "DataStore", "name": "MongoDB childprofiles collection"},
+    {"id": "DS3", "type": "DataStore", "name": "MongoDB videos collection"},
+    {"id": "DS4", "type": "DataStore", "name": "File System (backend/uploads/)"},
+    {"id": "DS5", "type": "DataStore", "name": "Browser localStorage"}
+  ],
+  "flows": [
+    {"id": "DF1", "source": "EE1", "destination": "P1", "description": "parent registration (email, password, name, govt ID, six-digit code)"},
+    {"id": "DF2", "source": "P1", "destination": "DS1", "description": "store parent account"},
+    {"id": "DF3", "source": "P1", "destination": "EE1", "description": "JWT + user data to parent"},
+    {"id": "DF4", "source": "EE2", "destination": "P1", "description": "child login (parent email, password)"},
+    {"id": "DF5", "source": "P1", "destination": "EE2", "description": "JWT (userType child) + child profiles"},
+    {"id": "DF6", "source": "EE1", "destination": "P3", "description": "child profile creation (name, DOB, gender, govt ID)"},
+    {"id": "DF7", "source": "P3", "destination": "DS2", "description": "store/update child profile"},
+    {"id": "DF8", "source": "EE2", "destination": "P2", "description": "video search, request, like, comment"},
+    {"id": "DF9", "source": "P2", "destination": "DS3", "description": "store/retrieve video metadata and files (DS3+DS4 combined in source description)"},
+    {"id": "DF10", "source": "P3", "destination": "DS2", "description": "store child search and watch history"},
+    {"id": "DF11", "source": "EE1", "destination": "P2", "description": "video upload, approval/rejection"},
+    {"id": "DF12", "source": "P2", "destination": "EE2", "description": "stream approved video to child"},
+    {"id": "DF13", "source": "DS2", "destination": "P4", "description": "child browsing data to AI engine (planned)"},
+    {"id": "DF14", "source": "P4", "destination": "EE3", "description": "browsing data to advertisers (planned)"},
+    {"id": "DF15", "source": "P1", "destination": "DS4", "description": "store government ID images"},
+    {"id": "DF16", "source": "P1", "destination": "DS5", "description": "JWT stored in localStorage"},
+    {"id": "DF17", "source": "P3", "destination": "EE1", "description": "child history retrieved for parent review"}
+  ]
+}

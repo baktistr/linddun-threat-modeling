@@ -62,7 +62,7 @@ class Retriever:
 
     # ---- query ----
     def search(self, query: str, k: int | None = None, source: str | None = None,
-               hybrid: bool = True) -> list[Hit]:
+               hybrid: bool = True, exclude_kinds: list[str] | None = None) -> list[Hit]:
         k = k or config.TOP_K
         qvec = self.backend.transform([query])[0]
         dense = self.matrix @ qvec  # cosine (all normalized)
@@ -78,6 +78,8 @@ class Retriever:
         for idx in order:
             c = self.chunks[idx]
             if source and c.source != source:
+                continue
+            if exclude_kinds and c.meta.get("kind") in exclude_kinds:
                 continue
             hits.append(Hit(chunk=c, score=float(scores[idx])))
             if len(hits) >= k:
