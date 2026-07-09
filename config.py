@@ -38,7 +38,6 @@ STORE_DIR.mkdir(parents=True, exist_ok=True)
 # Knowledge base sub-corpora. Each is tagged so retrieval can filter by source.
 CORPORA = {
     "linddun": KB_DIR / "linddun",
-    "regulations": KB_DIR / "regulations",
     "scenarios": KB_DIR / "scenarios",
 }
 

@@ -61,8 +61,7 @@ def test_genomic_gold_has_dfd_locations():
 def test_schema_roundtrip():
     print("\n[GeneratedThreat schema]")
     t = GeneratedThreat(flow_id="DF1", originator_id="P1", threat_type="Dd", tree_node="Dd.1.1",
-                         title="Excessive collection", description="desc",
-                         regulatory_citation="COPPA § 312.7")
+                         title="Excessive collection", description="desc")
     d = t.to_dict()
     t2 = GeneratedThreat.from_dict(d)
     check(t == t2, "to_dict/from_dict round-trips to an equal object")
@@ -73,28 +72,14 @@ def test_schema_roundtrip():
 def test_verifier_valid_citation():
     print("\n[citation verifier: valid citations]")
     dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
-    # Dd.1.1 is a real node (used by KidsTube gold threat #2); EE1->P1 is DF1; § 312.7 is
-    # LINDDUN-relevant to Dd per regulations.md.
+    # Dd.1.1 is a real node (used by KidsTube gold threat #2); EE1->P1 is DF1.
     t = GeneratedThreat(flow_id="DF1", originator_id="P1", threat_type="Dd", tree_node="Dd.1.1",
-                         title="Excessive collection", description="desc",
-                         regulatory_citation="COPPA § 312.7")
+                         title="Excessive collection", description="desc")
     v = verify_threat(t, dfd)
     check(v.node_valid, "real tree_node verifies as valid")
     check(v.type_applicable, "Dd is applicable at ExternalEntity->Process")
     check(v.location_valid, "originator_id matching a flow endpoint verifies as valid")
-    check(v.regulation_valid, "real regulatory citation resolves to a provision")
-    check(v.regulation_relevant, "resolved provision lists Dd as LINDDUN-relevant")
     check(v.all_valid, "all_valid is true when every check passes")
-
-
-def test_verifier_no_citation_given():
-    print("\n[citation verifier: no regulatory citation given]")
-    dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
-    t = GeneratedThreat(flow_id="DF1", originator_id="EE1", threat_type="L", tree_node="L.1.1",
-                         title="t", description="d", regulatory_citation="")
-    v = verify_threat(t, dfd)
-    check(v.regulation_valid and v.regulation_relevant,
-          "an empty citation is not treated as a false claim")
 
 
 def test_verifier_fabricated_citations():
@@ -114,19 +99,6 @@ def test_verifier_fabricated_citations():
                                     tree_node="Dd.1.1", title="t", description="d")
     check(not verify_threat(missing_flow, dfd).type_applicable,
           "a flow_id absent from dfd.json fails the type-applicability check")
-
-    bad_reg = GeneratedThreat(flow_id="DF1", originator_id="P1", threat_type="Dd",
-                               tree_node="Dd.1.1", title="t", description="d",
-                               regulatory_citation="Some Made Up Law § 999.999")
-    check(not verify_threat(bad_reg, dfd).regulation_valid,
-          "a citation matching no real provision fails verification")
-
-    irrelevant_reg = GeneratedThreat(flow_id="DF1", originator_id="EE1", threat_type="L",
-                                      tree_node="L.1.1", title="t", description="d",
-                                      regulatory_citation="COPPA § 312.7")  # Dd-relevant, not L
-    v = verify_threat(irrelevant_reg, dfd)
-    check(v.regulation_valid and not v.regulation_relevant,
-          "a real but irrelevant citation resolves, but fails the relevance check")
 
 
 def _fixture_gold():
@@ -265,7 +237,6 @@ def main():
     test_genomic_gold_has_dfd_locations()
     test_schema_roundtrip()
     test_verifier_valid_citation()
-    test_verifier_no_citation_given()
     test_verifier_fabricated_citations()
     test_matcher_coarse_tier()
     test_matcher_strict_tier()

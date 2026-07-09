@@ -49,19 +49,6 @@ Working bibliography for this project (AI-assisted, grounded LINDDUN Pro privacy
 - Lewis, P., et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.* NeurIPS. <https://arxiv.org/abs/2005.11401>
 - Karpukhin, V., et al. (2020). *Dense Passage Retrieval for Open-Domain Question Answering.* EMNLP. <https://arxiv.org/abs/2004.04906> — dense side of hybrid retrieval.
 
-## H. Primary regulatory sources (in / needed for the knowledge base)
-
-In the knowledge base (KidsTube):
-- COPPA — 16 CFR Part 312. <https://www.ecfr.gov/current/title-16/chapter-I/subchapter-C/part-312>
-- GDPR — Regulation (EU) 2016/679. <https://eur-lex.europa.eu/eli/reg/2016/679/oj>
-- CCPA/CPRA — Cal. Civ. Code §1798.100 et seq. <https://leginfo.legislature.ca.gov/faces/codes_displayText.xhtml?division=3.&part=4.&lawCode=CIV&title=1.81.5>
-
-In the knowledge base (genomic, added Week 4):
-- HIPAA Privacy Rule — 45 CFR Parts 160 & 164. <https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html>
-- Genetic Information Nondiscrimination Act (GINA), 2008. <https://www.eeoc.gov/genetic-information-discrimination>
-- Common Rule — 45 CFR 46. <https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-A/part-46>
-- Clinical Laboratory Improvement Amendments (CLIA) — 42 CFR Part 493. <https://www.ecfr.gov/current/title-42/chapter-IV/subchapter-G/part-493>
-
 ## Notes on positioning
 
 PILLAR (B), the multi-agent LINDDUN GO benchmark (B), and PriMod4AI (B) are the nearest prior art — LINDDUN + LLMs. This project's intended differentiation: grounded per-node retrieval over the full LINDDUN Pro trees, an authoritative NIST-derived gold standard, and **code → DFD** as a supported input (the gap least addressed by the above).

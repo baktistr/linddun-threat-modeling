@@ -32,7 +32,6 @@ def test_kb_files_exist():
         "linddun/threat_trees.json",
         "linddun/mapping_table.json",
         "linddun/threat_types_and_methodology.md",
-        "regulations/regulations.md",
         "scenarios/kidstube/system_description.md",
         "scenarios/kidstube/gold_standard_threats.json",
         "scenarios/genomic/system_description.md",
@@ -105,7 +104,7 @@ def test_retrieval_quality():
         ("government ID stored unencrypted", None, "government id"),
         ("excessive data volume retained", "linddun", "Dd.2"),
         ("children not informed about tracking", None, "unaware"),
-        ("verifiable parental consent", "regulations", "312.5"),
+        ("unable to deny an action they took", "linddun", "non-repudiation"),
         ("mapping table external entity to process", "linddun", "ExternalEntity"),
         ("profiling children behavioral data", "scenarios", "profil"),
     ]

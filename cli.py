@@ -16,6 +16,9 @@ import sys
 import config
 from retrieval.index import Retriever
 
+GENERATE_SCENARIOS = ["kidstube", "genomic", "smart_home"]
+EVAL_SCENARIOS = ["kidstube", "genomic"]  # only scenarios with a gold_standard_threats.json
+
 
 def cmd_build(_):
     r = Retriever.build()
@@ -99,7 +102,7 @@ def main():
 
     sp = sub.add_parser("search")
     sp.add_argument("query")
-    sp.add_argument("--source", choices=["linddun", "regulations", "scenarios"], default=None)
+    sp.add_argument("--source", choices=["linddun", "scenarios"], default=None)
     sp.add_argument("-k", type=int, default=config.TOP_K)
     sp.set_defaults(func=cmd_search)
 
@@ -108,15 +111,15 @@ def main():
     sa.set_defaults(func=cmd_ask)
 
     sg = sub.add_parser("generate")
-    sg.add_argument("--scenario", required=True, choices=["kidstube", "genomic", "smart_home", "telehealth_demo"])
+    sg.add_argument("--scenario", required=True, choices=GENERATE_SCENARIOS)
     sg.add_argument("--ungrounded", action="store_true",
-                     help="Ablation baseline: no interaction-context/regulatory retrieval.")
+                     help="Ablation baseline: no interaction-context grounding.")
     sg.add_argument("--provider", choices=["anthropic", "openai", "azure"], default=None,
                      help="Override LLM_PROVIDER from config/.env for this run.")
     sg.set_defaults(func=cmd_generate)
 
     se = sub.add_parser("eval")
-    se.add_argument("--scenario", required=True, choices=["kidstube", "genomic", "smart_home", "telehealth_demo"])
+    se.add_argument("--scenario", required=True, choices=EVAL_SCENARIOS)
     se.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
     se.add_argument("--strict", action="store_true", help="Also require exact tree_node match.")
     se.set_defaults(func=cmd_eval)

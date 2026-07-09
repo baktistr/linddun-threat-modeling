@@ -1,10 +1,10 @@
 # LINDDUN Knowledge Base
 
-RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the curated, chunked, and retrievable knowledge that every stage (DFD synthesis, threat elicitation, regulatory mapping) draws on.
+RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the curated, chunked, and retrievable knowledge that grounds every stage of the pipeline (DFD synthesis, threat elicitation, traceable citation) — built to answer one question: can an LLM, grounded in the LINDDUN Pro methodology, help a privacy expert conduct a LINDDUN-based privacy risk analysis they can trust?
 
-> The retrieval engine is intentionally minimal and dependency-light; it can later be swapped for / merged with a shared `RAG-MCP-system` backend (Qdrant + hybrid + reranker). The knowledge base content (LINDDUN trees, mapping table, regulations, and the KidsTube + genomic gold standards) is the durable asset and is backend-agnostic.
+> The retrieval engine is intentionally minimal and dependency-light; it can later be swapped for / merged with a shared `RAG-MCP-system` backend (Qdrant + hybrid + reranker). The knowledge base content (LINDDUN trees, mapping table, and the KidsTube + genomic gold standards) is the durable asset and is backend-agnostic.
 
-**Progress reports:** [Week 1](WEEK1_REPORT.md) · [Week 2](WEEK2_REPORT.md) · [Week 3](WEEK3_REPORT.md)
+**Progress reports:** [Week 1](WEEK1_REPORT.md) · [Week 2](WEEK2_REPORT.md) · [Week 3](WEEK3_REPORT.md) · [Week 4](WEEK4_REPORT.md) · [Week 5](WEEK5_REPORT.md)
 **Background & related work:** [REFERENCES.md](REFERENCES.md)
 
 ## What's in the knowledge base
@@ -14,14 +14,13 @@ RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the cura
 | `knowledge_base/linddun/threat_trees.json` | All 7 LINDDUN threat types + tree nodes (structured) | Each node is independently retrievable for grounded elicitation |
 | `knowledge_base/linddun/mapping_table.json` | LINDDUN Pro Table 4.1 — which types apply at S/fl/D per interaction | Drives which threats to check for each DFD interaction |
 | `knowledge_base/linddun/threat_types_and_methodology.md` | Type definitions + S/fl/D interpretation + iteration strategy | Prose context for the model |
-| `knowledge_base/regulations/regulations.md` | COPPA, GDPR, CCPA (KidsTube) + HIPAA, GINA, Common Rule, CLIA (genomic, added Week 4) mapped to LINDDUN types | Enables regulatory citation on threats |
 | `knowledge_base/scenarios/kidstube/system_description.md` | KidsTube DFD, assets, flows | Primary evaluation scenario |
 | `knowledge_base/scenarios/kidstube/gold_standard_threats.json` | **36-threat gold standard** | Ground truth for all evaluation |
 | `knowledge_base/scenarios/genomic/system_description.md` | Genomic sequencing DFD, assets, flows | Second evaluation scenario |
 | `knowledge_base/scenarios/genomic/gold_standard_threats.json` | **99-threat gold standard** (NIST complete example; 10 tagged as the core-example subset); each threat now also carries `dfd_source_id`/`dfd_destination_id` (97/99 resolved, Week 3) | Authoritative ground truth — NIST's own LINDDUN analysis, transcribed from Appendix G figures |
 | `knowledge_base/scenarios/genomic/dfd.json` | Structured DFD: **32 elements, 39 flows** across the shared + clinical + research pipelines (Week 3) | Lets generation iterate over concrete named flows, same as KidsTube |
 
-Sources: LINDDUN Pro Tutorial v0.1 (KU Leuven, downloads.linddun.org); eCFR Title 16 Part 312; GDPR (EU 2016/679); CCPA (Cal. Civ. Code §1798.100+); 45 CFR Parts 160/164 (HIPAA); GINA (2008); 45 CFR 46 (Common Rule); 42 CFR Part 493 (CLIA); NIST SP 1800-43C DRAFT, *Genomic Data Threat Modeling: Privacy* (NCCoE, Aug 2025).
+Sources: LINDDUN Pro Tutorial v0.1 (KU Leuven, downloads.linddun.org); NIST SP 1800-43C DRAFT, *Genomic Data Threat Modeling: Privacy* (NCCoE, Aug 2025).
 
 ## Evaluation scenarios
 
@@ -68,12 +67,12 @@ embedding backend.
 # top-k semantic + keyword (hybrid) search
 python cli.py search "government ID stored unencrypted" -k 3
 
-# restrict to one source: linddun | regulations | scenarios
+# restrict to one source: linddun | scenarios
 python cli.py search "excessive data retention" --source linddun
 ```
 
 Each hit prints a relevance score, its source/document/section, and a snippet —
-so you can trace any result back to a specific tree node or regulation.
+so you can trace any result back to a specific tree node or scenario document.
 
 ### 4. Ask a grounded question (optional, needs Claude)
 
@@ -127,7 +126,6 @@ python cli.py build                    # rebuild after changing the backend
 ```
 knowledge_base/        curated source-of-truth documents (the durable asset)
   linddun/             methodology: trees, mapping table, definitions
-  regulations/         COPPA / GDPR / CCPA + HIPAA / GINA / Common Rule / CLIA excerpts
   scenarios/kidstube/  system description + dfd.json (12 elements, 17 flows) + 36-threat gold standard (primary)
   scenarios/genomic/   system description + dfd.json (32 elements, 39 flows, all 4 pipelines) + 99-threat gold standard
 
@@ -162,21 +160,24 @@ references/nist-sp-1800-43c/   NIST report PDF + appendix figures/sources (prove
 ### Design choices
 
 - **Structured chunks.** JSON threat trees, mapping rows, and gold threats are split into one chunk per item, so retrieval returns a precise node (e.g. `Dd.2.1`) rather than a wall of text. This is what makes grounding citations clean.
-- **Hybrid retrieval.** Dense cosine similarity is blended with keyword overlap so exact node IDs and regulation numbers (`Dd.1.1`, `§312.5`) surface reliably, which pure dense embeddings tend to blur.
+- **Hybrid retrieval.** Dense cosine similarity is blended with keyword overlap so exact node IDs (`Dd.1.1`) surface reliably, which pure dense embeddings tend to blur.
 - **Pluggable embeddings.** Starts dependency-free for a reproducible demo; upgrades to semantic embeddings with one env var.
 - **Backend-agnostic content.** If we adopt the partner's Qdrant/reranker stack, only `retrieval/` changes — the knowledge base and gold standard move over unchanged.
 
 ## Target pipeline (end-to-end goal)
 
-The end goal is an LLM assistant that performs LINDDUN Pro threat modeling from a real-world input — either a **DFD** the user provides or the **source code** of an app — grounded in this knowledge base and graded against the gold standards.
+The end goal is not full automation but an LLM assistant that helps a privacy expert conduct LINDDUN Pro threat modeling faster and more completely — from a real-world input (a **DFD** the user provides, or the **source code** of an app), grounded in this knowledge base, with every generated threat independently traceable to a specific methodology node and DFD location so the expert can verify rather than blindly trust it. Where a gold standard exists, output is also graded against it as a proxy for how close the assistant gets to expert-level analysis.
 
 ```
-INPUT                     PIVOT                  GROUNDED ELICITATION           OUTPUT
-─────                     ─────                  ────────────────────           ──────
+INPUT                     PIVOT                  GROUNDED ELICITATION                OUTPUT
+─────                     ─────                  ────────────────────                ──────
 DFD (provided) ──┐
-                 ├─► canonical DFD ──► per-interaction LINDDUN ──► threats ──► regulatory ──► threat model
-source code ─────┘    (elements +      elicitation grounded         (LLM)      mapping        (scored vs gold)
-                       interactions)    in the KB
+                 ├─► canonical DFD ──► per-interaction LINDDUN ──► cited threats ──► reviewed threat model
+source code ─────┘    (elements +      elicitation grounded         (LLM, tree-        (privacy expert
+                       interactions)    in the KB                    node + DFD-        verifies, scored
+                                                                      location cited,    vs gold where
+                                                                      independently      available)
+                                                                      verified)
 ```
 
 The **canonical DFD is the pivot**: both inputs converge on one structured representation (elements, flows, trust boundaries, interactions), and everything downstream consumes it. This is the shared schema to align with the `RAG-MCP-system` backend.
@@ -185,14 +186,14 @@ The **canonical DFD is the pivot**: both inputs converge on one structured repre
 
 | Stage | Component | Status |
 |---|---|---|
-| Knowledge base (LINDDUN trees, mapping table, regulations) | `knowledge_base/`, `ingestion/`, `retrieval/` | ✅ built |
+| Knowledge base (LINDDUN trees, mapping table) | `knowledge_base/`, `ingestion/`, `retrieval/` | ✅ built |
 | Evaluation ground truth (KidsTube 36 + genomic 99) | `knowledge_base/scenarios/`, `scripts/verify_genomic.py` | ✅ built |
 | Methodology handoff (DFD interaction → applicable types/positions/nodes) | `retrieval/interaction_context.py` | ✅ built |
 | Per-scenario structured DFD (named elements/flows, not the general pivot schema) | `knowledge_base/scenarios/*/dfd.json` | ✅ built (Week 3) |
 | **Input front-end** — DFD ingestion / **source-code → DFD synthesis** | — | ⬜ not built (the largest piece; code→DFD is the research-hard part) |
 | Canonical DFD schema (the general pivot representation, arbitrary systems) | — | ⬜ not built (formalize first) |
-| Threat generation (LLM emits structured threats per flow, 3-way citations) | `generation/` | ✅ built (pipeline + tests); ⬜ live run pending an API key |
-| Citation verification (node / location / regulation independently checked) | `generation/verify.py` | ✅ built (Week 3) |
+| Threat generation (LLM emits structured threats per flow, 2-way citations) | `generation/` | ✅ built (pipeline + tests); ⬜ live run pending an API key |
+| Citation verification (node / location independently checked) | `generation/verify.py` | ✅ built (Week 3) |
 | Eval harness (generated vs gold, per-category P/R/F1 + citation-correctness; retrieval excludes the answer key) | `eval/` | ✅ built (Week 3) |
 | Grounded-vs-ungrounded ablation | `generation/generate.py --ungrounded` | ✅ built; ⬜ live comparison pending an API key |
 
@@ -201,4 +202,4 @@ The **canonical DFD is the pivot**: both inputs converge on one structured repre
 - `retrieval/interaction_context.py` is the handoff: given a DFD interaction (e.g. `ExternalEntity -> Process`) it returns the applicable threat types, their S/fl/D positions, and the relevant tree nodes — the context each per-flow generation prompt consumes (`generation/prompt.py`).
 - **Leakage closed:** `Retriever.search(..., exclude_kinds=["gold_threat"])` excludes gold-standard chunks from generation-time retrieval (Week 3); `search`/`ask` are unaffected by default.
 - **Gold suits input modes differently:** KidsTube is anchored per DFD flow (good for a per-flow pipeline) and is a real React/Node app — the one scenario that can eventually test the full **code → DFD → threats** chain end to end. Genomic has no codebase, but (as of Week 3) 97 of its 99 threats do have a real per-threat DFD anchor (`dfd_source_id`/`dfd_destination_id`, transcribed from Appendix F Figure 11) and `eval/match.py` matches on it, the same as KidsTube. The catch: only 17 of those 97 sit on an interaction type the mapping table covers (see the genomic scenario section above) — the rest are direct ExternalEntity↔DataStore, ExternalEntity↔ExternalEntity, or DataStore↔DataStore interactions with no mediating Process, which the LINDDUN Pro tutorial's mapping table doesn't model at all, so genomic's realistic recall ceiling with the current pipeline is far below 99, independent of generation quality.
-- **Citations are independently verified, not self-reported:** `generation/verify.py` re-checks each generated threat's tree node, DFD location, and regulatory citation against the knowledge base files directly — the concrete mechanism behind the abstract's "traceability that is verified" claim.
+- **Citations are independently verified, not self-reported:** `generation/verify.py` re-checks each generated threat's tree node and DFD location against the knowledge base files directly — the concrete mechanism behind the abstract's "traceability that is verified" claim.

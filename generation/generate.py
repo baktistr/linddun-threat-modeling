@@ -1,15 +1,14 @@
 """Threat generation driver.
 
-For each DFD flow in a scenario's dfd.json, builds a grounded (retrieval + interaction-context)
-or ungrounded (ablation baseline) prompt and calls Claude with a forced tool-use schema so the
-response parses directly into GeneratedThreat objects -- no free-text parsing.
+For each DFD flow in a scenario's dfd.json, builds a grounded (interaction-context) or ungrounded
+(ablation baseline) prompt and calls Claude with a forced tool-use schema so the response parses
+directly into GeneratedThreat objects -- no free-text parsing.
 """
 from __future__ import annotations
 import json
 from pathlib import Path
 
 import config
-from retrieval.index import Retriever
 from retrieval.interaction_context import get_interaction_context, effective_type
 from generation.schema import GeneratedThreat
 from generation.prompt import build_grounded_prompt, build_ungrounded_prompt
@@ -27,7 +26,6 @@ def generate_for_scenario(scenario: str, grounded: bool = True, provider: str | 
     backend = get_llm_backend(provider)
     dfd = _load_dfd(scenario)
     elements_by_id = {e["id"]: e for e in dfd["elements"]}
-    retriever = Retriever.load() if grounded else None
 
     all_threats: list[GeneratedThreat] = []
     n_flows = len(dfd["flows"])
@@ -42,9 +40,7 @@ def generate_for_scenario(scenario: str, grounded: bool = True, provider: str | 
                 if progress:
                     print(f"{tag}: skipped (invalid interaction, no Process mediates)", flush=True)
                 continue
-            reg_hits = retriever.search(flow["description"], k=3, source="regulations",
-                                         exclude_kinds=["gold_threat"])
-            prompt = build_grounded_prompt(flow, elements_by_id, ctx, reg_hits)
+            prompt = build_grounded_prompt(flow, elements_by_id, ctx)
         else:
             prompt = build_ungrounded_prompt(flow, elements_by_id)
 

@@ -2,10 +2,10 @@
 
 Mirrors the gold-standard threat shape (knowledge_base/scenarios/*/gold_standard_threats.json:
 interaction, originator_id, tree_node, threat_type, title, description, assumptions, severity,
-likelihood) plus the two citations the abstract's traceability claim adds on top of tree_node:
-originator_id doubles as the DFD-location citation (verified against dfd.json instead of trusted),
-and regulatory_citation (verified against regulations.md). uncertainty_note lets the model flag low
-confidence instead of asserting a citation it isn't sure about.
+likelihood) plus the citation the abstract's traceability claim adds on top of tree_node:
+originator_id doubles as the DFD-location citation (verified against dfd.json instead of trusted).
+uncertainty_note lets the model flag low confidence instead of asserting a citation it isn't sure
+about.
 """
 from __future__ import annotations
 from dataclasses import dataclass, field, fields, asdict
@@ -19,7 +19,6 @@ class GeneratedThreat:
     tree_node: str                # LINDDUN Pro threat-tree node id, e.g. "Dd.1.1" -- the methodology citation
     title: str
     description: str
-    regulatory_citation: str = "" # e.g. "COPPA §312.5" -- the regulatory citation, "" if none applies
     assumptions: str = ""
     severity: str = ""
     likelihood: str = ""
@@ -65,10 +64,6 @@ THREAT_TOOL_SCHEMA = {
                         },
                         "title": {"type": "string"},
                         "description": {"type": "string"},
-                        "regulatory_citation": {
-                            "type": "string",
-                            "description": "An exact section label from the provided regulatory context, e.g. 'COPPA §312.5'. Empty string if none applies.",
-                        },
                         "assumptions": {"type": "string"},
                         "severity": {"type": "string", "enum": ["Low", "Med", "High"]},
                         "likelihood": {"type": "string", "enum": ["Low", "Med", "High"]},
@@ -77,7 +72,7 @@ THREAT_TOOL_SCHEMA = {
                             "description": "If you are not confident this threat applies, or a citation is approximate, say so here instead of asserting it silently. Empty string if fully confident.",
                         },
                     },
-                    "required": ["originator_id", "threat_type", "tree_node", "title", "description", "regulatory_citation"],
+                    "required": ["originator_id", "threat_type", "tree_node", "title", "description"],
                 },
             }
         },

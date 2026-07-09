@@ -1,8 +1,8 @@
 """Ingestion: load knowledge-base documents and split them into retrievable chunks.
 
 Handles Markdown/text (split on headings then size) and JSON (structured items
-become individual chunks so each threat-tree node / threat / regulation is
-independently retrievable). Every chunk carries metadata for filtering and citation.
+become individual chunks so each threat-tree node / threat is independently
+retrievable). Every chunk carries metadata for filtering and citation.
 """
 from __future__ import annotations
 import json
@@ -17,7 +17,7 @@ import config
 class Chunk:
     id: str
     text: str
-    source: str          # corpus tag: linddun | regulations | scenarios
+    source: str          # corpus tag: linddun | scenarios
     doc: str             # filename
     section: str = ""    # heading or json key path
     meta: dict = field(default_factory=dict)

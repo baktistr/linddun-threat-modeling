@@ -59,8 +59,6 @@ def citation_correctness(verifications: list[VerificationResult]) -> dict:
         "node_valid_rate": sum(v.node_valid for v in verifications) / n,
         "type_applicable_rate": sum(v.type_applicable for v in verifications) / n,
         "location_valid_rate": sum(v.location_valid for v in verifications) / n,
-        "regulation_valid_rate": sum(v.regulation_valid for v in verifications) / n,
-        "regulation_relevant_rate": sum(v.regulation_relevant for v in verifications) / n,
         "all_valid_rate": sum(v.all_valid for v in verifications) / n,
         "n": len(verifications),
     }

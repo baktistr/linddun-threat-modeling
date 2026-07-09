@@ -32,19 +32,11 @@ POSITIONS = {
         "DS1": (3.6, -1.6), "DS2": (7.4, -1.6),
         "EE3": (12.0, 3.2),
     },
-    "telehealth_demo": {
-        "EE1": (0.0, 6.5), "EE2": (0.0, 2.0), "EE4": (0.0, -3.5),
-        "P1": (6.0, 6.5), "DS1": (5.5, 2.0), "P2": (12.0, 2.0),
-        "DS2": (7.5, -3.5),
-        "EE3": (13.0, 6.5), "EE5": (14.5, -3.5),
-    },
 }
 
 # per-flow curvature override (arc3 rad); default 0.12. Higher values bow an edge further out,
 # used for long edges that must visually clear an intermediate node sitting between them.
-RAD_OVERRIDE = {
-    "telehealth_demo": {"DF4": 0.45},
-}
+RAD_OVERRIDE = {}
 
 # short human labels for edges (full descriptions live in dfd.json/system_description.md)
 EDGE_LABELS = {
@@ -53,13 +45,6 @@ EDGE_LABELS = {
         "DF3": "write sensor events", "DF4": "upload video clips",
         "DF5": "motion alert", "DF6": "push notification",
         "DF7": "usage analytics", "DF8": "retrieve clip",
-    },
-    "telehealth_demo": {
-        "DF1": "submit vitals", "DF2": "store vitals",
-        "DF3": "review/annotate EHR", "DF4": "relay genetic results",
-        "DF5": "upload sequencing report", "DF6": "pull results",
-        "DF7": "risk alert", "DF8": "read vitals history",
-        "DF9": "billing/coverage audit",
     },
 }
 
@@ -72,12 +57,6 @@ LABEL_PLACEMENT = {
         "DF3": (-1, 0.5), "DF4": (1, 0.5), "DF8": (-1, 0.5),
         "DF5": (1, 0.5), "DF7": (1, 0.5),
         "DF2": (1, 0.5),
-    },
-    "telehealth_demo": {
-        "DF1": (1, 0.5), "DF2": (1, 0.5), "DF3": (1, 0.5),
-        "DF4": (1, 0.5, 0.95), "DF7": (1, 0.65),
-        "DF5": (1, 0.5), "DF6": (1, 0.22), "DF8": (-1, 0.6),
-        "DF9": (-1, 0.68),
     },
 }
 
@@ -226,6 +205,6 @@ def render(scenario: str, out_path=None):
 
 
 if __name__ == "__main__":
-    for scenario in ("smart_home", "telehealth_demo"):
+    for scenario in ("smart_home",):
         path = render(scenario)
         print(f"Wrote {path}")
