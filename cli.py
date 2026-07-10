@@ -59,7 +59,12 @@ def cmd_generate(args):
 
 def cmd_eval(args):
     from eval.run_eval import run_eval
-    print(run_eval(args.scenario, args.generated, strict=args.strict))
+    report = run_eval(args.scenario, args.generated, strict=args.strict, by_node=args.by_node)
+    print(report)
+    if args.out:
+        from pathlib import Path
+        Path(args.out).write_text(report + "\n")
+        print(f"\n(report also written to {args.out})")
 
 
 def cmd_ask(args):
@@ -122,6 +127,9 @@ def main():
     se.add_argument("--scenario", required=True, choices=EVAL_SCENARIOS)
     se.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
     se.add_argument("--strict", action="store_true", help="Also require exact tree_node match.")
+    se.add_argument("--by-node", action="store_true",
+                     help="Also report a per-tree-node breakdown, not just per LINDDUN category.")
+    se.add_argument("--out", default=None, help="Also write the report to this path.")
     se.set_defaults(func=cmd_eval)
 
     args = p.parse_args()

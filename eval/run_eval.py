@@ -1,5 +1,6 @@
 """End-to-end eval: load generated + gold threats for a scenario, match, score per LINDDUN
-category, independently verify citations, and print a report."""
+category, independently verify citations, classify unmatched gold threats by reachability, and
+print a report."""
 from __future__ import annotations
 import json
 
@@ -7,11 +8,23 @@ import config
 from generation.generate import load_generated
 from generation.verify import verify_threat
 from eval.match import match_threats
-from eval.metrics import per_category_scores, citation_correctness, CATEGORY_NAMES, LINDDUN_TYPES
+from eval.metrics import (per_category_scores, per_node_scores, citation_correctness,
+                          CATEGORY_NAMES, LINDDUN_TYPES)
+from eval.reachability import reachability_breakdown
+
+
+def _node_titles() -> dict[str, str]:
+    trees = json.loads((config.KB_DIR / "linddun" / "threat_trees.json").read_text())["threat_types"]
+    return {nid: n.get("title", "") for tt in trees.values() for nid, n in tt.get("nodes", {}).items()}
 
 
 def _load_gold(scenario: str) -> list[dict]:
     path = config.KB_DIR / "scenarios" / scenario / "gold_standard_threats.json"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"No gold_standard_threats.json for scenario '{scenario}' -- eval requires a "
+            f"gold-backed scenario (expected {path})."
+        )
     return json.loads(path.read_text())["threats"]
 
 
@@ -19,7 +32,7 @@ def _load_dfd(scenario: str) -> dict:
     return json.loads((config.KB_DIR / "scenarios" / scenario / "dfd.json").read_text())
 
 
-def run_eval(scenario: str, generated_path: str, strict: bool = False) -> str:
+def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: bool = False) -> str:
     generated = load_generated(generated_path)
     gold = _load_gold(scenario)
     dfd = _load_dfd(scenario)
@@ -67,4 +80,34 @@ def run_eval(scenario: str, generated_path: str, strict: bool = False) -> str:
             continue
         lines.append(f"  {k:<24} {v:.2f}")
     lines.append(f"  n_threats_checked        {citation_stats['n']}")
+
+    rc = reachability_breakdown(gold, scenario, dfd, match.matched_gold_ids)
+    lines.append("")
+    lines.append("Reachability breakdown (gold threats not matched):")
+    lines.append(f"  reachable_but_missed        {rc.reachable_but_missed:>4}   "
+                  "(real recall failures -- flow valid, no LLM match)")
+    lines.append(f"  structurally_unreachable     {rc.structurally_unreachable:>4}   "
+                  "(flow's element-type pair not in mapping_table.json)")
+    lines.append(f"  unresolved_location          {rc.unresolved_location:>4}   "
+                  "(no single flow to anchor to -- can never be matched)")
+    lines.append(f"  recall (raw, vs all gold):        {overall_r:.2f}")
+    lines.append(f"  recall (reachable-adjusted):      {rc.reachable_recall:.2f}   "
+                  "(tp / (tp + reachable_but_missed))")
+
+    if by_node:
+        node_scores = per_node_scores(generated, gold, match.gen_to_gold, match.matched_gold_ids)
+        titles = _node_titles()
+        nonzero = {n: s for n, s in node_scores.items() if s.tp or s.fp or s.fn}
+        lines.append("")
+        lines.append("Per-node breakdown (nonzero rows only):")
+        lines.append(f"{'Node':<10} {'Title':<42} {'TP':>4} {'FP':>4} {'FN':>4}")
+        for n in sorted(nonzero):
+            s = nonzero[n]
+            lines.append(f"{n:<10} {titles.get(n, '')[:42]:<42} {s.tp:>4} {s.fp:>4} {s.fn:>4}")
+        missed = sorted((s for s in nonzero.values() if s.fn), key=lambda s: -s.fn)[:10]
+        if missed:
+            lines.append("")
+            lines.append("Top missed tree nodes (by FN):")
+            for s in missed:
+                lines.append(f"  {s.threat_type:<10} {titles.get(s.threat_type, '')[:50]:<50} FN={s.fn}")
     return "\n".join(lines)

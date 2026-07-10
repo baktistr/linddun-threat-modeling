@@ -1,0 +1,68 @@
+Eval report: scenario=kidstube generated=storage/generated/kidstube_ungrounded.json
+  n_generated=113 n_gold=36 strict_node_match=False
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               4   13    1   0.24   0.80   0.36
+I    Identifying           2   17    2   0.11   0.50   0.17
+Nr   Non-repudiation       2   10    0   0.17   1.00   0.29
+D    Detecting             2   18    0   0.10   1.00   0.18
+Dd   Data Disclosure       4    7    9   0.36   0.31   0.33
+U    Unawareness           4   12    0   0.25   1.00   0.40  *
+Nc   Non-compliance        3   15    3   0.17   0.50   0.25  *
+ALL                       21   92   15   0.19   0.58   0.28
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          0.95
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           0.95
+  n_threats_checked        113
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          11   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             4   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.58
+  recall (reachable-adjusted):      0.66   (tp / (tp + reachable_but_missed))
+
+Per-node breakdown (nonzero rows only):
+Node       Title                                        TP   FP   FN
+D.1        Observed communications                       1    4    0
+D.1.1      Network-observable actions                    1   11    0
+D.1.2                                                    0    1    0
+D.2.1                                                    0    2    0
+Dd.1       Unnecessary data types                        1    2    0
+Dd.1.1     Data type sensitivity                         3    4    0
+Dd.2.1     Amount                                        0    1    1
+Dd.3.4     Duration/retention                            0    0    1
+Dd.4.2     Availability/accessibility of data            0    0    7
+I.1        Identified data                               1    4    0
+I.1.1      Identifying through explicit identifier       1   10    0
+I.1.2      Identifying through credential or identity    0    1    0
+I.2        Identifiable data                             0    2    0
+I.2.1      Identifying through identity-revealing con    0    0    1
+I.2.2      Identifying through small anonymity set or    0    0    1
+L.1        Linked data                                   2    3    0
+L.1.1      Unique identifier                             1    9    0
+L.1.2                                                    1    1    0
+L.2.2.1    Profiling an individual                       0    0    1
+Nc.1       Compliance-related problem                    1    4    0
+Nc.1.1     Unlawful processing or disclosure             2   10    2
+Nc.1.2     Violation of data-protection principle        0    0    1
+Nc.2.1                                                   0    1    0
+Nr.1       Retained evidence of a claim/action           1    4    0
+Nr.1.1     Attributable persistent logging               1    6    0
+U.1        Lack of transparency / awareness              3    2    0
+U.1.1      No notice of data collection                  1    9    0
+U.1.2      Covert processing / surveillance without t    0    1    0
+
+Top missed tree nodes (by FN):
+  Dd.4.2     Availability/accessibility of data                 FN=7
+  Nc.1.1     Unlawful processing or disclosure                  FN=2
+  Dd.2.1     Amount                                             FN=1
+  Dd.3.4     Duration/retention                                 FN=1
+  I.2.1      Identifying through identity-revealing content or  FN=1
+  I.2.2      Identifying through small anonymity set or weak ve FN=1
+  L.2.2.1    Profiling an individual                            FN=1
+  Nc.1.2     Violation of data-protection principle             FN=1

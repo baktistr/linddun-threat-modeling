@@ -53,6 +53,30 @@ def per_category_scores(generated: list[GeneratedThreat], gold: list[dict],
     return {tt: CategoryScore(tt, tp[tt], fp[tt], fn[tt]) for tt in LINDDUN_TYPES}
 
 
+def per_node_scores(generated: list[GeneratedThreat], gold: list[dict],
+                     gen_to_gold: dict[int, int], matched_gold_ids: set[int]
+                     ) -> dict[str, CategoryScore]:
+    """Same as per_category_scores but grouped by tree_node instead of threat_type -- finds where
+    misses concentrate below the top-level LINDDUN category. CategoryScore.threat_type holds a
+    tree_node id here (e.g. "Dd.1.1"), not a type code; the field is reused rather than renamed
+    to avoid an unrelated cross-cutting rename."""
+    tp: dict[str, int] = defaultdict(int)
+    fp: dict[str, int] = defaultdict(int)
+    fn: dict[str, int] = defaultdict(int)
+
+    for idx, t in enumerate(generated):
+        if idx in gen_to_gold:
+            tp[t.tree_node] += 1
+        else:
+            fp[t.tree_node] += 1
+    for g in gold:
+        if g["id"] not in matched_gold_ids:
+            fn[g["tree_node"]] += 1
+
+    nodes = set(tp) | set(fp) | set(fn)
+    return {n: CategoryScore(n, tp[n], fp[n], fn[n]) for n in sorted(nodes)}
+
+
 def citation_correctness(verifications: list[VerificationResult]) -> dict:
     n = len(verifications) or 1
     return {

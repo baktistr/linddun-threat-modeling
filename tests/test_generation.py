@@ -14,7 +14,8 @@ from generation.schema import GeneratedThreat
 from generation.verify import verify_threat
 from generation.llm_backend import get_llm_backend
 from eval.match import match_threats
-from eval.metrics import per_category_scores
+from eval.metrics import per_category_scores, per_node_scores
+from eval.reachability import reachability_breakdown
 
 PASS, FAIL = 0, 0
 
@@ -222,6 +223,51 @@ def test_matcher_genomic_location_based():
     check(m.fp == 1, f"fp==1: generated #2 has no matching resolved gold threat (got {m.fp})")
 
 
+def test_per_node_scores():
+    print("\n[per-node breakdown]")
+    gold, generated = _fixture_gold(), _fixture_generated()
+    m = match_threats(generated, gold, scenario="kidstube", strict=False)
+    scores = per_node_scores(generated, gold, m.gen_to_gold, m.matched_gold_ids)
+    check(scores["Dd.1.1"].tp == 1, "node Dd.1.1: tp=1 (gold #1 matched by gen #1)")
+    check(scores["L.1.1"].fn == 1, "node L.1.1: fn=1 (gold #2 never generated)")
+    check(scores["U.1.1"].fp == 1, "node U.1.1: fp=1 (gen #2 has no gold counterpart)")
+    check(scores["Dd.9.9"].tp == 1,
+          "node Dd.9.9: tp=1 -- gen #3 matched gold #3 at the coarse (flow+type) tier despite a different node")
+    check("Dd.3.4" not in scores,
+          "gold #3's own node (Dd.3.4) doesn't appear in the coarse-tier breakdown at all -- "
+          "the node mismatch is invisible unless --strict is also used")
+
+
+def test_reachability_genomic_reproduces_published_split():
+    print("\n[reachability: genomic reproduces the WEEK3/4 hand-counted 70/27/2 split]")
+    gold = json.loads((config.KB_DIR / "scenarios/genomic/gold_standard_threats.json").read_text())["threats"]
+    dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
+    # matched_gold_ids=set() -- as if nothing were generated yet, isolating the pure structural
+    # ceiling (independent of any live LLM run) from actual recall failures.
+    rc = reachability_breakdown(gold, "genomic", dfd, matched_gold_ids=set())
+    check(rc.reachable_but_missed == 70, f"70 structurally reachable (got {rc.reachable_but_missed})")
+    check(rc.structurally_unreachable == 27, f"27 structurally unreachable (got {rc.structurally_unreachable})")
+    check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
+
+
+def test_reachability_kidstube_multiflow_threats_are_unresolved():
+    print("\n[reachability: kidstube multi-flow gold threats can't anchor to one flow]")
+    gold = json.loads((config.KB_DIR / "scenarios/kidstube/gold_standard_threats.json").read_text())["threats"]
+    dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
+    rc = reachability_breakdown(gold, "kidstube", dfd, matched_gold_ids=set())
+    check(rc.structurally_unreachable == 0, "kidstube has no mapping-table gap (all flows Process-mediated)")
+    check(rc.unresolved_location == 4,
+          f"4 gold threats span multiple flows (e.g. '[DF7/DF10]') and can't anchor to one (got {rc.unresolved_location})")
+    check(rc.reachable_but_missed == 32, f"32 remaining threats are on a single, valid flow (got {rc.reachable_but_missed})")
+
+
+def test_reachability_recall_property():
+    print("\n[reachability: reachable_recall excludes structural misses from the denominator]")
+    from eval.reachability import ReachabilityCounts
+    rc = ReachabilityCounts(matched=7, reachable_but_missed=3, structurally_unreachable=5, unresolved_location=2)
+    check(rc.reachable_recall == 0.7, f"7/(7+3)=0.7 (got {rc.reachable_recall})")
+
+
 def test_matcher_genomic_without_dfd_falls_back_to_coarse():
     print("\n[matcher: genomic without a dfd arg falls back to type-only matching]")
     gold = [{"id": 1, "threat_type": "L", "tree_node": "L.2.1.2",
@@ -240,6 +286,10 @@ def main():
     test_verifier_fabricated_citations()
     test_matcher_coarse_tier()
     test_matcher_strict_tier()
+    test_per_node_scores()
+    test_reachability_genomic_reproduces_published_split()
+    test_reachability_kidstube_multiflow_threats_are_unresolved()
+    test_reachability_recall_property()
     test_llm_backend_routing()
     test_matcher_genomic_location_based()
     test_matcher_genomic_without_dfd_falls_back_to_coarse()

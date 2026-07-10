@@ -22,6 +22,29 @@ def gold_flow_id(gold_threat: dict) -> str | None:
     return m.group(1) if m else None
 
 
+def resolve_gold_flow(gold_threat: dict, scenario: str, dfd: dict | None,
+                       flows_by_id: dict) -> dict | None:
+    """Resolve a gold threat's own flow in dfd.json, independent of what any generated threat
+    claims -- shared by match_threats() and eval/reachability.py so the two can't develop
+    different notions of "which flow is this gold threat located on".
+
+    kidstube: the flow id embedded in `interaction` (e.g. "[DF1]"), looked up by id.
+    other scenarios: the flow whose (source, destination) matches dfd_source_id/dfd_destination_id.
+    Returns None if unresolvable (no dfd, no embedded/transcribed location, or a
+    dfd_location_confidence == "unresolved" gold threat) -- by design, not a bug.
+    """
+    if scenario == "kidstube":
+        gflow_id = gold_flow_id(gold_threat)
+        return flows_by_id.get(gflow_id) if gflow_id else None
+    if dfd is None:
+        return None
+    gsrc = gold_threat.get("dfd_source_id")
+    gdst = gold_threat.get("dfd_destination_id")
+    if gsrc is None or gdst is None:
+        return None
+    return next((f for f in dfd["flows"] if f["source"] == gsrc and f["destination"] == gdst), None)
+
+
 @dataclass
 class MatchResult:
     gen_to_gold: dict[int, int]       # generated list index -> matched gold threat id
@@ -57,11 +80,10 @@ def match_threats(generated: list[GeneratedThreat], gold: list[dict], scenario: 
                 if gflow is None or gflow != g.flow_id:
                     continue
             elif location_anchored:
-                gsrc = gold_t.get("dfd_source_id")
-                gdst = gold_t.get("dfd_destination_id")
-                if gsrc is None or gdst is None:
+                gold_flow = resolve_gold_flow(gold_t, scenario, dfd, flows_by_id)
+                if gold_flow is None:
                     continue  # unresolved gold location -- cannot be matched, by design
-                if gen_flow is None or gen_flow["source"] != gsrc or gen_flow["destination"] != gdst:
+                if gen_flow is None or gen_flow["id"] != gold_flow["id"]:
                     continue
             if strict and g.tree_node != gold_t["tree_node"]:
                 continue

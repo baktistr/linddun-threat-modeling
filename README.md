@@ -4,7 +4,7 @@ RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the cura
 
 > The retrieval engine is intentionally minimal and dependency-light; it can later be swapped for / merged with a shared `RAG-MCP-system` backend (Qdrant + hybrid + reranker). The knowledge base content (LINDDUN trees, mapping table, and the KidsTube + genomic gold standards) is the durable asset and is backend-agnostic.
 
-**Progress reports:** [Week 1](WEEK1_REPORT.md) · [Week 2](WEEK2_REPORT.md) · [Week 3](WEEK3_REPORT.md) · [Week 4](WEEK4_REPORT.md) · [Week 5](WEEK5_REPORT.md)
+**Progress reports:** [Week 1](WEEK1_REPORT.md) · [Week 2](WEEK2_REPORT.md) · [Week 3](WEEK3_REPORT.md) · [Week 4](WEEK4_REPORT.md) · [Week 5](WEEK5_REPORT.md) · [Week 6](WEEK6_REPORT.md)
 **Background & related work:** [REFERENCES.md](REFERENCES.md)
 
 ## What's in the knowledge base
