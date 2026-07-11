@@ -4,8 +4,9 @@ RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the cura
 
 > The retrieval engine is intentionally minimal and dependency-light; it can later be swapped for / merged with a shared `RAG-MCP-system` backend (Qdrant + hybrid + reranker). The knowledge base content (LINDDUN trees, mapping table, and the KidsTube + genomic gold standards) is the durable asset and is backend-agnostic.
 
-**Progress reports:** [Week 1](WEEK1_REPORT.md) · [Week 2](WEEK2_REPORT.md) · [Week 3](WEEK3_REPORT.md) · [Week 4](WEEK4_REPORT.md) · [Week 5](WEEK5_REPORT.md) · [Week 6](WEEK6_REPORT.md)
+**Progress reports:** [Week 1](WEEK1_REPORT.md) · [Week 2](WEEK2_REPORT.md) · [Week 3](WEEK3_REPORT.md) · [Week 4](WEEK4_REPORT.md) · [Week 5](WEEK5_REPORT.md) · [Week 6](WEEK6_REPORT.md) · [Week 7](WEEK7_REPORT.md)
 **Background & related work:** [REFERENCES.md](REFERENCES.md)
+**Grounded vs. ungrounded pipeline, in detail:** [PIPELINE.md](PIPELINE.md)
 
 ## What's in the knowledge base
 
@@ -15,7 +16,7 @@ RAG knowledge base for AI-assisted LINDDUN Pro privacy threat modeling: the cura
 | `knowledge_base/linddun/mapping_table.json` | LINDDUN Pro Table 4.1 — which types apply at S/fl/D per interaction | Drives which threats to check for each DFD interaction |
 | `knowledge_base/linddun/threat_types_and_methodology.md` | Type definitions + S/fl/D interpretation + iteration strategy | Prose context for the model |
 | `knowledge_base/scenarios/kidstube/system_description.md` | KidsTube DFD, assets, flows | Primary evaluation scenario |
-| `knowledge_base/scenarios/kidstube/gold_standard_threats.json` | **36-threat gold standard** | Ground truth for all evaluation |
+| `knowledge_base/scenarios/kidstube/gold_standard_threats.json` | **41-threat gold standard** | Ground truth for all evaluation |
 | `knowledge_base/scenarios/genomic/system_description.md` | Genomic sequencing DFD, assets, flows | Second evaluation scenario |
 | `knowledge_base/scenarios/genomic/gold_standard_threats.json` | **99-threat gold standard** (NIST complete example; 10 tagged as the core-example subset); each threat now also carries `dfd_source_id`/`dfd_destination_id` (97/99 resolved, Week 3) | Authoritative ground truth — NIST's own LINDDUN analysis, transcribed from Appendix G figures |
 | `knowledge_base/scenarios/genomic/dfd.json` | Structured DFD: **32 elements, 39 flows** across the shared + clinical + research pipelines (Week 3) | Lets generation iterate over concrete named flows, same as KidsTube |
@@ -26,9 +27,9 @@ Sources: LINDDUN Pro Tutorial v0.1 (KU Leuven, downloads.linddun.org); NIST SP 1
 
 Two scenarios provide the ground truth that AI-generated threats are scored against. Both ship a `system_description.md` (the DFD, assets, and flows) and a `gold_standard_threats.json` (the curated threat catalog). Each gold threat carries `tree_node`, `threat_type`, `severity`, and `likelihood`; scenario-specific provenance fields are noted below.
 
-### KidsTube — primary scenario (36 threats, all 7 LINDDUN types)
+### KidsTube — primary scenario (41 threats, all 7 LINDDUN types)
 
-A children's video-streaming platform under parental supervision (React / Node-Express / MongoDB). Source: EPS S26 HW2. **Current revision (v3):** 30 primary threats (Bakti's HW2) plus **6 merged from a second HW2 (Bilal)** that close coverage gaps — broken object-level authorization (BOLA), insecure password hashing, inference of sensitive child attributes from watch patterns, AB 2273 (AADC) privacy-by-default, CCPA/CPRA published-policy + DSAR, and a missing registration-time privacy notice. An earlier pass (v2) **audited 8 LINDDUN sub-node IDs** against the official trees and flagged 3 borderline threats; corrected threats record `original_hw2_node` + `mapping_note`, and merged threats record `source: "bilal_hw2"`. severity/likelihood are the HW2 qualitative ratings.
+A children's video-streaming platform under parental supervision (React / Node-Express / MongoDB). Source: EPS S26 HW2. **Current revision (v4):** 30 primary threats (Bakti's HW2) plus **6 merged from a second HW2 (Bilal)** that close coverage gaps — broken object-level authorization (BOLA), insecure password hashing, inference of sensitive child attributes from watch patterns, AB 2273 (AADC) privacy-by-default, CCPA/CPRA published-policy + DSAR, and a missing registration-time privacy notice — plus **5 net new entries from splitting 4 originally multi-flow threats** so every gold threat anchors to exactly one DFD flow (see `WEEK7_REPORT.md`). An earlier pass (v2) **audited 8 LINDDUN sub-node IDs** against the official trees and flagged 3 borderline threats; corrected threats record `original_hw2_node` + `mapping_note`, merged threats record `source: "bilal_hw2"`, and split threats record a `mapping_note` cross-referencing their sibling id(s). severity/likelihood are the HW2 qualitative ratings.
 
 ### Genomic Sequencing — second scenario (99 threats, all 7 LINDDUN types)
 
@@ -126,7 +127,7 @@ python cli.py build                    # rebuild after changing the backend
 ```
 knowledge_base/        curated source-of-truth documents (the durable asset)
   linddun/             methodology: trees, mapping table, definitions
-  scenarios/kidstube/  system description + dfd.json (12 elements, 17 flows) + 36-threat gold standard (primary)
+  scenarios/kidstube/  system description + dfd.json (12 elements, 17 flows) + 41-threat gold standard (primary)
   scenarios/genomic/   system description + dfd.json (32 elements, 39 flows, all 4 pipelines) + 99-threat gold standard
 
 ingestion/loader.py    md/json -> Chunk[] (structured items become individual chunks; dfd.json excluded)
@@ -187,7 +188,7 @@ The **canonical DFD is the pivot**: both inputs converge on one structured repre
 | Stage | Component | Status |
 |---|---|---|
 | Knowledge base (LINDDUN trees, mapping table) | `knowledge_base/`, `ingestion/`, `retrieval/` | ✅ built |
-| Evaluation ground truth (KidsTube 36 + genomic 99) | `knowledge_base/scenarios/`, `scripts/verify_genomic.py` | ✅ built |
+| Evaluation ground truth (KidsTube 41 + genomic 99) | `knowledge_base/scenarios/`, `scripts/verify_genomic.py` | ✅ built |
 | Methodology handoff (DFD interaction → applicable types/positions/nodes) | `retrieval/interaction_context.py` | ✅ built |
 | Per-scenario structured DFD (named elements/flows, not the general pivot schema) | `knowledge_base/scenarios/*/dfd.json` | ✅ built (Week 3) |
 | **Input front-end** — DFD ingestion / **source-code → DFD synthesis** | — | ⬜ not built (the largest piece; code→DFD is the research-hard part) |

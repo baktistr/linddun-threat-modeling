@@ -250,15 +250,16 @@ def test_reachability_genomic_reproduces_published_split():
     check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
 
 
-def test_reachability_kidstube_multiflow_threats_are_unresolved():
-    print("\n[reachability: kidstube multi-flow gold threats can't anchor to one flow]")
+def test_reachability_kidstube_all_resolved_after_v4_split():
+    print("\n[reachability: kidstube gold threats all anchor to exactly one flow (v4)]")
     gold = json.loads((config.KB_DIR / "scenarios/kidstube/gold_standard_threats.json").read_text())["threats"]
     dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
     rc = reachability_breakdown(gold, "kidstube", dfd, matched_gold_ids=set())
     check(rc.structurally_unreachable == 0, "kidstube has no mapping-table gap (all flows Process-mediated)")
-    check(rc.unresolved_location == 4,
-          f"4 gold threats span multiple flows (e.g. '[DF7/DF10]') and can't anchor to one (got {rc.unresolved_location})")
-    check(rc.reachable_but_missed == 32, f"32 remaining threats are on a single, valid flow (got {rc.reachable_but_missed})")
+    check(rc.unresolved_location == 0,
+          f"v4 split the 4 originally multi-flow threats (10, 18, 21, 29) into duplicate/independent "
+          f"per-flow entries, so every gold threat now anchors to exactly one flow (got {rc.unresolved_location})")
+    check(rc.reachable_but_missed == 41, f"all 41 threats are on a single, valid flow (got {rc.reachable_but_missed})")
 
 
 def test_reachability_recall_property():
@@ -288,7 +289,7 @@ def main():
     test_matcher_strict_tier()
     test_per_node_scores()
     test_reachability_genomic_reproduces_published_split()
-    test_reachability_kidstube_multiflow_threats_are_unresolved()
+    test_reachability_kidstube_all_resolved_after_v4_split()
     test_reachability_recall_property()
     test_llm_backend_routing()
     test_matcher_genomic_location_based()

@@ -1,15 +1,15 @@
 {
   "_meta": {
     "scenario": "KidsTube",
-    "source": "EPS S26 HW2 (Bakti Satria Adhityatama) primary; EPS S26 HW2 (Bilal) supplementary additions on threats 31\u201336",
+    "source": "EPS S26 HW2 (Bakti Satria Adhityatama) primary; EPS S26 HW2 (Bilal) supplementary additions on threats 36\u201341",
     "role": "gold-standard baseline for evaluation",
-    "revision": "v3 \u2014 merged Bilal HW2 coverage gaps (BOLA, weak hashing, sensitive-attribute inference, AB 2273 AADC, CCPA published-policy/DSAR, registration-time privacy notice)",
-    "threat_count": 36,
-    "corrections_applied": 14,
-    "borderline_flagged": 8,
+    "revision": "v4 \u2014 split 4 multi-flow threats (originally ids 10, 18, 21, 29) into duplicate per-flow entries so every gold threat anchors to exactly one DFD flow",
+    "threat_count": 41,
+    "corrections_applied": 17,
+    "borderline_flagged": 12,
     "bilal_additions": 6,
-    "audit_note": "v2: 8 node IDs corrected to match official LINDDUN tree semantics; 3 threats flagged borderline (see mapping_note). threat_type (the 7 LINDDUN categories) was unchanged in all cases; only the sub-node within each type was corrected. v3: 6 additional threats merged in from Bilal HW2 (ids 31\u201336) covering primary-catalog gaps \u2014 Insecure password hashing (Dd), inference of sensitive child characteristics from watch patterns (D), broken object-level authorization / BOLA (Dd), no privacy notice at registration (Nc), AB 2273 (AADC) privacy-by-default (Nc), CCPA/CPRA published-policy + DSAR + Do Not Sell obligations (Nc). Bilal's informal sub-node IDs (e.g. L.1, Nc.3, Nc.2.1) were re-mapped to official tree nodes; each merged threat records source=\"bilal_hw2\", original_hw2_node, and a mapping_note. Threats 13 and 16 received minor description enhancements adding AB 2273 and CCPA \u00a71798.135 cross-references respectively. Recommend advisor sign-off, especially on threats #27 and #32\u201335.",
-    "field_notes": "severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node is the corrected LINDDUN threat tree node id; original_hw2_node records the prior value where changed. source=\"bilal_hw2\" marks threats merged in during the v3 supplementary pass; absence of that field means the threat originates from the primary HW2 (Bakti)."
+    "audit_note": "v2: 8 node IDs corrected to match official LINDDUN tree semantics; 3 threats flagged borderline (see mapping_note). threat_type (the 7 LINDDUN categories) was unchanged in all cases; only the sub-node within each type was corrected. v3: 6 additional threats merged in from Bilal HW2 (ids 36\u201341 in this revision's numbering) covering primary-catalog gaps \u2014 insecure password hashing (Dd), inference of sensitive child characteristics from watch patterns (D), broken object-level authorization / BOLA (Dd), no privacy notice at registration (Nc), AB 2273 (AADC) privacy-by-default (Nc), CCPA/CPRA published-policy + DSAR + Do Not Sell obligations (Nc). Bilal's informal sub-node IDs (e.g. L.1, Nc.3, Nc.2.1) were re-mapped to official tree nodes; each merged threat records source=\"bilal_hw2\", original_hw2_node, and a mapping_note. Two threats received minor description enhancements adding AB 2273 and CCPA \u00a71798.135 cross-references respectively. Recommend advisor sign-off, especially on threats #30 and #37\u201340 (v4 numbering). v4: `eval/reachability.py` (Week 6) found 4 gold threats (then ids 10, 18, 21, 29) described something spanning more than one DFD flow at once, so they could never be matched by the per-flow generation pipeline regardless of model quality -- a structural ceiling distinct from Genomic's mapping-table gap. Two (21, 29 at the time) split cleanly into independent per-flow entries: the same vulnerability (unencrypted JWT; unencrypted DB connection) is genuinely, identically present on each contributing flow. Two (10, 18 at the time) describe genuine cross-flow aggregation risk -- the description explicitly states the risk is the *combination* of data across flows -- so rather than fabricate a weaker single-flow version, each was duplicated as-is onto every contributing flow; either flow being flagged counts as a match. Net +5 threats (36 -> 41); every id from 10 onward shifted and every in-text cross-reference to a shifted id was updated. See WEEK7_REPORT.md.",
+    "field_notes": "severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node is the corrected LINDDUN threat tree node id; original_hw2_node records the prior value where changed. source=\"bilal_hw2\" marks threats merged in during the v3 supplementary pass; absence of that field means the threat originates from the primary HW2 (Bakti). Threats whose mapping_note says \"v4: ... duplicate ...\" or \"v4: ... independent counterpart ...\" are one half of a pair/triple split from a single originally multi-flow threat -- see the note for which sibling id(s) to cross-reference."
   },
   "threats": [
     {
@@ -128,7 +128,7 @@
     },
     {
       "id": 10,
-      "interaction": "P3-DS2 [DF7/DF10]",
+      "interaction": "P3-DS2 [DF7]",
       "originator_id": "DS2",
       "tree_node": "L.2.2.1",
       "threat_type": "L",
@@ -138,10 +138,24 @@
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "L.2.1",
-      "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination)."
+      "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: split from a single two-flow threat (originally tagged [DF7/DF10]) into duplicate per-flow entries (this one and #11) so the per-flow generation pipeline can match it -- the profiling risk genuinely arises from combining data written via both flows, so both entries deliberately carry identical content rather than an approximated single-flow version."
     },
     {
       "id": 11,
+      "interaction": "P3-DS2 [DF10]",
+      "originator_id": "DS2",
+      "tree_node": "L.2.2.1",
+      "threat_type": "L",
+      "title": "Profiling children through aggregated behavioral data in DS2",
+      "description": "DS2 stores up to 50 search entries and 100 watch entries per child with exact queries, timestamps, per-second durations; combined with name, DOB, gender this builds a rich behavioral profile.",
+      "assumptions": "Confirmed by ChildProfile schema and history tracking code.",
+      "severity": "High",
+      "likelihood": "High",
+      "original_hw2_node": "L.2.1",
+      "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: duplicate of #10, split from the original two-flow threat -- see #10's note."
+    },
+    {
+      "id": 12,
       "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
       "tree_node": "Dd.2.1",
@@ -154,7 +168,7 @@
       "mapping_note": "Kept Dd.2.1 (amount) as primary; the retention aspect also relates to Dd.3.4 (duration/retention)."
     },
     {
-      "id": 12,
+      "id": 13,
       "interaction": "EE2-P2 [DF8]",
       "originator_id": "P2",
       "tree_node": "Nr.1.1",
@@ -166,7 +180,7 @@
       "likelihood": "High"
     },
     {
-      "id": 13,
+      "id": 14,
       "interaction": "EE2-P2 [DF8]",
       "originator_id": "P2",
       "tree_node": "U.1.1",
@@ -179,7 +193,7 @@
       "mapping_note": "v3: added AB 2273 (AADC) cross-reference from Bilal HW2 #8 (age-appropriate transparency for child users)."
     },
     {
-      "id": 14,
+      "id": 15,
       "interaction": "P2-DS3 [DF9]",
       "originator_id": "DS3",
       "tree_node": "L.1.3",
@@ -192,7 +206,7 @@
       "mapping_note": "L.1.3 is an instance of L.1 (linking via unique identifier) applied to ObjectId foreign keys; instance sub-ID, resolves to official L.1.1."
     },
     {
-      "id": 15,
+      "id": 16,
       "interaction": "DS2-P4 [DF13]",
       "originator_id": "P4",
       "tree_node": "Dd.4.1",
@@ -206,7 +220,7 @@
       "mapping_note": "Corrected from non-official Dd.4.3: sharing with additional/third parties maps to Dd.4.1 (involved parties); the dynamic third-party aspect is Dd.4.1.2."
     },
     {
-      "id": 16,
+      "id": 17,
       "interaction": "P4-EE3 [DF14]",
       "originator_id": "EE3",
       "tree_node": "Nc.1.1",
@@ -219,7 +233,7 @@
       "mapping_note": "v3: added CCPA/CPRA \u00a71798.135 \"Do Not Sell or Share\" cross-reference from Bilal HW2 #20."
     },
     {
-      "id": 17,
+      "id": 18,
       "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
       "tree_node": "Dd.4.2",
@@ -233,8 +247,21 @@
       "mapping_note": "Corrected from non-official Dd.4.4: unauthenticated broad access maps to Dd.4.2 (availability/accessibility)."
     },
     {
-      "id": 18,
-      "interaction": "EE1-P3-DS2 [DF6->DF7]",
+      "id": 19,
+      "interaction": "EE1-P3 [DF6]",
+      "originator_id": "P3",
+      "tree_node": "Nc.1.2",
+      "threat_type": "Nc",
+      "title": "Systematic violation of data minimization principle across the platform",
+      "description": "Excessive data (exact DOB, gender, child government ID, per-second watch tracking, 50/100 behavioral logs) collected and retained. Violates COPPA \u00a7312.7, GDPR Art. 5(1)(c), CCPA minimization.",
+      "assumptions": "Based on analysis of all collected data fields vs. functional requirements.",
+      "severity": "High",
+      "likelihood": "High",
+      "mapping_note": "v4: split from a single two-flow threat (originally tagged [DF6->DF7]) into duplicate per-flow entries (this one and #20) so the per-flow generation pipeline can match it -- the violation is platform-wide, spanning collection (DF6) and storage (DF7), so both entries deliberately carry identical content rather than an approximated single-flow version."
+    },
+    {
+      "id": 20,
+      "interaction": "P3-DS2 [DF7]",
       "originator_id": "DS2",
       "tree_node": "Nc.1.2",
       "threat_type": "Nc",
@@ -242,10 +269,11 @@
       "description": "Excessive data (exact DOB, gender, child government ID, per-second watch tracking, 50/100 behavioral logs) collected and retained. Violates COPPA \u00a7312.7, GDPR Art. 5(1)(c), CCPA minimization.",
       "assumptions": "Based on analysis of all collected data fields vs. functional requirements.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "mapping_note": "v4: duplicate of #19, split from the original two-flow threat -- see #19's note."
     },
     {
-      "id": 19,
+      "id": 21,
       "interaction": "EE1-P3 [DF6]",
       "originator_id": "P3",
       "tree_node": "U.2.1",
@@ -257,7 +285,7 @@
       "likelihood": "Med"
     },
     {
-      "id": 20,
+      "id": 22,
       "interaction": "EE2-P2 [DF8]",
       "originator_id": "DF8",
       "tree_node": "D.1.1",
@@ -269,8 +297,8 @@
       "likelihood": "Med"
     },
     {
-      "id": 21,
-      "interaction": "P1-EE1/EE2 [DF3/DF5]",
+      "id": 23,
+      "interaction": "P1-EE1 [DF3]",
       "originator_id": "P1",
       "tree_node": "I.2.1",
       "threat_type": "I",
@@ -278,10 +306,24 @@
       "description": "JWTs are signed but not encrypted; anyone intercepting a token can decode the base64 payload to learn the user's ObjectId and whether the request is from a parent or child.",
       "assumptions": "Standard JWT uses base64-encoded payloads readable without the signing secret.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "mapping_note": "v4: split from a single two-flow threat (originally tagged [DF3/DF5]) into per-flow entries (this one and #24) -- the JWT vulnerability is identical and independently present on each flow, so this is a clean split, not an approximation."
     },
     {
-      "id": 22,
+      "id": 24,
+      "interaction": "P1-EE2 [DF5]",
+      "originator_id": "P1",
+      "tree_node": "I.2.1",
+      "threat_type": "I",
+      "title": "JWT tokens expose user type and identity in transit",
+      "description": "JWTs are signed but not encrypted; anyone intercepting a token can decode the base64 payload to learn the user's ObjectId and whether the request is from a parent or child.",
+      "assumptions": "Standard JWT uses base64-encoded payloads readable without the signing secret.",
+      "severity": "Med",
+      "likelihood": "Med",
+      "mapping_note": "v4: independent counterpart of #23, split from the original two-flow threat -- see #23's note."
+    },
+    {
+      "id": 25,
       "interaction": "DS2-P3-EE1 [DF17]",
       "originator_id": "P3",
       "tree_node": "U.1.2",
@@ -293,7 +335,7 @@
       "likelihood": "High"
     },
     {
-      "id": 23,
+      "id": 26,
       "interaction": "EE1-P1 [DF1]",
       "originator_id": "P1",
       "tree_node": "I.2.2",
@@ -306,7 +348,7 @@
       "mapping_note": "Borderline: weak parental-identity verification \u2014 Identifying (I.2.2, weak verification) primary, but also relates to Nc.1.3 (inadequate consent mechanism)."
     },
     {
-      "id": 24,
+      "id": 27,
       "interaction": "P2-DS3 [DF9]",
       "originator_id": "DS3",
       "tree_node": "Nr.1.2",
@@ -318,7 +360,7 @@
       "likelihood": "Med"
     },
     {
-      "id": 25,
+      "id": 28,
       "interaction": "P3-DS2 [DF7]",
       "originator_id": "DS2",
       "tree_node": "L.2.1.1",
@@ -332,7 +374,7 @@
       "mapping_note": "Corrected from L.2.2: linking via shared FK + naming prefix is quasi-identifier combination (L.2.1.1), not L.2.2 (profiling/inference)."
     },
     {
-      "id": 26,
+      "id": 29,
       "interaction": "P1-DS4 [DF15]",
       "originator_id": "DS4",
       "tree_node": "Dd.4.2",
@@ -346,7 +388,7 @@
       "mapping_note": "Corrected from Dd.1.3: co-location/exposure risk maps to Dd.4.2 (availability/accessibility), not Dd.1.3 (data-type encoding)."
     },
     {
-      "id": 27,
+      "id": 30,
       "interaction": "EE1-P2 [DF11]",
       "originator_id": "P2",
       "tree_node": "Dd.3.2",
@@ -359,7 +401,7 @@
       "mapping_note": "Borderline / non-canonical: a content-moderation gap is a weak fit for Data Disclosure (it is not primarily a personal-data disclosure threat). Kept under Dd.3.2 (propagation) as least-bad; candidate for removal or re-scoping in advisor review."
     },
     {
-      "id": 28,
+      "id": 31,
       "interaction": "EE1-P1 [DF1]",
       "originator_id": "P1",
       "tree_node": "Nc.1.3",
@@ -371,21 +413,49 @@
       "likelihood": "High"
     },
     {
-      "id": 29,
-      "interaction": "P1/P2/P3-DS1/DS2/DS3 [DF2/DF7/DF9]",
-      "originator_id": "DS1/DS2/DS3",
+      "id": 32,
+      "interaction": "P1-DS1 [DF2]",
+      "originator_id": "DS1",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
       "title": "No encryption at rest or in transit for database containing children's PII",
-      "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 17), all data is plaintext-readable.",
+      "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 18), all data is plaintext-readable.",
       "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "Dd.4.5",
-      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility)."
+      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: split from a single three-flow threat (originally tagged [DF2/DF7/DF9], originator DS1/DS2/DS3) into duplicate per-store entries (this one, #33, #34) -- the unencrypted-connection issue is identical and independently present on each store, so this is a clean split, not an approximation."
     },
     {
-      "id": 30,
+      "id": 33,
+      "interaction": "P3-DS2 [DF7]",
+      "originator_id": "DS2",
+      "tree_node": "Dd.4.2",
+      "threat_type": "Dd",
+      "title": "No encryption at rest or in transit for database containing children's PII",
+      "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 18), all data is plaintext-readable.",
+      "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
+      "severity": "High",
+      "likelihood": "High",
+      "original_hw2_node": "Dd.4.5",
+      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#34, split from the original three-flow threat -- see #32's note."
+    },
+    {
+      "id": 34,
+      "interaction": "P2-DS3 [DF9]",
+      "originator_id": "DS3",
+      "tree_node": "Dd.4.2",
+      "threat_type": "Dd",
+      "title": "No encryption at rest or in transit for database containing children's PII",
+      "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 18), all data is plaintext-readable.",
+      "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
+      "severity": "High",
+      "likelihood": "High",
+      "original_hw2_node": "Dd.4.5",
+      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#33, split from the original three-flow threat -- see #32's note."
+    },
+    {
+      "id": 35,
       "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
       "tree_node": "U.1.3",
@@ -397,7 +467,7 @@
       "likelihood": "High"
     },
     {
-      "id": 31,
+      "id": 36,
       "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
       "tree_node": "Dd.4.2",
@@ -412,7 +482,7 @@
       "mapping_note": "Added from Bilal HW2 #3 (Insecure Credential Storage). Re-mapped from Bilal's informal Dd.2 to official Dd.4.2 (availability/accessibility \u2014 broken protection of stored credentials)."
     },
     {
-      "id": 32,
+      "id": 37,
       "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
       "tree_node": "D.2",
@@ -424,10 +494,10 @@
       "likelihood": "Med",
       "source": "bilal_hw2",
       "original_hw2_node": "D.1",
-      "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) \u2014 the threat is inference from patterns, not direct observation. Distinct from threat 10 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction."
+      "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) \u2014 the threat is inference from patterns, not direct observation. Distinct from threats 10\u201311 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction."
     },
     {
-      "id": 33,
+      "id": 38,
       "interaction": "EE1-P3 [DF6]",
       "originator_id": "P3",
       "tree_node": "Dd.4.2",
@@ -439,25 +509,25 @@
       "likelihood": "High",
       "source": "bilal_hw2",
       "original_hw2_node": "Dd.1",
-      "mapping_note": "Added from Bilal HW2 #11 (BOLA). Re-mapped from Bilal's Dd.1 (data-type sensitivity) to Dd.4.2 (availability/accessibility \u2014 too easy for an unauthorized data subject to access another's data). Distinct from threat 17 (database-level no-auth): this is application-layer authorization missing on otherwise authenticated requests."
+      "mapping_note": "Added from Bilal HW2 #11 (BOLA). Re-mapped from Bilal's Dd.1 (data-type sensitivity) to Dd.4.2 (availability/accessibility \u2014 too easy for an unauthorized data subject to access another's data). Distinct from threat 18 (database-level no-auth): this is application-layer authorization missing on otherwise authenticated requests."
     },
     {
-      "id": 34,
+      "id": 39,
       "interaction": "EE1-P1 [DF1]",
       "originator_id": "P1",
       "tree_node": "Nc.1.1",
       "threat_type": "Nc",
       "title": "No privacy notice presented to parent at point of registration",
       "description": "COPPA 16 CFR \u00a7312.4 and CCPA \u00a71798.100(a) both require a clear privacy notice at the point of collection. P1 collects parent PII (email, password, name, government ID, six-digit code) and creates child profiles before any privacy notice or link to a privacy policy is shown to the registering parent.",
-      "assumptions": "No privacy-notice screen or policy link was observed at registration. Distinct from threat 19 (intervenability after the fact) \u2014 this is the up-front notice obligation.",
+      "assumptions": "No privacy-notice screen or policy link was observed at registration. Distinct from threat 21 (intervenability after the fact) \u2014 this is the up-front notice obligation.",
       "severity": "High",
       "likelihood": "High",
       "source": "bilal_hw2",
       "original_hw2_node": "U.1.2",
-      "mapping_note": "Added from Bilal HW2 #13 (No Privacy Notice at Point of Registration). Re-mapped from Bilal's U.1.2 (which is already used in threat 22 for covert parental surveillance) to Nc.1.1 since the primary frame here is a regulatory notice violation. Sibling to threat 13 (child-facing notice gap) but for the parent-facing path."
+      "mapping_note": "Added from Bilal HW2 #13 (No Privacy Notice at Point of Registration). Re-mapped from Bilal's U.1.2 (which is already used in threat 25 for covert parental surveillance) to Nc.1.1 since the primary frame here is a regulatory notice violation. Sibling to threat 14 (child-facing notice gap) but for the parent-facing path."
     },
     {
-      "id": 35,
+      "id": 40,
       "interaction": "P3-EE2 [DF12]",
       "originator_id": "P3",
       "tree_node": "Nc.1.2",
@@ -469,22 +539,22 @@
       "likelihood": "High",
       "source": "bilal_hw2",
       "original_hw2_node": "Nc.3",
-      "mapping_note": "Added from Bilal HW2 #19 (AADC: No Privacy-by-Default for Minor Users). Re-mapped from Bilal's informal Nc.3 to Nc.1.2 (data-minimization-adjacent regulatory non-compliance) \u2014 Nc.1.2 is already used in threat 18 (COPPA/GDPR/CCPA minimization) and the AB 2273 default-settings violation is the same regulatory family. Mapping_note documents the shared sub-node."
+      "mapping_note": "Added from Bilal HW2 #19 (AADC: No Privacy-by-Default for Minor Users). Re-mapped from Bilal's informal Nc.3 to Nc.1.2 (data-minimization-adjacent regulatory non-compliance) \u2014 Nc.1.2 is already used in threats 19\u201320 (COPPA/GDPR/CCPA minimization) and the AB 2273 default-settings violation is the same regulatory family. Mapping_note documents the shared sub-node."
     },
     {
-      "id": 36,
+      "id": 41,
       "interaction": "EE1-P1 [DF1]",
       "originator_id": "P1",
       "tree_node": "Nc.1.1",
       "threat_type": "Nc",
       "title": "CCPA/CPRA non-compliance: no published privacy policy, Do Not Sell, or DSAR workflow",
       "description": "CCPA/CPRA requires covered California businesses to publish a privacy policy (\u00a71798.130), provide a \"Do Not Sell or Share My Personal Information\" link if data is sold or shared (\u00a71798.135), and operate a Data Subject Access Request workflow for access/deletion/correction requests (\u00a71798.105, \u00a71798.110, \u00a71798.106). No published privacy policy URL, opt-out link, or DSAR intake endpoint is documented for KidsTube.",
-      "assumptions": "No privacy policy URL was observed in the engineering documentation; threat 16 documents the contradiction between the policy's stated position and the planned advertiser-sharing feature, but this threat covers the broader publication and DSAR-workflow obligation.",
+      "assumptions": "No privacy policy URL was observed in the engineering documentation; threat 17 documents the contradiction between the policy's stated position and the planned advertiser-sharing feature, but this threat covers the broader publication and DSAR-workflow obligation.",
       "severity": "High",
       "likelihood": "High",
       "source": "bilal_hw2",
       "original_hw2_node": "Nc.2.1",
-      "mapping_note": "Added from Bilal HW2 #20 (CCPA: No Privacy Policy or Do Not Sell Opt-Out). Re-mapped from Bilal's informal Nc.2.1 to official Nc.1.1. Shares Nc.1.1 with threat 16 \u2014 both are COPPA/CCPA disclosure-regime violations; this threat is the platform-wide publication-and-DSAR gap, threat 16 is the specific advertiser-sharing contradiction."
+      "mapping_note": "Added from Bilal HW2 #20 (CCPA: No Privacy Policy or Do Not Sell Opt-Out). Re-mapped from Bilal's informal Nc.2.1 to official Nc.1.1. Shares Nc.1.1 with threat 17 \u2014 both are COPPA/CCPA disclosure-regime violations; this threat is the platform-wide publication-and-DSAR gap, threat 17 is the specific advertiser-sharing contradiction."
     }
   ]
 }

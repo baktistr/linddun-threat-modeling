@@ -44,9 +44,9 @@ def test_gold_standard_integrity():
     print("\n[gold standard integrity]")
     gs = json.loads((config.KB_DIR / "scenarios/kidstube/gold_standard_threats.json").read_text())
     threats = gs["threats"]
-    check(len(threats) == 36, f"36 threats (got {len(threats)})")
+    check(len(threats) == 41, f"41 threats (got {len(threats)})")
     ids = [t["id"] for t in threats]
-    check(ids == list(range(1, 37)), "ids contiguous 1..36")
+    check(ids == list(range(1, 42)), "ids contiguous 1..41")
     types = {t["threat_type"] for t in threats}
     check(types == {"L", "I", "Nr", "D", "Dd", "U", "Nc"}, f"all 7 LINDDUN types present (got {sorted(types)})")
     check(all(t["tree_node"] for t in threats), "every threat has a tree node")

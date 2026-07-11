@@ -1,18 +1,30 @@
 #!/usr/bin/env python3
 """Generate the KidsTube gold-standard threat catalog as structured JSON.
 
-Primary source: EPS S26 HW2 (Bakti Satria Adhityatama) — threats 1–30. This is the
+Primary source: EPS S26 HW2 (Bakti Satria Adhityatama) — threats 1–35. This is the
 evaluation ground truth against which AI-generated threats are compared in later weeks.
 
-Revision v3 (current): Six additional threats (31–36) were merged in from EPS S26 HW2
-(Bilal) covering coverage gaps in the primary catalog — weak password hashing, inference
-of sensitive child characteristics from watch patterns, broken object-level
-authorization (BOLA), missing privacy notice at registration, AB 2273 (AADC)
-privacy-by-default, and CCPA/CPRA published-policy + DSAR obligations. Threats 13 and
-16 were lightly enhanced with AB 2273 and CCPA "Do Not Sell" cross-references. Bilal's
-informal LINDDUN sub-node IDs (L.1, Nc.3, Nc.2.1, etc.) were re-mapped to official
-tree nodes; each merged threat carries `source: bilal_hw2` and a `mapping_note`
-documenting the re-mapping.
+Revision v4 (current): Four threats that spanned more than one DFD flow at once (originally
+ids 10, 18, 21, 29) were split into duplicate per-flow entries so the per-flow generation
+pipeline can match them at all -- see eval/reachability.py's "unresolved_location" category
+and WEEK6_REPORT.md finding #3. Two (originally 21, 29) split cleanly: each contributing flow
+independently exhibits the identical vulnerability (an unencrypted JWT; an unencrypted DB
+connection), so each half is a complete, non-approximate threat on its own. Two (originally
+10, 18) describe genuine cross-flow aggregation risk -- the threat is specifically the
+*combination* of data across flows -- so rather than fabricate weaker single-flow content,
+each was duplicated as-is onto every contributing flow (both halves carry identical content;
+either flow being flagged by the generation pipeline counts as a match). This inserted 5 net
+new entries (36 -> 41); every id from 10 onward shifted, and every in-text cross-reference to
+a shifted id (e.g. "see threat 17") was updated to match. See WEEK7_REPORT.md.
+
+Revision v3: Six additional threats (36–41) were merged in from EPS S26 HW2 (Bilal) covering
+coverage gaps in the primary catalog — weak password hashing, inference of sensitive child
+characteristics from watch patterns, broken object-level authorization (BOLA), missing
+privacy notice at registration, AB 2273 (AADC) privacy-by-default, and CCPA/CPRA
+published-policy + DSAR obligations. Threats 14 and 17 (v3 ids; see the v4 renumbering above)
+were lightly enhanced with AB 2273 and CCPA "Do Not Sell" cross-references. Bilal's informal
+LINDDUN sub-node IDs (L.1, Nc.3, Nc.2.1, etc.) were re-mapped to official tree nodes; each
+merged threat carries `source: bilal_hw2` and a `mapping_note` documenting the re-mapping.
 
 Revision v2: LINDDUN node IDs were audited against the official threat trees. Eight
 sub-node IDs were corrected and three threats flagged borderline. The threat_type
@@ -26,7 +38,7 @@ from pathlib import Path
 
 # Each threat is a dict. Required keys: id, interaction, originator_id, tree_node,
 # threat_type, title, description, assumptions, severity, likelihood.
-# Optional: original_hw2_node, mapping_note (present where audited/corrected/flagged).
+# Optional: original_hw2_node, mapping_note (present where audited/corrected/flagged/split).
 THREATS = [
     {"id": 1, "interaction": "EE1-P1 [DF1]", "originator_id": "EE1", "tree_node": "L.1.1", "threat_type": "L",
      "title": "Linking parent and child accounts via shared email identifier",
@@ -88,42 +100,50 @@ THREATS = [
      "severity": "High", "likelihood": "High",
      "mapping_note": "Borderline: mixes data-type sensitivity (Dd.1.1, govt ID) and granularity (Dd.1.2, exact DOB). Kept under Dd.1.2 (granularity) as primary."},
 
-    {"id": 10, "interaction": "P3-DS2 [DF7/DF10]", "originator_id": "DS2", "tree_node": "L.2.2.1", "threat_type": "L",
+    {"id": 10, "interaction": "P3-DS2 [DF7]", "originator_id": "DS2", "tree_node": "L.2.2.1", "threat_type": "L",
      "title": "Profiling children through aggregated behavioral data in DS2",
      "description": "DS2 stores up to 50 search entries and 100 watch entries per child with exact queries, timestamps, per-second durations; combined with name, DOB, gender this builds a rich behavioral profile.",
      "assumptions": "Confirmed by ChildProfile schema and history tracking code.",
      "severity": "High", "likelihood": "High",
      "original_hw2_node": "L.2.1",
-     "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination)."},
+     "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: split from a single two-flow threat (originally tagged [DF7/DF10]) into duplicate per-flow entries (this one and #11) so the per-flow generation pipeline can match it -- the profiling risk genuinely arises from combining data written via both flows, so both entries deliberately carry identical content rather than an approximated single-flow version."},
 
-    {"id": 11, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "Dd.2.1", "threat_type": "Dd",
+    {"id": 11, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "L.2.2.1", "threat_type": "L",
+     "title": "Profiling children through aggregated behavioral data in DS2",
+     "description": "DS2 stores up to 50 search entries and 100 watch entries per child with exact queries, timestamps, per-second durations; combined with name, DOB, gender this builds a rich behavioral profile.",
+     "assumptions": "Confirmed by ChildProfile schema and history tracking code.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "L.2.1",
+     "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: duplicate of #10, split from the original two-flow threat -- see #10's note."},
+
+    {"id": 12, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "Dd.2.1", "threat_type": "Dd",
      "title": "Excessive volume of child behavioral data retained indefinitely",
      "description": "DS2 retains up to 50 search + 100 watch entries per child. Documentation states logs are not deleted. The FIFO cap perpetually maintains maximum volume — not a deletion mechanism.",
      "assumptions": "Documentation explicitly states logs are not deleted. 50/100 caps are FIFO buffers.",
      "severity": "High", "likelihood": "High",
      "mapping_note": "Kept Dd.2.1 (amount) as primary; the retention aspect also relates to Dd.3.4 (duration/retention)."},
 
-    {"id": 12, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "Nr.1.1", "threat_type": "Nr",
+    {"id": 13, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "Nr.1.1", "threat_type": "Nr",
      "title": "Non-repudiation of child actions via persistent attributed logging",
      "description": "Every child action is logged with timestamps and the child's ObjectId across DS2/DS3, creating an irrefutable permanent record of a minor's online behavior the child cannot deny.",
      "assumptions": "Confirmed by ChildProfile and Video schemas.",
      "severity": "Med", "likelihood": "High"},
 
-    {"id": 13, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "U.1.1", "threat_type": "U",
+    {"id": 14, "interaction": "EE2-P2 [DF8]", "originator_id": "P2", "tree_node": "U.1.1", "threat_type": "U",
      "title": "Children unaware of data collection and parental surveillance",
      "description": "P2/P3 silently record all activity. Documentation states children are not notified about search/watch history tracking. No child-facing notices or indicators. California AB 2273 (AADC) specifically prohibits collecting data from minors without age-appropriate transparency.",
      "assumptions": "Directly stated in engineering documentation under Video Search and Watch History.",
      "severity": "High", "likelihood": "High",
      "mapping_note": "v3: added AB 2273 (AADC) cross-reference from Bilal HW2 #8 (age-appropriate transparency for child users)."},
 
-    {"id": 14, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "L.1.3", "threat_type": "L",
+    {"id": 15, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "L.1.3", "threat_type": "L",
      "title": "Video interactions permanently linkable to identified users via ObjectId",
      "description": "Likes and comments store user ObjectId as foreign keys to DS1/DS2, permanently linking all content interactions to identified individuals and enabling long-term profiling.",
      "assumptions": "Confirmed by Video schema: likes[].user and comments[].user are ObjectId refs.",
      "severity": "Med", "likelihood": "High",
      "mapping_note": "L.1.3 is an instance of L.1 (linking via unique identifier) applied to ObjectId foreign keys; instance sub-ID, resolves to official L.1.1."},
 
-    {"id": 15, "interaction": "DS2-P4 [DF13]", "originator_id": "P4", "tree_node": "Dd.4.1", "threat_type": "Dd",
+    {"id": 16, "interaction": "DS2-P4 [DF13]", "originator_id": "P4", "tree_node": "Dd.4.1", "threat_type": "Dd",
      "title": "Planned sharing of children's browsing data with AI engine and third parties",
      "description": "Planned feature would expose children's behavioral profiles to an AI engine and ad targeting. Documentation states browsing history is used to train AI models and shared with advertisers (not yet implemented).",
      "assumptions": "Feature documented but not yet implemented. Analyzed as a planned threat requiring preventive action.",
@@ -131,14 +151,14 @@ THREATS = [
      "original_hw2_node": "Dd.4.3",
      "mapping_note": "Corrected from non-official Dd.4.3: sharing with additional/third parties maps to Dd.4.1 (involved parties); the dynamic third-party aspect is Dd.4.1.2."},
 
-    {"id": 16, "interaction": "P4-EE3 [DF14]", "originator_id": "EE3", "tree_node": "Nc.1.1", "threat_type": "Nc",
+    {"id": 17, "interaction": "P4-EE3 [DF14]", "originator_id": "EE3", "tree_node": "Nc.1.1", "threat_type": "Nc",
      "title": "Planned third-party data sharing violates COPPA and contradicts privacy policy",
      "description": "Advertisers would receive children's behavioral data without verifiable parental consent (COPPA §312.5). Sharing personal information with third parties also triggers CCPA/CPRA §1798.135 \"Do Not Sell or Share\" disclosure and opt-out obligations. The privacy policy states KidsTube does not sell or rent children's data — directly contradicting the planned feature.",
      "assumptions": "Privacy policy (Section 6) and engineering documentation are in direct contradiction.",
      "severity": "High", "likelihood": "Med",
      "mapping_note": "v3: added CCPA/CPRA §1798.135 \"Do Not Sell or Share\" cross-reference from Bilal HW2 #20."},
 
-    {"id": 17, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
+    {"id": 18, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
      "title": "MongoDB database accessible without authentication on shared server",
      "description": "Connection uses mongodb://localhost:27017/kidstube with no TLS and no authentication; any process on the server can read/write all collections. SSH access uses shared accounts.",
      "assumptions": "Connection string confirmed in documentation. Shared SSH accounts documented.",
@@ -146,50 +166,66 @@ THREATS = [
      "original_hw2_node": "Dd.4.4",
      "mapping_note": "Corrected from non-official Dd.4.4: unauthenticated broad access maps to Dd.4.2 (availability/accessibility)."},
 
-    {"id": 18, "interaction": "EE1-P3-DS2 [DF6->DF7]", "originator_id": "DS2", "tree_node": "Nc.1.2", "threat_type": "Nc",
+    {"id": 19, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "Nc.1.2", "threat_type": "Nc",
      "title": "Systematic violation of data minimization principle across the platform",
      "description": "Excessive data (exact DOB, gender, child government ID, per-second watch tracking, 50/100 behavioral logs) collected and retained. Violates COPPA §312.7, GDPR Art. 5(1)(c), CCPA minimization.",
      "assumptions": "Based on analysis of all collected data fields vs. functional requirements.",
-     "severity": "High", "likelihood": "High"},
+     "severity": "High", "likelihood": "High",
+     "mapping_note": "v4: split from a single two-flow threat (originally tagged [DF6->DF7]) into duplicate per-flow entries (this one and #20) so the per-flow generation pipeline can match it -- the violation is platform-wide, spanning collection (DF6) and storage (DF7), so both entries deliberately carry identical content rather than an approximated single-flow version."},
 
-    {"id": 19, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "U.2.1", "threat_type": "U",
+    {"id": 20, "interaction": "P3-DS2 [DF7]", "originator_id": "DS2", "tree_node": "Nc.1.2", "threat_type": "Nc",
+     "title": "Systematic violation of data minimization principle across the platform",
+     "description": "Excessive data (exact DOB, gender, child government ID, per-second watch tracking, 50/100 behavioral logs) collected and retained. Violates COPPA §312.7, GDPR Art. 5(1)(c), CCPA minimization.",
+     "assumptions": "Based on analysis of all collected data fields vs. functional requirements.",
+     "severity": "High", "likelihood": "High",
+     "mapping_note": "v4: duplicate of #19, split from the original two-flow threat -- see #19's note."},
+
+    {"id": 21, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "U.2.1", "threat_type": "U",
      "title": "Limited intervenability: deletion claims contradict actual data persistence",
      "description": "Privacy policy claims 30-day erasure with no enforcement; logs are not deleted; government ID images and comments referencing the child ObjectId may survive profile deletion.",
      "assumptions": "Assumed file system cleanup (DS4) and cross-collection cleanup (DS3) not triggered by API deletion.",
      "severity": "Med", "likelihood": "Med"},
 
-    {"id": 20, "interaction": "EE2-P2 [DF8]", "originator_id": "DF8", "tree_node": "D.1.1", "threat_type": "D",
+    {"id": 22, "interaction": "EE2-P2 [DF8]", "originator_id": "DF8", "tree_node": "D.1.1", "threat_type": "D",
      "title": "Child search queries and actions observable on the network",
      "description": "Child interactions are sent as HTTP API calls with JWT in the Authorization header. Without enforced HTTPS, exact search terms are visible to network observers; even with HTTPS, traffic patterns reveal behavior.",
      "assumptions": "No mention of HTTPS enforcement, HSTS headers, or TLS configuration in documentation.",
      "severity": "Med", "likelihood": "Med"},
 
-    {"id": 21, "interaction": "P1-EE1/EE2 [DF3/DF5]", "originator_id": "P1", "tree_node": "I.2.1", "threat_type": "I",
+    {"id": 23, "interaction": "P1-EE1 [DF3]", "originator_id": "P1", "tree_node": "I.2.1", "threat_type": "I",
      "title": "JWT tokens expose user type and identity in transit",
      "description": "JWTs are signed but not encrypted; anyone intercepting a token can decode the base64 payload to learn the user's ObjectId and whether the request is from a parent or child.",
      "assumptions": "Standard JWT uses base64-encoded payloads readable without the signing secret.",
-     "severity": "Med", "likelihood": "Med"},
+     "severity": "Med", "likelihood": "Med",
+     "mapping_note": "v4: split from a single two-flow threat (originally tagged [DF3/DF5]) into per-flow entries (this one and #24) -- the JWT vulnerability is identical and independently present on each flow, so this is a clean split, not an approximation."},
 
-    {"id": 22, "interaction": "DS2-P3-EE1 [DF17]", "originator_id": "P3", "tree_node": "U.1.2", "threat_type": "U",
+    {"id": 24, "interaction": "P1-EE2 [DF5]", "originator_id": "P1", "tree_node": "I.2.1", "threat_type": "I",
+     "title": "JWT tokens expose user type and identity in transit",
+     "description": "JWTs are signed but not encrypted; anyone intercepting a token can decode the base64 payload to learn the user's ObjectId and whether the request is from a parent or child.",
+     "assumptions": "Standard JWT uses base64-encoded payloads readable without the signing secret.",
+     "severity": "Med", "likelihood": "Med",
+     "mapping_note": "v4: independent counterpart of #23, split from the original two-flow threat -- see #23's note."},
+
+    {"id": 25, "interaction": "DS2-P3-EE1 [DF17]", "originator_id": "P3", "tree_node": "U.1.2", "threat_type": "U",
      "title": "Covert parental surveillance of children without age-appropriate transparency",
      "description": "Parents receive full search and watch history through Manage Children. Children are explicitly not informed; complete secrecy, especially near age 13, violates age-appropriate transparency principles.",
      "assumptions": "Directly confirmed by engineering documentation.",
      "severity": "High", "likelihood": "High"},
 
-    {"id": 23, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "I.2.2", "threat_type": "I",
+    {"id": 26, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "I.2.2", "threat_type": "I",
      "title": "Six-digit code provides inadequate verification of parental identity",
      "description": "P1 validates only that the code is exactly 6 digits — no complexity, rotation, or lockout. All test accounts use 123456. A child could observe or guess the code and access parent controls.",
      "assumptions": "Test accounts use 123456. No rate limiting or lockout documented.",
      "severity": "Med", "likelihood": "High",
      "mapping_note": "Borderline: weak parental-identity verification — Identifying (I.2.2, weak verification) primary, but also relates to Nc.1.3 (inadequate consent mechanism)."},
 
-    {"id": 24, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "Nr.1.2", "threat_type": "Nr",
+    {"id": 27, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "Nr.1.2", "threat_type": "Nr",
      "title": "Children's comments create irrevocable attributed speech records",
      "description": "Comments are stored with the child's ObjectId, text, and timestamp. No DELETE endpoint exists, creating permanent attributable speech records for minors that persist even if harmful.",
      "assumptions": "Video API shows POST /api/videos/:id/comments but no DELETE endpoint for comments.",
      "severity": "Med", "likelihood": "Med"},
 
-    {"id": 25, "interaction": "P3-DS2 [DF7]", "originator_id": "DS2", "tree_node": "L.2.1.1", "threat_type": "L",
+    {"id": 28, "interaction": "P3-DS2 [DF7]", "originator_id": "DS2", "tree_node": "L.2.1.1", "threat_type": "L",
      "title": "Cross-referencing child and parent data via shared naming prefix and foreign key",
      "description": "Child profiles contain a direct parent ObjectId foreign key and documentation states children share the same prefixes as the parent, making family relationships trivially discoverable from DB access alone.",
      "assumptions": "Stated in engineering documentation and confirmed in ChildProfile schema.",
@@ -197,7 +233,7 @@ THREATS = [
      "original_hw2_node": "L.2.2",
      "mapping_note": "Corrected from L.2.2: linking via shared FK + naming prefix is quasi-identifier combination (L.2.1.1), not L.2.2 (profiling/inference)."},
 
-    {"id": 26, "interaction": "P1-DS4 [DF15]", "originator_id": "DS4", "tree_node": "Dd.4.2", "threat_type": "Dd",
+    {"id": 29, "interaction": "P1-DS4 [DF15]", "originator_id": "DS4", "tree_node": "Dd.4.2", "threat_type": "Dd",
      "title": "Government ID images co-located with streaming content on shared file system",
      "description": "Government IDs are stored in the same backend/uploads/ directory structure as publicly served video content. Misconfigured static file serving could accidentally expose IDs.",
      "assumptions": "Both images and videos stored under backend/uploads/ per file structure documentation.",
@@ -205,28 +241,44 @@ THREATS = [
      "original_hw2_node": "Dd.1.3",
      "mapping_note": "Corrected from Dd.1.3: co-location/exposure risk maps to Dd.4.2 (availability/accessibility), not Dd.1.3 (data-type encoding)."},
 
-    {"id": 27, "interaction": "EE1-P2 [DF11]", "originator_id": "P2", "tree_node": "Dd.3.2", "threat_type": "Dd",
+    {"id": 30, "interaction": "EE1-P2 [DF11]", "originator_id": "P2", "tree_node": "Dd.3.2", "threat_type": "Dd",
      "title": "No automated content moderation before video exposure to children",
      "description": "Videos default to isApproved:false but approval relies entirely on parent judgment. No automated content scanning or platform-level review; a negligent parent could approve inappropriate content.",
      "assumptions": "isApproved defaults to false; no automated screening pipeline documented.",
      "severity": "Med", "likelihood": "Med",
      "mapping_note": "Borderline / non-canonical: a content-moderation gap is a weak fit for Data Disclosure (it is not primarily a personal-data disclosure threat). Kept under Dd.3.2 (propagation) as least-bad; candidate for removal or re-scoping in advisor review."},
 
-    {"id": 28, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.3", "threat_type": "Nc",
+    {"id": 31, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.3", "threat_type": "Nc",
      "title": "Inadequate COPPA verifiable parental consent mechanism",
      "description": "Parent uploads government ID and chooses a six-digit code, but P1 never verifies the ID belongs to the registrant. None of the FTC-approved §312.5 consent methods are implemented.",
      "assumptions": "No third-party identity verification or FTC-approved consent method documented.",
      "severity": "High", "likelihood": "High"},
 
-    {"id": 29, "interaction": "P1/P2/P3-DS1/DS2/DS3 [DF2/DF7/DF9]", "originator_id": "DS1/DS2/DS3", "tree_node": "Dd.4.2", "threat_type": "Dd",
+    {"id": 32, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
      "title": "No encryption at rest or in transit for database containing children's PII",
-     "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 17), all data is plaintext-readable.",
+     "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 18), all data is plaintext-readable.",
      "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
      "severity": "High", "likelihood": "High",
      "original_hw2_node": "Dd.4.5",
-     "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility)."},
+     "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: split from a single three-flow threat (originally tagged [DF2/DF7/DF9], originator DS1/DS2/DS3) into duplicate per-store entries (this one, #33, #34) -- the unencrypted-connection issue is identical and independently present on each store, so this is a clean split, not an approximation."},
 
-    {"id": 30, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "U.1.3", "threat_type": "U",
+    {"id": 33, "interaction": "P3-DS2 [DF7]", "originator_id": "DS2", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "No encryption at rest or in transit for database containing children's PII",
+     "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 18), all data is plaintext-readable.",
+     "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "Dd.4.5",
+     "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#34, split from the original three-flow threat -- see #32's note."},
+
+    {"id": 34, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "Dd.4.2", "threat_type": "Dd",
+     "title": "No encryption at rest or in transit for database containing children's PII",
+     "description": "MongoDB connections use no TLS and store all personal data (parent PII, child PII, behavioral data) without encryption at rest. Combined with no authentication (threat 18), all data is plaintext-readable.",
+     "assumptions": "Connection string has no auth or TLS parameters. No mention of encryption features.",
+     "severity": "High", "likelihood": "High",
+     "original_hw2_node": "Dd.4.5",
+     "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#33, split from the original three-flow threat -- see #32's note."},
+
+    {"id": 35, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "U.1.3", "threat_type": "U",
      "title": "Per-second watch duration tracking creates undisclosed detailed behavioral profiles",
      "description": "VideoPlayer.js reports exact seconds watched via setInterval; DS2 stores watchDuration per second with a completion flag. This granularity is undisclosed, unnecessary, and builds detailed temporal profiles of children.",
      "assumptions": "Confirmed by VideoPlayer.js using setInterval and trackWatchHistory(videoId, totalWatchTime, true).",
@@ -234,7 +286,7 @@ THREATS = [
 
     # --- v3 additions merged from EPS S26 HW2 (Bilal) ---
 
-    {"id": 31, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
+    {"id": 36, "interaction": "P1-DS1 [DF2]", "originator_id": "DS1", "tree_node": "Dd.4.2", "threat_type": "Dd",
      "title": "Insecure credential storage: weak or unverified password hashing",
      "description": "Parent passwords flow from P1 into DS1. If the hashing algorithm is weak (MD5/SHA-1), uses no per-user salt, or passwords are stored in plaintext, a single DS1 breach exposes every parent credential — which in turn unlocks every child profile because children authenticate with the parent's credentials (see threat 7).",
      "assumptions": "Codebase was not audited to confirm Argon2id/bcrypt is in use. Node.js applications frequently default to weak hashing without explicit enforcement.",
@@ -243,50 +295,50 @@ THREATS = [
      "original_hw2_node": "Dd.2",
      "mapping_note": "Added from Bilal HW2 #3 (Insecure Credential Storage). Re-mapped from Bilal's informal Dd.2 to official Dd.4.2 (availability/accessibility — broken protection of stored credentials)."},
 
-    {"id": 32, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "D.2", "threat_type": "D",
+    {"id": 37, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "D.2", "threat_type": "D",
      "title": "Inference of sensitive child characteristics from watch patterns",
      "description": "DS2 watch and search history can be analyzed to infer sensitive attributes about the child even without explicit identifiers: repeated medical content reveals health conditions, minority-language videos reveal ethnicity, family-separation content may reveal custody situations. CCPA/CPRA classifies such inferences as personal information.",
      "assumptions": "No policy or technical control prohibits analytics or admin processes from running pattern analysis over DS2 history fields.",
      "severity": "High", "likelihood": "Med",
      "source": "bilal_hw2",
      "original_hw2_node": "D.1",
-     "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) — the threat is inference from patterns, not direct observation. Distinct from threat 10 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction."},
+     "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) — the threat is inference from patterns, not direct observation. Distinct from threats 10–11 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction."},
 
-    {"id": 33, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "Dd.4.2", "threat_type": "Dd",
+    {"id": 38, "interaction": "EE1-P3 [DF6]", "originator_id": "P3", "tree_node": "Dd.4.2", "threat_type": "Dd",
      "title": "Unauthorized cross-account access via missing object-level authorization (BOLA)",
      "description": "API endpoints exposing /api/children/:id, /api/users/:id, and history routes do not verify that the authenticated parent owns the child profile being requested. Any logged-in parent can retrieve another family's child data, search history, or watch history by manipulating the id path parameter. This is OWASP API Security #1: Broken Object-Level Authorization.",
      "assumptions": "Standard Express.js route handlers without ownership-check middleware. No authorization integration tests verifying cross-account requests return 403.",
      "severity": "High", "likelihood": "High",
      "source": "bilal_hw2",
      "original_hw2_node": "Dd.1",
-     "mapping_note": "Added from Bilal HW2 #11 (BOLA). Re-mapped from Bilal's Dd.1 (data-type sensitivity) to Dd.4.2 (availability/accessibility — too easy for an unauthorized data subject to access another's data). Distinct from threat 17 (database-level no-auth): this is application-layer authorization missing on otherwise authenticated requests."},
+     "mapping_note": "Added from Bilal HW2 #11 (BOLA). Re-mapped from Bilal's Dd.1 (data-type sensitivity) to Dd.4.2 (availability/accessibility — too easy for an unauthorized data subject to access another's data). Distinct from threat 18 (database-level no-auth): this is application-layer authorization missing on otherwise authenticated requests."},
 
-    {"id": 34, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.1", "threat_type": "Nc",
+    {"id": 39, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.1", "threat_type": "Nc",
      "title": "No privacy notice presented to parent at point of registration",
      "description": "COPPA 16 CFR §312.4 and CCPA §1798.100(a) both require a clear privacy notice at the point of collection. P1 collects parent PII (email, password, name, government ID, six-digit code) and creates child profiles before any privacy notice or link to a privacy policy is shown to the registering parent.",
-     "assumptions": "No privacy-notice screen or policy link was observed at registration. Distinct from threat 19 (intervenability after the fact) — this is the up-front notice obligation.",
+     "assumptions": "No privacy-notice screen or policy link was observed at registration. Distinct from threat 21 (intervenability after the fact) — this is the up-front notice obligation.",
      "severity": "High", "likelihood": "High",
      "source": "bilal_hw2",
      "original_hw2_node": "U.1.2",
-     "mapping_note": "Added from Bilal HW2 #13 (No Privacy Notice at Point of Registration). Re-mapped from Bilal's U.1.2 (which is already used in threat 22 for covert parental surveillance) to Nc.1.1 since the primary frame here is a regulatory notice violation. Sibling to threat 13 (child-facing notice gap) but for the parent-facing path."},
+     "mapping_note": "Added from Bilal HW2 #13 (No Privacy Notice at Point of Registration). Re-mapped from Bilal's U.1.2 (which is already used in threat 25 for covert parental surveillance) to Nc.1.1 since the primary frame here is a regulatory notice violation. Sibling to threat 14 (child-facing notice gap) but for the parent-facing path."},
 
-    {"id": 35, "interaction": "P3-EE2 [DF12]", "originator_id": "P3", "tree_node": "Nc.1.2", "threat_type": "Nc",
+    {"id": 40, "interaction": "P3-EE2 [DF12]", "originator_id": "P3", "tree_node": "Nc.1.2", "threat_type": "Nc",
      "title": "AB 2273 (AADC) violation: no privacy-by-default configuration for minor users",
      "description": "California AB 2273 (Age-Appropriate Design Code) requires services likely accessed by minors to default to the most privacy-protective settings. KidsTube collects watch/search history, per-second viewing telemetry, and likes/comments by default for every child profile, with no opt-out and no setting that disables behavioral collection. All collection defaults are on for child accounts.",
      "assumptions": "No privacy-by-default configuration or opt-out toggle for behavioral collection was observed in the engineering documentation or schemas.",
      "severity": "High", "likelihood": "High",
      "source": "bilal_hw2",
      "original_hw2_node": "Nc.3",
-     "mapping_note": "Added from Bilal HW2 #19 (AADC: No Privacy-by-Default for Minor Users). Re-mapped from Bilal's informal Nc.3 to Nc.1.2 (data-minimization-adjacent regulatory non-compliance) — Nc.1.2 is already used in threat 18 (COPPA/GDPR/CCPA minimization) and the AB 2273 default-settings violation is the same regulatory family. Mapping_note documents the shared sub-node."},
+     "mapping_note": "Added from Bilal HW2 #19 (AADC: No Privacy-by-Default for Minor Users). Re-mapped from Bilal's informal Nc.3 to Nc.1.2 (data-minimization-adjacent regulatory non-compliance) — Nc.1.2 is already used in threats 19–20 (COPPA/GDPR/CCPA minimization) and the AB 2273 default-settings violation is the same regulatory family. Mapping_note documents the shared sub-node."},
 
-    {"id": 36, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.1", "threat_type": "Nc",
+    {"id": 41, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.1", "threat_type": "Nc",
      "title": "CCPA/CPRA non-compliance: no published privacy policy, Do Not Sell, or DSAR workflow",
      "description": "CCPA/CPRA requires covered California businesses to publish a privacy policy (§1798.130), provide a \"Do Not Sell or Share My Personal Information\" link if data is sold or shared (§1798.135), and operate a Data Subject Access Request workflow for access/deletion/correction requests (§1798.105, §1798.110, §1798.106). No published privacy policy URL, opt-out link, or DSAR intake endpoint is documented for KidsTube.",
-     "assumptions": "No privacy policy URL was observed in the engineering documentation; threat 16 documents the contradiction between the policy's stated position and the planned advertiser-sharing feature, but this threat covers the broader publication and DSAR-workflow obligation.",
+     "assumptions": "No privacy policy URL was observed in the engineering documentation; threat 17 documents the contradiction between the policy's stated position and the planned advertiser-sharing feature, but this threat covers the broader publication and DSAR-workflow obligation.",
      "severity": "High", "likelihood": "High",
      "source": "bilal_hw2",
      "original_hw2_node": "Nc.2.1",
-     "mapping_note": "Added from Bilal HW2 #20 (CCPA: No Privacy Policy or Do Not Sell Opt-Out). Re-mapped from Bilal's informal Nc.2.1 to official Nc.1.1. Shares Nc.1.1 with threat 16 — both are COPPA/CCPA disclosure-regime violations; this threat is the platform-wide publication-and-DSAR gap, threat 16 is the specific advertiser-sharing contradiction."},
+     "mapping_note": "Added from Bilal HW2 #20 (CCPA: No Privacy Policy or Do Not Sell Opt-Out). Re-mapped from Bilal's informal Nc.2.1 to official Nc.1.1. Shares Nc.1.1 with threat 17 — both are COPPA/CCPA disclosure-regime violations; this threat is the platform-wide publication-and-DSAR gap, threat 17 is the specific advertiser-sharing contradiction."},
 ]
 
 
@@ -297,9 +349,9 @@ def main():
     catalog = {
         "_meta": {
             "scenario": "KidsTube",
-            "source": "EPS S26 HW2 (Bakti Satria Adhityatama) primary; EPS S26 HW2 (Bilal) supplementary additions on threats 31–36",
+            "source": "EPS S26 HW2 (Bakti Satria Adhityatama) primary; EPS S26 HW2 (Bilal) supplementary additions on threats 36–41",
             "role": "gold-standard baseline for evaluation",
-            "revision": "v3 — merged Bilal HW2 coverage gaps (BOLA, weak hashing, sensitive-attribute inference, AB 2273 AADC, CCPA published-policy/DSAR, registration-time privacy notice)",
+            "revision": "v4 — split 4 multi-flow threats (originally ids 10, 18, 21, 29) into duplicate per-flow entries so every gold threat anchors to exactly one DFD flow",
             "threat_count": len(THREATS),
             "corrections_applied": corrections,
             "borderline_flagged": borderline,
@@ -307,22 +359,37 @@ def main():
             "audit_note": ("v2: 8 node IDs corrected to match official LINDDUN tree semantics; 3 threats flagged "
                            "borderline (see mapping_note). threat_type (the 7 LINDDUN categories) was unchanged "
                            "in all cases; only the sub-node within each type was corrected. "
-                           "v3: 6 additional threats merged in from Bilal HW2 (ids 31–36) covering primary-catalog "
-                           "gaps — Insecure password hashing (Dd), inference of sensitive child characteristics "
-                           "from watch patterns (D), broken object-level authorization / BOLA (Dd), no privacy "
-                           "notice at registration (Nc), AB 2273 (AADC) privacy-by-default (Nc), CCPA/CPRA "
-                           "published-policy + DSAR + Do Not Sell obligations (Nc). Bilal's informal sub-node "
-                           "IDs (e.g. L.1, Nc.3, Nc.2.1) were re-mapped to official tree nodes; each merged "
-                           "threat records source=\"bilal_hw2\", original_hw2_node, and a mapping_note. "
-                           "Threats 13 and 16 received minor description enhancements adding AB 2273 and "
-                           "CCPA §1798.135 cross-references respectively. Recommend advisor sign-off, "
-                           "especially on threats #27 and #32–35."),
+                           "v3: 6 additional threats merged in from Bilal HW2 (ids 36–41 in this revision's "
+                           "numbering) covering primary-catalog gaps — insecure password hashing (Dd), inference "
+                           "of sensitive child characteristics from watch patterns (D), broken object-level "
+                           "authorization / BOLA (Dd), no privacy notice at registration (Nc), AB 2273 (AADC) "
+                           "privacy-by-default (Nc), CCPA/CPRA published-policy + DSAR + Do Not Sell obligations "
+                           "(Nc). Bilal's informal sub-node IDs (e.g. L.1, Nc.3, Nc.2.1) were re-mapped to "
+                           "official tree nodes; each merged threat records source=\"bilal_hw2\", "
+                           "original_hw2_node, and a mapping_note. Two threats received minor description "
+                           "enhancements adding AB 2273 and CCPA §1798.135 cross-references respectively. "
+                           "Recommend advisor sign-off, especially on threats #30 and #37–40 (v4 numbering). "
+                           "v4: `eval/reachability.py` (Week 6) found 4 gold threats (then ids 10, 18, 21, 29) "
+                           "described something spanning more than one DFD flow at once, so they could never be "
+                           "matched by the per-flow generation pipeline regardless of model quality -- a "
+                           "structural ceiling distinct from Genomic's mapping-table gap. Two (21, 29 at the "
+                           "time) split cleanly into independent per-flow entries: the same vulnerability "
+                           "(unencrypted JWT; unencrypted DB connection) is genuinely, identically present on "
+                           "each contributing flow. Two (10, 18 at the time) describe genuine cross-flow "
+                           "aggregation risk -- the description explicitly states the risk is the *combination* "
+                           "of data across flows -- so rather than fabricate a weaker single-flow version, each "
+                           "was duplicated as-is onto every contributing flow; either flow being flagged counts "
+                           "as a match. Net +5 threats (36 -> 41); every id from 10 onward shifted and every "
+                           "in-text cross-reference to a shifted id was updated. See WEEK7_REPORT.md."),
             "field_notes": ("severity/likelihood are the HW2 qualitative ratings. originator_id is the DFD "
                             "element where the threat is located (LINDDUN Pro Table 4.2-4.4 format). tree_node "
                             "is the corrected LINDDUN threat tree node id; original_hw2_node records the prior "
                             "value where changed. source=\"bilal_hw2\" marks threats merged in during the v3 "
                             "supplementary pass; absence of that field means the threat originates from the "
-                            "primary HW2 (Bakti)."),
+                            "primary HW2 (Bakti). Threats whose mapping_note says \"v4: ... duplicate ...\" or "
+                            "\"v4: ... independent counterpart ...\" are one half of a pair/triple split from a "
+                            "single originally multi-flow threat -- see the note for which sibling id(s) to "
+                            "cross-reference."),
         },
         "threats": THREATS,
     }
