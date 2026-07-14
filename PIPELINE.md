@@ -73,7 +73,7 @@ Both modes are driven by `generate_for_scenario()` (`generation/generate.py:24-5
    (or zero, in grounded mode, if skipped — see below). There is no batching and no cross-flow
    context; the model only ever sees one flow per call.
 3. Resolves the flow's `source`/`destination` element ids to their full element records
-   (name, type, and — for genomic only — `role`).
+   (name and type).
 
 Everything past this point diverges.
 
@@ -92,11 +92,16 @@ This is a **pure data lookup**, not a retrieval/embedding search — it reads
 5 valid interaction rows, byte-verified against the source PDF) and
 `knowledge_base/linddun/threat_trees.json` (all 7 LINDDUN types, ~50 tree nodes) directly.
 `effective_type()` (`retrieval/interaction_context.py`) is the identity function on
-`element["type"]` — it does not reclassify anything. Week 4 introduced a reinterpretation here
-(genomic `ExternalEntity` elements tagged `role: "internal_staff"` were treated as `Process` for
-this lookup only, raising genomic reachability from 17/99 to 70/99), but that reclassification
-was never signed off by the advisor and was reverted in Week 8, restoring the original 17/99
-ceiling. `dfd.json`'s `role: "internal_staff"` annotations are still present but no longer consulted.
+`element["type"]` — it does not reclassify anything. Week 4 introduced a lookup-time
+reinterpretation here (genomic `ExternalEntity` elements tagged `role: "internal_staff"` were
+treated as `Process` for this lookup only, raising genomic reachability from 17/99 to 70/99), but
+that reclassification was never signed off by the advisor and was reverted in Week 8, restoring
+the original 17/99 ceiling. Week 9 fixed the underlying mismatch at the source instead: genomic's
+`dfd.json` (`scripts/build_genomic_dfd.py`) now types data-transforming staff (lab technicians,
+clinicians, genetic counselors/physicians, bioinformaticists, researchers) as `Process` directly,
+matching what they structurally are, rather than typing them `ExternalEntity` and patching the
+mismatch at lookup time. No scenario's `dfd.json` carries a `role` field anymore, and genomic
+reachability is 70/99 again — this time as a fact about the DFD, not a scoring-time hack.
 
 **Step 2 — the reachability gate** (`generate.py:39-42`).
 
@@ -232,15 +237,18 @@ and has no live numbers yet (see the open item this raises, below):
 | `node_valid_rate` | 1.00 | 0.95 | 1.00 | 0.94 |
 | Recall (reachable-adjusted) | 0.78 | 0.66 | 0.64 | 0.77 |
 
-> **Historical table — the two Genomic columns no longer reflect current pipeline behavior.**
-> This table is Week 6's own reported numbers, generated while `effective_type()` still
-> reclassified `role: "internal_staff"` elements as `Process` (raising genomic's structural
+> **Historical table — the two Genomic columns don't reflect the exact mechanism behind current
+> pipeline behavior, even though the reachability ceiling has landed back in the same place.**
+> This table is Week 6's own reported numbers, generated while `effective_type()` reclassified
+> `role: "internal_staff"` elements as `Process` at lookup time only (raising genomic's structural
 > ceiling to 70/99). That reclassification was reverted in Week 8 without ever getting advisor
-> sign-off, restoring the original 17/99 ceiling — so "33/39 (6 skipped)" is now "10/39 (29
-> skipped)" for grounded, and every Genomic number in this table would come out different on a
-> fresh run. Left unedited here as a historical record of what Week 6 actually measured, not as a
-> current-state claim — see `WEEK8_REPORT.md` and `storage/generated/genomic_*_eval.txt` for the
-> current re-scored numbers.
+> sign-off (restoring 17/99), then superseded in Week 9 by a structural fix: genomic's `dfd.json`
+> now types those staff elements `Process` directly, so the 70/99 ceiling is back — this time as a
+> fact about the DFD rather than a scoring-time hack, and permanent rather than pending sign-off.
+> The specific per-flow numbers in this table (e.g. "33/39 (6 skipped)") were measured against the
+> Week 4-era hack and haven't been re-run against the Week 9 dfd.json, so treat them as
+> illustrative of the mechanism, not current numbers — see `WEEK8_REPORT.md` and
+> `storage/generated/genomic_*_eval.txt` for the most recent re-scored numbers.
 
 Two things worth internalizing (true of the *mechanism*, independent of which specific numbers apply):
 
@@ -267,3 +275,44 @@ top-k similarity search miss the right node/mapping-row often enough that it beh
 it's the one prior LLM-LINDDUN papers don't report: PILLAR doesn't run an ungrounded ablation at
 all, and PriMod4AI runs RAG but never compares it against a no-retrieval or deterministic-lookup
 baseline on the same scenarios.
+
+## Last stage: manual FP adjudication (`eval/adjudicate.py`)
+
+Every precision number reported above (`FP`, `precision`) treats every generated threat that
+didn't match a gold threat as wrong. That's an overstatement: our gold standards are curated
+catalogs (KidsTube from a human threat-modeling exercise, genomic from NIST's published analysis,
+the rest author-constructed), not exhaustive enumerations of every valid threat a system could
+have. Some "false positives" are threats the model found that the gold standard simply never
+catalogued — the abstract's "zero-slot FP" problem. There's no deterministic KB lookup that can
+tell spurious apart from valid-but-uncatalogued the way `generation/verify.py` checks a citation;
+it's a human judgment call, so this stage is deliberately **not** LLM-automated — a model grading
+its own (or another model's) output would just relocate the self-report-vs-verified problem this
+whole project exists to avoid.
+
+`eval/adjudicate.py` turns match.py's FP count into concrete, reviewable items:
+
+1. **`build_worklist()`** resolves each unmatched generated threat's flow/source/destination names
+   and citation-verification result from `dfd.json`, and writes them to
+   `storage/adjudication/<scenario>_<mode>.json`. Reviewing every FP is the default (`n=None`); a
+   smaller `--n` samples a reproducible (seeded) subset instead — the worklist is additive/resumable,
+   so a second, larger `--n` tops it up without disturbing labels already given.
+2. **`review_cli()`** is a terminal loop, one unlabeled item at a time, saving after every answer.
+   Each item is labeled **spurious** (not a real threat), **valid_uncatalogued** (a real threat the
+   gold standard missed), or **borderline** (unclear), plus an optional free-text note.
+3. **`human_corrected_precision()`** turns labels into a corrected point estimate: `spurious`
+   threats stay FPs, `valid_uncatalogued` threats move to the TP side, `borderline` splits 50/50 for
+   the single-number estimate (the full spurious/valid/borderline breakdown is reported alongside so
+   a reader can recompute either bound). If only a sample was labeled, the sample's split is
+   extrapolated across the full FP count — reported as an estimate, not exact, unless every FP was
+   reviewed (`is_full_review=True`).
+
+`python cli.py eval` automatically looks for a worklist matching the scenario+mode of whatever
+`--generated` file was scored and prints `precision_corrected` alongside the existing (conservative
+lower-bound) `precision_raw` if one exists with at least one label; otherwise it prints the exact
+`python cli.py adjudicate ...` command needed to start one. Run standalone:
+
+```
+python cli.py adjudicate --scenario kidstube --generated storage/generated/kidstube_grounded.json           # review every FP
+python cli.py adjudicate --scenario kidstube --generated storage/generated/kidstube_grounded.json --n 20     # review a sample of 20
+python cli.py adjudicate --scenario kidstube --generated storage/generated/kidstube_grounded.json --report-only  # no prompts, just print current status
+```

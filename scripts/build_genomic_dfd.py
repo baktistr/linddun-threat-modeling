@@ -124,58 +124,58 @@ ROWS = [
     (99, "Nc.4", "Physical Sample Management Technician", "S7-PH", "Physical Sample Remnants", "Disposal", "", "Used Flow Cell", "S3.2-PH", "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run."),
 ]
 
-# Element inventory (id -> (name, dfd_type, role)), from Appendix E Figures 4 (clinical), 5
+# Element inventory (id -> (name, dfd_type)), from Appendix E Figures 4 (clinical), 5
 # (research physical), 6 (research digital), 7 (shared), cross-checked against Figure 11's own
 # Source/Destination element labels.
 #
-# `role` is NOT part of NIST's own diagram -- it's an interpretive annotation we add on top,
-# distinguishing ExternalEntity elements who are internal staff performing part of the org's
-# workflow (role="internal_staff") from elements genuinely outside the organization
-# (role="external_party"). NIST's SP 1800-43C follows the broader PANOPTIC convention, which
-# types every human actor as ExternalEntity regardless of employment; strict LINDDUN Pro Table
-# 4.1 semantics define ExternalEntity as "outside the system" specifically so that a Process can
-# mediate any DataStore/EE exchange (mapping_table.json's `_meta` note). `role` drives
-# `effective_type()` in retrieval/interaction_context.py, used only for mapping-table lookups --
-# `type` below is left untouched as a faithful transcription of NIST's figure. See
-# WEEK4_REPORT.md for the rationale and quantified impact (recovers 53/80 previously-unreachable
-# genomic gold threats); flagged for advisor sign-off before treating the resulting reachability
-# numbers as final.
+# NIST's SP 1800-43C follows the broader PANOPTIC convention, which types every human actor as
+# ExternalEntity regardless of employment. Strict LINDDUN Pro Table 4.1 semantics define
+# ExternalEntity as "outside the system" specifically so that a Process can mediate any
+# DataStore/EE exchange (mapping_table.json's `_meta` note); a staff member who receives data and
+# performs a transformation on it as part of the org's own workflow (lab technicians, clinicians,
+# genetic counselors/physicians, bioinformaticists, researchers) fits LINDDUN Pro's definition of
+# Process, not ExternalEntity, independent of what icon NIST's own figure used. `type` below types
+# these actors as Process directly rather than as an ExternalEntity carrying a `role` annotation
+# consulted only at lookup time (Week 4's approach, reverted Week 8, superseded by this direct fix
+# in Week 9 -- see retrieval/interaction_context.py:effective_type() for the history). Only actors
+# genuinely outside the organization (Patient, 3rd Party Previous Enrollment Entity, the two
+# Trusted/-trusted Data Recipient roles) remain ExternalEntity.
 ELEMENTS = {
     # Shared pipeline (Figure 7)
-    "S1-PH": ("Receiving Clerk", "ExternalEntity", "internal_staff"),
-    "S2-A": ("Lab Technician", "ExternalEntity", "internal_staff"),
-    "S3-PH": ("Wet Lab", "Process", None),
-    "S3.1-PH": ("Privacy-Relevant Wet Lab Devices", "DataStore", None),
-    "S3.2-PH": ("Used Flow Cell", "DataStore", None),
-    "S4-PH": ("LIMS", "DataStore", None),
-    "S5-A": ("Compute Nodes", "Process", None),
-    "S6-A": ("Cluster Filesystem", "DataStore", None),
-    "S7-PH": ("Physical Sample Management Technician", "ExternalEntity", "internal_staff"),
-    "S8-A": ("Digital Data Management Technician", "ExternalEntity", "internal_staff"),
-    "S9-PH": ("Device Decommissioning Specialist", "ExternalEntity", "internal_staff"),
-    "S10-PH": ("Device Acquisition Specialist", "ExternalEntity", "internal_staff"),
-    "S11-PH": ("Physical Sample Storage", "DataStore", None),
-    "S12-PH": ("Sample Disposal Item", "DataStore", None),
-    "S13-A": ("Data Delivery DMZ", "DataStore", None),
+    "S1-PH": ("Receiving Clerk", "Process"),
+    "S2-A": ("Lab Technician", "Process"),
+    "S3-PH": ("Wet Lab", "Process"),
+    "S3.1-PH": ("Privacy-Relevant Wet Lab Devices", "DataStore"),
+    "S3.2-PH": ("Used Flow Cell", "DataStore"),
+    "S4-PH": ("LIMS", "DataStore"),
+    "S5-A": ("Compute Nodes", "Process"),
+    "S6-A": ("Cluster Filesystem", "DataStore"),
+    "S7-PH": ("Physical Sample Management Technician", "Process"),
+    "S8-A": ("Digital Data Management Technician", "Process"),
+    "S9-PH": ("Device Decommissioning Specialist", "Process"),
+    "S10-PH": ("Device Acquisition Specialist", "Process"),
+    "S11-PH": ("Physical Sample Storage", "DataStore"),
+    "S12-PH": ("Sample Disposal Item", "DataStore"),
+    "S13-A": ("Data Delivery DMZ", "DataStore"),
     # Clinical pipeline (Figure 4)
-    "C1-A": ("Patient", "ExternalEntity", "external_party"),
-    "C2-A": ("Clinician", "ExternalEntity", "internal_staff"),
-    "C3-A": ("Clinical Result Generation App", "Process", None),
-    "C4-A": ("Genetic Counselor", "ExternalEntity", "internal_staff"),
-    "C5-A": ("Genetic Physician", "ExternalEntity", "internal_staff"),
-    "C6-A": ("Bioinformaticist", "ExternalEntity", "internal_staff"),
-    "C7-CR": ("Trusted Research Data Recipient", "ExternalEntity", "external_party"),
-    "C8-A": ("3rd Party Previous Enrollment Entity", "ExternalEntity", "external_party"),
-    "C9-A": ("3rd Party Portal", "DataStore", None),
-    "C10-A": ("Internal EMR", "DataStore", None),
-    "C11-CT": ("External EMR", "DataStore", None),
+    "C1-A": ("Patient", "ExternalEntity"),
+    "C2-A": ("Clinician", "Process"),
+    "C3-A": ("Clinical Result Generation App", "Process"),
+    "C4-A": ("Genetic Counselor", "Process"),
+    "C5-A": ("Genetic Physician", "Process"),
+    "C6-A": ("Bioinformaticist", "Process"),
+    "C7-CR": ("Trusted Research Data Recipient", "ExternalEntity"),
+    "C8-A": ("3rd Party Previous Enrollment Entity", "ExternalEntity"),
+    "C9-A": ("3rd Party Portal", "DataStore"),
+    "C10-A": ("Internal EMR", "DataStore"),
+    "C11-CT": ("External EMR", "DataStore"),
     # Research pipeline, physical + digital (Figures 5, 6)
-    "R1-A": ("NCCoE Researcher", "ExternalEntity", "internal_staff"),
-    "R2-RP": ("DNA Store", "DataStore", None),
-    "R3-A": ("NCCoE-trusted Data Recipient", "ExternalEntity", "external_party"),
-    "R4-RD": ("Digital Sample Data Store", "DataStore", None),
-    "R5-A": ("NCCoE-Managed Publishing Location", "DataStore", None),
-    "R6-A": ("Externally-Managed Publishing Location", "DataStore", None),
+    "R1-A": ("NCCoE Researcher", "Process"),
+    "R2-RP": ("DNA Store", "DataStore"),
+    "R3-A": ("NCCoE-trusted Data Recipient", "ExternalEntity"),
+    "R4-RD": ("Digital Sample Data Store", "DataStore"),
+    "R5-A": ("NCCoE-Managed Publishing Location", "DataStore"),
+    "R6-A": ("Externally-Managed Publishing Location", "DataStore"),
 }
 
 
@@ -291,8 +291,8 @@ def merge_into_gold(raw: list[dict]) -> dict:
 
 def build_dfd_json(raw: list[dict]) -> dict:
     elements = [
-        {"id": eid, "name": name, "type": etype, **({"role": role} if role else {})}
-        for eid, (name, etype, role) in ELEMENTS.items()
+        {"id": eid, "name": name, "type": etype}
+        for eid, (name, etype) in ELEMENTS.items()
     ]
     flows = []
     seen = set()
@@ -322,32 +322,29 @@ def build_dfd_json(raw: list[dict]) -> dict:
             "element_count": len(elements),
             "known_gap": "mapping_table.json (LINDDUN Pro Table 4.1, sourced from the official "
                          "tutorial) only covers 5 interaction pairs, all routed through a Process "
-                         "(Process<->Process/DataStore/ExternalEntity). NIST's diagrams routinely "
-                         "show entities and stores talking DIRECTLY to each other with no Process "
-                         "in between, which the tutorial's table doesn't model at all. Of the 97 "
-                         "gold threats with a resolved DFD location, only 17 sit on one of the 5 "
-                         "valid pairs by raw `type` alone; the other 80 break down as "
-                         "ExternalEntity->DataStore (39), ExternalEntity->ExternalEntity (23), "
-                         "DataStore->ExternalEntity (17), and DataStore->DataStore (1). Week 4: "
-                         "each ExternalEntity element now also carries a `role` "
-                         "(internal_staff/external_party) -- an interpretive annotation, not part "
-                         "of NIST's own diagram -- and `effective_type()` "
-                         "(retrieval/interaction_context.py) treats internal_staff EEs (lab "
-                         "technicians, clinicians, genetic counselors/physicians, "
-                         "bioinformaticists, researchers) as Process for mapping-table lookups "
-                         "only, since they perform data transformation as part of the org's "
-                         "workflow rather than sitting genuinely outside it (only Patient, "
-                         "3rd Party Previous Enrollment Entity, and the two Trusted/-trusted Data "
-                         "Recipient roles keep role=external_party). This recovers 53 of the 80 "
-                         "previously-unreachable threats (17/99 -> 70/99 reachable); the remaining "
-                         "27 are all genuinely cross-organization exchanges (Data Delivery DMZ <-> "
-                         "external data recipients/publishing locations, 3rd Party Previous "
+                         "(Process<->Process/DataStore/ExternalEntity). NIST's own figures draw "
+                         "every human actor as an ExternalEntity icon regardless of employment, "
+                         "which if transcribed literally would leave internal staff performing "
+                         "data-transforming work (lab technicians, clinicians, genetic "
+                         "counselors/physicians, bioinformaticists, researchers) typed as "
+                         "ExternalEntity -- a mismatch with LINDDUN Pro's own definition of that "
+                         "type as 'outside the system'. Week 3 found this left only 17/99 gold "
+                         "threats structurally reachable. Week 4 patched around it at lookup time "
+                         "(a `role` annotation + `effective_type()` reclassification, recovering "
+                         "53/80 unreachable threats to 70/99) but that reclassification was never "
+                         "signed off and was reverted in Week 8, restoring 17/99. Week 9 fixes it "
+                         "at the source instead: these actors are typed `Process` directly in this "
+                         "file, matching what they structurally are, rather than being typed "
+                         "ExternalEntity and reclassified only for scoring. `effective_type()` is "
+                         "now permanently the identity function and no per-element `role` field is "
+                         "needed. The remaining unreachable threats are genuinely cross-organization "
+                         "exchanges (Data Delivery DMZ <-> external data recipients/publishing "
+                         "locations, ExternalEntity <-> ExternalEntity such as 3rd Party Previous "
                          "Enrollment Entity <-> Patient) that stay unreachable under LINDDUN Pro's "
-                         "own Process-mediation rule. `type` is left untouched as a faithful "
-                         "transcription of NIST's figure -- this is a per-project reinterpretation "
-                         "layered on top, flagged for advisor sign-off before the 70/99 number is "
-                         "treated as final. See WEEK3_REPORT.md (original finding) and "
-                         "WEEK4_REPORT.md (this change).",
+                         "own Process-mediation rule, which is correct: those exchanges really do "
+                         "cross outside the system with no Process mediating them. See "
+                         "WEEK3_REPORT.md (original finding), WEEK4_REPORT.md (lookup-time patch), "
+                         "WEEK8_REPORT.md (revert) for history.",
         },
         "elements": elements,
         "flows": flows,

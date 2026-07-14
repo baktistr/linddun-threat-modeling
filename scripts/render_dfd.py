@@ -122,7 +122,6 @@ LABEL_PLACEMENT = {
     },
 }
 
-ROLE_COLOR = {"internal_staff": "#cfe3ff", "external_party": "#f2f2f2"}
 EE_DEFAULT_COLOR = "#f2f2f2"
 PROCESS_COLOR = "#d9f2d9"
 STORE_COLOR = "#fff6cf"
@@ -142,10 +141,9 @@ def _store_size(name: str) -> float:
     return max(2.4, 0.165 * len(name) + 0.5)
 
 
-def _draw_external_entity(ax, x, y, name, role):
+def _draw_external_entity(ax, x, y, name):
     w, h = _entity_size(name)
-    color = ROLE_COLOR.get(role, EE_DEFAULT_COLOR)
-    ax.add_patch(Rectangle((x - w / 2, y - h / 2), w, h, facecolor=color,
+    ax.add_patch(Rectangle((x - w / 2, y - h / 2), w, h, facecolor=EE_DEFAULT_COLOR,
                             edgecolor="black", linewidth=1.4, zorder=2))
     ax.text(x, y, name, ha="center", va="center", fontsize=9.5, zorder=3)
     return w, h
@@ -301,7 +299,7 @@ def render(scenario: str, out_path=None):
     for eid, (x, y) in positions.items():
         e = elements[eid]
         if e["type"] == "ExternalEntity":
-            _draw_external_entity(ax, x, y, e["name"], e.get("role"))
+            _draw_external_entity(ax, x, y, e["name"])
         elif e["type"] == "Process":
             _draw_process(ax, x, y, e["name"])
         else:
@@ -317,13 +315,11 @@ def render(scenario: str, out_path=None):
 
     legend_handles = [
         Rectangle((0, 0), 1, 1, facecolor=EE_DEFAULT_COLOR, edgecolor="black", label="External Entity"),
-        Rectangle((0, 0), 1, 1, facecolor=ROLE_COLOR["internal_staff"], edgecolor="black",
-                  label="External Entity (role=internal_staff)"),
         Ellipse((0, 0), 1, 1, facecolor=PROCESS_COLOR, edgecolor="black", label="Process"),
         Rectangle((0, 0), 1, 0.4, facecolor=STORE_COLOR, edgecolor="black", label="Data Store"),
     ]
     ax.legend(handles=legend_handles, loc="lower center", bbox_to_anchor=(0.5, -0.06),
-              ncol=4, fontsize=8.5, frameon=False)
+              ncol=3, fontsize=8.5, frameon=False)
     if auto:
         ax.text(min(xs) - 1.8, max(ys) + 1.4,
                  "Red dashed = structurally unreachable (mapping_table.json has no row for this\n"

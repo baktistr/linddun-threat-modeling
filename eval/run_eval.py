@@ -11,6 +11,7 @@ from eval.match import match_threats
 from eval.metrics import (per_category_scores, per_node_scores, citation_correctness,
                           CATEGORY_NAMES, LINDDUN_TYPES)
 from eval.reachability import reachability_breakdown
+from eval.adjudicate import worklist_path, human_corrected_precision
 
 
 def _node_titles() -> dict[str, str]:
@@ -162,6 +163,23 @@ def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: 
     lines.append(f"  recall (raw, vs all gold):        {overall_r:.2f}")
     lines.append(f"  recall (reachable-adjusted):      {rc.reachable_recall:.2f}   "
                   "(tp / (tp + reachable_but_missed))")
+
+    mode = generated[0].mode if generated else None
+    hcp = human_corrected_precision(tot_tp, tot_fp, worklist_path(scenario, mode)) if mode else None
+    lines.append("")
+    lines.append("Human-corrected precision (gold standards are curated catalogs, not exhaustive "
+                 "-- automated precision above is a conservative lower bound):")
+    if hcp is None:
+        lines.append(f"  not available -- run `python cli.py adjudicate --scenario {scenario} "
+                     f"--generated {generated_path}` to label a sample of the {tot_fp} unmatched "
+                     "(FP) threats above as spurious / valid-but-uncatalogued / borderline.")
+    else:
+        lines.append(f"  n_fp_total={hcp.n_fp_total} n_labeled={hcp.n_labeled} "
+                     f"(spurious={hcp.spurious} valid_uncatalogued={hcp.valid_uncatalogued} "
+                     f"borderline={hcp.borderline})")
+        lines.append(f"  precision_raw (lower bound):           {hcp.precision_raw:.2f}")
+        review_note = "exact, full review" if hcp.is_full_review else "extrapolated from sample"
+        lines.append(f"  precision_corrected (point estimate):  {hcp.precision_corrected:.2f}   ({review_note})")
 
     if by_node:
         node_scores = per_node_scores(generated, gold, match.gen_to_gold, match.matched_gold_ids)

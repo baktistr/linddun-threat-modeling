@@ -21,6 +21,7 @@ from ingestion.loader import Chunk
 from eval.match import match_threats, match_threats_panoptic
 from eval.metrics import per_category_scores, per_node_scores, per_panoptic_category_scores
 from eval.reachability import reachability_breakdown, reachability_breakdown_panoptic
+from eval.adjudicate import fp_indices, build_worklist, worklist_path, human_corrected_precision
 
 PASS, FAIL = 0, 0
 
@@ -151,6 +152,92 @@ def test_matcher_strict_tier():
     check(m.tp == 1, f"tp==1 -- gold #3/gen #3 node mismatch no longer counts (got {m.tp})")
     check(m.fp == 2, f"fp==2 (got {m.fp})")
     check(m.fn == 2, f"fn==2 (got {m.fn})")
+
+
+def _fixture_dfd():
+    return {
+        "elements": [
+            {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+            {"id": "P1", "name": "Auth Service", "type": "Process"},
+            {"id": "DS1", "name": "User Store", "type": "DataStore"},
+        ],
+        "flows": [
+            {"id": "DF1", "source": "EE1", "destination": "P1", "description": "registration"},
+            {"id": "DF2", "source": "P1", "destination": "DS1", "description": "store account"},
+        ],
+    }
+
+
+def test_adjudicate_worklist_and_precision():
+    print("\n[adjudicate: worklist build/resume + human-corrected precision]")
+    gold, generated = _fixture_gold(), _fixture_generated()
+    dfd = _fixture_dfd()
+    m = match_threats(generated, gold, scenario="kidstube", dfd=dfd, strict=False)
+    check(fp_indices(generated, m) == [1], f"fp_indices == [1] (got {fp_indices(generated, m)})")
+
+    scenario, mode = "_test_fixture", "_test_mode"
+    path = worklist_path(scenario, mode)
+    if path.exists():
+        path.unlink()
+    try:
+        wp = build_worklist(scenario, mode, generated, m, dfd, n=None)
+        check(wp == path, "build_worklist returns the expected path")
+        records = json.loads(path.read_text())
+        check(len(records) == 1, f"worklist has 1 record (the single FP) (got {len(records)})")
+        check(records[0]["gen_index"] == 1, "worklist record is generated index 1")
+        check(records[0]["label"] is None, "new record starts unlabeled")
+        check(records[0]["source"] == "Parent User" and records[0]["destination"] == "Auth Service",
+              "worklist record resolves source/destination names from dfd.json")
+
+        check(human_corrected_precision(m.tp, m.fp, path) is None,
+              "human_corrected_precision is None before any label is given")
+
+        records[0]["label"] = "valid_uncatalogued"
+        path.write_text(json.dumps(records, indent=2))
+        hcp = human_corrected_precision(m.tp, m.fp, path)
+        check(hcp is not None, "human_corrected_precision available once labeled")
+        check(hcp.is_full_review, "1 labeled / 1 fp_total -> full review")
+        check(hcp.precision_raw == m.tp / (m.tp + m.fp), "precision_raw matches raw tp/(tp+fp)")
+        check(hcp.precision_corrected == 1.0,
+              f"precision_corrected == 1.0 (sole FP relabeled valid -> no FPs left) (got {hcp.precision_corrected})")
+
+        build_worklist(scenario, mode, generated, m, dfd, n=None)
+        records2 = json.loads(path.read_text())
+        check(records2[0]["label"] == "valid_uncatalogued",
+              "re-running build_worklist preserves an existing label (resumable, not clobbered)")
+    finally:
+        if path.exists():
+            path.unlink()
+
+
+def test_adjudicate_precision_extrapolation_from_sample():
+    print("\n[adjudicate: precision extrapolated from a partial sample]")
+    scenario, mode = "_test_fixture2", "_test_mode"
+    path = worklist_path(scenario, mode)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        # 10 FPs total, only 4 sampled/labeled: 2 spurious, 1 valid_uncatalogued, 1 borderline.
+        records = [{"gen_index": i, "label": None} for i in range(10)]
+        records[0]["label"] = "spurious"
+        records[1]["label"] = "spurious"
+        records[2]["label"] = "valid_uncatalogued"
+        records[3]["label"] = "borderline"
+        path.write_text(json.dumps(records, indent=2))
+
+        tp = 5
+        hcp = human_corrected_precision(tp, fp_total=10, path=path)
+        check(hcp.n_labeled == 4, f"n_labeled == 4 (got {hcp.n_labeled})")
+        check(not hcp.is_full_review, "4 labeled / 10 fp_total -> not a full review, extrapolated")
+        check(hcp.precision_raw == 5 / 15, f"precision_raw == 5/15 (got {hcp.precision_raw})")
+        # scale=10/4=2.5; spurious_est=2*2.5+1*2.5*0.5=6.25; valid_est=1*2.5+1*2.5*0.5=3.75
+        # tp_corrected=5+3.75=8.75; precision_corrected=8.75/(8.75+6.25)=8.75/15
+        expected = 8.75 / 15
+        check(abs(hcp.precision_corrected - expected) < 1e-9,
+              f"precision_corrected matches hand-computed extrapolation "
+              f"(got {hcp.precision_corrected}, expected {expected})")
+    finally:
+        if path.exists():
+            path.unlink()
 
 
 def test_schema_mode_field():
@@ -509,18 +596,21 @@ def test_per_node_scores():
 
 
 def test_reachability_genomic_reproduces_published_split():
-    print("\n[reachability: genomic reproduces the WEEK3/8 hand-counted 17/80/2 split]")
+    print("\n[reachability: genomic reproduces the WEEK9 hand-counted 70/27/2 split]")
     gold = json.loads((config.KB_DIR / "scenarios/genomic/gold_standard_threats.json").read_text())["threats"]
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
     # matched_gold_ids=set() -- as if nothing were generated yet, isolating the pure structural
     # ceiling (independent of any live LLM run) from actual recall failures.
-    # This is the original Week 3 finding, restored: Week 4's effective_type()
-    # internal_staff->Process reclassification (which raised this to 70/27/2) was reverted in
-    # Week 8 without advisor sign-off ever having been given -- see effective_type()'s docstring
-    # in retrieval/interaction_context.py.
+    # History: Week 3 found only 17/99 reachable (NIST types every human actor as ExternalEntity,
+    # which the mapping table can't route through). Week 4 patched around it at lookup time with
+    # a `role` annotation + effective_type() reclassification (70/99), never signed off, reverted
+    # Week 8 (back to 17/99). Week 9 fixes it at the source instead -- genomic's dfd.json now
+    # types data-transforming staff as Process directly (scripts/build_genomic_dfd.py), so 70/99
+    # is reachable again, this time as a structural fact about the DFD rather than a lookup-time
+    # hack. See retrieval/interaction_context.py:effective_type() for the full history.
     rc = reachability_breakdown(gold, "genomic", dfd, matched_gold_ids=set())
-    check(rc.reachable_but_missed == 17, f"17 structurally reachable (got {rc.reachable_but_missed})")
-    check(rc.structurally_unreachable == 80, f"80 structurally unreachable (got {rc.structurally_unreachable})")
+    check(rc.reachable_but_missed == 70, f"70 structurally reachable (got {rc.reachable_but_missed})")
+    check(rc.structurally_unreachable == 27, f"27 structurally unreachable (got {rc.structurally_unreachable})")
     check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
 
 
@@ -574,6 +664,8 @@ def main():
     test_verifier_fabricated_citations()
     test_matcher_coarse_tier()
     test_matcher_strict_tier()
+    test_adjudicate_worklist_and_precision()
+    test_adjudicate_precision_extrapolation_from_sample()
     test_per_node_scores()
     test_reachability_genomic_reproduces_published_split()
     test_reachability_kidstube_all_resolved_after_v4_split()

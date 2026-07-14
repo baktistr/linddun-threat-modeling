@@ -9,6 +9,7 @@ Usage:
   python cli.py generate --scenario kidstube [--ungrounded|--rag] [--framework linddun|panoptic] [--provider anthropic|openai|azure]
   python cli.py eval --scenario kidstube --generated storage/generated/kidstube_grounded.json [--strict]
   python cli.py eval --scenario genomic --generated storage/generated/genomic_panoptic_grounded.json --framework panoptic
+  python cli.py adjudicate --scenario kidstube --generated storage/generated/kidstube_grounded.json [--n N] [--report-only]
 """
 from __future__ import annotations
 import argparse
@@ -69,6 +70,36 @@ def cmd_eval(args):
         from pathlib import Path
         Path(args.out).write_text(report + "\n")
         print(f"\n(report also written to {args.out})")
+
+
+def cmd_adjudicate(args):
+    import json
+    from generation.generate import load_generated
+    from eval.match import match_threats
+    from eval.adjudicate import build_worklist, review_cli, human_corrected_precision
+
+    generated = load_generated(args.generated)
+    gold = json.loads((config.KB_DIR / "scenarios" / args.scenario /
+                       "gold_standard_threats.json").read_text())["threats"]
+    dfd = json.loads((config.KB_DIR / "scenarios" / args.scenario / "dfd.json").read_text())
+    match = match_threats(generated, gold, scenario=args.scenario, dfd=dfd)
+    mode = generated[0].mode if generated else "unknown"
+
+    path = build_worklist(args.scenario, mode, generated, match, dfd, n=args.n, seed=args.seed)
+    print(f"Worklist: {path}  ({match.fp} FP threat(s) total)")
+    if not args.report_only:
+        review_cli(path)
+
+    hcp = human_corrected_precision(match.tp, match.fp, path)
+    if hcp is None:
+        print("\nNo labels yet.")
+        return
+    print(f"\nHuman-corrected precision: n_fp_total={hcp.n_fp_total} n_labeled={hcp.n_labeled} "
+          f"(spurious={hcp.spurious} valid_uncatalogued={hcp.valid_uncatalogued} "
+          f"borderline={hcp.borderline})")
+    print(f"  precision_raw (lower bound):           {hcp.precision_raw:.2f}")
+    review_note = "exact, full review" if hcp.is_full_review else "extrapolated from sample"
+    print(f"  precision_corrected (point estimate):  {hcp.precision_corrected:.2f}   ({review_note})")
 
 
 def cmd_ask(args):
@@ -147,6 +178,18 @@ def main():
                      help="Score against LINDDUN threat_type/tree_node (default), or PANOPTIC "
                           "panoptic_action membership (for mode=panoptic_* generated output).")
     se.set_defaults(func=cmd_eval)
+
+    sj = sub.add_parser("adjudicate")
+    sj.add_argument("--scenario", required=True, choices=EVAL_SCENARIOS)
+    sj.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
+    sj.add_argument("--n", type=int, default=None,
+                     help="Review a random sample of N unmatched (FP) threats instead of all of "
+                          "them. Omit to review every FP.")
+    sj.add_argument("--seed", type=int, default=42, help="Sampling seed, for a reproducible sample.")
+    sj.add_argument("--report-only", action="store_true",
+                     help="Don't prompt interactively -- just (re)build the worklist file and "
+                          "print human-corrected precision from whatever's already labeled.")
+    sj.set_defaults(func=cmd_adjudicate)
 
     args = p.parse_args()
     args.func(args)

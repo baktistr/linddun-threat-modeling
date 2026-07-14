@@ -78,22 +78,17 @@ ELEMENT_TYPES = {"ExternalEntity", "Process", "DataStore"}
 
 
 def effective_type(element: dict) -> str:
-    """Type to use for mapping-table lookups.
+    """Type to use for mapping-table lookups. Identity function on `element["type"]`.
 
-    Week 4 introduced a reinterpretation here: since NIST's own DFDs type every human actor as
-    ExternalEntity regardless of whether they're internal staff or a genuinely external party,
-    elements tagged role=="internal_staff" (an annotation this repo adds -- see
-    scripts/build_genomic_dfd.py) were treated as Process for this lookup, raising genomic
-    reachability from 17/99 to 70/99 gold threats. That reclassification was never signed off by
-    the advisor (flagged as a pending open item every week since Week 4) and is reverted here
-    (Week 8): `role` is no longer consulted, so this is now the identity function on
-    `element["type"]`. `dfd.json`'s `role: "internal_staff"` annotations are left in place as
-    inert provenance rather than stripped -- they document a reclassification this repo tried and
-    backed out of, not current pipeline behavior. Reverting this restores the original Week 3
-    finding: only 17/99 genomic gold threats are structurally reachable by the mapping-table-gated
-    per-flow generation loop, independent of model quality; see WEEK3_REPORT.md and
-    knowledge_base/linddun/panoptic_crosswalk.json (Week 8) for why NIST's own analysis isn't
-    bound by this same restriction in the first place."""
+    History: Week 4 introduced a lookup-time reclassification (genomic ExternalEntity elements
+    tagged role=="internal_staff" were treated as Process here only, raising genomic reachability
+    from 17/99 to 70/99) that was never signed off by the advisor and was reverted in Week 8. Week
+    9 made that revert permanent and structural rather than a pending question: genomic's own
+    dfd.json (scripts/build_genomic_dfd.py) now types those staff elements as Process directly, so
+    there is nothing left for this function to reclassify -- no scenario's dfd.json carries a
+    `role` field anymore. This function stays as the single point every reachability/generation/
+    verification check calls through, so a future scenario can't silently reintroduce a
+    type-vs-effective-type split without it being visible here."""
     return element.get("type")
 
 
