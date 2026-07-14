@@ -1,24 +1,24 @@
 Eval report (PANOPTIC framework): scenario=genomic generated=storage/generated/genomic_panoptic_ungrounded.json
-  n_generated=220 (with panoptic_action: 220) n_gold=99
+  n_generated=212 (with panoptic_action: 212) n_gold=99
 
 NOTE: matches on panoptic_action membership in the gold threat's own panoptic_actions list, plus same-flow location (dfd_source_id/dfd_destination_id) -- not LINDDUN threat_type/tree_node. See knowledge_base/panoptic/taxonomy.json and knowledge_base/linddun/panoptic_crosswalk.json.
 
 Cat    Name                         TP   FP   FN      P      R     F1
-PA01   Notice                        1   12    1   0.08   0.50   0.13
-PA02   Consent                       0    3   20   0.00   0.00   0.00
-PA03   Collection                   13  151   21   0.08   0.38   0.13
-PA04   Insecurity                    0   14    0   0.00   0.00   0.00
-PA05   Identification                0   16   14   0.00   0.00   0.00
-PA06   Quality Assurance             0    6    0   0.00   0.00   0.00
-PA07   Manageability                 3    0    7   1.00   0.30   0.46
+PA01   Notice                        1   15    2   0.06   0.33   0.11
+PA02   Consent                       0   14   22   0.00   0.00   0.00
+PA03   Collection                   11  137   23   0.07   0.32   0.12
+PA04   Insecurity                    0    6    0   0.00   0.00   0.00
+PA05   Identification                0   18   14   0.00   0.00   0.00
+PA06   Quality Assurance             0    5    0   0.00   0.00   0.00
+PA07   Manageability                 0    5    7   0.00   0.00   0.00
 PA11   Use                           0    0   10   0.00   0.00   0.00
-PA12   Retention & Destruction       0    1    8   0.00   0.00   0.00
+PA12   Retention & Destruction       0    0    8   0.00   0.00   0.00
 PA13   Deviations                    0    0    1   0.00   0.00   0.00
-ALL                                 17  203   82   0.08   0.17   0.11
+ALL                                 12  200   87   0.06   0.12   0.08
 
 Reachability breakdown (gold threats not matched):
-  reachable_but_missed          80   (real recall failures -- flow valid, no LLM match)
-  unresolved_location             2   (no single flow to anchor to -- can never be matched)
+  reachable_but_missed          87   (real recall failures -- flow valid, no LLM match)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
   (PANOPTIC mode has no structural-gate concept -- every flow is attempted, so there is no structurally_unreachable count here, unlike the LINDDUN report)
-  recall (raw, vs all gold):        0.17
-  recall (reachable-adjusted):      0.18   (tp / (tp + reachable_but_missed))
+  recall (raw, vs all gold):        0.12
+  recall (reachable-adjusted):      0.12   (tp / (tp + reachable_but_missed))

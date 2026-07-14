@@ -1,27 +1,30 @@
 Eval report: scenario=kidstube generated=storage/generated/kidstube_rag.json
-  n_generated=86 n_gold=41 strict_node_match=False
+  n_generated=82 n_gold=41 strict_node_match=False
 
 Type Name                 TP   FP   FN      P      R     F1
-L    Linking               3    8    3   0.27   0.50   0.35
-I    Identifying           4   10    1   0.29   0.80   0.42
-Nr   Non-repudiation       1    2    1   0.33   0.50   0.40
-D    Detecting             2   12    0   0.14   1.00   0.25
-Dd   Data Disclosure       7    6    8   0.54   0.47   0.50
-U    Unawareness           3   11    1   0.21   0.75   0.33  *
-Nc   Non-compliance        5   12    2   0.29   0.71   0.42  *
-ALL                       25   61   16   0.29   0.61   0.39
+L    Linking               4    9    2   0.31   0.67   0.42
+I    Identifying           4   12    1   0.25   0.80   0.38
+Nr   Non-repudiation       2    2    0   0.50   1.00   0.67
+D    Detecting             2   14    0   0.12   1.00   0.22
+Dd   Data Disclosure       4    5   11   0.44   0.27   0.33
+U    Unawareness           2    5    2   0.29   0.50   0.36  *
+Nc   Non-compliance        5   11    2   0.31   0.71   0.43  *
+ALL                       23   58   18   0.28   0.56   0.38
 (* Non-compliance and Unawareness -- flagged as hardest to automate)
 
 Citation correctness (independently verified against the knowledge base, not self-reported):
-  node_valid_rate          0.99
-  type_applicable_rate     1.00
+  node_valid_rate          0.96
+  type_applicable_rate     0.99
   location_valid_rate      1.00
-  all_valid_rate           0.99
-  n_threats_checked        86
+  all_valid_rate           0.96
+  n_threats_checked        82
 
 Reachability breakdown (gold threats not matched):
-  reachable_but_missed          16   (real recall failures -- flow valid, no LLM match)
+  reachable_but_missed          18   (real recall failures -- flow valid, no LLM match)
   structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
   unresolved_location             0   (no single flow to anchor to -- can never be matched)
-  recall (raw, vs all gold):        0.61
-  recall (reachable-adjusted):      0.61   (tp / (tp + reachable_but_missed))
+  recall (raw, vs all gold):        0.56
+  recall (reachable-adjusted):      0.56   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario kidstube --generated storage/generated/kidstube_rag.json` to label a sample of the 58 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

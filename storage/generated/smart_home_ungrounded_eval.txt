@@ -1,29 +1,32 @@
 Eval report: scenario=smart_home generated=storage/generated/smart_home_ungrounded.json
-  n_generated=55 n_gold=18 strict_node_match=False
+  n_generated=53 n_gold=18 strict_node_match=False
 
 NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) against the generated threat's flow in dfd.json. 0 gold threats have dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).
 
 Type Name                 TP   FP   FN      P      R     F1
-L    Linking               3    4    0   0.43   1.00   0.60
-I    Identifying           2    8    0   0.20   1.00   0.33
-Nr   Non-repudiation       1    3    1   0.25   0.50   0.33
-D    Detecting             2   11    0   0.15   1.00   0.27
-Dd   Data Disclosure       3    2    2   0.60   0.60   0.60
-U    Unawareness           1    6    1   0.14   0.50   0.22  *
-Nc   Non-compliance        2    7    0   0.22   1.00   0.36  *
-ALL                       14   41    4   0.25   0.78   0.38
+L    Linking               3    5    0   0.38   1.00   0.55
+I    Identifying           2    6    0   0.25   1.00   0.40
+Nr   Non-repudiation       2    4    0   0.33   1.00   0.50
+D    Detecting             2    9    0   0.18   1.00   0.31
+Dd   Data Disclosure       3    1    2   0.75   0.60   0.67
+U    Unawareness           1    7    1   0.12   0.50   0.20  *
+Nc   Non-compliance        2    6    0   0.25   1.00   0.40  *
+ALL                       15   38    3   0.28   0.83   0.42
 (* Non-compliance and Unawareness -- flagged as hardest to automate)
 
 Citation correctness (independently verified against the knowledge base, not self-reported):
-  node_valid_rate          0.91
+  node_valid_rate          0.92
   type_applicable_rate     1.00
   location_valid_rate      1.00
-  all_valid_rate           0.91
-  n_threats_checked        55
+  all_valid_rate           0.92
+  n_threats_checked        53
 
 Reachability breakdown (gold threats not matched):
-  reachable_but_missed           4   (real recall failures -- flow valid, no LLM match)
+  reachable_but_missed           3   (real recall failures -- flow valid, no LLM match)
   structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
   unresolved_location             0   (no single flow to anchor to -- can never be matched)
-  recall (raw, vs all gold):        0.78
-  recall (reachable-adjusted):      0.78   (tp / (tp + reachable_but_missed))
+  recall (raw, vs all gold):        0.83
+  recall (reachable-adjusted):      0.83   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario smart_home --generated storage/generated/smart_home_ungrounded.json` to label a sample of the 38 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

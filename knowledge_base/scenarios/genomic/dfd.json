@@ -36,7 +36,7 @@
     {
       "id": "S4-PH",
       "name": "LIMS",
-      "type": "DataStore"
+      "type": "Process"
     },
     {
       "id": "S5-A",

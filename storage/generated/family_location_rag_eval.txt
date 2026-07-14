@@ -5,25 +5,28 @@ NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 1
 
 Type Name                 TP   FP   FN      P      R     F1
 L    Linking               3    9    0   0.25   1.00   0.40
-I    Identifying           2   11    0   0.15   1.00   0.27
+I    Identifying           1   10    1   0.09   0.50   0.15
 Nr   Non-repudiation       0    3    2   0.00   0.00   0.00
-D    Detecting             1   10    1   0.09   0.50   0.15
+D    Detecting             2   11    0   0.15   1.00   0.27
 Dd   Data Disclosure       4    4    3   0.50   0.57   0.53
-U    Unawareness           2    8    0   0.20   1.00   0.33  *
+U    Unawareness           1    9    1   0.10   0.50   0.17  *
 Nc   Non-compliance        2   10    0   0.17   1.00   0.29  *
-ALL                       14   55    6   0.20   0.70   0.31
+ALL                       13   56    7   0.19   0.65   0.29
 (* Non-compliance and Unawareness -- flagged as hardest to automate)
 
 Citation correctness (independently verified against the knowledge base, not self-reported):
-  node_valid_rate          0.96
+  node_valid_rate          0.94
   type_applicable_rate     1.00
   location_valid_rate      1.00
-  all_valid_rate           0.96
+  all_valid_rate           0.94
   n_threats_checked        69
 
 Reachability breakdown (gold threats not matched):
-  reachable_but_missed           6   (real recall failures -- flow valid, no LLM match)
+  reachable_but_missed           7   (real recall failures -- flow valid, no LLM match)
   structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
   unresolved_location             0   (no single flow to anchor to -- can never be matched)
-  recall (raw, vs all gold):        0.70
-  recall (reachable-adjusted):      0.70   (tp / (tp + reachable_but_missed))
+  recall (raw, vs all gold):        0.65
+  recall (reachable-adjusted):      0.65   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario family_location --generated storage/generated/family_location_rag.json` to label a sample of the 56 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

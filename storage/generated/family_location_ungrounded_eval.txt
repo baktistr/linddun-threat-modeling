@@ -1,29 +1,32 @@
 Eval report: scenario=family_location generated=storage/generated/family_location_ungrounded.json
-  n_generated=86 n_gold=20 strict_node_match=False
+  n_generated=83 n_gold=20 strict_node_match=False
 
 NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) against the generated threat's flow in dfd.json. 0 gold threats have dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).
 
 Type Name                 TP   FP   FN      P      R     F1
-L    Linking               3   10    0   0.23   1.00   0.38
-I    Identifying           2   13    0   0.13   1.00   0.24
-Nr   Non-repudiation       1    5    1   0.17   0.50   0.25
-D    Detecting             2   17    0   0.11   1.00   0.19
-Dd   Data Disclosure       3    3    4   0.50   0.43   0.46
+L    Linking               3   11    0   0.21   1.00   0.35
+I    Identifying           2   12    0   0.14   1.00   0.25
+Nr   Non-repudiation       1    6    1   0.14   0.50   0.22
+D    Detecting             2   14    0   0.12   1.00   0.22
+Dd   Data Disclosure       2    3    5   0.40   0.29   0.33
 U    Unawareness           2   11    0   0.15   1.00   0.27  *
 Nc   Non-compliance        2   12    0   0.14   1.00   0.25  *
-ALL                       15   71    5   0.17   0.75   0.28
+ALL                       14   69    6   0.17   0.70   0.27
 (* Non-compliance and Unawareness -- flagged as hardest to automate)
 
 Citation correctness (independently verified against the knowledge base, not self-reported):
-  node_valid_rate          0.92
+  node_valid_rate          0.94
   type_applicable_rate     1.00
   location_valid_rate      1.00
-  all_valid_rate           0.92
-  n_threats_checked        86
+  all_valid_rate           0.94
+  n_threats_checked        83
 
 Reachability breakdown (gold threats not matched):
-  reachable_but_missed           5   (real recall failures -- flow valid, no LLM match)
+  reachable_but_missed           6   (real recall failures -- flow valid, no LLM match)
   structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
   unresolved_location             0   (no single flow to anchor to -- can never be matched)
-  recall (raw, vs all gold):        0.75
-  recall (reachable-adjusted):      0.75   (tp / (tp + reachable_but_missed))
+  recall (raw, vs all gold):        0.70
+  recall (reachable-adjusted):      0.70   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario family_location --generated storage/generated/family_location_ungrounded.json` to label a sample of the 69 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

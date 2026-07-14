@@ -55,7 +55,7 @@ def test_genomic_gold_has_dfd_locations():
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
     elem_ids = {e["id"] for e in dfd["elements"]}
     n_resolved = sum(1 for t in threats if t.get("dfd_location_confidence") != "unresolved")
-    check(n_resolved == 97, f"97/99 genomic threats have a resolved DFD location (got {n_resolved})")
+    check(n_resolved == 99, f"99/99 genomic threats have a resolved DFD location (got {n_resolved})")
     for t in threats:
         if t.get("dfd_location_confidence") == "unresolved":
             check(t["dfd_source_id"] is None and t["dfd_destination_id"] is None,
@@ -501,8 +501,10 @@ def test_reachability_panoptic_no_structural_gate():
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
     rc = reachability_breakdown_panoptic(gold, "genomic", dfd, matched_gold_ids=set())
     check(rc.structurally_unreachable == 0, "structurally_unreachable is always 0 for panoptic mode")
-    check(rc.reachable_but_missed == 97, f"97 reachable (got {rc.reachable_but_missed})")
-    check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
+    # All 99 gold threats now carry a resolved DFD location (ids 20 and 23 best-fit anchored), so
+    # under PANOPTIC (no Process-mediation gate) every one is reachable_but_missed, none unresolved.
+    check(rc.reachable_but_missed == 99, f"99 reachable (got {rc.reachable_but_missed})")
+    check(rc.unresolved_location == 0, f"0 unresolved-location (got {rc.unresolved_location})")
 
 
 def test_llm_backend_routing():
@@ -596,7 +598,7 @@ def test_per_node_scores():
 
 
 def test_reachability_genomic_reproduces_published_split():
-    print("\n[reachability: genomic reproduces the WEEK9 hand-counted 70/27/2 split]")
+    print("\n[reachability: genomic reproduces the hand-counted 72/27/0 split]")
     gold = json.loads((config.KB_DIR / "scenarios/genomic/gold_standard_threats.json").read_text())["threats"]
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
     # matched_gold_ids=set() -- as if nothing were generated yet, isolating the pure structural
@@ -604,14 +606,18 @@ def test_reachability_genomic_reproduces_published_split():
     # History: Week 3 found only 17/99 reachable (NIST types every human actor as ExternalEntity,
     # which the mapping table can't route through). Week 4 patched around it at lookup time with
     # a `role` annotation + effective_type() reclassification (70/99), never signed off, reverted
-    # Week 8 (back to 17/99). Week 9 fixes it at the source instead -- genomic's dfd.json now
-    # types data-transforming staff as Process directly (scripts/build_genomic_dfd.py), so 70/99
-    # is reachable again, this time as a structural fact about the DFD rather than a lookup-time
-    # hack. See retrieval/interaction_context.py:effective_type() for the full history.
+    # Week 8 (back to 17/99). Week 9 fixed it at the source -- genomic's dfd.json types
+    # data-transforming staff as Process directly (scripts/build_genomic_dfd.py) -- giving 70/27/2.
+    # Then a Week 9 re-OCR of Appendix G Figure 20 found the "de-identification cluster" (ids 18-27)
+    # had corrupted descriptions/nodes in genomic_complete_raw.json (a phantom "within the data
+    # delivery DMZ" threat, shifted rows, and wrong nodes at 24/25). With the raw corrected, all 99
+    # gold threats map to Figure 11 row=id and every location resolves (0 unresolved); ids 20 and 23
+    # land on their true flows (Patient->Clinician, and Genetic Counselor->3rd Party Previous
+    # Enrollment -- a Process->ExternalEntity flow that is reachable), giving the final 72/27/0 split.
     rc = reachability_breakdown(gold, "genomic", dfd, matched_gold_ids=set())
-    check(rc.reachable_but_missed == 70, f"70 structurally reachable (got {rc.reachable_but_missed})")
+    check(rc.reachable_but_missed == 72, f"72 structurally reachable (got {rc.reachable_but_missed})")
     check(rc.structurally_unreachable == 27, f"27 structurally unreachable (got {rc.structurally_unreachable})")
-    check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
+    check(rc.unresolved_location == 0, f"0 unresolved-location (got {rc.unresolved_location})")
 
 
 def test_reachability_kidstube_all_resolved_after_v4_split():

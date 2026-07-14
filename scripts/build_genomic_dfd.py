@@ -147,7 +147,12 @@ ELEMENTS = {
     "S3-PH": ("Wet Lab", "Process"),
     "S3.1-PH": ("Privacy-Relevant Wet Lab Devices", "DataStore"),
     "S3.2-PH": ("Used Flow Cell", "DataStore"),
-    "S4-PH": ("LIMS", "DataStore"),
+    "S4-PH": ("LIMS", "Process"),   # NIST Figures 4/5/7 draw LIMS with the Software icon (same as
+                                     # Compute Nodes S5-A and Clinical Result Generation App C3-A,
+                                     # both typed Process here); it generates/returns de-identified
+                                     # IDs (Figure 11 row 26 = Generation). Was DataStore before the
+                                     # Week 9 re-OCR pass -- the only Software element mis-typed as a
+                                     # store. Both LIMS flows (rows 2, 26) stay reachable either way.
     "S5-A": ("Compute Nodes", "Process"),
     "S6-A": ("Cluster Filesystem", "DataStore"),
     "S7-PH": ("Physical Sample Management Technician", "Process"),
@@ -198,29 +203,22 @@ def _normalize_node(node: str) -> str:
     return node[:2].capitalize() + node[2:] if node[:2].upper() == "DD" else node
 
 
-# Figure 11's "No." column mostly equals gold's `id` 1:1 (verified: 88/99 rows match by node,
-# and every one of the ~90 non-clustered rows also matches gold's `description` text on spot
-# checks against Appendix-Figure20.png, which shares Figure 11's row order). The exception is a
-# locally-repeated "sample/data not de-identified" cluster (rows/ids ~18-27), where Figure 11 (an
-# exhaustive per-dataflow-segment walk) enumerates MORE granular instances than gold's final,
-# curated, cross-validated catalog (built from Appendix G Figures 20/24, and per WEEK2_REPORT.md
-# already hand-corrected once in this exact region: "rows #23/#24 had swapped feasibility; #27's
-# description was recovered from the source"). Resolved here by exact `description` text matching
-# against gold (not row position); ambiguous/unresolved ids are flagged rather than guessed.
-GOLD_ID_ROW_OVERRIDE = {
-    18: 19,   # gold desc "before being received" -- matches row19 (Researcher->Receiving Clerk)
-    19: 21,   # gold desc "before being received" -- matches row21 (Clinician->Receiving Clerk)
-    20: None,  # unresolved: no 3rd distinct Figure 11 row for this description among candidates
-    21: 22,   # gold desc uniquely matches row22 (Cluster Filesystem->Clinical Result Generation App)
-    22: 23,   # gold desc uniquely matches row23 (Genetic Counselor->3rd Party Previous Enrollment)
-    23: None,  # unresolved: no Figure 11 row found for "within the data delivery DMZ" (I.1.1)
-    24: 25,   # gold desc uniquely matches row25 (Bioinformaticist->Cluster Filesystem, I.1.2)
-    25: 26,   # gold desc uniquely matches row26 (Wet Lab->LIMS, "full de-identification difficult")
-    26: 27,   # gold desc uniquely matches row27 (Bioinformaticist->Cluster Filesystem, "date of birth")
-    27: 27,   # duplicate of gold id26's description/node -- shares row27's location (best effort)
-}
-LOW_CONFIDENCE_GOLD_IDS = {18, 19, 26, 27}   # assigned, but via ambiguous/duplicate content match
-UNRESOLVED_GOLD_IDS = {20, 23}               # no Figure 11 row confidently corresponds
+# Figure 11's "No." column equals gold's `id` 1:1 for every one of the 99 threats -- gold id N
+# maps to Figure 11 row N directly, and the LINDDUN node agrees on all 99 (asserted by
+# verify_against_existing_gold below).
+#
+# History: earlier weeks needed a GOLD_ID_ROW_OVERRIDE + DIRECT_LOCATION_OVERRIDE + unresolved/
+# low-confidence flags to work around the "sample/data not de-identified" cluster (ids 18-27),
+# which appeared not to line up with Figure 11. A Week 9 re-OCR of Appendix G Figure 20 found the
+# real cause was transcription corruption in genomic_complete_raw.json itself: rows 18/20/21/22/23/
+# 24/25/26 carried shifted or phantom descriptions (including a "within the data delivery DMZ"
+# description that does not exist anywhere in Figure 20), and rows 24/25 carried wrong nodes
+# (I.1.2/I.2.1.1 instead of I.1.1/I.1.2 -- Figure 24 independently corroborated the corrected
+# nodes). With the raw corrected, the cluster lines up 1:1 with Figure 11 by row=id like every
+# other threat, so all the override scaffolding is gone and all 99 locations are high-confidence.
+GOLD_ID_ROW_OVERRIDE: dict[int, int] = {}
+LOW_CONFIDENCE_GOLD_IDS: set[int] = set()
+UNRESOLVED_GOLD_IDS: set[int] = set()
 
 
 def row_for_gold_id(gold_id: int) -> int | None:
@@ -282,8 +280,9 @@ def merge_into_gold(raw: list[dict]) -> dict:
         "('Task 4: Assess System Design'), cross-checked against nist_node; " \
         f"{len(UNRESOLVED_GOLD_IDS)} ids ({sorted(UNRESOLVED_GOLD_IDS)}) left unresolved " \
         f"(dfd_location_confidence=unresolved), {len(LOW_CONFIDENCE_GOLD_IDS)} ids " \
-        f"({sorted(LOW_CONFIDENCE_GOLD_IDS)}) resolved via ambiguous/duplicate content-match " \
-        "(dfd_location_confidence=low) -- see scripts/build_genomic_dfd.py."
+        f"({sorted(LOW_CONFIDENCE_GOLD_IDS)}) low-confidence. Week 9 re-OCR of Figure 20 corrected " \
+        "the de-identification cluster (ids 18-27) transcription, so all 99 now map to Figure 11 " \
+        "row=id with matching nodes and are high-confidence -- see scripts/build_genomic_dfd.py."
     base_revision = gold["_meta"].get("revision", "").split(dfd_location_note)[0]
     gold["_meta"]["revision"] = base_revision + dfd_location_note
     return gold

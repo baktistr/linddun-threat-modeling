@@ -3,10 +3,10 @@
     "scenario": "Genomic Sequencing (NIST SP 1800-43C complete example)",
     "source": "NIST SP 1800-43C (DRAFT, August 2025), 'Genomic Data Threat Modeling: Privacy \u2014 An Implementation for Genomic Data Sequencing and Analysis', NCCoE. Complete-example threats transcribed (vision OCR) from Appendix G Figures 20 (validations) and 24 (ranked threats): https://pages.nist.gov/nccoe-genomic-data-threat-modeling/Vol_C/Appendix/appendixG.html",
     "role": "authoritative gold-standard baseline for evaluation (second scenario alongside KidsTube)",
-    "revision": "v2 \u2014 complete example (~99 itemized LINDDUN threats); supersedes the v1 10-threat core-example subset + Week 3: dfd_source_id/dfd_destination_id added from Appendix F Figure 11 ('Task 4: Assess System Design'), cross-checked against nist_node; 2 ids ([20, 23]) left unresolved (dfd_location_confidence=unresolved), 4 ids ([18, 19, 26, 27]) resolved via ambiguous/duplicate content-match (dfd_location_confidence=low) -- see scripts/build_genomic_dfd.py.",
+    "revision": "v2 \u2014 complete example (~99 itemized LINDDUN threats); supersedes the v1 10-threat core-example subset + Week 3: dfd_source_id/dfd_destination_id added from Appendix F Figure 11 ('Task 4: Assess System Design'), cross-checked against nist_node; 0 ids ([]) left unresolved (dfd_location_confidence=unresolved), 0 ids ([]) low-confidence. Week 9 re-OCR of Figure 20 corrected the de-identification cluster (ids 18-27) transcription, so all 99 now map to Figure 11 row=id with matching nodes and are high-confidence -- see scripts/build_genomic_dfd.py.",
     "threat_count": 99,
     "core_example_count": 10,
-    "node_remaps": 25,
+    "node_remaps": 24,
     "low_confidence_rows": 0,
     "provenance_note": "The complete example is published by NIST ONLY as raster figures in the external HTML appendices (no machine-readable table exists). These threats were transcribed by vision-reading Figures 20 and 24, which were transcribed independently and cross-checked. Raw transcription: scripts/data/genomic_complete_raw.json. TREAT PER-THREAT DETAILS AS TRANSCRIPTION-CONFIDENCE (OCR of a DRAFT figure), not authoritative; verify against the source figures before relying on a single row. scripts/verify_genomic.py cross-checks every row against Figure 24 + NIST's ranking formula (Tables 18/19): 97/99 corroborated, all 99 formula-consistent. Rows 23/24 feasibility and #27's description were corrected against the source; the only cell not independently re-confirmed is #24's node (I.1.2).",
     "node_mapping_note": "NIST's LINDDUN tree is a newer/deeper revision than this repo's threat_trees.json. nist_node is the verbatim NIST node; tree_node is the nearest ancestor present in this repo's tree (I.2.3->I.2, I.2.1.1->I.2.1, U.2.2/U.2.3->U.2, Nr.2->Nr.1, Nc.2/Nc.4->Nc.1, DD->Dd). A follow-up could instead extend the canonical tree with the missing official nodes.",
@@ -575,8 +575,8 @@
       "tree_node": "I.1.1",
       "nist_node": "I.1.1",
       "threat_type": "I",
-      "title": "Identifying through explicit identifier: Data sample is not de-identified before being received",
-      "description": "Data sample is not de-identified before being received",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified within the data store",
+      "description": "Data sample is not de-identified within the data store",
       "assumptions": "",
       "severity": "Med",
       "likelihood": "High",
@@ -591,15 +591,15 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "dfd_source_id": "R1-A",
-      "dfd_destination_id": "S1-PH",
+      "dfd_source_id": "R2-RP",
+      "dfd_destination_id": "R1-A",
       "dfd_dataflow_type": "Physical Sample",
-      "dfd_context": "NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data",
-      "dfd_location_confidence": "low"
+      "dfd_context": "NCCoE Researcher retrieves the physical sample referenced by the physical sample request from the DNA Store",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 19,
-      "interaction": "S5",
+      "interaction": "S2.1",
       "originator_id": "",
       "tree_node": "I.1.1",
       "nist_node": "I.1.1",
@@ -609,7 +609,7 @@
       "assumptions": "",
       "severity": "Med",
       "likelihood": "Low",
-      "scenario_id": "S5",
+      "scenario_id": "S2.1",
       "panoptic_actions": [
         "PA05.01.01"
       ],
@@ -620,14 +620,43 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "dfd_source_id": "C2-A",
+      "dfd_source_id": "R1-A",
       "dfd_destination_id": "S1-PH",
       "dfd_dataflow_type": "Physical Sample",
-      "dfd_context": "Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data",
-      "dfd_location_confidence": "low"
+      "dfd_context": "NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data",
+      "dfd_location_confidence": "high"
     },
     {
       "id": 20,
+      "interaction": "S2.1",
+      "originator_id": "",
+      "tree_node": "I.1.1",
+      "nist_node": "I.1.1",
+      "threat_type": "I",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified within the data store",
+      "description": "Data sample is not de-identified within the data store",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S2.1",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Disassociability"
+      ],
+      "in_core_example": false,
+      "dfd_source_id": "C1-A",
+      "dfd_destination_id": "C2-A",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Clinician retrieves the physical sample referenced by the physical sample request",
+      "dfd_location_confidence": "high"
+    },
+    {
+      "id": 21,
       "interaction": "S2.1",
       "originator_id": "",
       "tree_node": "I.1.1",
@@ -649,15 +678,15 @@
         "Disassociability"
       ],
       "in_core_example": false,
-      "dfd_source_id": null,
-      "dfd_destination_id": null,
-      "dfd_dataflow_type": null,
-      "dfd_context": null,
-      "dfd_location_confidence": "unresolved"
+      "dfd_source_id": "C2-A",
+      "dfd_destination_id": "S1-PH",
+      "dfd_dataflow_type": "Physical Sample",
+      "dfd_context": "Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data",
+      "dfd_location_confidence": "high"
     },
     {
-      "id": 21,
-      "interaction": "S2.1",
+      "id": 22,
+      "interaction": "S5",
       "originator_id": "",
       "tree_node": "I.1.1",
       "nist_node": "I.1.1",
@@ -667,7 +696,7 @@
       "assumptions": "",
       "severity": "Med",
       "likelihood": "High",
-      "scenario_id": "S2.1",
+      "scenario_id": "S5",
       "panoptic_actions": [
         "PA05.01.01"
       ],
@@ -685,7 +714,7 @@
       "dfd_location_confidence": "high"
     },
     {
-      "id": 22,
+      "id": 23,
       "interaction": "S6",
       "originator_id": "",
       "tree_node": "I.1.1",
@@ -714,43 +743,14 @@
       "dfd_location_confidence": "high"
     },
     {
-      "id": 23,
-      "interaction": "S1.2",
+      "id": 24,
+      "interaction": "S6",
       "originator_id": "",
       "tree_node": "I.1.1",
       "nist_node": "I.1.1",
       "threat_type": "I",
-      "title": "Identifying through explicit identifier: Data sample is not de-identified within the data delivery DMZ",
-      "description": "Data sample is not de-identified within the data delivery DMZ",
-      "assumptions": "",
-      "severity": "Med",
-      "likelihood": "High",
-      "scenario_id": "S1.2",
-      "panoptic_actions": [
-        "PA05.01.01"
-      ],
-      "feasibility": "Plausible",
-      "difficulty": "Moderate",
-      "ranking_value": 0.51,
-      "impacted_peos": [
-        "Disassociability"
-      ],
-      "in_core_example": false,
-      "dfd_source_id": null,
-      "dfd_destination_id": null,
-      "dfd_dataflow_type": null,
-      "dfd_context": null,
-      "dfd_location_confidence": "unresolved"
-    },
-    {
-      "id": 24,
-      "interaction": "S6",
-      "originator_id": "",
-      "tree_node": "I.1.2",
-      "nist_node": "I.1.2",
-      "threat_type": "I",
-      "title": "Identifying through credential or identity reuse: The Patient's name accompanies the sequence data so that it can be tied to the correct\u2026",
-      "description": "The Patient's name accompanies the sequence data so that it can be tied to the correct Patient throughout processing",
+      "title": "Identifying through explicit identifier: Data sample is not de-identified within the data store",
+      "description": "Data sample is not de-identified within the data store",
       "assumptions": "",
       "severity": "Med",
       "likelihood": "Low",
@@ -765,6 +765,36 @@
         "Disassociability"
       ],
       "in_core_example": false,
+      "dfd_source_id": "R4-RD",
+      "dfd_destination_id": "R1-A",
+      "dfd_dataflow_type": "Digital Sample Data",
+      "dfd_context": "NCCoE Researcher retrieves the digital sample data referenced by the digital sample data request from the Digital Sample Data Store",
+      "dfd_location_confidence": "high"
+    },
+    {
+      "id": 25,
+      "interaction": "S6",
+      "originator_id": "",
+      "tree_node": "I.1.2",
+      "nist_node": "I.1.2",
+      "threat_type": "I",
+      "title": "Identifying through credential or identity reuse: The Patient's name accompanies the sequence data so that it can be tied to the correct\u2026",
+      "description": "The Patient's name accompanies the sequence data so that it can be tied to the correct Patient throughout processing",
+      "assumptions": "",
+      "severity": "Med",
+      "likelihood": "High",
+      "scenario_id": "S6",
+      "panoptic_actions": [
+        "PA05.01.01"
+      ],
+      "feasibility": "Plausible",
+      "difficulty": "Moderate",
+      "ranking_value": 0.51,
+      "impacted_peos": [
+        "Predictability",
+        "Disassociability"
+      ],
+      "in_core_example": false,
       "dfd_source_id": "C6-A",
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
@@ -772,7 +802,7 @@
       "dfd_location_confidence": "high"
     },
     {
-      "id": 25,
+      "id": 26,
       "interaction": "S6",
       "originator_id": "",
       "tree_node": "I.2.1",
@@ -791,46 +821,15 @@
       "difficulty": "Moderate",
       "ranking_value": 0.51,
       "impacted_peos": [
-        "Predictability",
         "Disassociability"
       ],
-      "in_core_example": false,
+      "in_core_example": true,
       "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1.",
       "dfd_source_id": "S3-PH",
       "dfd_destination_id": "S4-PH",
       "dfd_dataflow_type": "Sample Metadata",
       "dfd_context": "Generate the de-identified ID to be used for the sample",
       "dfd_location_confidence": "high"
-    },
-    {
-      "id": 26,
-      "interaction": "S6",
-      "originator_id": "",
-      "tree_node": "I.2.1",
-      "nist_node": "I.2.1.1",
-      "threat_type": "I",
-      "title": "Identifying through identity-revealing content or metadata: Some of the Patient's other identifiable information, such as date of birth, accompany\u2026",
-      "description": "Some of the Patient's other identifiable information, such as date of birth, accompany the sequence data",
-      "assumptions": "",
-      "severity": "Med",
-      "likelihood": "High",
-      "scenario_id": "S6",
-      "panoptic_actions": [
-        "PA05.01.01"
-      ],
-      "feasibility": "Plausible",
-      "difficulty": "Moderate",
-      "ranking_value": 0.51,
-      "impacted_peos": [
-        "Disassociability"
-      ],
-      "in_core_example": true,
-      "mapping_note": "NIST node I.2.1.1 is not in this repo's threat tree (NIST uses a deeper/newer LINDDUN revision); mapped to nearest ancestor I.2.1.",
-      "dfd_source_id": "C6-A",
-      "dfd_destination_id": "S6-A",
-      "dfd_dataflow_type": "Sequence Data",
-      "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
-      "dfd_location_confidence": "low"
     },
     {
       "id": 27,
@@ -860,7 +859,7 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
-      "dfd_location_confidence": "low"
+      "dfd_location_confidence": "high"
     },
     {
       "id": 28,
@@ -1962,6 +1961,7 @@
       "scenario_id": "S16",
       "panoptic_actions": [
         "PA02.04",
+        "PA07.04",
         "PA07.05"
       ],
       "feasibility": "Plausible",
@@ -1994,6 +1994,7 @@
       "scenario_id": "S16",
       "panoptic_actions": [
         "PA02.04",
+        "PA07.04",
         "PA07.05"
       ],
       "feasibility": "Plausible",
@@ -2106,7 +2107,7 @@
     },
     {
       "id": 68,
-      "interaction": "S19",
+      "interaction": "S17",
       "originator_id": "",
       "tree_node": "U.1.1",
       "nist_node": "U.1.1",
@@ -2116,9 +2117,9 @@
       "assumptions": "",
       "severity": "High",
       "likelihood": "High",
-      "scenario_id": "S19",
+      "scenario_id": "S17",
       "panoptic_actions": [
-        "PA02.04",
+        "PA02.02",
         "PA07.05"
       ],
       "feasibility": "Plausible",
@@ -2137,7 +2138,7 @@
     },
     {
       "id": 69,
-      "interaction": "S19",
+      "interaction": "S17",
       "originator_id": "",
       "tree_node": "U.1.1",
       "nist_node": "U.1.1",
@@ -2147,10 +2148,10 @@
       "assumptions": "",
       "severity": "High",
       "likelihood": "High",
-      "scenario_id": "S19",
+      "scenario_id": "S17",
       "panoptic_actions": [
-        "PA02.04",
-        "PA07.04"
+        "PA02.02",
+        "PA07.05"
       ],
       "feasibility": "Plausible",
       "difficulty": "Minor",
