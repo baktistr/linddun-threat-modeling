@@ -39,6 +39,7 @@ STORE_DIR.mkdir(parents=True, exist_ok=True)
 CORPORA = {
     "linddun": KB_DIR / "linddun",
     "scenarios": KB_DIR / "scenarios",
+    "panoptic": KB_DIR / "panoptic",
 }
 
 # Chunking

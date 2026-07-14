@@ -1,0 +1,27 @@
+Eval report: scenario=kidstube generated=storage/generated/kidstube_rag.json
+  n_generated=86 n_gold=41 strict_node_match=False
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               3    8    3   0.27   0.50   0.35
+I    Identifying           4   10    1   0.29   0.80   0.42
+Nr   Non-repudiation       1    2    1   0.33   0.50   0.40
+D    Detecting             2   12    0   0.14   1.00   0.25
+Dd   Data Disclosure       7    6    8   0.54   0.47   0.50
+U    Unawareness           3   11    1   0.21   0.75   0.33  *
+Nc   Non-compliance        5   12    2   0.29   0.71   0.42  *
+ALL                       25   61   16   0.29   0.61   0.39
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          0.99
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           0.99
+  n_threats_checked        86
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          16   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.61
+  recall (reachable-adjusted):      0.61   (tp / (tp + reachable_but_missed))

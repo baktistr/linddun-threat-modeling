@@ -1,5 +1,6 @@
 """Recall/precision/F1 per LINDDUN category, plus citation-correctness aggregation."""
 from __future__ import annotations
+import re
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -11,6 +12,8 @@ CATEGORY_NAMES = {
     "L": "Linking", "I": "Identifying", "Nr": "Non-repudiation", "D": "Detecting",
     "Dd": "Data Disclosure", "U": "Unawareness", "Nc": "Non-compliance",
 }
+
+PANOPTIC_PARENT_RE = re.compile(r"^(PA\d{2})")
 
 
 @dataclass
@@ -75,6 +78,47 @@ def per_node_scores(generated: list[GeneratedThreat], gold: list[dict],
 
     nodes = set(tp) | set(fp) | set(fn)
     return {n: CategoryScore(n, tp[n], fp[n], fn[n]) for n in sorted(nodes)}
+
+
+def _panoptic_parent(action: str) -> str:
+    m = PANOPTIC_PARENT_RE.match(action or "")
+    return m.group(1) if m else "?"
+
+
+def per_panoptic_category_scores(generated: list[GeneratedThreat], gold: list[dict],
+                                  gen_to_gold: dict[int, int], matched_gold_ids: set[int]
+                                  ) -> dict[str, CategoryScore]:
+    """Same shape as per_category_scores, grouped by PANOPTIC parent category (e.g. "PA03" from
+    a "PA03.09" sub-activity id) instead of LINDDUN threat_type. Only scores generated threats
+    that carry a panoptic_action (i.e. mode="panoptic" output); pair with match_threats_panoptic().
+
+    A gold threat's panoptic_actions can span multiple parent categories (e.g. genomic gold #1
+    touches PA03, PA08, PA10, PA11 all at once) -- unlike LINDDUN's one-threat-type-per-threat
+    assumption. To keep totals additive (so summing every category's tp/fp/fn reproduces the
+    overall counts, matching per_category_scores' invariant), an unmatched gold threat's FN is
+    counted once, under the parent category of its *first* listed panoptic_action only -- a
+    simplification, not a claim that the other categories weren't also missed."""
+    tp: dict[str, int] = defaultdict(int)
+    fp: dict[str, int] = defaultdict(int)
+    fn: dict[str, int] = defaultdict(int)
+
+    for idx, t in enumerate(generated):
+        if not t.panoptic_action:
+            continue
+        cat = _panoptic_parent(t.panoptic_action)
+        if idx in gen_to_gold:
+            tp[cat] += 1
+        else:
+            fp[cat] += 1
+    for g in gold:
+        if g["id"] in matched_gold_ids:
+            continue
+        actions = g.get("panoptic_actions") or []
+        if actions:
+            fn[_panoptic_parent(actions[0])] += 1
+
+    cats = set(tp) | set(fp) | set(fn)
+    return {c: CategoryScore(c, tp[c], fp[c], fn[c]) for c in sorted(cats)}
 
 
 def citation_correctness(verifications: list[VerificationResult]) -> dict:

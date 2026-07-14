@@ -23,7 +23,18 @@ class GeneratedThreat:
     severity: str = ""
     likelihood: str = ""
     uncertainty_note: str = ""
-    grounded: bool = True         # whether this threat came from the grounded or ungrounded (ablation) pipeline
+    grounded: bool = True         # whether this threat came from a grounded (any KB context) or ungrounded pipeline
+    mode: str | None = None       # "grounded" | "rag" | "ungrounded" | "panoptic" -- which grounding mechanism
+                                   # produced this. None (unset) is only ever seen loading a pre-RAG-ablation saved
+                                   # file; inferred from `grounded` below so old storage/generated/*.json still loads.
+    panoptic_action: str = ""     # PANOPTIC sub-activity id (e.g. "PA03.09") -- populated only by mode="panoptic";
+                                   # threat_type/tree_node are still populated too (best-effort LINDDUN mapping
+                                   # consistent with panoptic_crosswalk.json), so panoptic-mode output remains
+                                   # scoreable against both the PANOPTIC-native matcher and the standard LINDDUN one.
+
+    def __post_init__(self):
+        if self.mode is None:
+            self.mode = "grounded" if self.grounded else "ungrounded"
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -61,6 +72,10 @@ THREAT_TOOL_SCHEMA = {
                         "tree_node": {
                             "type": "string",
                             "description": "LINDDUN Pro threat-tree node id chosen from the applicable nodes provided, e.g. 'Dd.1.1'.",
+                        },
+                        "panoptic_action": {
+                            "type": "string",
+                            "description": "PANOPTIC sub-activity id this threat is grounded in (e.g. 'PA03.09'), if using panoptic-mode context. Empty string otherwise.",
                         },
                         "title": {"type": "string"},
                         "description": {"type": "string"},

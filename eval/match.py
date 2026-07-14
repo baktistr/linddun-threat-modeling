@@ -96,3 +96,41 @@ def match_threats(generated: list[GeneratedThreat], gold: list[dict], scenario: 
     fn = len(gold) - len(matched_gold_ids)
     return MatchResult(gen_to_gold=gen_to_gold, matched_gold_ids=matched_gold_ids,
                         tp=tp, fp=fp, fn=fn)
+
+
+def match_threats_panoptic(generated: list[GeneratedThreat], gold: list[dict], scenario: str,
+                           dfd: dict) -> MatchResult:
+    """PANOPTIC-native matching, for mode="panoptic" output: a generated threat matches a gold
+    threat if (a) its panoptic_action appears in that gold threat's own panoptic_actions list,
+    and (b) the generated threat's flow resolves to the same location as the gold threat's --
+    reusing resolve_gold_flow() so this can't develop a different notion of "same flow" than the
+    LINDDUN matcher above. Generated threats with no panoptic_action (i.e. from a non-panoptic
+    mode) are excluded from both the numerator and denominator here -- use match_threats() for
+    those; this function only scores panoptic-mode output.
+    """
+    flows_by_id = {f["id"]: f for f in dfd["flows"]}
+    matched_gold_ids: set[int] = set()
+    gen_to_gold: dict[int, int] = {}
+
+    panoptic_generated = [(gi, g) for gi, g in enumerate(generated) if g.panoptic_action]
+    for gi, g in panoptic_generated:
+        gen_flow = flows_by_id.get(g.flow_id)
+        for gold_t in gold:
+            if gold_t["id"] in matched_gold_ids:
+                continue
+            if g.panoptic_action not in gold_t.get("panoptic_actions", []):
+                continue
+            gold_flow = resolve_gold_flow(gold_t, scenario, dfd, flows_by_id)
+            if gold_flow is None:
+                continue  # unresolved gold location -- cannot be matched, by design
+            if gen_flow is None or gen_flow["id"] != gold_flow["id"]:
+                continue
+            matched_gold_ids.add(gold_t["id"])
+            gen_to_gold[gi] = gold_t["id"]
+            break
+
+    tp = len(gen_to_gold)
+    fp = len(panoptic_generated) - tp
+    fn = len(gold) - len(matched_gold_ids)
+    return MatchResult(gen_to_gold=gen_to_gold, matched_gold_ids=matched_gold_ids,
+                        tp=tp, fp=fp, fn=fn)

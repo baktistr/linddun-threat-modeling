@@ -13,9 +13,14 @@ import config
 from generation.schema import GeneratedThreat
 from generation.verify import verify_threat
 from generation.llm_backend import get_llm_backend
-from eval.match import match_threats
-from eval.metrics import per_category_scores, per_node_scores
-from eval.reachability import reachability_breakdown
+from generation.generate import resolve_mode
+from generation.prompt import (build_flow_query, build_rag_prompt, build_panoptic_prompt,
+                               build_panoptic_rag_prompt, build_panoptic_ungrounded_prompt)
+from retrieval.index import Retriever, Hit
+from ingestion.loader import Chunk
+from eval.match import match_threats, match_threats_panoptic
+from eval.metrics import per_category_scores, per_node_scores, per_panoptic_category_scores
+from eval.reachability import reachability_breakdown, reachability_breakdown_panoptic
 
 PASS, FAIL = 0, 0
 
@@ -148,6 +153,271 @@ def test_matcher_strict_tier():
     check(m.fn == 2, f"fn==2 (got {m.fn})")
 
 
+def test_schema_mode_field():
+    print("\n[GeneratedThreat.mode field]")
+    t_grounded = GeneratedThreat(flow_id="DF1", originator_id="P1", threat_type="Dd", tree_node="Dd.1.1",
+                                  title="t", description="d")
+    check(t_grounded.mode == "grounded" and t_grounded.grounded is True,
+          "default construction: mode='grounded', grounded=True")
+
+    t_rag = GeneratedThreat(flow_id="DF1", originator_id="P1", threat_type="Dd", tree_node="Dd.1.1",
+                             title="t", description="d", mode="rag")
+    check(t_rag.mode == "rag" and t_rag.grounded is True,
+          "explicit mode='rag' is preserved, grounded still True (rag has KB context)")
+
+    t_ungrounded = GeneratedThreat(flow_id="DF1", originator_id="P1", threat_type="Dd", tree_node="Dd.1.1",
+                                    title="t", description="d", grounded=False)
+    check(t_ungrounded.mode == "ungrounded",
+          "grounded=False with no explicit mode infers mode='ungrounded'")
+
+    # Simulates loading a pre-RAG-ablation storage/generated/*.json file: has "grounded" but no "mode" key.
+    legacy_ungrounded = GeneratedThreat.from_dict({
+        "flow_id": "DF1", "originator_id": "P1", "threat_type": "Dd", "tree_node": "Dd.1.1",
+        "title": "t", "description": "d", "grounded": False,
+    })
+    check(legacy_ungrounded.mode == "ungrounded",
+          "legacy dict (grounded=False, no mode key) backfills mode='ungrounded'")
+    legacy_grounded = GeneratedThreat.from_dict({
+        "flow_id": "DF1", "originator_id": "P1", "threat_type": "Dd", "tree_node": "Dd.1.1",
+        "title": "t", "description": "d", "grounded": True,
+    })
+    check(legacy_grounded.mode == "grounded",
+          "legacy dict (grounded=True, no mode key) backfills mode='grounded'")
+
+    for t in (t_grounded, t_rag, t_ungrounded):
+        d = t.to_dict()
+        t2 = GeneratedThreat.from_dict(d)
+        check(t == t2, f"to_dict/from_dict round-trips mode={t.mode!r} to an equal object")
+
+
+def test_resolve_mode():
+    print("\n[resolve_mode: CLI flag -> mode name]")
+    check(resolve_mode(rag=False, ungrounded=False) == "grounded", "no flags -> grounded (default)")
+    check(resolve_mode(rag=True, ungrounded=False) == "rag", "--rag -> rag")
+    check(resolve_mode(rag=False, ungrounded=True) == "ungrounded", "--ungrounded -> ungrounded")
+    try:
+        resolve_mode(rag=True, ungrounded=True)
+        check(False, "--rag and --ungrounded together raises ValueError")
+    except ValueError:
+        check(True, "--rag and --ungrounded together raises ValueError")
+
+
+def test_build_flow_query():
+    print("\n[build_flow_query]")
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID)"}
+    q = build_flow_query(flow, elements_by_id)
+    check("Parent User" in q and "Authentication Service" in q, "query includes both element names")
+    check("ExternalEntity" in q and "Process" in q, "query includes both element types")
+    check("parent registration" in q, "query includes the flow description")
+
+
+def test_build_rag_prompt():
+    print("\n[build_rag_prompt]")
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID)"}
+    chunk = Chunk(id="linddun:threat_trees.json:3", text="Threat tree node Dd.1.1 -- Excessive collection...",
+                  source="linddun", doc="threat_trees.json", section="Dd.1.1 Excessive collection",
+                  meta={"kind": "tree_node", "tree_node": "Dd.1.1"})
+    hits = [Hit(chunk=chunk, score=0.42)]
+
+    prompt = build_rag_prompt(flow, elements_by_id, hits)
+    check("Dd.1.1" in prompt and "Excessive collection" in prompt, "retrieved chunk content is inlined")
+    check("linddun/threat_trees.json" in prompt, "retrieved chunk's source/doc is cited")
+    check("guidance" in prompt.lower(), "prompt frames retrieved context as guidance, not a hard constraint")
+    check("emit_threats" in prompt, "prompt still directs the model to the shared tool schema")
+
+    empty_prompt = build_rag_prompt(flow, elements_by_id, [])
+    check("no relevant knowledge-base passages retrieved" in empty_prompt,
+          "empty retrieval degrades gracefully instead of an empty/broken context block")
+
+
+def test_rag_retrieval_no_gold_leakage():
+    print("\n[RAG retrieval: no gold-standard leakage into generation-time context]")
+    r = Retriever.load()
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID, six-digit code)"}
+    query = build_flow_query(flow, elements_by_id)
+    hits = r.search(query, k=config.TOP_K, source="linddun", exclude_kinds=["gold_threat"])
+    check(len(hits) > 0, "a real flow query returns at least one hit from the linddun corpus")
+    check(all(h.chunk.source == "linddun" for h in hits),
+          "source='linddun' filter excludes every scenarios-corpus chunk (gold standards live there)")
+    check(all(h.chunk.meta.get("kind") != "gold_threat" for h in hits),
+          "no retrieved chunk is a gold_threat chunk (defense in depth alongside the source filter)")
+
+
+def test_resolve_mode_panoptic():
+    print("\n[resolve_mode: --framework x --rag/--ungrounded composition]")
+    check(resolve_mode(rag=False, ungrounded=False, framework="panoptic") == "panoptic_grounded",
+          "framework=panoptic, no flags -> panoptic_grounded")
+    check(resolve_mode(rag=True, ungrounded=False, framework="panoptic") == "panoptic_rag",
+          "framework=panoptic, --rag -> panoptic_rag")
+    check(resolve_mode(rag=False, ungrounded=True, framework="panoptic") == "panoptic_ungrounded",
+          "framework=panoptic, --ungrounded -> panoptic_ungrounded")
+    check(resolve_mode(rag=False, ungrounded=False, framework="linddun") == "grounded",
+          "framework=linddun (default), no flags -> grounded (unchanged, bare name)")
+    check(resolve_mode(rag=True, ungrounded=False, framework="linddun") == "rag",
+          "framework=linddun, --rag -> rag (unchanged, bare name)")
+    try:
+        resolve_mode(rag=True, ungrounded=True, framework="panoptic")
+        check(False, "--rag and --ungrounded together raises ValueError regardless of framework")
+    except ValueError:
+        check(True, "--rag and --ungrounded together raises ValueError regardless of framework")
+    try:
+        resolve_mode(rag=False, ungrounded=False, framework="not-a-framework")
+        check(False, "unknown framework raises ValueError")
+    except ValueError:
+        check(True, "unknown framework raises ValueError")
+
+
+def test_build_panoptic_prompt():
+    print("\n[build_panoptic_prompt (panoptic_grounded)]")
+    taxonomy = json.loads((config.KB_DIR / "panoptic/taxonomy.json").read_text())
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID)"}
+    prompt = build_panoptic_prompt(flow, elements_by_id, taxonomy)
+    check("PANOPTIC" in prompt, "prompt references PANOPTIC")
+    check("PA03.09" in prompt, "a real sub-activity id appears in the menu")
+    check("panoptic_action" in prompt, "prompt asks for a panoptic_action citation")
+    check("emit_threats" in prompt, "prompt still directs the model to the shared tool schema")
+
+
+def test_build_panoptic_rag_prompt():
+    print("\n[build_panoptic_rag_prompt]")
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID)"}
+    chunk = Chunk(id="panoptic:taxonomy.json:5", text="PANOPTIC sub-activity PA03.09 -- Recording: ...",
+                  source="panoptic", doc="taxonomy.json", section="PA03.09 Recording",
+                  meta={"kind": "panoptic_sub_activity", "panoptic_id": "PA03.09"})
+    hits = [Hit(chunk=chunk, score=0.51)]
+
+    prompt = build_panoptic_rag_prompt(flow, elements_by_id, hits)
+    check("PA03.09" in prompt and "Recording" in prompt, "retrieved chunk content is inlined")
+    check("panoptic/taxonomy.json" in prompt, "retrieved chunk's source/doc is cited")
+    check("guidance" in prompt.lower(), "prompt frames retrieved context as guidance, not a hard constraint")
+    check("emit_threats" in prompt, "prompt still directs the model to the shared tool schema")
+
+    empty_prompt = build_panoptic_rag_prompt(flow, elements_by_id, [])
+    check("no relevant knowledge-base passages retrieved" in empty_prompt,
+          "empty retrieval degrades gracefully instead of an empty/broken context block")
+
+
+def test_build_panoptic_ungrounded_prompt():
+    print("\n[build_panoptic_ungrounded_prompt]")
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID)"}
+    prompt = build_panoptic_ungrounded_prompt(flow, elements_by_id)
+    check("PANOPTIC" in prompt, "prompt references PANOPTIC")
+    check("no reference material is provided" in prompt, "prompt states no KB context is given")
+    check("panoptic_action" in prompt, "prompt still asks for a panoptic_action citation")
+    check("PA0" not in prompt, "no PANOPTIC taxonomy content (e.g. a real sub-activity id) leaks into the ungrounded prompt")
+
+
+def test_panoptic_rag_retrieval_no_gold_leakage():
+    print("\n[PANOPTIC RAG retrieval: source='panoptic' excludes LINDDUN/scenarios/gold content]")
+    r = Retriever.load()
+    elements_by_id = {
+        "EE1": {"id": "EE1", "name": "Parent User", "type": "ExternalEntity"},
+        "P1": {"id": "P1", "name": "Authentication Service", "type": "Process"},
+    }
+    flow = {"id": "DF1", "source": "EE1", "destination": "P1",
+            "description": "parent registration (email, password, name, govt ID, six-digit code)"}
+    query = build_flow_query(flow, elements_by_id)
+    hits = r.search(query, k=config.TOP_K, source="panoptic", exclude_kinds=["gold_threat"])
+    check(len(hits) > 0, "a real flow query returns at least one hit from the panoptic corpus")
+    check(all(h.chunk.source == "panoptic" for h in hits),
+          "source='panoptic' filter excludes every linddun/scenarios-corpus chunk")
+    check(all(h.chunk.meta.get("kind") != "gold_threat" for h in hits),
+          "no retrieved chunk is a gold_threat chunk (defense in depth alongside the source filter)")
+
+
+def test_matcher_panoptic():
+    print("\n[matcher: PANOPTIC-native, panoptic_action + flow location]")
+    dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
+    flow = next(f for f in dfd["flows"] if f["source"] == "S3-PH" and f["destination"] == "S11-PH")
+
+    gold = [
+        {"id": 1, "threat_type": "L", "tree_node": "L.2.1.2", "panoptic_actions": ["PA03.09", "PA08.01.01"],
+         "dfd_source_id": "S3-PH", "dfd_destination_id": "S11-PH", "dfd_location_confidence": "high"},
+        {"id": 2, "threat_type": "I", "tree_node": "I.1.1", "panoptic_actions": ["PA05.02.02"],
+         "dfd_source_id": None, "dfd_destination_id": None, "dfd_location_confidence": "unresolved"},
+    ]
+    generated = [
+        # matches gold #1 via panoptic_action membership + same flow, even though tree_node differs
+        GeneratedThreat(flow_id=flow["id"], originator_id="S3-PH", threat_type="Dd", tree_node="Dd.9.9",
+                         title="t1", description="d1", mode="panoptic_grounded", panoptic_action="PA03.09"),
+        # right panoptic_action, wrong flow -> no match
+        GeneratedThreat(flow_id="GF999", originator_id="S6-A", threat_type="L", tree_node="L.2.1.2",
+                         title="t2", description="d2", mode="panoptic_grounded", panoptic_action="PA08.01.01"),
+        # no panoptic_action at all (e.g. from a non-panoptic mode) -> excluded, not scored as FP
+        GeneratedThreat(flow_id=flow["id"], originator_id="S3-PH", threat_type="L", tree_node="L.2.1.2",
+                         title="t3", description="d3", mode="grounded"),
+    ]
+    m = match_threats_panoptic(generated, gold, scenario="genomic", dfd=dfd)
+    check(m.tp == 1, f"tp==1: gen #1 matched gold #1 via panoptic_action+flow (got {m.tp})")
+    check(1 in m.gen_to_gold.values(), "gold #1 matched")
+    check(2 not in m.matched_gold_ids, "gold #2 (unresolved location) can never be matched")
+    check(m.fp == 1, f"fp==1: gen #2's panoptic_action is real but on the wrong flow (got {m.fp})")
+    check(2 not in m.gen_to_gold, "gen #3 (no panoptic_action) is excluded entirely, not scored as FP")
+
+
+def test_panoptic_category_scores():
+    print("\n[per-PANOPTIC-category scores]")
+    dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
+    flow = next(f for f in dfd["flows"] if f["source"] == "S3-PH" and f["destination"] == "S11-PH")
+    gold = [
+        {"id": 1, "threat_type": "L", "tree_node": "L.2.1.2", "panoptic_actions": ["PA03.09", "PA08.01.01"],
+         "dfd_source_id": "S3-PH", "dfd_destination_id": "S11-PH", "dfd_location_confidence": "high"},
+        {"id": 2, "threat_type": "L", "tree_node": "L.1.1", "panoptic_actions": ["PA10.01"],
+         "dfd_source_id": "S3-PH", "dfd_destination_id": "S11-PH", "dfd_location_confidence": "high"},
+    ]
+    generated = [
+        GeneratedThreat(flow_id=flow["id"], originator_id="S3-PH", threat_type="L", tree_node="L.2.1.2",
+                         title="t1", description="d1", mode="panoptic_grounded", panoptic_action="PA03.09"),
+        GeneratedThreat(flow_id=flow["id"], originator_id="S3-PH", threat_type="U", tree_node="U.1.1",
+                         title="t2", description="d2", mode="panoptic_grounded", panoptic_action="PA01.01"),
+    ]
+    m = match_threats_panoptic(generated, gold, scenario="genomic", dfd=dfd)
+    scores = per_panoptic_category_scores(generated, gold, m.gen_to_gold, m.matched_gold_ids)
+    check(scores["PA03"].tp == 1, "PA03: tp=1 (gen #1 matched gold #1 via PA03.09)")
+    check(scores["PA01"].fp == 1, "PA01: fp=1 (gen #2's PA01.01 has no matching gold)")
+    check(scores["PA10"].fn == 1, "PA10: fn=1 (gold #2's first panoptic_action PA10.01 never generated)")
+
+
+def test_reachability_panoptic_no_structural_gate():
+    print("\n[reachability: panoptic mode has no structurally_unreachable concept]")
+    gold = json.loads((config.KB_DIR / "scenarios/genomic/gold_standard_threats.json").read_text())["threats"]
+    dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
+    rc = reachability_breakdown_panoptic(gold, "genomic", dfd, matched_gold_ids=set())
+    check(rc.structurally_unreachable == 0, "structurally_unreachable is always 0 for panoptic mode")
+    check(rc.reachable_but_missed == 97, f"97 reachable (got {rc.reachable_but_missed})")
+    check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
+
+
 def test_llm_backend_routing():
     print("\n[LLM backend routing (no network calls)]")
     try:
@@ -239,14 +509,18 @@ def test_per_node_scores():
 
 
 def test_reachability_genomic_reproduces_published_split():
-    print("\n[reachability: genomic reproduces the WEEK3/4 hand-counted 70/27/2 split]")
+    print("\n[reachability: genomic reproduces the WEEK3/8 hand-counted 17/80/2 split]")
     gold = json.loads((config.KB_DIR / "scenarios/genomic/gold_standard_threats.json").read_text())["threats"]
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
     # matched_gold_ids=set() -- as if nothing were generated yet, isolating the pure structural
     # ceiling (independent of any live LLM run) from actual recall failures.
+    # This is the original Week 3 finding, restored: Week 4's effective_type()
+    # internal_staff->Process reclassification (which raised this to 70/27/2) was reverted in
+    # Week 8 without advisor sign-off ever having been given -- see effective_type()'s docstring
+    # in retrieval/interaction_context.py.
     rc = reachability_breakdown(gold, "genomic", dfd, matched_gold_ids=set())
-    check(rc.reachable_but_missed == 70, f"70 structurally reachable (got {rc.reachable_but_missed})")
-    check(rc.structurally_unreachable == 27, f"27 structurally unreachable (got {rc.structurally_unreachable})")
+    check(rc.reachable_but_missed == 17, f"17 structurally reachable (got {rc.reachable_but_missed})")
+    check(rc.structurally_unreachable == 80, f"80 structurally unreachable (got {rc.structurally_unreachable})")
     check(rc.unresolved_location == 2, f"2 unresolved-location (got {rc.unresolved_location})")
 
 
@@ -283,6 +557,19 @@ def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
     test_schema_roundtrip()
+    test_schema_mode_field()
+    test_resolve_mode()
+    test_build_flow_query()
+    test_build_rag_prompt()
+    test_rag_retrieval_no_gold_leakage()
+    test_resolve_mode_panoptic()
+    test_build_panoptic_prompt()
+    test_build_panoptic_rag_prompt()
+    test_build_panoptic_ungrounded_prompt()
+    test_panoptic_rag_retrieval_no_gold_leakage()
+    test_matcher_panoptic()
+    test_panoptic_category_scores()
+    test_reachability_panoptic_no_structural_gate()
     test_verifier_valid_citation()
     test_verifier_fabricated_citations()
     test_matcher_coarse_tier()

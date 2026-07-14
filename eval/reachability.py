@@ -65,3 +65,28 @@ def reachability_breakdown(gold: list[dict], scenario: str, dfd: dict,
             continue
         counts[classify_gold_threat(g, scenario, dfd, flows_by_id)] += 1
     return ReachabilityCounts(matched=len(matched_gold_ids), **counts)
+
+
+def reachability_breakdown_panoptic(gold: list[dict], scenario: str, dfd: dict,
+                                    matched_gold_ids: set[int]) -> ReachabilityCounts:
+    """PANOPTIC mode's reachability story is simpler than LINDDUN's: generate.py never gates
+    panoptic-mode flows on mapping_table.json validity (PANOPTIC has no Process-mediation
+    restriction at all -- see build_panoptic_prompt()'s docstring), so there is no
+    structurally_unreachable concept for it. An unmatched gold threat is either a genuine recall
+    failure (its flow resolves fine) or unresolved_location (the same 2/99 genomic threats with
+    no confidently-transcribed DFD location that the LINDDUN reachability breakdown also excludes)
+    -- structurally_unreachable is always 0 here, kept in the same ReachabilityCounts shape only
+    so both breakdowns can be reported side by side without a second dataclass.
+    """
+    flows_by_id = {f["id"]: f for f in dfd["flows"]}
+    reachable_but_missed = unresolved_location = 0
+    for g in gold:
+        if g["id"] in matched_gold_ids:
+            continue
+        flow = resolve_gold_flow(g, scenario, dfd, flows_by_id)
+        if flow is None:
+            unresolved_location += 1
+        else:
+            reachable_but_missed += 1
+    return ReachabilityCounts(matched=len(matched_gold_ids), reachable_but_missed=reachable_but_missed,
+                              structurally_unreachable=0, unresolved_location=unresolved_location)

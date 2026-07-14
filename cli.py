@@ -6,8 +6,9 @@ Usage:
   python cli.py search "QUERY" [--source S] [-k N]
   python cli.py ask "QUESTION"                # retrieve + Claude answer (needs ANTHROPIC_API_KEY)
   python cli.py stats                         # corpus statistics
-  python cli.py generate --scenario kidstube [--ungrounded] [--provider anthropic|openai|azure]   # LLM threat generation
+  python cli.py generate --scenario kidstube [--ungrounded|--rag] [--framework linddun|panoptic] [--provider anthropic|openai|azure]
   python cli.py eval --scenario kidstube --generated storage/generated/kidstube_grounded.json [--strict]
+  python cli.py eval --scenario genomic --generated storage/generated/genomic_panoptic_grounded.json --framework panoptic
 """
 from __future__ import annotations
 import argparse
@@ -16,8 +17,8 @@ import sys
 import config
 from retrieval.index import Retriever
 
-GENERATE_SCENARIOS = ["kidstube", "genomic", "smart_home"]
-EVAL_SCENARIOS = ["kidstube", "genomic"]  # only scenarios with a gold_standard_threats.json
+GENERATE_SCENARIOS = ["kidstube", "genomic", "smart_home", "family_location"]
+EVAL_SCENARIOS = ["kidstube", "genomic", "smart_home", "family_location"]  # only scenarios with a gold_standard_threats.json
 
 
 def cmd_build(_):
@@ -49,17 +50,20 @@ def cmd_stats(_):
 
 
 def cmd_generate(args):
-    from generation.generate import generate_for_scenario, save_generated
-    grounded = not args.ungrounded
-    threats = generate_for_scenario(args.scenario, grounded=grounded, provider=args.provider)
-    path = save_generated(args.scenario, grounded, threats)
-    label = "grounded" if grounded else "ungrounded"
-    print(f"Generated {len(threats)} threats ({label}) for scenario '{args.scenario}' -> {path}")
+    from generation.generate import generate_for_scenario, save_generated, resolve_mode
+    try:
+        mode = resolve_mode(rag=args.rag, ungrounded=args.ungrounded, framework=args.framework)
+    except ValueError as e:
+        raise SystemExit(str(e))
+    threats = generate_for_scenario(args.scenario, mode=mode, provider=args.provider)
+    path = save_generated(args.scenario, mode, threats)
+    print(f"Generated {len(threats)} threats ({mode}) for scenario '{args.scenario}' -> {path}")
 
 
 def cmd_eval(args):
     from eval.run_eval import run_eval
-    report = run_eval(args.scenario, args.generated, strict=args.strict, by_node=args.by_node)
+    report = run_eval(args.scenario, args.generated, strict=args.strict, by_node=args.by_node,
+                      framework=args.framework)
     print(report)
     if args.out:
         from pathlib import Path
@@ -107,7 +111,7 @@ def main():
 
     sp = sub.add_parser("search")
     sp.add_argument("query")
-    sp.add_argument("--source", choices=["linddun", "scenarios"], default=None)
+    sp.add_argument("--source", choices=["linddun", "scenarios", "panoptic"], default=None)
     sp.add_argument("-k", type=int, default=config.TOP_K)
     sp.set_defaults(func=cmd_search)
 
@@ -117,8 +121,17 @@ def main():
 
     sg = sub.add_parser("generate")
     sg.add_argument("--scenario", required=True, choices=GENERATE_SCENARIOS)
+    sg.add_argument("--framework", choices=["linddun", "panoptic"], default="linddun",
+                     help="Which methodology to ground in: LINDDUN (default, mapping_table.json/"
+                          "threat_trees.json) or MITRE PANOPTIC (knowledge_base/panoptic/"
+                          "taxonomy.json, no Process-mediation gate -- every flow attempted).")
     sg.add_argument("--ungrounded", action="store_true",
-                     help="Ablation baseline: no interaction-context grounding.")
+                     help="Ablation baseline: no context from the chosen --framework's KB.")
+    sg.add_argument("--rag", action="store_true",
+                     help="RAG ablation: semantic-retrieval-grounded prompt (top-k over the "
+                          "chosen --framework's KB), vs. the default deterministic/exhaustive "
+                          "grounding or --ungrounded's no context at all. Mutually exclusive "
+                          "with --ungrounded.")
     sg.add_argument("--provider", choices=["anthropic", "openai", "azure"], default=None,
                      help="Override LLM_PROVIDER from config/.env for this run.")
     sg.set_defaults(func=cmd_generate)
@@ -130,6 +143,9 @@ def main():
     se.add_argument("--by-node", action="store_true",
                      help="Also report a per-tree-node breakdown, not just per LINDDUN category.")
     se.add_argument("--out", default=None, help="Also write the report to this path.")
+    se.add_argument("--framework", choices=["linddun", "panoptic"], default="linddun",
+                     help="Score against LINDDUN threat_type/tree_node (default), or PANOPTIC "
+                          "panoptic_action membership (for mode=panoptic_* generated output).")
     se.set_defaults(func=cmd_eval)
 
     args = p.parse_args()

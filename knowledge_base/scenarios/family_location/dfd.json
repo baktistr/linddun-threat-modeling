@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "scenario": "Family Location Sharing App",
+    "source": "Hand-authored evaluation scenario (Week 8), designed for this repo -- not derived from an external homework assignment (KidsTube) or an authoritative third-party analysis (Genomic/NIST). Treat its gold standard as AI-assisted-and-reviewed, not independently authoritative; see gold_standard_threats.json's own _meta for the same caveat.",
+    "purpose": "An app that shares a child's live location with parents/guardians, for situations like field trips or staying at a friend's house. All flows are Process-mediated (a Process on at least one side of every flow), by design, so every flow is reachable under LINDDUN Pro's Table 4.1 with no effective_type reclassification needed -- deliberately, mirroring smart_home's discipline, to keep this scenario's reachability ceiling equal to its gold-standard size."
+  },
+  "elements": [
+    {"id": "EE1", "type": "ExternalEntity", "name": "Parent"},
+    {"id": "EE2", "type": "ExternalEntity", "name": "Child"},
+    {"id": "EE3", "type": "ExternalEntity", "name": "Secondary Guardian"},
+    {"id": "EE4", "type": "ExternalEntity", "name": "Advertising/Analytics Partner"},
+    {"id": "P1", "type": "Process", "name": "Mobile App Backend"},
+    {"id": "P2", "type": "Process", "name": "Geofencing & Alert Engine"},
+    {"id": "DS1", "type": "DataStore", "name": "Location History Store"},
+    {"id": "DS2", "type": "DataStore", "name": "Family Account & Permissions Store"}
+  ],
+  "flows": [
+    {"id": "DF1", "source": "EE2", "destination": "P1",
+     "description": "Child's device transmits live GPS coordinates to the backend at regular intervals"},
+    {"id": "DF2", "source": "P1", "destination": "DS1",
+     "description": "Backend writes each location ping to the Location History Store"},
+    {"id": "DF3", "source": "P1", "destination": "P2",
+     "description": "Backend forwards new location pings to the Geofencing Engine to check zone entry/exit"},
+    {"id": "DF4", "source": "DS2", "destination": "P2",
+     "description": "Geofencing Engine reads configured zone definitions (home, school, friend's house) from the Family Account Store"},
+    {"id": "DF5", "source": "P2", "destination": "EE1",
+     "description": "Geofencing Engine pushes an arrival/departure notification to the parent when the child enters or exits a defined zone"},
+    {"id": "DF6", "source": "EE1", "destination": "P1",
+     "description": "Parent registers an account, creates the child's profile (name, DOB, school), and defines geofence zones"},
+    {"id": "DF7", "source": "P1", "destination": "DS2",
+     "description": "Backend stores account, child profile, and geofence zone data"},
+    {"id": "DF8", "source": "EE1", "destination": "P1",
+     "description": "Parent requests to view the child's current location or location history on a map"},
+    {"id": "DF9", "source": "DS1", "destination": "P1",
+     "description": "Backend retrieves stored location history to serve the parent's map/history view"},
+    {"id": "DF10", "source": "EE1", "destination": "P1",
+     "description": "Parent invites a secondary guardian (e.g. grandparent, relative) to also view the child's location"},
+    {"id": "DF11", "source": "P1", "destination": "EE3",
+     "description": "Backend grants the secondary guardian access and shares the child's live location with them"},
+    {"id": "DF12", "source": "P1", "destination": "EE4",
+     "description": "Backend shares aggregated usage and engagement analytics with an advertising/analytics partner to fund the app's free tier"},
+    {"id": "DF13", "source": "EE2", "destination": "P1",
+     "description": "Child sends a manual check-in / SOS message with their current location to the parent"}
+  ]
+}

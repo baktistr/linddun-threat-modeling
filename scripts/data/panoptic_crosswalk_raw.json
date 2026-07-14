@@ -1,0 +1,26 @@
+{
+  "fig19_panoptic_to_linddun": [
+    {"panoptic_category": "PA01", "panoptic_name": "Notice", "linddun_types": ["U"]},
+    {"panoptic_category": "PA02", "panoptic_name": "Consent", "linddun_types": ["U"]},
+    {"panoptic_category": "PA03", "panoptic_name": "Collection", "linddun_types": ["L", "D", "Dd"]},
+    {"panoptic_category": "PA04", "panoptic_name": "Insecurity", "linddun_types": ["Dd", "Nc"]},
+    {"panoptic_category": "PA05", "panoptic_name": "Identification", "linddun_types": ["L", "I"]},
+    {"panoptic_category": "PA06", "panoptic_name": "Quality Assurance", "linddun_types": ["Dd", "Nc"]},
+    {"panoptic_category": "PA07", "panoptic_name": "Manageability", "linddun_types": ["U", "Nc"]},
+    {"panoptic_category": "PA08", "panoptic_name": "Aggregation", "linddun_types": ["L"]},
+    {"panoptic_category": "PA09", "panoptic_name": "Processing", "linddun_types": ["Dd"]},
+    {"panoptic_category": "PA10", "panoptic_name": "Sharing", "linddun_types": ["L", "Dd"]},
+    {"panoptic_category": "PA11", "panoptic_name": "Use", "linddun_types": ["L", "Nr", "Dd"]},
+    {"panoptic_category": "PA12", "panoptic_name": "Retention & Destruction", "linddun_types": ["Dd"]},
+    {"panoptic_category": "PA13", "panoptic_name": "Deviations", "linddun_types": ["Nc"]}
+  ],
+  "fig19b_linddun_to_panoptic": [
+    {"linddun_type": "L", "linddun_name": "Linking", "panoptic_categories": ["PA03", "PA05", "PA08", "PA10", "PA11"]},
+    {"linddun_type": "I", "linddun_name": "Identifying", "panoptic_categories": ["PA05"]},
+    {"linddun_type": "Nr", "linddun_name": "Non-Repudiation", "panoptic_categories": ["PA11"]},
+    {"linddun_type": "D", "linddun_name": "Detecting", "panoptic_categories": ["PA03"]},
+    {"linddun_type": "Dd", "linddun_name": "Data Disclosure", "panoptic_categories": ["PA03", "PA04", "PA06", "PA09", "PA10", "PA11", "PA12"]},
+    {"linddun_type": "U", "linddun_name": "Unawareness", "panoptic_categories": ["PA01", "PA02", "PA07"]},
+    {"linddun_type": "Nc", "linddun_name": "Non-Compliance", "panoptic_categories": ["PA04", "PA06", "PA07", "PA12", "PA13"]}
+  ]
+}

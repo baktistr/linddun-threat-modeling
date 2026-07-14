@@ -108,10 +108,31 @@ def _split_json(path: Path, doc: str, source: str) -> list[Chunk]:
             add(f"Invalid interaction {inv['source']} -> {inv['destination']}: {inv['reason']}",
                 section=f"invalid {inv['source']}->{inv['destination']}",
                 meta={"kind": "mapping_invalid"})
+    elif "privacy_activities" in data:  # panoptic/taxonomy.json
+        for pc in data.get("contextual_domains", []):
+            add(f"PANOPTIC Contextual Domain {pc['id']} ({pc['name']}): {pc.get('description','')}",
+                section=f"{pc['id']} {pc['name']}",
+                meta={"kind": "panoptic_contextual_domain", "panoptic_id": pc["id"]})
+        for pa in data["privacy_activities"]:
+            lt = ", ".join(pa.get("linddun_types", []))
+            add(f"PANOPTIC Privacy Activity {pa['id']} ({pa['name']}). LINDDUN types: {lt}.",
+                section=f"{pa['id']} {pa['name']}",
+                meta={"kind": "panoptic_activity", "panoptic_id": pa["id"], "linddun_types": pa.get("linddun_types", [])})
+            for sub in pa.get("sub_activities", []):
+                add(f"PANOPTIC sub-activity {sub['id']} — {sub['name']}: {sub.get('description','')} "
+                    f"(under {pa['id']} {pa['name']}; LINDDUN types: {lt})",
+                    section=f"{sub['id']} {sub['name']}",
+                    meta={"kind": "panoptic_sub_activity", "panoptic_id": sub["id"],
+                          "parent_activity": pa["id"], "linddun_types": pa.get("linddun_types", [])})
     elif "threats" in data:  # gold_standard_threats.json
         for t in data["threats"]:
+            # "interaction" is KidsTube/genomic's own field (a [DFn] tag or NIST scenario_id);
+            # scenarios using the location-based convention (family_location, smart_home) instead
+            # carry dfd_source_id/dfd_destination_id -- fall back to composing an equivalent
+            # string from those rather than assuming every gold standard has "interaction".
+            interaction = t.get("interaction") or f"{t.get('dfd_source_id', '?')}->{t.get('dfd_destination_id', '?')}"
             add(f"[Gold threat #{t['id']}] {t['title']} ({t['threat_type']}, node {t['tree_node']}, "
-                f"originator {t['originator_id']}, interaction {t['interaction']}). "
+                f"originator {t['originator_id']}, interaction {interaction}). "
                 f"{t['description']} Assumptions: {t['assumptions']} "
                 f"Severity {t['severity']}, Likelihood {t['likelihood']}.",
                 section=f"threat #{t['id']} {t['title']}",

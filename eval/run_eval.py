@@ -32,7 +32,76 @@ def _load_dfd(scenario: str) -> dict:
     return json.loads((config.KB_DIR / "scenarios" / scenario / "dfd.json").read_text())
 
 
-def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: bool = False) -> str:
+def _load_panoptic_categories() -> dict[str, str]:
+    cw = json.loads((config.KB_DIR / "linddun" / "panoptic_crosswalk.json").read_text())
+    return cw["panoptic_categories"]
+
+
+def run_eval_panoptic(scenario: str, generated_path: str) -> str:
+    """PANOPTIC-framework report: matches on panoptic_action membership in the gold threat's own
+    panoptic_actions list (not LINDDUN threat_type/tree_node), scored per PANOPTIC category. See
+    eval/match.py::match_threats_panoptic and eval/metrics.py::per_panoptic_category_scores."""
+    from eval.match import match_threats_panoptic
+    from eval.metrics import per_panoptic_category_scores
+    from eval.reachability import reachability_breakdown_panoptic
+
+    generated = load_generated(generated_path)
+    gold = _load_gold(scenario)
+    dfd = _load_dfd(scenario)
+    categories = _load_panoptic_categories()
+
+    match = match_threats_panoptic(generated, gold, scenario=scenario, dfd=dfd)
+    scores = per_panoptic_category_scores(generated, gold, match.gen_to_gold, match.matched_gold_ids)
+    n_panoptic_generated = sum(1 for t in generated if t.panoptic_action)
+
+    lines = [
+        f"Eval report (PANOPTIC framework): scenario={scenario} generated={generated_path}",
+        f"  n_generated={len(generated)} (with panoptic_action: {n_panoptic_generated}) n_gold={len(gold)}",
+        "",
+        "NOTE: matches on panoptic_action membership in the gold threat's own panoptic_actions "
+        "list, plus same-flow location (dfd_source_id/dfd_destination_id) -- not LINDDUN "
+        "threat_type/tree_node. See knowledge_base/panoptic/taxonomy.json and "
+        "knowledge_base/linddun/panoptic_crosswalk.json.",
+        "",
+        f"{'Cat':<6} {'Name':<26} {'TP':>4} {'FP':>4} {'FN':>4} {'P':>6} {'R':>6} {'F1':>6}",
+    ]
+    tot_tp = tot_fp = tot_fn = 0
+    for cat in sorted(categories):
+        s = scores.get(cat)
+        if s is None:
+            continue
+        tot_tp += s.tp
+        tot_fp += s.fp
+        tot_fn += s.fn
+        lines.append(f"{cat:<6} {categories[cat]:<26} {s.tp:>4} {s.fp:>4} {s.fn:>4} "
+                      f"{s.precision:>6.2f} {s.recall:>6.2f} {s.f1:>6.2f}")
+
+    overall_p = tot_tp / (tot_tp + tot_fp) if (tot_tp + tot_fp) else 0.0
+    overall_r = tot_tp / (tot_tp + tot_fn) if (tot_tp + tot_fn) else 0.0
+    overall_f1 = 2 * overall_p * overall_r / (overall_p + overall_r) if (overall_p + overall_r) else 0.0
+    lines.append(f"{'ALL':<6} {'':<26} {tot_tp:>4} {tot_fp:>4} {tot_fn:>4} "
+                 f"{overall_p:>6.2f} {overall_r:>6.2f} {overall_f1:>6.2f}")
+
+    rc = reachability_breakdown_panoptic(gold, scenario, dfd, match.matched_gold_ids)
+    lines.append("")
+    lines.append("Reachability breakdown (gold threats not matched):")
+    lines.append(f"  reachable_but_missed        {rc.reachable_but_missed:>4}   "
+                  "(real recall failures -- flow valid, no LLM match)")
+    lines.append(f"  unresolved_location          {rc.unresolved_location:>4}   "
+                  "(no single flow to anchor to -- can never be matched)")
+    lines.append("  (PANOPTIC mode has no structural-gate concept -- every flow is attempted, "
+                 "so there is no structurally_unreachable count here, unlike the LINDDUN report)")
+    lines.append(f"  recall (raw, vs all gold):        {overall_r:.2f}")
+    lines.append(f"  recall (reachable-adjusted):      {rc.reachable_recall:.2f}   "
+                  "(tp / (tp + reachable_but_missed))")
+    return "\n".join(lines)
+
+
+def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: bool = False,
+            framework: str = "linddun") -> str:
+    if framework == "panoptic":
+        return run_eval_panoptic(scenario, generated_path)
+
     generated = load_generated(generated_path)
     gold = _load_gold(scenario)
     dfd = _load_dfd(scenario)

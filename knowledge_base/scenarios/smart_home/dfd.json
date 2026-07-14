@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "scenario": "Smart Home Security System (demo)",
-    "source": "Hand-authored dummy scenario for the Week 4 progress demo -- not a gold-standard-backed evaluation scenario (no gold_standard_threats.json). Shows grounded generation on a novel system, all flows Process-mediated so every interaction is reachable with no caveats.",
-    "purpose": "Small, general-purpose demo DFD: a homeowner's smart camera/hub system with a cloud backend and a third-party analytics vendor."
+    "scenario": "Smart Home Security System",
+    "source": "Originally a hand-authored dummy demo for Week 4 (no gold standard); upgraded to a scored evaluation scenario in Week 8 with gold_standard_threats.json added. Still hand-authored for this repo, not transcribed from an external human-authored assignment or an authoritative third-party report -- see gold_standard_threats.json's own _meta for the same provenance caveat as family_location.",
+    "purpose": "A homeowner's smart camera/lock/hub system with a cloud backend and a third-party analytics vendor. All flows Process-mediated so every interaction is reachable with no mapping-table caveats."
   },
   "elements": [
     {"id": "EE1", "type": "ExternalEntity", "name": "Homeowner"},

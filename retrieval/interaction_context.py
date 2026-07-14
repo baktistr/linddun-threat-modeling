@@ -78,14 +78,22 @@ ELEMENT_TYPES = {"ExternalEntity", "Process", "DataStore"}
 
 
 def effective_type(element: dict) -> str:
-    """Type to use for mapping-table lookups. LINDDUN Pro Table 4.1 requires a Process to
-    mediate any DataStore/ExternalEntity exchange (an ExternalEntity is defined as outside the
-    system). NIST's own DFDs type every human actor as ExternalEntity regardless of whether
-    they're internal staff or a genuinely external party. Elements with role=="internal_staff"
-    (an annotation we add, not part of NIST's diagram -- see scripts/build_genomic_dfd.py) are
-    treated as Process here; `element["type"]` itself is left untouched for provenance."""
-    if element.get("type") == "ExternalEntity" and element.get("role") == "internal_staff":
-        return "Process"
+    """Type to use for mapping-table lookups.
+
+    Week 4 introduced a reinterpretation here: since NIST's own DFDs type every human actor as
+    ExternalEntity regardless of whether they're internal staff or a genuinely external party,
+    elements tagged role=="internal_staff" (an annotation this repo adds -- see
+    scripts/build_genomic_dfd.py) were treated as Process for this lookup, raising genomic
+    reachability from 17/99 to 70/99 gold threats. That reclassification was never signed off by
+    the advisor (flagged as a pending open item every week since Week 4) and is reverted here
+    (Week 8): `role` is no longer consulted, so this is now the identity function on
+    `element["type"]`. `dfd.json`'s `role: "internal_staff"` annotations are left in place as
+    inert provenance rather than stripped -- they document a reclassification this repo tried and
+    backed out of, not current pipeline behavior. Reverting this restores the original Week 3
+    finding: only 17/99 genomic gold threats are structurally reachable by the mapping-table-gated
+    per-flow generation loop, independent of model quality; see WEEK3_REPORT.md and
+    knowledge_base/linddun/panoptic_crosswalk.json (Week 8) for why NIST's own analysis isn't
+    bound by this same restriction in the first place."""
     return element.get("type")
 
 

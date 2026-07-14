@@ -1,0 +1,176 @@
+{
+  "contextual_domains": [
+    {"id": "PC01", "name": "Environment", "description": "The type of contextual domain in which data actions occur"},
+    {"id": "PC02", "name": "Distribution", "description": "How many entities with which the information holder shares information"},
+    {"id": "PC03", "name": "Interaction", "description": "The extent to which the data subject or their proxy interacts with the data custodian, processor, third-party, or their proxy (entities other than the data subject)"},
+    {"id": "PC04", "name": "Engagement", "description": "Targeted subpopulations with which the entity or their proxy interact"},
+    {"id": "PC05", "name": "Data Type", "description": "Classes of data upon which data actions are performed"}
+  ],
+  "privacy_activities": [
+    {
+      "id": "PA01", "name": "Notice", "linddun_types": ["U"],
+      "sub_activities": [
+        {"id": "PA01.01", "name": "Out of scope", "description": ""},
+        {"id": "PA01.02", "name": "Unclear", "description": "A privacy notice is difficult to find or access"},
+        {"id": "PA01.03", "name": "Imprecise", "description": "Key data actions are not clearly stated in the notice"},
+        {"id": "PA01.04", "name": "Absent", "description": "Applicable notice is missing"},
+        {"id": "PA01.05", "name": "Insufficient", "description": "Significant point is missing from the notice"},
+        {"id": "PA01.06", "name": "Misleading / false", "description": "The notice is erroneous or deceptive", "tags": ["Deviations"]}
+      ]
+    },
+    {
+      "id": "PA02", "name": "Consent", "linddun_types": ["U"],
+      "sub_activities": [
+        {"id": "PA02.01", "name": "Out of sequence", "description": ""},
+        {"id": "PA02.02", "name": "Imprecise", "description": "Key data actions are not clearly stated"},
+        {"id": "PA02.03", "name": "Insufficient", "description": "Applicable consent is not requested"},
+        {"id": "PA02.04", "name": "Absent", "description": "Significant content for consent is not requested"},
+        {"id": "PA02.05", "name": "Misleading", "description": "There is no way to opt out or opt in"},
+        {"id": "PA02.06", "name": "No opt-out / in", "description": "There is no way to opt out or opt in of a data action with a single option"},
+        {"id": "PA02.06.01", "name": "No overall opt-out /", "description": "There is no way to opt out of specific elements of a data action"},
+        {"id": "PA02.06.02", "name": "No granular opt-out / inherited", "description": "Consent is inherited from a prior consent through the same organization", "id_inferred": true},
+        {"id": "PA02.07", "name": "Compulsory self-identification", "description": "Requiring the data subject to provide a direct identifier, does not apply to pseudonyms"}
+      ]
+    },
+    {
+      "id": "PA03", "name": "Collection", "linddun_types": ["L", "D", "Dd"],
+      "sub_activities": [
+        {"id": "PA03.01", "name": "Application or Registration", "description": "Information collected or created during registration or application"},
+        {"id": "PA03.02", "name": "Tracking & profiling", "description": "Collecting information or generating information about a data subject through repeated actions", "confidence": "low", "confidence_note": "two independent vision-transcription passes of Figure 19 parsed this row's name/description differently -- names/ids in this densely-wrapped table region (PA03.02-PA03.04) are less certain than the rest of the file."},
+        {"id": "PA03.03", "name": "Sniffing & affording", "description": "Collecting information from a device's broadcast signals or divulging application data", "confidence": "low", "confidence_note": "see PA03.02's confidence_note"},
+        {"id": "PA03.04", "name": "Soliciting", "description": "Collecting information from a broadcast signal by using false pretenses to manipulate the data subject into divulging", "confidence": "low", "confidence_note": "see PA03.02's confidence_note"},
+        {"id": "PA03.05", "name": "Pretexting", "description": "Collecting information by using false pretenses to manipulate the data subject into divulging some unrelated purpose"},
+        {"id": "PA03.06", "name": "External appropriation", "description": "Using personal information legitimately collected by another entity for some unrelated purpose"},
+        {"id": "PA03.07", "name": "Interception", "description": "Collecting information flows in transit between their source and destination"},
+        {"id": "PA03.08", "name": "Soliciting & affording soliciting", "description": "The data subject is prompted to provide information and/or make available/facilitate functionality"},
+        {"id": "PA03.08.01", "name": "2nd Party Solicits 1st Party", "description": "Information custodian entices individuals to disclose more personal information than they otherwise might and/or enables others to do the same"},
+        {"id": "PA03.08.02", "name": "3rd Party Solicits 2nd Party", "description": "A third-party entices an information custodian to disclose more of a data subject's personal information than they otherwise might and/or enables others to do the same, including purchasing information"},
+        {"id": "PA03.08.03", "name": "3rd Party Solicits 1st Party", "description": "A third-party entices the data subject to disclose additional personal information and/or enables others to do the same"},
+        {"id": "PA03.09", "name": "Recording", "description": "Capturing a physical or digital artifact representing an aspect or likeness of the data subject"},
+        {"id": "PA03.10", "name": "Transaction", "description": "Logging information pertaining to monetary transactions"},
+        {"id": "PA03.11", "name": "Biological sample", "description": "Collecting biological materials or specimens (e.g., blood, urine, tissue, cells, or saliva) from the data subject"},
+        {"id": "PA03.12", "name": "Extraction", "description": "Capturing data directly from a device"},
+        {"id": "PA03.13", "name": "Legal proceeding", "description": "Data submitted by the data subject or their representative as part of a legal proceeding"}
+      ]
+    },
+    {
+      "id": "PA04", "name": "Insecurity", "linddun_types": ["Dd", "Nc"],
+      "sub_activities": [
+        {"id": "PA04.01", "name": "Insufficient access controls", "description": "Operational constraints for managing access to personal information are insufficient or flawed"},
+        {"id": "PA04.02", "name": "Insufficient encryption", "description": "Adequate encryption is not properly implemented"},
+        {"id": "PA04.03", "name": "Undermining / interfering with authentication", "description": "Intervening in authentication processes such that chains of trust are disrupted or other operational assumptions are invalidated"},
+        {"id": "PA04.04", "name": "Detection failure", "description": "Relevant system events are not captured and/or identified"},
+        {"id": "PA04.05", "name": "Misconfigured permissions", "description": "System, application, or service data handling permissions allow unauthorized handling"}
+      ]
+    },
+    {
+      "id": "PA05", "name": "Identification", "linddun_types": ["L", "I"],
+      "sub_activities": [
+        {"id": "PA05.01", "name": "Implicit identification", "description": "Inferring the data subject's identity from a collection of data points"},
+        {"id": "PA05.01.01", "name": "Re-identification", "description": "Re-associating data with the data subject that had been treated to remove those associations"},
+        {"id": "PA05.02", "name": "Identifier assignment", "description": "Assigning an identifier"},
+        {"id": "PA05.02.01", "name": "Direct identifier", "description": "Assigning a direct identifier (e.g., name, SSN)"},
+        {"id": "PA05.02.02", "name": "Pseudo-identifier", "description": "Assigning a pseudo-identifier (e.g., a randomly generated ID)"},
+        {"id": "PA05.02.03", "name": "Fingerprinting", "description": "Constructing a device, system, or application pseudo-identifier based on a unique set of properties"},
+        {"id": "PA05.03", "name": "Compulsory self-identification", "description": "Requiring the data subject to provide a direct identifier, does not apply to pseudonyms"}
+      ]
+    },
+    {
+      "id": "PA06", "name": "Quality Assurance", "linddun_types": ["Dd", "Nc"],
+      "sub_activities": [
+        {"id": "PA06.01", "name": "Age not vetted", "description": "Age of the user is not checked before performing data actions"},
+        {"id": "PA06.02", "name": "Unvetted source", "description": "Source of the data is not considered when performing data actions"},
+        {"id": "PA06.03", "name": "Unvetted data quality", "description": "Quality of the data is not considered when performing data actions"},
+        {"id": "PA06.03.01", "name": "Bias of data not evaluated", "description": "Data action is not evaluated for biases"},
+        {"id": "PA06.03.02", "name": "Unvetted data accuracy", "description": "Accuracy of the data is not considered when performing data actions"},
+        {"id": "PA06.04", "name": "Unvetted recipients", "description": "The legitimacy and/or trustworthiness of downstream data recipients has not been assessed"},
+        {"id": "PA06.05", "name": "Unvetted downstream practices", "description": "The legitimacy and/or trustworthiness of downstream data processes has not been assessed"},
+        {"id": "PA06.06", "name": "Insufficient communication of downstream responsibilities", "description": "The legitimacy and/or trustworthiness of downstream data stewardship responsibilities has not been assured"},
+        {"id": "PA06.07", "name": "Data insufficiently de-identified", "description": "Insufficient data processing to prevent identification of the data subject"},
+        {"id": "PA06.08", "name": "Data out of scope", "description": "Action leverages data types outside of limits established by any relevant source"},
+        {"id": "PA06.09", "name": "Data collection out of scope", "description": "Collection exceeds limits bounding that action established by any relevant source"},
+        {"id": "PA06.09.01", "name": "Data collection out of scope", "description": "Collection exceeds limits bounding that action established by any relevant source"},
+        {"id": "PA06.09.02", "name": "Data processing out of scope", "description": "Processing exceeds limits bounding that action established by any relevant source"},
+        {"id": "PA06.09.03", "name": "Data sharing out of scope", "description": "Sharing exceeds limits bounding that action established by any relevant source"},
+        {"id": "PA06.10", "name": "Insufficient agreed usage restrictions", "description": "Data use agreement for data processor, third-parties, and downstream data recipients is insufficient or absent"}
+      ]
+    },
+    {
+      "id": "PA07", "name": "Manageability", "linddun_types": ["U", "Nc"],
+      "sub_activities": [
+        {"id": "PA07.01", "name": "No individual access to information", "description": "The data subject or their proxy cannot obtain or view their collected personal data"},
+        {"id": "PA07.02", "name": "No individual management of information content", "description": "The data subject or their proxy cannot transform (e.g., move, copy, edit) their collected personal data"},
+        {"id": "PA07.03", "name": "No individual deletion of information", "description": "The data subject or their proxy cannot delete their collected personal data"},
+        {"id": "PA07.04", "name": "No individual control of information disclosure", "description": "The data subject or their proxy cannot control how or with whom their information is shared"},
+        {"id": "PA07.05", "name": "No individual control of information use", "description": "The data subject or their proxy cannot control how their information is used"},
+        {"id": "PA07.06", "name": "Privacy configurations compromised by outside forces", "description": "The data subject's privacy settings are compromised by dependencies on the settings of others"},
+        {"id": "PA07.07", "name": "Confounded controls", "description": "User controls are opaque or ineffective, including frustrating the data subject's attempts to utilize controls"},
+        {"id": "PA07.08", "name": "Bypass of user controls", "description": "Defeating or ignoring a privacy control within or outside a functional context"},
+        {"id": "PA07.09", "name": "Pre-emption of privacy settings", "description": "Preventing the data subject from influencing an action or event by initiating or executing it before they have an opportunity to affect it"}
+      ]
+    },
+    {
+      "id": "PA08", "name": "Aggregation", "linddun_types": ["L"],
+      "sub_activities": [
+        {"id": "PA08.01", "name": "Profiling", "description": "Assembling and organizing data points regarding specific data subjects"},
+        {"id": "PA08.01.01", "name": "Single source profiling", "description": "Assembling and organizing data points about specific data subjects from a single source"},
+        {"id": "PA08.01.02", "name": "Multi-source profiling", "description": "Assembling and organizing data points about specific data subjects with data points from multiple sources"},
+        {"id": "PA08.02", "name": "Clustering", "description": "Assembling and organizing data points regarding groups of people"},
+        {"id": "PA08.02.01", "name": "Single source clustering", "description": "Assembling and organizing data points regarding groups of people from a single source"},
+        {"id": "PA08.02.02", "name": "Multi-source clustering", "description": "Assembling and organizing data points regarding groups of people from multiple sources"}
+      ]
+    },
+    {
+      "id": "PA09", "name": "Processing", "linddun_types": ["Dd"],
+      "sub_activities": [
+        {"id": "PA09.01", "name": "Deriving new information", "description": "Determining or extracting novel information by analyzing personal data"},
+        {"id": "PA09.01.01", "name": "Deriving information about individuals", "description": "Determining or extracting novel information about the data subject by analyzing personal data"},
+        {"id": "PA09.01.02", "name": "Deriving aggregate information", "description": "Determining or extracting novel aggregate information by analyzing personal data"},
+        {"id": "PA09.01.03", "name": "Deriving sensitive information", "description": "Determining or extracting novel sensitive information by analyzing personal data"},
+        {"id": "PA09.01.04", "name": "Deriving derogatory information", "description": "Determining or extracting novel derogatory information by analyzing personal data"},
+        {"id": "PA09.02", "name": "Behavioral analysis", "description": "Leveraging information to determine or infer the behavior of an individual or group of individuals"},
+        {"id": "PA09.03", "name": "Introducing bias", "description": "Data action is adversely influenced by bias"},
+        {"id": "PA09.04", "name": "Trawling datasets for information", "description": "Reviewing aggregated collections or streams of information for items of interest"},
+        {"id": "PA09.05", "name": "Internal appropriation", "description": "Using personal information legitimately collected for some unrelated purpose"}
+      ]
+    },
+    {
+      "id": "PA10", "name": "Sharing", "linddun_types": ["L", "Dd"],
+      "sub_activities": [
+        {"id": "PA10.01", "name": "Affording revelations", "description": "Making available information that should be protected at the conclusion of its lifecycle"},
+        {"id": "PA10.02", "name": "Exposure", "description": "Information that should be protected is made generally discoverable and accessible, including a subset of a larger body of information (e.g., access controls, redaction, database views)"},
+        {"id": "PA10.02.01", "name": "Doxing", "description": "Disseminating information for purposes of harassment, in terms of the release itself and/or its exploitation by others without necessary or proper interpretation"},
+        {"id": "PA10.03", "name": "Misrepresentation", "description": "Downstream data recipients are in violation of usage agreements"}
+      ]
+    },
+    {
+      "id": "PA11", "name": "Use", "linddun_types": ["L", "Nr", "Dd"],
+      "sub_activities": [
+        {"id": "PA11.01", "name": "Implication", "description": "Establishing a particularized derogatory suspicion or accusation regarding the data subject"},
+        {"id": "PA11.02", "name": "Targeting", "description": "Distinguishing specific data subjects for treatment"},
+        {"id": "PA11.02.01", "name": "Tailored content", "description": "Customizing the information presented to the data subject"},
+        {"id": "PA11.03", "name": "Manipulation", "description": "Leveraging information to exploit, control, or inappropriately deliver a benefit to the data subject"},
+        {"id": "PA11.03.01", "name": "Extortion", "description": "Coercing the data subject to accrue benefits or to avert loss through use, disclosure, or destruction of information"},
+        {"id": "PA11.04", "name": "Intrusion", "description": "Invasions or incursions into the data subject's affairs"},
+        {"id": "PA11.05", "name": "Revenue", "description": "Information is used to generate revenue, including a commercial sale"},
+        {"id": "PA11.06", "name": "Reprisal", "description": "Leveraging information to retaliate against the data subject"}
+      ]
+    },
+    {
+      "id": "PA12", "name": "Retention & Destruction", "linddun_types": ["Dd"],
+      "sub_activities": [
+        {"id": "PA12.01", "name": "Data not destroyed after use", "description": "Information has not been disposed at the conclusion of its lifecycle"},
+        {"id": "PA12.02", "name": "Data improperly destroyed", "description": "Information remains at least partially recoverable despite attempts to destroy it"}
+      ]
+    },
+    {
+      "id": "PA13", "name": "Deviations", "linddun_types": ["Nc"],
+      "sub_activities": [
+        {"id": "PA13.01", "name": "Deviating from usage restrictions", "description": "Downstream data recipients are in violation of usage agreements"},
+        {"id": "PA13.02", "name": "Deviating from stated policy or user agreements", "description": "Data action deviates from stated policies or user agreements"},
+        {"id": "PA13.03", "name": "Deviating from claimed certification conformance", "description": "An entity does not actually hold a claimed certification or is not actually adhering to a claimed standard"},
+        {"id": "PA13.04", "name": "Deviating from regulatory requirements", "description": "An entity is violating a specific regulation that applies to it"}
+      ]
+    }
+  ]
+}
