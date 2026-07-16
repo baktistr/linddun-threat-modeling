@@ -1,0 +1,2593 @@
+{
+  "_meta": {
+    "scenario": "KidsTube (derived from source, llm)",
+    "adapter_mode": "llm",
+    "backend": "azure",
+    "rejected_elements": [],
+    "rejected_flows": []
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "Parent User",
+      "provenance": [
+        {
+          "fact_id": "Fc26fcde6"
+        },
+        {
+          "fact_id": "Fbe3b5ec4"
+        },
+        {
+          "fact_id": "F97335305"
+        },
+        {
+          "fact_id": "F0b620339"
+        },
+        {
+          "fact_id": "F47fd7608"
+        },
+        {
+          "fact_id": "Fd71fac73"
+        },
+        {
+          "fact_id": "Fa0ec5f70"
+        },
+        {
+          "fact_id": "Fbff61dd6"
+        },
+        {
+          "fact_id": "Fea939c7d"
+        },
+        {
+          "fact_id": "F0d301186"
+        },
+        {
+          "fact_id": "F23f46a68"
+        },
+        {
+          "fact_id": "Fa99c1e82"
+        },
+        {
+          "fact_id": "F4df3d326"
+        },
+        {
+          "fact_id": "Fd2d5d111"
+        },
+        {
+          "fact_id": "F5131f879"
+        },
+        {
+          "fact_id": "F294a73fd"
+        },
+        {
+          "fact_id": "F7971072e"
+        },
+        {
+          "fact_id": "F0781bf5b"
+        },
+        {
+          "fact_id": "F46369b22"
+        },
+        {
+          "fact_id": "Fb51de366"
+        },
+        {
+          "fact_id": "F238eb11d"
+        },
+        {
+          "fact_id": "Ff02c5618"
+        }
+      ],
+      "rationale": "Role-check facts across backend and frontend show the system explicitly recognizes and authorizes a parent role interacting with multiple services.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "Child User",
+      "provenance": [
+        {
+          "fact_id": "F52c67793"
+        },
+        {
+          "fact_id": "F54f07a00"
+        },
+        {
+          "fact_id": "Ffee5aa9f"
+        },
+        {
+          "fact_id": "Fc676d219"
+        },
+        {
+          "fact_id": "F00e74be4"
+        },
+        {
+          "fact_id": "Ffc0ca684"
+        },
+        {
+          "fact_id": "F874d2d54"
+        },
+        {
+          "fact_id": "F0d37c164"
+        },
+        {
+          "fact_id": "F55697b13"
+        },
+        {
+          "fact_id": "Fd1d6b396"
+        },
+        {
+          "fact_id": "F052f7254"
+        },
+        {
+          "fact_id": "F71b9bbd0"
+        },
+        {
+          "fact_id": "Fbfe393a9"
+        },
+        {
+          "fact_id": "F68234671"
+        },
+        {
+          "fact_id": "Fba5c753d"
+        },
+        {
+          "fact_id": "F3953fdcc"
+        },
+        {
+          "fact_id": "F77edb179"
+        },
+        {
+          "fact_id": "F6776e1e2"
+        },
+        {
+          "fact_id": "F99d46634"
+        },
+        {
+          "fact_id": "F1cff5d57"
+        }
+      ],
+      "rationale": "Role-check facts show the application distinguishes a child role and presents/permits child-specific interactions.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "Administrator",
+      "provenance": [
+        {
+          "fact_id": "F534ea9ba"
+        },
+        {
+          "fact_id": "F22cd0bb6"
+        },
+        {
+          "fact_id": "Fcc19aedb"
+        }
+      ],
+      "rationale": "Admin-only role checks indicate a separate external actor with privileged user-management access.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "Authentication Service",
+      "provenance": [
+        {
+          "fact_id": "Fc552b43f"
+        },
+        {
+          "fact_id": "F8d4ae4f3"
+        },
+        {
+          "fact_id": "Fb9d96a8d"
+        },
+        {
+          "fact_id": "F5633d31c"
+        },
+        {
+          "fact_id": "Fdf659a5f"
+        },
+        {
+          "fact_id": "F0ccaf4fd"
+        },
+        {
+          "fact_id": "F659de177"
+        },
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "F50c3a963"
+        },
+        {
+          "fact_id": "Fe4949aad"
+        },
+        {
+          "fact_id": "Fa48273c1"
+        },
+        {
+          "fact_id": "Fa17ce57e"
+        },
+        {
+          "fact_id": "F23ebd0dd"
+        },
+        {
+          "fact_id": "Fe1f159d6"
+        },
+        {
+          "fact_id": "Fe1551b3d"
+        }
+      ],
+      "rationale": "The auth router is mounted as one backend service and implements registration, multiple login flows, current-user lookup, and password change with database reads/writes.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "Child Profile Service",
+      "provenance": [
+        {
+          "fact_id": "Fddc78aea"
+        },
+        {
+          "fact_id": "F6c712160"
+        },
+        {
+          "fact_id": "F4e2da425"
+        },
+        {
+          "fact_id": "F80b239a4"
+        },
+        {
+          "fact_id": "Fa864dadc"
+        },
+        {
+          "fact_id": "F223c594b"
+        },
+        {
+          "fact_id": "F8a66d361"
+        },
+        {
+          "fact_id": "F1fff5e05"
+        },
+        {
+          "fact_id": "F1ae427eb"
+        },
+        {
+          "fact_id": "F7a93d535"
+        },
+        {
+          "fact_id": "F26eb09d0"
+        },
+        {
+          "fact_id": "F859b9e06"
+        },
+        {
+          "fact_id": "Fcaf6808f"
+        },
+        {
+          "fact_id": "F93c35c38"
+        },
+        {
+          "fact_id": "Fd800457b"
+        },
+        {
+          "fact_id": "Ff92c5144"
+        },
+        {
+          "fact_id": "Fedc019a1"
+        },
+        {
+          "fact_id": "F2338b1d5"
+        },
+        {
+          "fact_id": "Fca086277"
+        },
+        {
+          "fact_id": "Fba800375"
+        },
+        {
+          "fact_id": "Fde6dd13b"
+        },
+        {
+          "fact_id": "F92025df8"
+        },
+        {
+          "fact_id": "F00a375ed"
+        },
+        {
+          "fact_id": "F231053cd"
+        },
+        {
+          "fact_id": "F76b8d1f2"
+        },
+        {
+          "fact_id": "Ff17f3335"
+        },
+        {
+          "fact_id": "F38df087a"
+        },
+        {
+          "fact_id": "F610821a2"
+        },
+        {
+          "fact_id": "F17a9966e"
+        },
+        {
+          "fact_id": "Fd4188fff"
+        },
+        {
+          "fact_id": "F9122e3a8"
+        },
+        {
+          "fact_id": "Fdef4d6bf"
+        },
+        {
+          "fact_id": "F55e6dc79"
+        },
+        {
+          "fact_id": "Faad34d83"
+        },
+        {
+          "fact_id": "Ff995dbe0"
+        },
+        {
+          "fact_id": "F4d7c9153"
+        },
+        {
+          "fact_id": "F329d07f6"
+        },
+        {
+          "fact_id": "Fbfa2a9ef"
+        },
+        {
+          "fact_id": "F5e4e9878"
+        },
+        {
+          "fact_id": "Fd65c09fb"
+        },
+        {
+          "fact_id": "F509e44f7"
+        },
+        {
+          "fact_id": "F3005bc0f"
+        },
+        {
+          "fact_id": "F6eb2092f"
+        },
+        {
+          "fact_id": "Faea626b0"
+        }
+      ],
+      "rationale": "The children router is mounted as one coherent service handling child profile CRUD, approvals, and history-related operations against child and video data.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Video Service",
+      "provenance": [
+        {
+          "fact_id": "F997af8c2"
+        },
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "Fbd644856"
+        },
+        {
+          "fact_id": "Feb691a72"
+        },
+        {
+          "fact_id": "F9a95c32d"
+        },
+        {
+          "fact_id": "F53c8c68e"
+        },
+        {
+          "fact_id": "Fe6685224"
+        },
+        {
+          "fact_id": "F8bbb01db"
+        },
+        {
+          "fact_id": "Fdf5f8d2e"
+        },
+        {
+          "fact_id": "F9fe72a0c"
+        },
+        {
+          "fact_id": "F9336e362"
+        },
+        {
+          "fact_id": "F68f85ebc"
+        },
+        {
+          "fact_id": "Ff13d5411"
+        },
+        {
+          "fact_id": "F5ce408b1"
+        },
+        {
+          "fact_id": "Ffc83f1e3"
+        },
+        {
+          "fact_id": "Ff1c8533c"
+        },
+        {
+          "fact_id": "F0645b3b7"
+        },
+        {
+          "fact_id": "Ff3e2a486"
+        },
+        {
+          "fact_id": "F6502f67e"
+        },
+        {
+          "fact_id": "F31350f94"
+        },
+        {
+          "fact_id": "Fa6a75f10"
+        },
+        {
+          "fact_id": "F028be292"
+        },
+        {
+          "fact_id": "Fd4ff4f85"
+        },
+        {
+          "fact_id": "Fbd4c9fbb"
+        },
+        {
+          "fact_id": "F904703c3"
+        },
+        {
+          "fact_id": "F0d9fb39b"
+        }
+      ],
+      "rationale": "The videos router is mounted as a single service providing upload, browse, detail, stream, update, delete, like, and comment behavior with video datastore operations.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "User Profile and Administration Service",
+      "provenance": [
+        {
+          "fact_id": "F1156238e"
+        },
+        {
+          "fact_id": "Fa300d72b"
+        },
+        {
+          "fact_id": "Feec4e823"
+        },
+        {
+          "fact_id": "F73ab8b26"
+        },
+        {
+          "fact_id": "F782f20cd"
+        },
+        {
+          "fact_id": "F15f81f5f"
+        },
+        {
+          "fact_id": "F55c7c0e4"
+        },
+        {
+          "fact_id": "F684d2d95"
+        },
+        {
+          "fact_id": "Fdcec0762"
+        },
+        {
+          "fact_id": "Fa2e79063"
+        },
+        {
+          "fact_id": "F944a7ff8"
+        },
+        {
+          "fact_id": "F8398e878"
+        },
+        {
+          "fact_id": "F2ab27d74"
+        },
+        {
+          "fact_id": "Ff1f25d80"
+        },
+        {
+          "fact_id": "F901268f4"
+        },
+        {
+          "fact_id": "Fabaeb7f4"
+        },
+        {
+          "fact_id": "F60e45027"
+        }
+      ],
+      "rationale": "The users router is mounted as one service for profile retrieval/update, stats, user listing, role change, and deletion operations.",
+      "confidence": "high"
+    },
+    {
+      "id": "P5",
+      "type": "Process",
+      "name": "Image Upload Handler",
+      "provenance": [
+        {
+          "fact_id": "Fdaf9bef6"
+        },
+        {
+          "fact_id": "F2a689d58"
+        },
+        {
+          "fact_id": "F84f561a1"
+        },
+        {
+          "fact_id": "F58d4e79a"
+        },
+        {
+          "fact_id": "F29833cdd"
+        },
+        {
+          "fact_id": "F604cae92"
+        }
+      ],
+      "rationale": "Multer-based image upload middleware is reused by registration and child-profile routes and writes uploaded images to server filesystem storage.",
+      "confidence": "high"
+    },
+    {
+      "id": "P6",
+      "type": "Process",
+      "name": "Video Upload and Streaming Handler",
+      "provenance": [
+        {
+          "fact_id": "F15c5b0f0"
+        },
+        {
+          "fact_id": "Ff7dbec3f"
+        },
+        {
+          "fact_id": "F01760fba"
+        },
+        {
+          "fact_id": "F43d4aa4c"
+        },
+        {
+          "fact_id": "F53c8c68e"
+        }
+      ],
+      "rationale": "Video-related upload middleware writes files to server storage and the videos router also exposes a streaming endpoint, forming a coherent media file handling process.",
+      "confidence": "medium",
+      "uncertainty_note": "The facts clearly show upload storage and a stream route, but do not explicitly show filesystem reads for streaming; grouping upload and streaming is a reasonable analyst abstraction."
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "User Accounts Database",
+      "provenance": [
+        {
+          "fact_id": "F8d130874"
+        },
+        {
+          "fact_id": "Fdc3ecef1"
+        },
+        {
+          "fact_id": "F3cc74062"
+        },
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "F50c3a963"
+        },
+        {
+          "fact_id": "Fa17ce57e"
+        },
+        {
+          "fact_id": "F23ebd0dd"
+        },
+        {
+          "fact_id": "Fe1f159d6"
+        },
+        {
+          "fact_id": "Fe1551b3d"
+        },
+        {
+          "fact_id": "F684d2d95"
+        },
+        {
+          "fact_id": "Fdcec0762"
+        },
+        {
+          "fact_id": "Fa2e79063"
+        },
+        {
+          "fact_id": "Ff1f25d80"
+        },
+        {
+          "fact_id": "F901268f4"
+        },
+        {
+          "fact_id": "Fabaeb7f4"
+        },
+        {
+          "fact_id": "F60e45027"
+        }
+      ],
+      "rationale": "Mongoose model/collection facts and multiple user read/write operations show persistent storage of user account records in the users collection.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "Child Profiles Database",
+      "provenance": [
+        {
+          "fact_id": "Fc12aadaf"
+        },
+        {
+          "fact_id": "F1b828376"
+        },
+        {
+          "fact_id": "Fba55b95c"
+        },
+        {
+          "fact_id": "Fa48273c1"
+        },
+        {
+          "fact_id": "Fedc019a1"
+        },
+        {
+          "fact_id": "F2338b1d5"
+        },
+        {
+          "fact_id": "Fca086277"
+        },
+        {
+          "fact_id": "Fba800375"
+        },
+        {
+          "fact_id": "Fde6dd13b"
+        },
+        {
+          "fact_id": "F92025df8"
+        },
+        {
+          "fact_id": "F00a375ed"
+        },
+        {
+          "fact_id": "F231053cd"
+        },
+        {
+          "fact_id": "F76b8d1f2"
+        },
+        {
+          "fact_id": "F38df087a"
+        },
+        {
+          "fact_id": "F610821a2"
+        },
+        {
+          "fact_id": "F17a9966e"
+        },
+        {
+          "fact_id": "Fd4188fff"
+        },
+        {
+          "fact_id": "Fdef4d6bf"
+        },
+        {
+          "fact_id": "F55e6dc79"
+        },
+        {
+          "fact_id": "Faad34d83"
+        },
+        {
+          "fact_id": "Ff995dbe0"
+        },
+        {
+          "fact_id": "F329d07f6"
+        },
+        {
+          "fact_id": "Fbfa2a9ef"
+        },
+        {
+          "fact_id": "F5e4e9878"
+        },
+        {
+          "fact_id": "Fd65c09fb"
+        },
+        {
+          "fact_id": "F509e44f7"
+        },
+        {
+          "fact_id": "F3005bc0f"
+        },
+        {
+          "fact_id": "F6eb2092f"
+        },
+        {
+          "fact_id": "Faea626b0"
+        }
+      ],
+      "rationale": "The ChildProfile model maps to a persistent MongoDB collection and is heavily read and updated by child-profile related routes.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "Video Metadata Database",
+      "provenance": [
+        {
+          "fact_id": "Fecdb6c1e"
+        },
+        {
+          "fact_id": "F9d4e4d1d"
+        },
+        {
+          "fact_id": "Ff17f3335"
+        },
+        {
+          "fact_id": "F9122e3a8"
+        },
+        {
+          "fact_id": "F4d7c9153"
+        },
+        {
+          "fact_id": "F944a7ff8"
+        },
+        {
+          "fact_id": "F2ab27d74"
+        },
+        {
+          "fact_id": "F9336e362"
+        },
+        {
+          "fact_id": "F68f85ebc"
+        },
+        {
+          "fact_id": "Ff13d5411"
+        },
+        {
+          "fact_id": "F5ce408b1"
+        },
+        {
+          "fact_id": "Ffc83f1e3"
+        },
+        {
+          "fact_id": "Ff1c8533c"
+        },
+        {
+          "fact_id": "F0645b3b7"
+        },
+        {
+          "fact_id": "Ff3e2a486"
+        },
+        {
+          "fact_id": "F6502f67e"
+        },
+        {
+          "fact_id": "F31350f94"
+        },
+        {
+          "fact_id": "Fa6a75f10"
+        },
+        {
+          "fact_id": "F028be292"
+        },
+        {
+          "fact_id": "Fd4ff4f85"
+        },
+        {
+          "fact_id": "Fbd4c9fbb"
+        },
+        {
+          "fact_id": "F904703c3"
+        },
+        {
+          "fact_id": "F0d9fb39b"
+        }
+      ],
+      "rationale": "The Video model maps to the videos collection and route facts show persistent reads, writes, aggregates, and populate operations over stored video records.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "Uploaded Image Files",
+      "provenance": [
+        {
+          "fact_id": "F58d4e79a"
+        },
+        {
+          "fact_id": "F29833cdd"
+        },
+        {
+          "fact_id": "F604cae92"
+        },
+        {
+          "fact_id": "Fb7226fa8"
+        },
+        {
+          "fact_id": "F0db67b76"
+        }
+      ],
+      "rationale": "Filesystem location and write facts show uploaded images stored under the backend uploads area, which is also statically exposed by the server.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "Uploaded Video Files",
+      "provenance": [
+        {
+          "fact_id": "Ff7dbec3f"
+        },
+        {
+          "fact_id": "F01760fba"
+        },
+        {
+          "fact_id": "F43d4aa4c"
+        },
+        {
+          "fact_id": "Fb7226fa8"
+        },
+        {
+          "fact_id": "F0db67b76"
+        }
+      ],
+      "rationale": "Filesystem storage facts show uploaded media files written under the backend uploads area and exposed through a static mount.",
+      "confidence": "medium",
+      "uncertainty_note": "The facts show a shared uploads directory for static serving and a video upload subflow, but they do not explicitly partition files by media type beyond the separate upload middleware paths."
+    },
+    {
+      "id": "DS6",
+      "type": "DataStore",
+      "name": "Browser Local Storage",
+      "provenance": [
+        {
+          "fact_id": "F56d87323"
+        },
+        {
+          "fact_id": "Fce398d91"
+        },
+        {
+          "fact_id": "F62fda2e3"
+        },
+        {
+          "fact_id": "F2e650993"
+        },
+        {
+          "fact_id": "F508b2196"
+        },
+        {
+          "fact_id": "F2e4e2c07"
+        },
+        {
+          "fact_id": "Ff846b350"
+        },
+        {
+          "fact_id": "F0024b850"
+        },
+        {
+          "fact_id": "Fde60591c"
+        },
+        {
+          "fact_id": "F809bd225"
+        },
+        {
+          "fact_id": "F74596479"
+        },
+        {
+          "fact_id": "F30746500"
+        },
+        {
+          "fact_id": "F59b51844"
+        },
+        {
+          "fact_id": "Ff2a154ff"
+        },
+        {
+          "fact_id": "F1608ffcf"
+        },
+        {
+          "fact_id": "F6e4bbb32"
+        },
+        {
+          "fact_id": "F0f321140"
+        },
+        {
+          "fact_id": "F0af9f099"
+        },
+        {
+          "fact_id": "F91f5d83a"
+        },
+        {
+          "fact_id": "F85874863"
+        }
+      ],
+      "rationale": "Frontend web storage access facts show persistent browser-side storage of token, user, and cookie-banner state in localStorage.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Parent submits registration data, including account details and profile image, to create an account.",
+      "provenance": [
+        {
+          "fact_id": "Fb88d5db7"
+        },
+        {
+          "fact_id": "F8d4ae4f3"
+        },
+        {
+          "fact_id": "Fdaf9bef6"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "DS4",
+      "description": "Uploaded parent profile image file is written to image storage during registration.",
+      "provenance": [
+        {
+          "fact_id": "Fdaf9bef6"
+        },
+        {
+          "fact_id": "F29833cdd"
+        },
+        {
+          "fact_id": "F604cae92"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF3",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "New parent account record is stored in the users collection during registration.",
+      "provenance": [
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "Fc8cd7ac9"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF4",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service reads user account data to check whether a registering email already exists.",
+      "provenance": [
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "Faa937398"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF5",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Parent submits login credentials to authenticate.",
+      "provenance": [
+        {
+          "fact_id": "Fa0547687"
+        },
+        {
+          "fact_id": "Fb9d96a8d"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF6",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service reads parent user account data for login.",
+      "provenance": [
+        {
+          "fact_id": "F50c3a963"
+        },
+        {
+          "fact_id": "F70fa6875"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF7",
+      "source": "EE2",
+      "destination": "P1",
+      "description": "Child submits child login information to authenticate.",
+      "provenance": [
+        {
+          "fact_id": "Fc4a2aad0"
+        },
+        {
+          "fact_id": "F5633d31c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF8",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service reads parent account data when processing child login.",
+      "provenance": [
+        {
+          "fact_id": "Fe4949aad"
+        },
+        {
+          "fact_id": "F7cb94511"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF9",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "Authentication service reads child profile records associated with a child login attempt.",
+      "provenance": [
+        {
+          "fact_id": "Fa48273c1"
+        },
+        {
+          "fact_id": "Ffd84aa61"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF10",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Parent submits parent-login credentials to authenticate.",
+      "provenance": [
+        {
+          "fact_id": "Fcc0a8c3a"
+        },
+        {
+          "fact_id": "Fdf659a5f"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF11",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service reads user account data for explicit parent login.",
+      "provenance": [
+        {
+          "fact_id": "Fa17ce57e"
+        },
+        {
+          "fact_id": "F81943046"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF12",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service reads the current authenticated user's account/profile data for /me.",
+      "provenance": [
+        {
+          "fact_id": "F23ebd0dd"
+        },
+        {
+          "fact_id": "F0b4b8b24"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF13",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Authenticated parent submits current and new password data to change password.",
+      "provenance": [
+        {
+          "fact_id": "F1c12f4cb"
+        },
+        {
+          "fact_id": "F659de177"
+        }
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "DF14",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service reads the current user account before changing password.",
+      "provenance": [
+        {
+          "fact_id": "Fe1f159d6"
+        },
+        {
+          "fact_id": "Fb2b14479"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF15",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Authentication service writes updated password data to the user account record.",
+      "provenance": [
+        {
+          "fact_id": "Fe1551b3d"
+        },
+        {
+          "fact_id": "F77d15ed4"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF16",
+      "source": "P1",
+      "destination": "DS6",
+      "description": "Frontend authentication context stores authentication token and serialized user data in browser local storage after login/registration.",
+      "provenance": [
+        {
+          "fact_id": "F809bd225"
+        },
+        {
+          "fact_id": "F74596479"
+        },
+        {
+          "fact_id": "F30746500"
+        },
+        {
+          "fact_id": "F59b51844"
+        },
+        {
+          "fact_id": "Ff2a154ff"
+        },
+        {
+          "fact_id": "F1608ffcf"
+        },
+        {
+          "fact_id": "F6e4bbb32"
+        },
+        {
+          "fact_id": "F0f321140"
+        }
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "DF17",
+      "source": "DS6",
+      "destination": "P1",
+      "description": "Frontend API/authentication components read stored authentication token and user data from browser local storage for session restoration and authenticated API use.",
+      "provenance": [
+        {
+          "fact_id": "F56d87323"
+        },
+        {
+          "fact_id": "Ff846b350"
+        },
+        {
+          "fact_id": "F0024b850"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF18",
+      "source": "P1",
+      "destination": "DS6",
+      "description": "Frontend authentication/config logic removes stored token and user data from browser local storage on logout or auth cleanup.",
+      "provenance": [
+        {
+          "fact_id": "Fce398d91"
+        },
+        {
+          "fact_id": "F62fda2e3"
+        },
+        {
+          "fact_id": "F0af9f099"
+        },
+        {
+          "fact_id": "F91f5d83a"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF19",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests the list of child profiles.",
+      "provenance": [
+        {
+          "fact_id": "F755b2338"
+        },
+        {
+          "fact_id": "F4e2da425"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF20",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads child profile records for a parent.",
+      "provenance": [
+        {
+          "fact_id": "F2338b1d5"
+        },
+        {
+          "fact_id": "F68236567"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF21",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent submits child profile creation data, including ID image upload.",
+      "provenance": [
+        {
+          "fact_id": "Ff0949e6d"
+        },
+        {
+          "fact_id": "F80b239a4"
+        },
+        {
+          "fact_id": "F2a689d58"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF22",
+      "source": "P2",
+      "destination": "DS4",
+      "description": "Uploaded child ID image file is written to image storage during child profile creation.",
+      "provenance": [
+        {
+          "fact_id": "F2a689d58"
+        },
+        {
+          "fact_id": "F29833cdd"
+        },
+        {
+          "fact_id": "F604cae92"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF23",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "New child profile record is stored in the childprofiles collection.",
+      "provenance": [
+        {
+          "fact_id": "Fca086277"
+        },
+        {
+          "fact_id": "F21e7f313"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF24",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests details for a specific child profile.",
+      "provenance": [
+        {
+          "fact_id": "F90e6c40f"
+        },
+        {
+          "fact_id": "Fa864dadc"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF25",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads a specific child profile record.",
+      "provenance": [
+        {
+          "fact_id": "Fba800375"
+        },
+        {
+          "fact_id": "Fc3e93c0a"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF26",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent submits updated child profile data, optionally including a replacement ID image.",
+      "provenance": [
+        {
+          "fact_id": "F5e6ed335"
+        },
+        {
+          "fact_id": "F223c594b"
+        },
+        {
+          "fact_id": "F84f561a1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF27",
+      "source": "P2",
+      "destination": "DS4",
+      "description": "Uploaded child ID image file is written to image storage during child profile update.",
+      "provenance": [
+        {
+          "fact_id": "F84f561a1"
+        },
+        {
+          "fact_id": "F29833cdd"
+        },
+        {
+          "fact_id": "F604cae92"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF28",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the existing child profile before updating it.",
+      "provenance": [
+        {
+          "fact_id": "Fde6dd13b"
+        },
+        {
+          "fact_id": "F7bf8ea90"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF29",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data.",
+      "provenance": [
+        {
+          "fact_id": "F92025df8"
+        },
+        {
+          "fact_id": "F95ba95fb"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF30",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests deletion/deactivation of a child profile.",
+      "provenance": [
+        {
+          "fact_id": "Fb8b8a51f"
+        },
+        {
+          "fact_id": "F8a66d361"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF31",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the target child profile before deletion/deactivation.",
+      "provenance": [
+        {
+          "fact_id": "F00a375ed"
+        },
+        {
+          "fact_id": "F25eb63bc"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF32",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes the child profile record to mark deletion/deactivation state.",
+      "provenance": [
+        {
+          "fact_id": "F231053cd"
+        },
+        {
+          "fact_id": "F5afb6e3a"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF33",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent submits a video request for a child profile, identifying the child profile and requested video.",
+      "provenance": [
+        {
+          "fact_id": "F28b2ba7d"
+        },
+        {
+          "fact_id": "F1fff5e05"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF34",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child profile before recording a requested video.",
+      "provenance": [
+        {
+          "fact_id": "F76b8d1f2"
+        },
+        {
+          "fact_id": "Fbc3c61fa"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF35",
+      "source": "P2",
+      "destination": "DS3",
+      "description": "Child profile service reads video metadata to validate the requested video.",
+      "provenance": [
+        {
+          "fact_id": "Ff17f3335"
+        },
+        {
+          "fact_id": "F01be7be0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF36",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data containing requested video information.",
+      "provenance": [
+        {
+          "fact_id": "F38df087a"
+        },
+        {
+          "fact_id": "F949b58c7"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF37",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent submits approval of a requested video for a child profile.",
+      "provenance": [
+        {
+          "fact_id": "F3d9a3245"
+        },
+        {
+          "fact_id": "F1ae427eb"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF38",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child profile before approving a video.",
+      "provenance": [
+        {
+          "fact_id": "F610821a2"
+        },
+        {
+          "fact_id": "F94faccd5"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF39",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data containing approved video information.",
+      "provenance": [
+        {
+          "fact_id": "F17a9966e"
+        },
+        {
+          "fact_id": "F6dd8655b"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF40",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "Child submits a video request tied to the child's own profile.",
+      "provenance": [
+        {
+          "fact_id": "F4fb6e62f"
+        },
+        {
+          "fact_id": "F7a93d535"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF41",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child's profile before adding a requested video.",
+      "provenance": [
+        {
+          "fact_id": "Fd4188fff"
+        },
+        {
+          "fact_id": "Ffbb01972"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF42",
+      "source": "P2",
+      "destination": "DS3",
+      "description": "Child profile service reads video metadata for the requested video ID.",
+      "provenance": [
+        {
+          "fact_id": "F9122e3a8"
+        },
+        {
+          "fact_id": "F1c1a4321"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF43",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data with the child's requested video entry.",
+      "provenance": [
+        {
+          "fact_id": "Fdef4d6bf"
+        },
+        {
+          "fact_id": "Fd47a1430"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF44",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "Child submits search history data to be recorded.",
+      "provenance": [
+        {
+          "fact_id": "F0e9317c7"
+        },
+        {
+          "fact_id": "F26eb09d0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF45",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child's profile before storing search history.",
+      "provenance": [
+        {
+          "fact_id": "F55e6dc79"
+        },
+        {
+          "fact_id": "F969c2e8e"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF46",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data containing search history.",
+      "provenance": [
+        {
+          "fact_id": "Faad34d83"
+        },
+        {
+          "fact_id": "F483e16cc"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF47",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "Child submits watch history data including watched video reference.",
+      "provenance": [
+        {
+          "fact_id": "Fff57675c"
+        },
+        {
+          "fact_id": "F859b9e06"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF48",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child's profile before storing watch history.",
+      "provenance": [
+        {
+          "fact_id": "Ff995dbe0"
+        },
+        {
+          "fact_id": "F0a951cbf"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF49",
+      "source": "P2",
+      "destination": "DS3",
+      "description": "Child profile service reads video metadata for the watched video ID.",
+      "provenance": [
+        {
+          "fact_id": "F4d7c9153"
+        },
+        {
+          "fact_id": "F9453a5a4"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF50",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data containing watch history.",
+      "provenance": [
+        {
+          "fact_id": "F329d07f6"
+        },
+        {
+          "fact_id": "F479a697b"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF51",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests a child's history data.",
+      "provenance": [
+        {
+          "fact_id": "F8cf23371"
+        },
+        {
+          "fact_id": "Fcaf6808f"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF52",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads a specific child profile to return history information.",
+      "provenance": [
+        {
+          "fact_id": "Fbfa2a9ef"
+        },
+        {
+          "fact_id": "F36d3ccac"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF53",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests deletion of a child's search history entries.",
+      "provenance": [
+        {
+          "fact_id": "F41bbb39a"
+        },
+        {
+          "fact_id": "F93c35c38"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF54",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child profile before clearing search history.",
+      "provenance": [
+        {
+          "fact_id": "F5e4e9878"
+        },
+        {
+          "fact_id": "Ff1d2f430"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF55",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data with search history removed.",
+      "provenance": [
+        {
+          "fact_id": "Fd65c09fb"
+        },
+        {
+          "fact_id": "F6634afe7"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF56",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests deletion of a child's watch history entries.",
+      "provenance": [
+        {
+          "fact_id": "F027fafee"
+        },
+        {
+          "fact_id": "Fd800457b"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF57",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child profile before clearing watch history.",
+      "provenance": [
+        {
+          "fact_id": "F509e44f7"
+        },
+        {
+          "fact_id": "F63378159"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF58",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data with watch history removed.",
+      "provenance": [
+        {
+          "fact_id": "F3005bc0f"
+        },
+        {
+          "fact_id": "Fd2f8ab2a"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF59",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "Parent requests removal of an approved video from a child profile.",
+      "provenance": [
+        {
+          "fact_id": "F8d08b7d6"
+        },
+        {
+          "fact_id": "Ff92c5144"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF60",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads the child profile before removing an approved video.",
+      "provenance": [
+        {
+          "fact_id": "F6eb2092f"
+        },
+        {
+          "fact_id": "Fb12f8d0d"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF61",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service writes updated child profile data with approved video removed.",
+      "provenance": [
+        {
+          "fact_id": "Faea626b0"
+        },
+        {
+          "fact_id": "Fedc95f9c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF62",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "Child requests the list of approved videos available to the child's profile.",
+      "provenance": [
+        {
+          "fact_id": "Fbbdc8ec0"
+        },
+        {
+          "fact_id": "F6c712160"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF63",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Child profile service reads child profile records to obtain approved videos for the authenticated child.",
+      "provenance": [
+        {
+          "fact_id": "Fedc019a1"
+        },
+        {
+          "fact_id": "Fbe5a431e"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF64",
+      "source": "EE1",
+      "destination": "P4",
+      "description": "Authenticated parent requests their profile data.",
+      "provenance": [
+        {
+          "fact_id": "Fa300d72b"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF65",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "User profile service reads the authenticated user's account/profile record.",
+      "provenance": [
+        {
+          "fact_id": "F684d2d95"
+        },
+        {
+          "fact_id": "F9514adfd"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF66",
+      "source": "EE1",
+      "destination": "P4",
+      "description": "Authenticated parent submits updated profile data.",
+      "provenance": [
+        {
+          "fact_id": "Ff11eaffd"
+        },
+        {
+          "fact_id": "Feec4e823"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF67",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "User profile service reads the current user record before profile update.",
+      "provenance": [
+        {
+          "fact_id": "Fdcec0762"
+        },
+        {
+          "fact_id": "F5eeb50ce"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF68",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "User profile service reads user records to check uniqueness/conflicts during profile update.",
+      "provenance": [
+        {
+          "fact_id": "Fa2e79063"
+        },
+        {
+          "fact_id": "F812f5556"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF69",
+      "source": "EE1",
+      "destination": "P4",
+      "description": "Parent requests dashboard/statistics data.",
+      "provenance": [
+        {
+          "fact_id": "Fe316f366"
+        },
+        {
+          "fact_id": "F73ab8b26"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF70",
+      "source": "P4",
+      "destination": "DS3",
+      "description": "User profile/administration service reads video metadata to compute statistics.",
+      "provenance": [
+        {
+          "fact_id": "F944a7ff8"
+        },
+        {
+          "fact_id": "F6373b725"
+        },
+        {
+          "fact_id": "F2ab27d74"
+        },
+        {
+          "fact_id": "F6d5aa970"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF71",
+      "source": "P4",
+      "destination": "DS2",
+      "description": "User profile/administration service reads child profile counts for statistics.",
+      "provenance": [
+        {
+          "fact_id": "F8398e878"
+        },
+        {
+          "fact_id": "F9f739755"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF72",
+      "source": "EE3",
+      "destination": "P4",
+      "description": "Administrator requests the list of user accounts.",
+      "provenance": [
+        {
+          "fact_id": "F782f20cd"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF73",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "User profile/administration service reads user account records and counts for administration views.",
+      "provenance": [
+        {
+          "fact_id": "Ff1f25d80"
+        },
+        {
+          "fact_id": "Ff0cc554a"
+        },
+        {
+          "fact_id": "F901268f4"
+        },
+        {
+          "fact_id": "F02cbde7d"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF74",
+      "source": "EE3",
+      "destination": "P4",
+      "description": "Administrator submits a role change for a user account.",
+      "provenance": [
+        {
+          "fact_id": "F15f81f5f"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF75",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "User profile/administration service writes updated role data to a user account.",
+      "provenance": [
+        {
+          "fact_id": "Fabaeb7f4"
+        },
+        {
+          "fact_id": "Fcec26ce6"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF76",
+      "source": "EE3",
+      "destination": "P4",
+      "description": "Administrator requests deletion/deactivation of a user account.",
+      "provenance": [
+        {
+          "fact_id": "F55c7c0e4"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF77",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "User profile/administration service writes updated deletion/deactivation state to a user account.",
+      "provenance": [
+        {
+          "fact_id": "F60e45027"
+        },
+        {
+          "fact_id": "F0ffa3a9f"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF78",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent uploads video metadata and video file for a new video.",
+      "provenance": [
+        {
+          "fact_id": "Fbc99b862"
+        },
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "F15c5b0f0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF79",
+      "source": "P3",
+      "destination": "DS5",
+      "description": "Uploaded video file is written to video file storage during video upload.",
+      "provenance": [
+        {
+          "fact_id": "F15c5b0f0"
+        },
+        {
+          "fact_id": "F01760fba"
+        },
+        {
+          "fact_id": "F43d4aa4c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF80",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service writes a new video metadata record.",
+      "provenance": [
+        {
+          "fact_id": "F9336e362"
+        },
+        {
+          "fact_id": "Fdbc1f000"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF81",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "User requests the public video list and pagination/filter parameters.",
+      "provenance": [
+        {
+          "fact_id": "Fc3f3f87c"
+        },
+        {
+          "fact_id": "Fbd644856"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Frontend caller is not role-specific; parent is one supported external actor."
+    },
+    {
+      "id": "DF82",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "User requests the public video list and pagination/filter parameters.",
+      "provenance": [
+        {
+          "fact_id": "Fc3f3f87c"
+        },
+        {
+          "fact_id": "Fbd644856"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Frontend caller is not role-specific; child is one supported external actor."
+    },
+    {
+      "id": "DF83",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads video metadata records and total counts for listing videos.",
+      "provenance": [
+        {
+          "fact_id": "F68f85ebc"
+        },
+        {
+          "fact_id": "F12f2b82a"
+        },
+        {
+          "fact_id": "Ff13d5411"
+        },
+        {
+          "fact_id": "F7b329afc"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF84",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent requests their own uploaded video list.",
+      "provenance": [
+        {
+          "fact_id": "Fe9189027"
+        },
+        {
+          "fact_id": "Feb691a72"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF85",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads a parent's video metadata records and counts for the my-videos view.",
+      "provenance": [
+        {
+          "fact_id": "F5ce408b1"
+        },
+        {
+          "fact_id": "Fbc599b01"
+        },
+        {
+          "fact_id": "Ffc83f1e3"
+        },
+        {
+          "fact_id": "Fb15d1947"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF86",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "User requests details for a specific video.",
+      "provenance": [
+        {
+          "fact_id": "Fb5c75256"
+        },
+        {
+          "fact_id": "F9a95c32d"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Frontend caller is not role-specific; parent is one supported external actor."
+    },
+    {
+      "id": "DF87",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "User requests details for a specific video.",
+      "provenance": [
+        {
+          "fact_id": "Fb5c75256"
+        },
+        {
+          "fact_id": "F9a95c32d"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Frontend caller is not role-specific; child is one supported external actor."
+    },
+    {
+      "id": "DF88",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads a specific video metadata record.",
+      "provenance": [
+        {
+          "fact_id": "Ff1c8533c"
+        },
+        {
+          "fact_id": "Fffda2cf2"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF89",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service writes updated video metadata, such as incremented view information, when a specific video is retrieved.",
+      "provenance": [
+        {
+          "fact_id": "F0645b3b7"
+        },
+        {
+          "fact_id": "Fca334324"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF90",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent submits updated metadata for a video they own.",
+      "provenance": [
+        {
+          "fact_id": "F9aeea67b"
+        },
+        {
+          "fact_id": "Fe6685224"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF91",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads the target video metadata before update.",
+      "provenance": [
+        {
+          "fact_id": "Ff3e2a486"
+        },
+        {
+          "fact_id": "F876927d0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF92",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service writes updated video metadata.",
+      "provenance": [
+        {
+          "fact_id": "F6502f67e"
+        },
+        {
+          "fact_id": "Fa0adff3d"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF93",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent requests deletion/deactivation of a video they own.",
+      "provenance": [
+        {
+          "fact_id": "F168c87ec"
+        },
+        {
+          "fact_id": "F8bbb01db"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF94",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads the target video metadata before deletion/deactivation.",
+      "provenance": [
+        {
+          "fact_id": "F31350f94"
+        },
+        {
+          "fact_id": "F5f9885d1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF95",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service writes updated deletion/deactivation state for a video record.",
+      "provenance": [
+        {
+          "fact_id": "Fa6a75f10"
+        },
+        {
+          "fact_id": "F969decc2"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF96",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent submits a like action for a video.",
+      "provenance": [
+        {
+          "fact_id": "F04ad8773"
+        },
+        {
+          "fact_id": "Fdf5f8d2e"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF97",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads the target video metadata before recording a like.",
+      "provenance": [
+        {
+          "fact_id": "F028be292"
+        },
+        {
+          "fact_id": "F010394cb"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF98",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service writes updated video metadata containing like information.",
+      "provenance": [
+        {
+          "fact_id": "Fd4ff4f85"
+        },
+        {
+          "fact_id": "F0c8769fa"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF99",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent submits a comment for a video.",
+      "provenance": [
+        {
+          "fact_id": "F5d643f8b"
+        },
+        {
+          "fact_id": "F9fe72a0c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF100",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service reads the target video metadata before adding a comment.",
+      "provenance": [
+        {
+          "fact_id": "Fbd4c9fbb"
+        },
+        {
+          "fact_id": "Fd7b7155c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF101",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Video service writes updated video metadata containing comment data.",
+      "provenance": [
+        {
+          "fact_id": "F904703c3"
+        },
+        {
+          "fact_id": "F638e5a89"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF102",
+      "source": "DS3",
+      "destination": "P3",
+      "description": "Video metadata is read back via populate after comment write, likely including referenced user/comment details for the response.",
+      "provenance": [
+        {
+          "fact_id": "F0d9fb39b"
+        },
+        {
+          "fact_id": "F2d459678"
+        }
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "DF103",
+      "source": "EE1",
+      "destination": "P6",
+      "description": "User requests streaming of an uploaded video file by filename.",
+      "provenance": [
+        {
+          "fact_id": "F53c8c68e"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Specific frontend caller not identified; parent is a supported external actor requesting stream content."
+    },
+    {
+      "id": "DF104",
+      "source": "EE2",
+      "destination": "P6",
+      "description": "User requests streaming of an uploaded video file by filename.",
+      "provenance": [
+        {
+          "fact_id": "F53c8c68e"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Specific frontend caller not identified; child is a supported external actor requesting stream content."
+    },
+    {
+      "id": "DF105",
+      "source": "DS5",
+      "destination": "P6",
+      "description": "Stored uploaded video file content is read for streaming responses.",
+      "provenance": [
+        {
+          "fact_id": "F53c8c68e"
+        },
+        {
+          "fact_id": "Fb7226fa8"
+        }
+      ],
+      "confidence": "low",
+      "uncertainty_note": "The route proves a streaming endpoint exists, and static/uploads mount proves upload file serving path exists, but an explicit fs read fact for the stream handler is not present."
+    },
+    {
+      "id": "DF106",
+      "source": "P6",
+      "destination": "DS5",
+      "description": "Video upload handler writes uploaded video files into server-side upload storage.",
+      "provenance": [
+        {
+          "fact_id": "F01760fba"
+        },
+        {
+          "fact_id": "F43d4aa4c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF107",
+      "source": "P5",
+      "destination": "DS4",
+      "description": "Image upload handler writes uploaded image files into server-side image storage.",
+      "provenance": [
+        {
+          "fact_id": "F29833cdd"
+        },
+        {
+          "fact_id": "F604cae92"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

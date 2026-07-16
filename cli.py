@@ -18,8 +18,21 @@ import sys
 import config
 from retrieval.index import Retriever
 
-GENERATE_SCENARIOS = ["kidstube", "genomic", "smart_home", "family_location"]
-EVAL_SCENARIOS = ["kidstube", "genomic", "smart_home", "family_location"]  # only scenarios with a gold_standard_threats.json
+
+def _scenarios(gold_required: bool = False) -> list[str]:
+    """Scenario choices, read off the filesystem rather than hardcoded.
+
+    These were two literal lists whose comment already said what they meant ("only scenarios with
+    a gold_standard_threats.json"). Scanning makes that true instead of aspirational, so a
+    scenario dropped into knowledge_base/scenarios/ -- notably the adapter's derived ones -- is
+    runnable without editing this file and drifting out of sync with what's on disk.
+    """
+    directory = config.KB_DIR / "scenarios"
+    if not directory.exists():
+        return []
+    return sorted(p.name for p in directory.iterdir()
+                  if p.is_dir() and (p / "dfd.json").exists()
+                  and (not gold_required or (p / "gold_standard_threats.json").exists()))
 
 
 def cmd_build(_):
@@ -102,6 +115,128 @@ def cmd_adjudicate(args):
     print(f"  precision_corrected (point estimate):  {hcp.precision_corrected:.2f}   ({review_note})")
 
 
+def _facts_path(scenario: str, override: str | None):
+    from pathlib import Path
+    if override:
+        return Path(override)
+    stem = scenario[:-len("_derived")] if scenario.endswith("_derived") else scenario
+    return config.ROOT / "adapters" / "data" / f"{stem}_code_facts.json"
+
+
+def _source_commit(source_root) -> str | None:
+    import subprocess
+    try:
+        out = subprocess.run(["git", "-C", str(source_root), "rev-parse", "HEAD"],
+                             capture_output=True, text=True, timeout=10)
+        return out.stdout.strip() or None
+    except Exception:
+        return None
+
+
+def cmd_extract(args):
+    import json
+    from pathlib import Path
+    from adapters.extract import extract_repo, source_files
+    from adapters.resolve import resolve_facts
+
+    root = Path(args.source_root).expanduser().resolve()
+    if not root.exists():
+        raise SystemExit(f"source root not found: {root}")
+    facts = resolve_facts(extract_repo(root))
+    out = Path(args.out) if args.out else _facts_path(args.scenario, None)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "_meta": {
+            "source_repo": args.source_root,
+            "commit": _source_commit(root),
+            "n_source_files": len(source_files(root)),
+            "extractor": "adapters/extract.py + adapters/resolve.py",
+            "note": "Committed so the adapter runs from a clean clone with no tree-sitter and no "
+                    "source checkout -- extraction is the only stage that needs either. Same "
+                    "pattern as scripts/data/genomic_figure11_raw.json.",
+        },
+        "facts": [f.to_dict() for f in facts],
+    }
+    out.write_text(json.dumps(payload, indent=2) + "\n")
+    literal = sum(1 for f in facts if not f.derived)
+    print(f"Extracted {len(facts)} facts ({literal} literal, {len(facts) - literal} derived) "
+          f"from {payload['_meta']['n_source_files']} files -> {out}")
+    print(f"  commit: {payload['_meta']['commit']}")
+
+
+def _load_facts(path):
+    import json
+    from adapters.schema import CodeFact
+    raw = json.loads(path.read_text())
+    facts = raw["facts"] if isinstance(raw, dict) else raw
+    return [CodeFact.from_dict(f) for f in facts], (raw.get("_meta", {}) if isinstance(raw, dict) else {})
+
+
+def cmd_derive(args):
+    from adapters.emit import emit_scenario_dfd
+    from adapters.synthesize import synthesize_facts_only
+
+    path = _facts_path(args.scenario, args.facts)
+    if not path.exists():
+        raise SystemExit(f"no facts at {path} -- run `python cli.py extract --source-root PATH` first.")
+    facts, meta = _load_facts(path)
+
+    if args.mode == "facts_only":
+        dfd = synthesize_facts_only(facts, scenario_name=args.scenario)
+    elif args.mode == "llm":
+        from adapters.synthesize import synthesize_llm
+        dfd = synthesize_llm(facts, provider=args.provider, scenario_name=args.scenario)
+    else:
+        raise SystemExit(f"--mode {args.mode} is not built yet (M3). "
+                         f"Use --mode facts_only or --mode llm.")
+
+    out = emit_scenario_dfd(
+        args.scenario, dfd,
+        derived_from={"repo": meta.get("source_repo"), "commit": meta.get("commit"),
+                      "facts": str(path.relative_to(config.ROOT)),
+                      "adapter_mode": args.mode, "adapter_version": 1},
+        purpose="Derived from source code by adapters/. Every element and flow cites the code "
+                "facts it was built from; adapters/verify_dfd.py re-derives those citations "
+                "against the source rather than trusting them.")
+    print(f"Derived {len(dfd['elements'])} elements, {len(dfd['flows'])} flows "
+          f"({args.mode}) -> {out}")
+
+
+def cmd_verify_dfd(args):
+    import json
+    from pathlib import Path
+    from adapters.verify_dfd import format_verification_report, verify_dfd
+
+    dfd = json.loads((config.KB_DIR / "scenarios" / args.scenario / "dfd.json").read_text())
+    facts, _ = _load_facts(_facts_path(args.scenario, args.facts))
+    root = Path(args.source_root).expanduser().resolve() if args.source_root else None
+    ev, fv = verify_dfd(dfd, facts, source_root=root)
+    print(format_verification_report(ev, fv, source_checked=root is not None))
+
+
+def cmd_eval_dfd(args):
+    import json
+    from adapters.align import align_elements, align_flows, derived_element_keys, load_hand_keys
+    from adapters.evaluate import format_report, score
+
+    derived = json.loads((config.KB_DIR / "scenarios" / args.derived / "dfd.json").read_text())
+    hand = json.loads((config.KB_DIR / "scenarios" / args.against / "dfd.json").read_text())
+    facts_file = _facts_path(args.derived, args.facts)
+    facts = json.loads(facts_file.read_text())
+    facts = facts["facts"] if isinstance(facts, dict) else facts
+
+    hand_keys = load_hand_keys(args.against)
+    elements = align_elements(derived_element_keys(derived, facts), hand_keys)
+    flows = align_flows(derived, hand, elements)
+    report = format_report(args.against, args.derived, score(derived, hand, hand_keys, elements, flows),
+                           elements, flows)
+    print(report)
+    if args.out:
+        from pathlib import Path
+        Path(args.out).write_text(report + "\n")
+        print(f"\n(report also written to {args.out})")
+
+
 def cmd_ask(args):
     r = Retriever.load()
     hits = r.search(args.query, k=config.TOP_K)
@@ -151,7 +286,7 @@ def main():
     sa.set_defaults(func=cmd_ask)
 
     sg = sub.add_parser("generate")
-    sg.add_argument("--scenario", required=True, choices=GENERATE_SCENARIOS)
+    sg.add_argument("--scenario", required=True, choices=_scenarios())
     sg.add_argument("--framework", choices=["linddun", "panoptic"], default="linddun",
                      help="Which methodology to ground in: LINDDUN (default, mapping_table.json/"
                           "threat_trees.json) or MITRE PANOPTIC (knowledge_base/panoptic/"
@@ -168,7 +303,7 @@ def main():
     sg.set_defaults(func=cmd_generate)
 
     se = sub.add_parser("eval")
-    se.add_argument("--scenario", required=True, choices=EVAL_SCENARIOS)
+    se.add_argument("--scenario", required=True, choices=_scenarios(gold_required=True))
     se.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
     se.add_argument("--strict", action="store_true", help="Also require exact tree_node match.")
     se.add_argument("--by-node", action="store_true",
@@ -180,7 +315,7 @@ def main():
     se.set_defaults(func=cmd_eval)
 
     sj = sub.add_parser("adjudicate")
-    sj.add_argument("--scenario", required=True, choices=EVAL_SCENARIOS)
+    sj.add_argument("--scenario", required=True, choices=_scenarios(gold_required=True))
     sj.add_argument("--generated", required=True, help="Path to a generated threats JSON file.")
     sj.add_argument("--n", type=int, default=None,
                      help="Review a random sample of N unmatched (FP) threats instead of all of "
@@ -190,6 +325,46 @@ def main():
                      help="Don't prompt interactively -- just (re)build the worklist file and "
                           "print human-corrected precision from whatever's already labeled.")
     sj.set_defaults(func=cmd_adjudicate)
+
+    sx = sub.add_parser("extract", help="Source repo -> code facts (needs the optional adapter deps).")
+    sx.add_argument("--source-root", required=True, help="Path to a checkout of the source repo.")
+    sx.add_argument("--out", default=None,
+                     help="Where to write the facts (default: adapters/data/<scenario>_code_facts.json).")
+    sx.add_argument("--scenario", default="kidstube", help="Names the output file.")
+    sx.set_defaults(func=cmd_extract)
+
+    sd = sub.add_parser("derive", help="Code facts -> DFD, emitted as a *_derived scenario.")
+    sd.add_argument("--facts", default=None,
+                     help="Facts JSON (default: adapters/data/<scenario>_code_facts.json).")
+    sd.add_argument("--scenario", default="kidstube_derived",
+                     help="Derived scenario to write. Must end in _derived.")
+    sd.add_argument("--mode", choices=["facts_only", "llm", "llm_naive"], default="facts_only",
+                     help="facts_only: deterministic, no LLM (the baseline the LLM must beat). "
+                          "llm: closed fact-id citation vocabulary. llm_naive: open file:line "
+                          "vocabulary (the ablation baseline).")
+    sd.add_argument("--provider", default=None, help="LLM provider for --mode llm/llm_naive.")
+    sd.set_defaults(func=cmd_derive)
+
+    sw = sub.add_parser("verify-dfd", help="Re-derive every citation in a derived DFD. No LLM.")
+    sw.add_argument("--scenario", default="kidstube_derived")
+    sw.add_argument("--facts", default=None)
+    sw.add_argument("--source-root", default=None,
+                     help="Re-parse the source to confirm each cited file:line really holds the "
+                          "claimed construct. Omit and facts_present reports not_checked -- never "
+                          "a pass.")
+    sw.set_defaults(func=cmd_verify_dfd)
+
+    sv = sub.add_parser("eval-dfd", help="Score a derived DFD against a hand-authored one.")
+    sv.add_argument("--derived", required=True, help="Derived scenario to score.")
+    sv.add_argument("--against", required=True,
+                     help="Hand-authored scenario to score against. REQUIRED and never "
+                          "defaulted: scoring one system's DFD against another system's "
+                          "ground truth produces a confident, meaningless number. Most repos "
+                          "have no hand-authored DFD at all -- for those, use `verify-dfd`, "
+                          "which needs only the source.")
+    sv.add_argument("--facts", default=None, help="Facts JSON the derived DFD cites.")
+    sv.add_argument("--out", default=None, help="Also write the report here.")
+    sv.set_defaults(func=cmd_eval_dfd)
 
     args = p.parse_args()
     args.func(args)

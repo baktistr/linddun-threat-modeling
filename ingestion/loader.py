@@ -144,6 +144,30 @@ def _split_json(path: Path, doc: str, source: str) -> list[Chunk]:
     return chunks
 
 
+DERIVED_SCENARIO_SUFFIX = "_derived"
+
+
+def _is_derived_artifact(path: Path, directory: Path) -> bool:
+    """True for anything under a scenario the adapter derived from source code.
+
+    Derived scenarios are pipeline *output*, not curated knowledge-base content -- the same
+    reasoning that already excludes dfd.json below, one level up. They live in
+    knowledge_base/scenarios/ so they are committed and reviewable for reproducibility, but
+    ingesting them would pollute the corpus the published numbers were measured on:
+    kidstube_derived's gold is KidsTube's 41 threats re-anchored, so chunking it would add 41
+    near-duplicate gold_threat chunks, shift TF-IDF idf across every term they contain, and
+    double-weight KidsTube in `cli.py search --source scenarios`, `cli.py ask`, and
+    tests/test_kb.py::test_retrieval_quality. (--rag generation already filters to
+    source="linddun" with exclude_kinds=["gold_threat"], so the headline RAG ablation would have
+    survived it -- but a silent corpus shift under everything else is not worth the risk.)
+    """
+    try:
+        relative = path.relative_to(directory)
+    except ValueError:
+        return False
+    return bool(relative.parts) and relative.parts[0].endswith(DERIVED_SCENARIO_SUFFIX)
+
+
 def load_corpus() -> list[Chunk]:
     """Walk every configured corpus directory and chunk all supported files."""
     all_chunks: list[Chunk] = []
@@ -155,6 +179,8 @@ def load_corpus() -> list[Chunk]:
                 continue
             if path.name == "dfd.json":
                 continue  # generation-time structure only; not retrieval content (see generation/)
+            if source == "scenarios" and _is_derived_artifact(path, directory):
+                continue  # adapter output, not curated KB content -- see _is_derived_artifact()
             doc = str(path.relative_to(directory))
             if path.suffix.lower() in {".md", ".txt"}:
                 all_chunks.extend(_split_markdown(path.read_text(), doc, source))

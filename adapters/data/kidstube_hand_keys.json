@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "scenario": "kidstube",
+    "source": "Hand-authored from knowledge_base/scenarios/kidstube/dfd.json + system_description.md",
+    "purpose": "Alignment keys for the HAND-AUTHORED side of the adapter evaluation. The derived side computes the same keys deterministically from its cited code facts (see adapters/align.py), and the two are compared by exact key match rather than by element name -- fuzzy name matching ('MongoDB users collection' vs. whatever an LLM emits) is unreliable, unreviewable, and re-breaks every time the model rephrases.",
+    "why_a_separate_file": "knowledge_base/scenarios/kidstube/dfd.json is ground truth and is never modified. Keeping the key map beside the adapter instead of inside the DFD leaves the evaluation target untouched and keeps this reviewable in a diff.",
+    "implemented_flag": "`implemented: false` transcribes system_description.md's own '(planned)' markers -- P4 (AI Recommendation Engine) and EE3 (Third-Party Advertisers) are described as planned features and exist in NO code in Privacy-Engineering-CMU/KidsTube-PE. The adapter's derivability ceiling is computed FROM these flags (adapters/evaluate.py), so it is data, not a hardcoded constant: a scenario added without a maintained key map fails loudly instead of silently reporting a wrong ceiling."
+  },
+  "elements": {
+    "EE1": {"kind": "actor_role", "key": "parent"},
+    "EE2": {"kind": "actor_role", "key": "child"},
+    "EE3": {"kind": "actor_role", "key": "third_party_advertiser", "implemented": false},
+    "P1": {"kind": "route_mount", "key": "/api/auth"},
+    "P2": {"kind": "route_mount", "key": "/api/videos"},
+    "P3": {"kind": "route_mount", "key": "/api/subprofiles"},
+    "P4": {"kind": "none", "key": "", "implemented": false},
+    "DS1": {"kind": "mongo_collection", "key": "users"},
+    "DS2": {"kind": "mongo_collection", "key": "childprofiles"},
+    "DS3": {"kind": "mongo_collection", "key": "videos"},
+    "DS4": {"kind": "fs_path", "key": "backend/uploads"},
+    "DS5": {"kind": "web_storage", "key": "localStorage"}
+  },
+  "notes": {
+    "P1_P2_P3": "route_mount keys are exact: backend/server.js mounts authRoutes at /api/auth, videosRoutes at /api/videos, childrenRoutes at /api/subprofiles. Note /api/subprofiles -> routes/children.js -- the mount path does not match the filename, which is why the derived side must resolve the mount table rather than read filenames.",
+    "P4": "kind 'none': no computable provenance key exists, because no code implements an AI recommendation engine. Paired with implemented:false so it classifies as structurally_underivable rather than unresolved_key.",
+    "DS1": "'users', not 'parents': backend/models/Parent.js declares `const userSchema` and exports `mongoose.model('User', userSchema)`, so the Mongoose collection is 'users'. The filename says Parent. This is the single sharpest test that the derived side resolves the model registration rather than the filename.",
+    "DS2": "'childprofiles': backend/models/Child.js exports mongoose.model('ChildProfile', childProfileSchema).",
+    "DS4": "fs_path keys match by prefix, not equality: backend/middleware/imageUpload.js writes to backend/uploads/images, which is under the hand DFD's coarser 'backend/uploads'. The granularity difference is recorded rather than scored.",
+    "EE3": "kind actor_role with implemented:false -- the key is what an advertiser role WOULD be if it existed, kept so the ceiling classification reads uniformly. No role_check fact in the codebase mentions it."
+  }
+}

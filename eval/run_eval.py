@@ -7,7 +7,7 @@ import json
 import config
 from generation.generate import load_generated
 from generation.verify import verify_threat
-from eval.match import match_threats
+from eval.match import (LOCATION_ANCHORED, gold_flow_id, gold_location_convention, match_threats)
 from eval.metrics import (per_category_scores, per_node_scores, citation_correctness,
                           CATEGORY_NAMES, LINDDUN_TYPES)
 from eval.reachability import reachability_breakdown
@@ -117,7 +117,12 @@ def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: 
         f"  n_generated={len(generated)} n_gold={len(gold)} strict_node_match={strict}",
         "",
     ]
-    if scenario != "kidstube":
+    # Which anchoring note applies is a property of the gold catalog, not of the scenario's name:
+    # keying this off `scenario != "kidstube"` told kidstube_derived -- whose gold is flow-anchored
+    # like the catalog it was re-anchored from -- that it was being matched on Figure 11 fields it
+    # does not have. Read it from the same helper the matcher itself uses so the report cannot
+    # describe a different procedure than the one that ran.
+    if gold_location_convention(gold) == LOCATION_ANCHORED:
         n_unresolved = sum(1 for t in gold if t.get("dfd_location_confidence") == "unresolved")
         lines += [
             "NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) "
@@ -125,6 +130,15 @@ def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: 
             "dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).",
             "",
         ]
+    else:
+        n_unanchored = sum(1 for t in gold if not gold_flow_id(t))
+        if n_unanchored:
+            lines += [
+                f"NOTE: matching uses the flow id embedded in gold's `interaction` (e.g. [DF1]). "
+                f"{n_unanchored} gold threats carry no flow id and can never be matched -- see "
+                f"this scenario's gold `_meta.unanchored_reason`.",
+                "",
+            ]
 
     lines.append(f"{'Type':<4} {'Name':<18} {'TP':>4} {'FP':>4} {'FN':>4} {'P':>6} {'R':>6} {'F1':>6}")
     tot_tp = tot_fp = tot_fn = 0

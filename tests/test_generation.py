@@ -649,9 +649,38 @@ def test_matcher_genomic_without_dfd_falls_back_to_coarse():
     check(m.tp == 1, "without a dfd, genomic matching degrades to threat_type-only (coarser, not stricter)")
 
 
+def test_gold_location_convention_is_read_from_the_catalog():
+    """Until Week 10 the matcher decided how to anchor gold by testing `scenario == "kidstube"`.
+    Any other scenario built on the same flow-anchored convention -- kidstube_derived, whose gold
+    is KidsTube's re-anchored -- silently took the location-anchored branch, found no
+    dfd_source_id, resolved every threat to None, and scored 0.00 with no error. Detection now
+    reads the catalog. These assertions pin the discriminator against the real data.
+    """
+    print("\n[matcher: anchoring convention is detected from the gold catalog, not the name]")
+    from eval.match import FLOW_ANCHORED, LOCATION_ANCHORED, gold_location_convention
+
+    expected = {"kidstube": FLOW_ANCHORED, "genomic": LOCATION_ANCHORED,
+                "family_location": LOCATION_ANCHORED, "smart_home": LOCATION_ANCHORED}
+    for scenario, want in expected.items():
+        gold = json.loads((config.KB_DIR / "scenarios" / scenario /
+                            "gold_standard_threats.json").read_text())["threats"]
+        got = gold_location_convention(gold)
+        check(got == want, f"{scenario} gold detected as {want} (got {got})")
+
+    # A flow-anchored catalog stays flow-anchored even when some threats carry no anchor -- the
+    # unanchored ones are handled downstream as unresolved_location. If `any` were `all`, a
+    # derived gold with 2 deliberately-unanchored threats would flip conventions and score 0.00.
+    partial = [{"id": 1, "interaction": "EE1-P1 [DF1]"}, {"id": 2, "interaction": "DS2-P4 (none)"}]
+    check(gold_location_convention(partial) == FLOW_ANCHORED,
+          "a partially-anchored flow catalog is still flow-anchored (guards the derived gold)")
+    check(gold_location_convention([{"id": 1, "interaction": "S1.1"}]) == LOCATION_ANCHORED,
+          "a catalog with no embedded flow ids is location-anchored")
+
+
 def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
+    test_gold_location_convention_is_read_from_the_catalog()
     test_schema_roundtrip()
     test_schema_mode_field()
     test_resolve_mode()

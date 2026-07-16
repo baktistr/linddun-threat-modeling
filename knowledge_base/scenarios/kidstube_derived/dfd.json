@@ -1,0 +1,1070 @@
+{
+  "_meta": {
+    "scenario": "KidsTube (derived from source, facts_only)",
+    "adapter_mode": "facts_only",
+    "schema_version": 2,
+    "derived_from": {
+      "repo": "/tmp/claude-1000/-home-baktistr-documents-CMU-linddun-threat-modeling/3f88a2ad-207c-48d4-ba0d-45d99009b131/scratchpad/KidsTube-PE",
+      "commit": "8e98a1f5254fc85b7f09130b3f71fe5f5da851c4",
+      "facts": "adapters/data/kidstube_code_facts.json",
+      "adapter_mode": "facts_only",
+      "adapter_version": 1
+    },
+    "purpose": "Derived from source code by adapters/. Every element and flow cites the code facts it was built from; adapters/verify_dfd.py re-derives those citations against the source rather than trusting them."
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "admin (actor role)",
+      "provenance": [
+        {
+          "fact_id": "F22cd0bb6"
+        },
+        {
+          "fact_id": "F534ea9ba"
+        },
+        {
+          "fact_id": "Fcc19aedb"
+        }
+      ],
+      "rationale": "3 role checks name the role 'admin'"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "child (actor role)",
+      "provenance": [
+        {
+          "fact_id": "F00e74be4"
+        },
+        {
+          "fact_id": "F052f7254"
+        },
+        {
+          "fact_id": "F0d37c164"
+        },
+        {
+          "fact_id": "F1cff5d57"
+        },
+        {
+          "fact_id": "F3953fdcc"
+        },
+        {
+          "fact_id": "F52c67793"
+        },
+        {
+          "fact_id": "F54f07a00"
+        },
+        {
+          "fact_id": "F55697b13"
+        },
+        {
+          "fact_id": "F6776e1e2"
+        },
+        {
+          "fact_id": "F68234671"
+        },
+        {
+          "fact_id": "F71b9bbd0"
+        },
+        {
+          "fact_id": "F77edb179"
+        },
+        {
+          "fact_id": "F874d2d54"
+        },
+        {
+          "fact_id": "F99d46634"
+        },
+        {
+          "fact_id": "Fba5c753d"
+        },
+        {
+          "fact_id": "Fbfe393a9"
+        },
+        {
+          "fact_id": "Fc676d219"
+        },
+        {
+          "fact_id": "Fd1d6b396"
+        },
+        {
+          "fact_id": "Ffc0ca684"
+        },
+        {
+          "fact_id": "Ffee5aa9f"
+        }
+      ],
+      "rationale": "20 role checks name the role 'child'"
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "parent (actor role)",
+      "provenance": [
+        {
+          "fact_id": "F0781bf5b"
+        },
+        {
+          "fact_id": "F0b620339"
+        },
+        {
+          "fact_id": "F0d301186"
+        },
+        {
+          "fact_id": "F0d5ee177"
+        },
+        {
+          "fact_id": "F12ab920d"
+        },
+        {
+          "fact_id": "F238eb11d"
+        },
+        {
+          "fact_id": "F23f46a68"
+        },
+        {
+          "fact_id": "F294a73fd"
+        },
+        {
+          "fact_id": "F3985d3f3"
+        },
+        {
+          "fact_id": "F46369b22"
+        },
+        {
+          "fact_id": "F47fd7608"
+        },
+        {
+          "fact_id": "F4a0a3192"
+        },
+        {
+          "fact_id": "F4df3d326"
+        },
+        {
+          "fact_id": "F5131f879"
+        },
+        {
+          "fact_id": "F7971072e"
+        },
+        {
+          "fact_id": "F97335305"
+        },
+        {
+          "fact_id": "F9ef464bf"
+        },
+        {
+          "fact_id": "Fa0ec5f70"
+        },
+        {
+          "fact_id": "Fa99c1e82"
+        },
+        {
+          "fact_id": "Fab2bba90"
+        },
+        {
+          "fact_id": "Fac31ae29"
+        },
+        {
+          "fact_id": "Fb51de366"
+        },
+        {
+          "fact_id": "Fbd441f50"
+        },
+        {
+          "fact_id": "Fbe3b5ec4"
+        },
+        {
+          "fact_id": "Fbff61dd6"
+        },
+        {
+          "fact_id": "Fc26fcde6"
+        },
+        {
+          "fact_id": "Fd2d5d111"
+        },
+        {
+          "fact_id": "Fd71fac73"
+        },
+        {
+          "fact_id": "Fd8a88ac8"
+        },
+        {
+          "fact_id": "Fe69e236e"
+        },
+        {
+          "fact_id": "Fea939c7d"
+        },
+        {
+          "fact_id": "Ff02c5618"
+        }
+      ],
+      "rationale": "32 role checks name the role 'parent'"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "/api/auth",
+      "provenance": [
+        {
+          "fact_id": "Fc552b43f"
+        },
+        {
+          "fact_id": "F0ccaf4fd"
+        },
+        {
+          "fact_id": "F5633d31c"
+        },
+        {
+          "fact_id": "F659de177"
+        },
+        {
+          "fact_id": "F8d4ae4f3"
+        },
+        {
+          "fact_id": "Fb9d96a8d"
+        },
+        {
+          "fact_id": "Fdf659a5f"
+        }
+      ],
+      "rationale": "router backend/routes/auth.js mounted at /api/auth serving 6 routes"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "/api/subprofiles",
+      "provenance": [
+        {
+          "fact_id": "Fddc78aea"
+        },
+        {
+          "fact_id": "F1ae427eb"
+        },
+        {
+          "fact_id": "F1fff5e05"
+        },
+        {
+          "fact_id": "F223c594b"
+        },
+        {
+          "fact_id": "F26eb09d0"
+        },
+        {
+          "fact_id": "F4e2da425"
+        },
+        {
+          "fact_id": "F6c712160"
+        },
+        {
+          "fact_id": "F7a93d535"
+        },
+        {
+          "fact_id": "F80b239a4"
+        },
+        {
+          "fact_id": "F859b9e06"
+        },
+        {
+          "fact_id": "F8a66d361"
+        },
+        {
+          "fact_id": "F93c35c38"
+        },
+        {
+          "fact_id": "Fa864dadc"
+        },
+        {
+          "fact_id": "Fcaf6808f"
+        },
+        {
+          "fact_id": "Fd800457b"
+        },
+        {
+          "fact_id": "Ff92c5144"
+        }
+      ],
+      "rationale": "router backend/routes/children.js mounted at /api/subprofiles serving 15 routes"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "/api/users",
+      "provenance": [
+        {
+          "fact_id": "F1156238e"
+        },
+        {
+          "fact_id": "F15f81f5f"
+        },
+        {
+          "fact_id": "F55c7c0e4"
+        },
+        {
+          "fact_id": "F73ab8b26"
+        },
+        {
+          "fact_id": "F782f20cd"
+        },
+        {
+          "fact_id": "Fa300d72b"
+        },
+        {
+          "fact_id": "Feec4e823"
+        }
+      ],
+      "rationale": "router backend/routes/users.js mounted at /api/users serving 6 routes"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "/api/videos",
+      "provenance": [
+        {
+          "fact_id": "F997af8c2"
+        },
+        {
+          "fact_id": "F53c8c68e"
+        },
+        {
+          "fact_id": "F8bbb01db"
+        },
+        {
+          "fact_id": "F9a95c32d"
+        },
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "F9fe72a0c"
+        },
+        {
+          "fact_id": "Fbd644856"
+        },
+        {
+          "fact_id": "Fdf5f8d2e"
+        },
+        {
+          "fact_id": "Fe6685224"
+        },
+        {
+          "fact_id": "Feb691a72"
+        }
+      ],
+      "rationale": "router backend/routes/videos.js mounted at /api/videos serving 9 routes"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "MongoDB childprofiles collection",
+      "provenance": [
+        {
+          "fact_id": "Fc12aadaf"
+        }
+      ],
+      "rationale": "model 'ChildProfile' -> collection 'childprofiles' via pluralization_rule"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "MongoDB tests collection",
+      "provenance": [
+        {
+          "fact_id": "Ff3f29bba"
+        }
+      ],
+      "rationale": "model 'Test' -> collection 'tests' via pluralization_rule"
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "MongoDB users collection",
+      "provenance": [
+        {
+          "fact_id": "F8d130874"
+        }
+      ],
+      "rationale": "model 'User' -> collection 'users' via pluralization_rule"
+    },
+    {
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "MongoDB videos collection",
+      "provenance": [
+        {
+          "fact_id": "Fecdb6c1e"
+        }
+      ],
+      "rationale": "model 'Video' -> collection 'videos' via pluralization_rule"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "File system (backend/uploads)",
+      "provenance": [
+        {
+          "fact_id": "F0db67b76"
+        },
+        {
+          "fact_id": "Ff7dbec3f"
+        }
+      ],
+      "rationale": "filesystem writes/reads target backend/uploads"
+    },
+    {
+      "id": "DS6",
+      "type": "DataStore",
+      "name": "File system (backend/uploads/images)",
+      "provenance": [
+        {
+          "fact_id": "F58d4e79a"
+        }
+      ],
+      "rationale": "filesystem writes/reads target backend/uploads/images"
+    },
+    {
+      "id": "DS7",
+      "type": "DataStore",
+      "name": "Browser localStorage",
+      "provenance": [
+        {
+          "fact_id": "F0024b850"
+        },
+        {
+          "fact_id": "F0af9f099"
+        },
+        {
+          "fact_id": "F0f321140"
+        },
+        {
+          "fact_id": "F1608ffcf"
+        },
+        {
+          "fact_id": "F2e4e2c07"
+        },
+        {
+          "fact_id": "F2e650993"
+        },
+        {
+          "fact_id": "F30746500"
+        },
+        {
+          "fact_id": "F508b2196"
+        },
+        {
+          "fact_id": "F56d87323"
+        },
+        {
+          "fact_id": "F59b51844"
+        },
+        {
+          "fact_id": "F62fda2e3"
+        },
+        {
+          "fact_id": "F6e4bbb32"
+        },
+        {
+          "fact_id": "F74596479"
+        },
+        {
+          "fact_id": "F809bd225"
+        },
+        {
+          "fact_id": "F85874863"
+        },
+        {
+          "fact_id": "F91f5d83a"
+        },
+        {
+          "fact_id": "Fce398d91"
+        },
+        {
+          "fact_id": "Fde60591c"
+        },
+        {
+          "fact_id": "Ff2a154ff"
+        },
+        {
+          "fact_id": "Ff846b350"
+        }
+      ],
+      "rationale": "browser localStorage keys: cookieBannerDismissed, token, user"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE3",
+      "destination": "P1",
+      "description": "parent requests /api/auth",
+      "provenance": [
+        {
+          "fact_id": "Fc26fcde6"
+        },
+        {
+          "fact_id": "Fd8a88ac8"
+        },
+        {
+          "fact_id": "F12ab920d"
+        },
+        {
+          "fact_id": "Fac31ae29"
+        },
+        {
+          "fact_id": "F3985d3f3"
+        },
+        {
+          "fact_id": "F4a0a3192"
+        }
+      ],
+      "intent": "request"
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "EE3",
+      "description": "/api/auth returns data to parent",
+      "provenance": [
+        {
+          "fact_id": "F3985d3f3"
+        },
+        {
+          "fact_id": "F4a0a3192"
+        }
+      ],
+      "intent": "response"
+    },
+    {
+      "id": "DF3",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "child requests /api/subprofiles",
+      "provenance": [
+        {
+          "fact_id": "F52c67793"
+        }
+      ],
+      "intent": "request"
+    },
+    {
+      "id": "DF4",
+      "source": "P2",
+      "destination": "EE2",
+      "description": "/api/subprofiles returns data to child",
+      "provenance": [
+        {
+          "fact_id": "F52c67793"
+        }
+      ],
+      "intent": "response"
+    },
+    {
+      "id": "DF5",
+      "source": "EE3",
+      "destination": "P2",
+      "description": "parent requests /api/subprofiles",
+      "provenance": [
+        {
+          "fact_id": "Fbe3b5ec4"
+        },
+        {
+          "fact_id": "F97335305"
+        },
+        {
+          "fact_id": "F0b620339"
+        },
+        {
+          "fact_id": "F47fd7608"
+        },
+        {
+          "fact_id": "Fd71fac73"
+        },
+        {
+          "fact_id": "Fa0ec5f70"
+        },
+        {
+          "fact_id": "Fbff61dd6"
+        },
+        {
+          "fact_id": "Fea939c7d"
+        },
+        {
+          "fact_id": "F0d301186"
+        },
+        {
+          "fact_id": "F23f46a68"
+        },
+        {
+          "fact_id": "Fa99c1e82"
+        }
+      ],
+      "intent": "request"
+    },
+    {
+      "id": "DF6",
+      "source": "P2",
+      "destination": "EE3",
+      "description": "/api/subprofiles returns data to parent",
+      "provenance": [
+        {
+          "fact_id": "Fbe3b5ec4"
+        },
+        {
+          "fact_id": "F0b620339"
+        },
+        {
+          "fact_id": "Fea939c7d"
+        }
+      ],
+      "intent": "response"
+    },
+    {
+      "id": "DF7",
+      "source": "EE3",
+      "destination": "P3",
+      "description": "parent requests /api/users",
+      "provenance": [
+        {
+          "fact_id": "F0d5ee177"
+        },
+        {
+          "fact_id": "Fbd441f50"
+        },
+        {
+          "fact_id": "Fab2bba90"
+        },
+        {
+          "fact_id": "Fe69e236e"
+        },
+        {
+          "fact_id": "F9ef464bf"
+        }
+      ],
+      "intent": "request"
+    },
+    {
+      "id": "DF8",
+      "source": "P3",
+      "destination": "EE3",
+      "description": "/api/users returns data to parent",
+      "provenance": [
+        {
+          "fact_id": "F0d5ee177"
+        },
+        {
+          "fact_id": "Fbd441f50"
+        },
+        {
+          "fact_id": "F9ef464bf"
+        }
+      ],
+      "intent": "response"
+    },
+    {
+      "id": "DF9",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "admin requests /api/users",
+      "provenance": [
+        {
+          "fact_id": "F534ea9ba"
+        },
+        {
+          "fact_id": "F22cd0bb6"
+        },
+        {
+          "fact_id": "Fcc19aedb"
+        }
+      ],
+      "intent": "request"
+    },
+    {
+      "id": "DF10",
+      "source": "P3",
+      "destination": "EE1",
+      "description": "/api/users returns data to admin",
+      "provenance": [
+        {
+          "fact_id": "F534ea9ba"
+        }
+      ],
+      "intent": "response"
+    },
+    {
+      "id": "DF11",
+      "source": "EE3",
+      "destination": "P4",
+      "description": "parent requests /api/videos",
+      "provenance": [
+        {
+          "fact_id": "F4df3d326"
+        },
+        {
+          "fact_id": "Fd2d5d111"
+        },
+        {
+          "fact_id": "F5131f879"
+        },
+        {
+          "fact_id": "F294a73fd"
+        },
+        {
+          "fact_id": "F7971072e"
+        },
+        {
+          "fact_id": "F0781bf5b"
+        }
+      ],
+      "intent": "request"
+    },
+    {
+      "id": "DF12",
+      "source": "P4",
+      "destination": "EE3",
+      "description": "/api/videos returns data to parent",
+      "provenance": [
+        {
+          "fact_id": "Fd2d5d111"
+        }
+      ],
+      "intent": "response"
+    },
+    {
+      "id": "DF13",
+      "source": "DS3",
+      "destination": "P1",
+      "description": "/api/auth reads users",
+      "provenance": [
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "F50c3a963"
+        },
+        {
+          "fact_id": "Fe4949aad"
+        },
+        {
+          "fact_id": "Fa17ce57e"
+        },
+        {
+          "fact_id": "F23ebd0dd"
+        },
+        {
+          "fact_id": "Fe1f159d6"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF14",
+      "source": "P1",
+      "destination": "DS3",
+      "description": "/api/auth writes users",
+      "provenance": [
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "Fe1551b3d"
+        }
+      ],
+      "intent": "db_write"
+    },
+    {
+      "id": "DF15",
+      "source": "DS1",
+      "destination": "P1",
+      "description": "/api/auth reads childprofiles",
+      "provenance": [
+        {
+          "fact_id": "Fa48273c1"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF16",
+      "source": "DS1",
+      "destination": "P2",
+      "description": "/api/subprofiles reads childprofiles",
+      "provenance": [
+        {
+          "fact_id": "Fedc019a1"
+        },
+        {
+          "fact_id": "F2338b1d5"
+        },
+        {
+          "fact_id": "Fba800375"
+        },
+        {
+          "fact_id": "Fde6dd13b"
+        },
+        {
+          "fact_id": "F00a375ed"
+        },
+        {
+          "fact_id": "F76b8d1f2"
+        },
+        {
+          "fact_id": "F610821a2"
+        },
+        {
+          "fact_id": "Fd4188fff"
+        },
+        {
+          "fact_id": "F55e6dc79"
+        },
+        {
+          "fact_id": "Ff995dbe0"
+        },
+        {
+          "fact_id": "Fbfa2a9ef"
+        },
+        {
+          "fact_id": "F5e4e9878"
+        },
+        {
+          "fact_id": "F509e44f7"
+        },
+        {
+          "fact_id": "F6eb2092f"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF17",
+      "source": "P2",
+      "destination": "DS1",
+      "description": "/api/subprofiles writes childprofiles",
+      "provenance": [
+        {
+          "fact_id": "Fca086277"
+        },
+        {
+          "fact_id": "F92025df8"
+        },
+        {
+          "fact_id": "F231053cd"
+        },
+        {
+          "fact_id": "F38df087a"
+        },
+        {
+          "fact_id": "F17a9966e"
+        },
+        {
+          "fact_id": "Fdef4d6bf"
+        },
+        {
+          "fact_id": "Faad34d83"
+        },
+        {
+          "fact_id": "F329d07f6"
+        },
+        {
+          "fact_id": "Fd65c09fb"
+        },
+        {
+          "fact_id": "F3005bc0f"
+        },
+        {
+          "fact_id": "Faea626b0"
+        }
+      ],
+      "intent": "db_write"
+    },
+    {
+      "id": "DF18",
+      "source": "DS4",
+      "destination": "P2",
+      "description": "/api/subprofiles reads videos",
+      "provenance": [
+        {
+          "fact_id": "Ff17f3335"
+        },
+        {
+          "fact_id": "F9122e3a8"
+        },
+        {
+          "fact_id": "F4d7c9153"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF19",
+      "source": "DS3",
+      "destination": "P3",
+      "description": "/api/users reads users",
+      "provenance": [
+        {
+          "fact_id": "F684d2d95"
+        },
+        {
+          "fact_id": "Fdcec0762"
+        },
+        {
+          "fact_id": "Fa2e79063"
+        },
+        {
+          "fact_id": "Ff1f25d80"
+        },
+        {
+          "fact_id": "F901268f4"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF20",
+      "source": "DS4",
+      "destination": "P3",
+      "description": "/api/users reads videos",
+      "provenance": [
+        {
+          "fact_id": "F944a7ff8"
+        },
+        {
+          "fact_id": "F2ab27d74"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF21",
+      "source": "DS1",
+      "destination": "P3",
+      "description": "/api/users reads childprofiles",
+      "provenance": [
+        {
+          "fact_id": "F8398e878"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF22",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "/api/users writes users",
+      "provenance": [
+        {
+          "fact_id": "Fabaeb7f4"
+        },
+        {
+          "fact_id": "F60e45027"
+        }
+      ],
+      "intent": "db_write"
+    },
+    {
+      "id": "DF23",
+      "source": "P4",
+      "destination": "DS4",
+      "description": "/api/videos writes videos",
+      "provenance": [
+        {
+          "fact_id": "F9336e362"
+        },
+        {
+          "fact_id": "F0645b3b7"
+        },
+        {
+          "fact_id": "F6502f67e"
+        },
+        {
+          "fact_id": "Fa6a75f10"
+        },
+        {
+          "fact_id": "Fd4ff4f85"
+        },
+        {
+          "fact_id": "F904703c3"
+        }
+      ],
+      "intent": "db_write"
+    },
+    {
+      "id": "DF24",
+      "source": "DS4",
+      "destination": "P4",
+      "description": "/api/videos reads videos",
+      "provenance": [
+        {
+          "fact_id": "F68f85ebc"
+        },
+        {
+          "fact_id": "Ff13d5411"
+        },
+        {
+          "fact_id": "F5ce408b1"
+        },
+        {
+          "fact_id": "Ffc83f1e3"
+        },
+        {
+          "fact_id": "Ff1c8533c"
+        },
+        {
+          "fact_id": "Ff3e2a486"
+        },
+        {
+          "fact_id": "F31350f94"
+        },
+        {
+          "fact_id": "F028be292"
+        },
+        {
+          "fact_id": "Fbd4c9fbb"
+        },
+        {
+          "fact_id": "F0d9fb39b"
+        }
+      ],
+      "intent": "db_read"
+    },
+    {
+      "id": "DF25",
+      "source": "P1",
+      "destination": "DS6",
+      "description": "/api/auth stores uploaded profileImage in backend/uploads/images",
+      "provenance": [
+        {
+          "fact_id": "Fdaf9bef6"
+        }
+      ],
+      "intent": "file_write"
+    },
+    {
+      "id": "DF26",
+      "source": "P2",
+      "destination": "DS6",
+      "description": "/api/subprofiles stores uploaded idImage in backend/uploads/images",
+      "provenance": [
+        {
+          "fact_id": "F2a689d58"
+        },
+        {
+          "fact_id": "F84f561a1"
+        }
+      ],
+      "intent": "file_write"
+    },
+    {
+      "id": "DF27",
+      "source": "P4",
+      "destination": "DS5",
+      "description": "/api/videos stores uploaded video in backend/uploads",
+      "provenance": [
+        {
+          "fact_id": "F15c5b0f0"
+        }
+      ],
+      "intent": "file_write"
+    }
+  ]
+}

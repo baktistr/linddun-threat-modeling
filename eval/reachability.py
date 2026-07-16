@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from retrieval.interaction_context import get_interaction_context, effective_type
-from eval.match import resolve_gold_flow
+from eval.match import gold_location_convention, resolve_gold_flow
 
 UNRESOLVED_LOCATION = "unresolved_location"
 STRUCTURALLY_UNREACHABLE = "structurally_unreachable"
@@ -34,17 +34,22 @@ class ReachabilityCounts:
         return self.matched / denom if denom else 0.0
 
 
-def classify_gold_threat(gold_threat: dict, scenario: str, dfd: dict, flows_by_id: dict) -> str:
+def classify_gold_threat(gold_threat: dict, scenario: str, dfd: dict, flows_by_id: dict,
+                         convention: str | None = None) -> str:
     """Classify one unmatched gold threat. Call only for threats not already in matched_gold_ids.
 
-    unresolved_location covers two distinct causes, both meaning resolve_gold_flow() couldn't
-    anchor the threat to a single flow: genomic's untranscribed/ambiguous locations (2/99,
-    dfd_location_confidence=="unresolved"), and KidsTube gold threats whose `interaction` spans
-    multiple flows at once (e.g. "P3-DS2 [DF7/DF10]") -- 4/36, a genuine structural ceiling for
-    the current per-flow generation loop discovered by running this classifier, since no single
-    per-flow LLM call could ever produce a threat anchored to more than one flow_id.
+    unresolved_location means resolve_gold_flow() couldn't anchor the threat to a single flow.
+    Two live causes: genomic's untranscribed/ambiguous locations (dfd_location_confidence ==
+    "unresolved"), and gold threats deliberately left unanchored because the flow they describe
+    does not exist in the DFD being scored against -- kidstube_derived's re-anchored gold does
+    this for the 2 threats on DF13/DF14, whose endpoints are planned features present in no code.
+    Historically it also covered KidsTube threats whose `interaction` spanned multiple flows at
+    once (e.g. "P3-DS2 [DF7/DF10]"); Week 7 resolved those to single flows, so all 41 now anchor.
+
+    `convention` is threaded through from the catalog-level detection so a threat that simply has
+    no anchor isn't mistaken for a catalog using the other convention.
     """
-    flow = resolve_gold_flow(gold_threat, scenario, dfd, flows_by_id)
+    flow = resolve_gold_flow(gold_threat, scenario, dfd, flows_by_id, convention)
     if flow is None:
         return UNRESOLVED_LOCATION
     elements_by_id = {e["id"]: e for e in dfd["elements"]}
@@ -59,11 +64,12 @@ def classify_gold_threat(gold_threat: dict, scenario: str, dfd: dict, flows_by_i
 def reachability_breakdown(gold: list[dict], scenario: str, dfd: dict,
                             matched_gold_ids: set[int]) -> ReachabilityCounts:
     flows_by_id = {f["id"]: f for f in dfd["flows"]}
+    convention = gold_location_convention(gold)
     counts = {REACHABLE_BUT_MISSED: 0, STRUCTURALLY_UNREACHABLE: 0, UNRESOLVED_LOCATION: 0}
     for g in gold:
         if g["id"] in matched_gold_ids:
             continue
-        counts[classify_gold_threat(g, scenario, dfd, flows_by_id)] += 1
+        counts[classify_gold_threat(g, scenario, dfd, flows_by_id, convention)] += 1
     return ReachabilityCounts(matched=len(matched_gold_ids), **counts)
 
 
@@ -79,11 +85,12 @@ def reachability_breakdown_panoptic(gold: list[dict], scenario: str, dfd: dict,
     so both breakdowns can be reported side by side without a second dataclass.
     """
     flows_by_id = {f["id"]: f for f in dfd["flows"]}
+    convention = gold_location_convention(gold)
     reachable_but_missed = unresolved_location = 0
     for g in gold:
         if g["id"] in matched_gold_ids:
             continue
-        flow = resolve_gold_flow(g, scenario, dfd, flows_by_id)
+        flow = resolve_gold_flow(g, scenario, dfd, flows_by_id, convention)
         if flow is None:
             unresolved_location += 1
         else:

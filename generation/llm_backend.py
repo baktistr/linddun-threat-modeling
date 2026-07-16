@@ -1,9 +1,21 @@
-"""Pluggable LLM backend for threat generation, mirroring retrieval/embeddings.py's pattern.
+"""Pluggable LLM backend, mirroring retrieval/embeddings.py's pattern.
 
-The generation pipeline needs one capability from a model: given a prompt, return the
-`{"threats": [...]}` payload for THREAT_TOOL_SCHEMA via a forced tool/function call. Each backend
-implements that against its provider's API shape; generation/generate.py never talks to a vendor
-SDK directly, so swapping providers is a config change (LLM_PROVIDER env var), not a code change.
+The pipeline needs one capability from a model: given a prompt and a tool schema, return the
+arguments of a forced call to that tool. Each backend implements that against its provider's API
+shape; no caller talks to a vendor SDK directly, so swapping providers is a config change
+(LLM_PROVIDER env var), not a code change.
+
+`call_tool` is the primitive; `generate_threats` is the original threat-elicitation caller kept
+as a thin wrapper so generation/generate.py is untouched. The generalisation exists because the
+source-code -> DFD adapter (adapters/synthesize.py) needs the same forced-tool-call capability
+against a *different* schema. Welding the backend to THREAT_TOOL_SCHEMA would have meant either a
+second copy of three providers' auth handling, or the adapter reaching for a vendor SDK directly
+-- both worse than one parameter.
+
+`max_tokens` is a parameter for the same reason: a whole-DFD payload (14+ elements, 27+ flows,
+provenance, rationales) does not fit the 2000 that suffices for one flow's threats, and Azure
+truncates mid-JSON with no error when it doesn't fit -- the tool call simply fails to parse, which
+looks like a model failure rather than a budget one.
 """
 from __future__ import annotations
 import json
@@ -13,14 +25,39 @@ import config
 from generation.schema import THREAT_TOOL_SCHEMA
 
 TOOL_NAME = THREAT_TOOL_SCHEMA["name"]
+DEFAULT_MAX_TOKENS = 2000
+
+
+def _as_openai_tool(schema: dict) -> dict:
+    """Anthropic's tool shape -> OpenAI's function shape. Shared by both OpenAI-compatible
+    backends so they cannot drift apart."""
+    return {
+        "type": "function",
+        "function": {
+            "name": schema["name"],
+            "description": schema.get("description", ""),
+            "parameters": schema["input_schema"],
+        },
+    }
 
 
 class LLMBackend(ABC):
     name: str
 
     @abstractmethod
+    def call_tool(self, prompt: str, tool_schema: dict,
+                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+        """Return the arguments of the model's forced call to `tool_schema`.
+
+        Returns {} if the model produced no parseable call -- callers must treat that as "no
+        answer", never as "an empty answer that happens to be valid".
+        """
+
     def generate_threats(self, prompt: str) -> dict:
-        """Return {"threats": [...]} parsed from the model's forced tool call."""
+        """Original threat-elicitation entrypoint. Unchanged public API and unchanged behaviour:
+        same schema, same forced tool choice, same 2000-token budget."""
+        result = self.call_tool(prompt, THREAT_TOOL_SCHEMA, max_tokens=DEFAULT_MAX_TOKENS)
+        return result if result else {"threats": []}
 
 
 class AnthropicBackend(LLMBackend):
@@ -32,18 +69,20 @@ class AnthropicBackend(LLMBackend):
         import anthropic
         self.client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
 
-    def generate_threats(self, prompt: str) -> dict:
+    def call_tool(self, prompt: str, tool_schema: dict,
+                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+        name = tool_schema["name"]
         resp = self.client.messages.create(
             model=config.CLAUDE_MODEL,
-            max_tokens=2000,
-            tools=[THREAT_TOOL_SCHEMA],
-            tool_choice={"type": "tool", "name": TOOL_NAME},
+            max_tokens=max_tokens,
+            tools=[tool_schema],
+            tool_choice={"type": "tool", "name": name},
             messages=[{"role": "user", "content": prompt}],
         )
         for block in resp.content:
-            if block.type == "tool_use" and block.name == TOOL_NAME:
+            if block.type == "tool_use" and block.name == name:
                 return block.input
-        return {"threats": []}
+        return {}
 
 
 class OpenAIBackend(LLMBackend):
@@ -60,26 +99,19 @@ class OpenAIBackend(LLMBackend):
             kwargs["base_url"] = config.OPENAI_BASE_URL
         self.client = openai.OpenAI(**kwargs)
 
-    def generate_threats(self, prompt: str) -> dict:
-        tool = {
-            "type": "function",
-            "function": {
-                "name": TOOL_NAME,
-                "description": THREAT_TOOL_SCHEMA["description"],
-                "parameters": THREAT_TOOL_SCHEMA["input_schema"],
-            },
-        }
+    def call_tool(self, prompt: str, tool_schema: dict,
+                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+        name = tool_schema["name"]
         resp = self.client.chat.completions.create(
             model=config.OPENAI_MODEL,
-            tools=[tool],
-            tool_choice={"type": "function", "function": {"name": TOOL_NAME}},
+            tools=[_as_openai_tool(tool_schema)],
+            tool_choice={"type": "function", "function": {"name": name}},
             messages=[{"role": "user", "content": prompt}],
         )
-        tool_calls = resp.choices[0].message.tool_calls or []
-        for call in tool_calls:
-            if call.function.name == TOOL_NAME:
+        for call in resp.choices[0].message.tool_calls or []:
+            if call.function.name == name:
                 return json.loads(call.function.arguments)
-        return {"threats": []}
+        return {}
 
 
 class AzureFoundryBackend(LLMBackend):
@@ -104,27 +136,20 @@ class AzureFoundryBackend(LLMBackend):
             api_version=config.AZURE_AI_API_VERSION,
         )
 
-    def generate_threats(self, prompt: str) -> dict:
-        tool = {
-            "type": "function",
-            "function": {
-                "name": TOOL_NAME,
-                "description": THREAT_TOOL_SCHEMA["description"],
-                "parameters": THREAT_TOOL_SCHEMA["input_schema"],
-            },
-        }
+    def call_tool(self, prompt: str, tool_schema: dict,
+                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+        name = tool_schema["name"]
         resp = self.client.chat.completions.create(
             model=config.AZURE_AI_MODEL,
-            tools=[tool],
-            tool_choice={"type": "function", "function": {"name": TOOL_NAME}},
+            tools=[_as_openai_tool(tool_schema)],
+            tool_choice={"type": "function", "function": {"name": name}},
             messages=[{"role": "user", "content": prompt}],
-            max_completion_tokens=2000,
+            max_completion_tokens=max_tokens,
         )
-        tool_calls = resp.choices[0].message.tool_calls or []
-        for call in tool_calls:
-            if call.function.name == TOOL_NAME:
+        for call in resp.choices[0].message.tool_calls or []:
+            if call.function.name == name:
                 return json.loads(call.function.arguments)
-        return {"threats": []}
+        return {}
 
 
 _BACKENDS: dict[str, type[LLMBackend]] = {
