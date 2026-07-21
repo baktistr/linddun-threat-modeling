@@ -1,0 +1,1081 @@
+{
+  "_meta": {
+    "scenario": "unnamed system (derived from source, llm_naive)",
+    "adapter_mode": "llm_naive",
+    "backend": "azure",
+    "rejected_elements": [],
+    "rejected_flows": []
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "Parent User",
+      "provenance": [
+        {
+          "file": "backend/models/Parent.js",
+          "line": 52
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 202
+        },
+        {
+          "file": "frontend/src/App.js",
+          "line": 45
+        }
+      ],
+      "rationale": "The code distinguishes parent users as a role and gives them dedicated registration, login, profile, child-management, and video-upload capabilities.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "Child User",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 141
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 18
+        },
+        {
+          "file": "frontend/src/pages/Landing.js",
+          "line": 58
+        }
+      ],
+      "rationale": "The code explicitly supports child logins and child-only behaviors such as approved-video access, requesting videos, and tracking watch/search history.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "Administrator",
+      "provenance": [
+        {
+          "file": "backend/models/Parent.js",
+          "line": 52
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 115
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 153
+        }
+      ],
+      "rationale": "The system has an admin role with separate authorization checks for listing users, changing roles, and deactivating accounts.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE4",
+      "type": "ExternalEntity",
+      "name": "Web Browser / Frontend Client",
+      "provenance": [
+        {
+          "file": "frontend/src/api/config.js",
+          "line": 9
+        },
+        {
+          "file": "frontend/src/api/config.js",
+          "line": 19
+        },
+        {
+          "file": "backend/server.js",
+          "line": 56
+        }
+      ],
+      "rationale": "A React frontend sends API requests to the backend and stores authentication state in browser localStorage.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE5",
+      "type": "ExternalEntity",
+      "name": "MongoDB Database",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 42
+        },
+        {
+          "file": "backend/server.js",
+          "line": 43
+        },
+        {
+          "file": "backend/test-server.js",
+          "line": 8
+        }
+      ],
+      "rationale": "The backend connects to MongoDB as an external database service used for application persistence.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "Authentication and Account Management Service",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 12
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 142
+        },
+        {
+          "file": "backend/server.js",
+          "line": 56
+        }
+      ],
+      "rationale": "This router handles registration, multiple login flows, current-user lookup, and password changes, using JWTs and the User/Child models.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "Authorization Middleware",
+      "provenance": [
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 4
+        },
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 12
+        },
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 36
+        }
+      ],
+      "rationale": "Dedicated middleware verifies bearer JWTs, loads the user record, and enforces role-based access before protected routes proceed.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Child Profile and Activity Management Service",
+      "provenance": [
+        {
+          "file": "backend/routes/children.js",
+          "line": 71
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 452
+        },
+        {
+          "file": "backend/server.js",
+          "line": 57
+        }
+      ],
+      "rationale": "This router manages child profiles, approvals, requests, and child search/watch history for parent and child flows.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "Video Management and Streaming Service",
+      "provenance": [
+        {
+          "file": "backend/routes/videos.js",
+          "line": 44
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 88
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 209
+        }
+      ],
+      "rationale": "This router uploads videos, lists/query videos, retrieves metadata, streams stored files, and processes likes/comments.",
+      "confidence": "high"
+    },
+    {
+      "id": "P5",
+      "type": "Process",
+      "name": "User Administration and Profile Service",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 9
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 86
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 115
+        }
+      ],
+      "rationale": "This router updates user profiles, returns user statistics, and provides admin-only user management functions.",
+      "confidence": "high"
+    },
+    {
+      "id": "P6",
+      "type": "Process",
+      "name": "Image Upload Handling",
+      "provenance": [
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 6
+        },
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 8
+        },
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 20
+        }
+      ],
+      "rationale": "A dedicated multer-based component validates image MIME/extensions and writes uploaded image files into an uploads/images directory.",
+      "confidence": "high"
+    },
+    {
+      "id": "P7",
+      "type": "Process",
+      "name": "Static Upload File Serving",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 33
+        },
+        {
+          "file": "backend/server.js",
+          "line": 34
+        },
+        {
+          "file": "frontend/src/api/videos.js",
+          "line": 57
+        }
+      ],
+      "rationale": "The backend exposes the uploads directory over HTTP so stored images and videos can be retrieved by clients.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "User Accounts Store",
+      "provenance": [
+        {
+          "file": "backend/models/Parent.js",
+          "line": 4
+        },
+        {
+          "file": "backend/models/Parent.js",
+          "line": 35
+        },
+        {
+          "file": "backend/models/Parent.js",
+          "line": 120
+        }
+      ],
+      "rationale": "The User Mongoose model persists parent/admin account records including credentials, six-digit code, role, and profile image.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "Child Profiles Store",
+      "provenance": [
+        {
+          "file": "backend/models/Child.js",
+          "line": 3
+        },
+        {
+          "file": "backend/models/Child.js",
+          "line": 33
+        },
+        {
+          "file": "backend/models/Child.js",
+          "line": 133
+        }
+      ],
+      "rationale": "The ChildProfile Mongoose model persists child identity details, parent linkage, approvals, requests, and search/watch history.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "Video Metadata Store",
+      "provenance": [
+        {
+          "file": "backend/models/Video.js",
+          "line": 3
+        },
+        {
+          "file": "backend/models/Video.js",
+          "line": 23
+        },
+        {
+          "file": "backend/models/Video.js",
+          "line": 142
+        }
+      ],
+      "rationale": "The Video Mongoose model persists video metadata, uploader linkage, moderation state, engagement data, and file path references.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "Uploaded Media Files",
+      "provenance": [
+        {
+          "file": "backend/routes/videos.js",
+          "line": 13
+        },
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 8
+        },
+        {
+          "file": "backend/server.js",
+          "line": 34
+        }
+      ],
+      "rationale": "The system writes uploaded videos and images to server-side filesystem directories under uploads and uploads/images.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "Browser Local Storage",
+      "provenance": [
+        {
+          "file": "frontend/src/api/config.js",
+          "line": 19
+        },
+        {
+          "file": "frontend/src/contexts/AuthContext.js",
+          "line": 21
+        },
+        {
+          "file": "frontend/src/components/CookieBanner.js",
+          "line": 18
+        }
+      ],
+      "rationale": "The frontend persists authentication token, user object, and cookie-banner dismissal state in browser localStorage.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE4",
+      "destination": "P1",
+      "description": "Parent registration data from browser/client to authentication service, including username, email, password, firstName, lastName, sixDigitCode, and optional profileImage upload.",
+      "provenance": [
+        {
+          "file": "frontend/src/pages/Register.js",
+          "line": 118
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 12
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "P6",
+      "description": "Uploaded parent profile image file passed from registration handling into image upload middleware for validation and storage.",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 12
+        },
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 20
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF3",
+      "source": "P6",
+      "destination": "DS4",
+      "description": "Parent profile image file written to uploads/images on disk with generated filename.",
+      "provenance": [
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 8
+        },
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 16
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF4",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "New user account record written, containing username, email, password, firstName, lastName, sixDigitCode, and optional profileImage filename.",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 35
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 51
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF5",
+      "source": "DS1",
+      "destination": "P1",
+      "description": "Existing user account lookup by email or username during registration to detect duplicates.",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 24
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF6",
+      "source": "DS2",
+      "destination": "P1",
+      "description": "Child profiles associated with the new or logging-in parent are read to include childrenProfiles in authentication/profile responses.",
+      "provenance": [
+        {
+          "file": "backend/models/Parent.js",
+          "line": 79
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 54
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF7",
+      "source": "P1",
+      "destination": "EE4",
+      "description": "Registration/login/profile responses returned to browser with JWT token and user object, including userType and childrenProfiles or children.",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 66
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 184
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF8",
+      "source": "P1",
+      "destination": "DS5",
+      "description": "JWT token and authenticated user object stored in browser localStorage after register, parent login, child login, or legacy login.",
+      "provenance": [
+        {
+          "file": "frontend/src/contexts/AuthContext.js",
+          "line": 61
+        },
+        {
+          "file": "frontend/src/contexts/AuthContext.js",
+          "line": 115
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF9",
+      "source": "DS5",
+      "destination": "EE4",
+      "description": "Stored token and user data read from browser localStorage on app start to restore session state.",
+      "provenance": [
+        {
+          "file": "frontend/src/contexts/AuthContext.js",
+          "line": 21
+        },
+        {
+          "file": "frontend/src/contexts/AuthContext.js",
+          "line": 22
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF10",
+      "source": "DS5",
+      "destination": "P2",
+      "description": "Bearer token from browser localStorage attached to Authorization header on API requests and supplied to authorization middleware.",
+      "provenance": [
+        {
+          "file": "frontend/src/api/config.js",
+          "line": 19
+        },
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 6
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF11",
+      "source": "P2",
+      "destination": "DS1",
+      "description": "Authorization middleware reads user account by decoded JWT userId and excludes password to validate token and active account.",
+      "provenance": [
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 12
+        },
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 13
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF12",
+      "source": "P2",
+      "destination": "P1",
+      "description": "Authenticated user context (user object plus JWT-derived userType) passed to protected authentication/account routes such as /me and change-password.",
+      "provenance": [
+        {
+          "file": "backend/middleware/ageCheck.js",
+          "line": 20
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 268
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF13",
+      "source": "EE4",
+      "destination": "P1",
+      "description": "Login and account-management requests from browser/client to authentication service, including email/password, optional sixDigitCode, and password change data.",
+      "provenance": [
+        {
+          "file": "frontend/src/api/auth.js",
+          "line": 15
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 203
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF14",
+      "source": "DS1",
+      "destination": "P1",
+      "description": "User account records read by email or id during login, parent login, child login, current-profile lookup, and password verification.",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 90
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 270
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF15",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Updated user account data written when changing password; new password is saved and hashed by the model pre-save hook.",
+      "provenance": [
+        {
+          "file": "backend/routes/auth.js",
+          "line": 316
+        },
+        {
+          "file": "backend/models/Parent.js",
+          "line": 96
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF16",
+      "source": "EE4",
+      "destination": "P3",
+      "description": "Child profile and child activity requests from browser/client, including child name, dateOfBirth, gender, optional idImage, videoId requests, search queries, and watch history data.",
+      "provenance": [
+        {
+          "file": "frontend/src/api/children.js",
+          "line": 14
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 89
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF17",
+      "source": "P3",
+      "destination": "P6",
+      "description": "Child ID image upload passed from child profile create/update handlers into image upload middleware.",
+      "provenance": [
+        {
+          "file": "backend/routes/children.js",
+          "line": 89
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 166
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF18",
+      "source": "P6",
+      "destination": "DS4",
+      "description": "Child ID image file written to uploads/images on disk with generated filename.",
+      "provenance": [
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 8
+        },
+        {
+          "file": "backend/middleware/imageUpload.js",
+          "line": 16
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF19",
+      "source": "P3",
+      "destination": "DS2",
+      "description": "Child profile records written or updated with name, dateOfBirth, gender, parent id, optional idImage, requests, approvals, searchHistory, watchHistory, and isActive status.",
+      "provenance": [
+        {
+          "file": "backend/routes/children.js",
+          "line": 102
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 116
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF20",
+      "source": "DS2",
+      "destination": "P3",
+      "description": "Child profile data read for parent child listings, single profile retrieval, approved videos, history views, request processing, and child activity tracking.",
+      "provenance": [
+        {
+          "file": "backend/routes/children.js",
+          "line": 73
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 561
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF21",
+      "source": "DS3",
+      "destination": "P3",
+      "description": "Video metadata read by child-profile service to validate requested videos, populate requested/approved video details, and enrich watch history.",
+      "provenance": [
+        {
+          "file": "backend/routes/children.js",
+          "line": 264
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 571
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF22",
+      "source": "P3",
+      "destination": "EE4",
+      "description": "Responses to browser/client containing child profiles, approved videos, searchHistory, watchHistory, and results of request/approval/delete operations.",
+      "provenance": [
+        {
+          "file": "backend/routes/children.js",
+          "line": 57
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 582
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF23",
+      "source": "EE4",
+      "destination": "P4",
+      "description": "Video API requests from browser/client, including upload multipart form data, browse filters, likes, comments, and video fetch/stream requests.",
+      "provenance": [
+        {
+          "file": "frontend/src/api/videos.js",
+          "line": 6
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 44
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF24",
+      "source": "P4",
+      "destination": "DS4",
+      "description": "Uploaded video file written to uploads directory on disk and later read as a file stream for playback.",
+      "provenance": [
+        {
+          "file": "backend/routes/videos.js",
+          "line": 13
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 229
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF25",
+      "source": "P4",
+      "destination": "DS3",
+      "description": "Video metadata written or updated, including title, description, filename, originalName, filePath, fileSize, uploader, category, ageRange, tags, likes, comments, views, and isActive.",
+      "provenance": [
+        {
+          "file": "backend/routes/videos.js",
+          "line": 54
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 67
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF26",
+      "source": "DS3",
+      "destination": "P4",
+      "description": "Video metadata read for public feed, my-videos list, single video retrieval, metadata updates, delete, like/unlike, comments, and counts.",
+      "provenance": [
+        {
+          "file": "backend/routes/videos.js",
+          "line": 120
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 181
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF27",
+      "source": "P4",
+      "destination": "EE4",
+      "description": "Video service responses to browser/client containing video metadata, public feed results, my-videos list, like/comment results, and streamed video content.",
+      "provenance": [
+        {
+          "file": "backend/routes/videos.js",
+          "line": 129
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 237
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF28",
+      "source": "DS4",
+      "destination": "P7",
+      "description": "Uploaded media files stored on disk are read by static file serving middleware from the uploads directory.",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 34
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF29",
+      "source": "P7",
+      "destination": "EE4",
+      "description": "Static uploaded files under /uploads, such as profile or child ID images, are served to the browser/client.",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 34
+        },
+        {
+          "file": "frontend/src/pages/Children.js",
+          "line": 292
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF30",
+      "source": "EE4",
+      "destination": "P5",
+      "description": "Browser/client requests to user profile and administration service for profile retrieval, profile updates, stats, admin user listing, role change, and deactivation.",
+      "provenance": [
+        {
+          "file": "frontend/src/api/auth.js",
+          "line": 45
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 41
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF31",
+      "source": "P5",
+      "destination": "DS1",
+      "description": "User account updates written for profile changes, admin role updates, and account deactivation.",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 61
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 163
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF32",
+      "source": "DS1",
+      "destination": "P5",
+      "description": "User account records read for profile retrieval, email uniqueness checks, stats/user administration queries, and admin listings without passwords.",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 11
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 129
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF33",
+      "source": "DS2",
+      "destination": "P5",
+      "description": "Child profile records counted or read by user service for parent profile childrenProfiles and parent statistics.",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 22
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 93
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF34",
+      "source": "DS3",
+      "destination": "P5",
+      "description": "Video metadata read by user service to compute parent statistics such as videoCount and totalViews.",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 92
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 94
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF35",
+      "source": "P5",
+      "destination": "EE4",
+      "description": "User/profile/admin responses returned to browser/client containing user profile data, childrenProfiles, statistics, user lists, updated roles, or deactivated user records.",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 25
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 100
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF36",
+      "source": "P1",
+      "destination": "EE5",
+      "description": "Authentication/account service connects to MongoDB and issues user/child database operations through Mongoose models.",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 43
+        },
+        {
+          "file": "backend/routes/auth.js",
+          "line": 24
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "The code shows Mongoose connection and model operations; the direct network hop to MongoDB is mediated by Mongoose."
+    },
+    {
+      "id": "DF37",
+      "source": "P3",
+      "destination": "EE5",
+      "description": "Child profile service issues child and related video database operations to MongoDB through Mongoose.",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 43
+        },
+        {
+          "file": "backend/routes/children.js",
+          "line": 27
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "The code shows Mongoose connection and model operations; the direct network hop to MongoDB is mediated by Mongoose."
+    },
+    {
+      "id": "DF38",
+      "source": "P4",
+      "destination": "EE5",
+      "description": "Video service issues video metadata database queries and updates to MongoDB through Mongoose.",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 43
+        },
+        {
+          "file": "backend/routes/videos.js",
+          "line": 120
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "The code shows Mongoose connection and model operations; the direct network hop to MongoDB is mediated by Mongoose."
+    },
+    {
+      "id": "DF39",
+      "source": "P5",
+      "destination": "EE5",
+      "description": "User/profile/admin service issues user, child, and video statistics queries and updates to MongoDB through Mongoose.",
+      "provenance": [
+        {
+          "file": "backend/server.js",
+          "line": 43
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 11
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "The code shows Mongoose connection and model operations; the direct network hop to MongoDB is mediated by Mongoose."
+    },
+    {
+      "id": "DF40",
+      "source": "EE1",
+      "destination": "EE4",
+      "description": "Parent enters registration, login, profile, child-management, and video-upload data into the web browser/frontend client.",
+      "provenance": [
+        {
+          "file": "frontend/src/pages/Register.js",
+          "line": 163
+        },
+        {
+          "file": "frontend/src/pages/Children.js",
+          "line": 384
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF41",
+      "source": "EE2",
+      "destination": "EE4",
+      "description": "Child enters login credentials, searches, and video request/play actions into the web browser/frontend client.",
+      "provenance": [
+        {
+          "file": "frontend/src/pages/Landing.js",
+          "line": 282
+        },
+        {
+          "file": "frontend/src/pages/Videos.js",
+          "line": 282
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF42",
+      "source": "EE3",
+      "destination": "EE4",
+      "description": "Administrator uses the web browser/frontend client to initiate admin user-management requests such as listing users, changing roles, and deactivating accounts.",
+      "provenance": [
+        {
+          "file": "backend/routes/users.js",
+          "line": 115
+        },
+        {
+          "file": "backend/routes/users.js",
+          "line": 153
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Admin-specific frontend screens are not shown, but backend exposes admin routes that would be called from a client."
+    }
+  ]
+}

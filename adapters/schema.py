@@ -213,6 +213,42 @@ DFD_ELEMENTS_NAIVE_TOOL_SCHEMA = {
     },
 }
 
+# The flows-side counterpart, same open-vocabulary substitution: file:line `citations` where the
+# closed schema takes `fact_ids`. Kept in lock-step with DFD_FLOWS_TOOL_SCHEMA (everything but the
+# citation field) so the two arms differ in exactly the citation vocabulary and nothing else.
+DFD_FLOWS_NAIVE_TOOL_SCHEMA = {
+    "name": "emit_dfd_flows",
+    "description": DFD_FLOWS_TOOL_SCHEMA["description"],
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "flows": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        **{k: v for k, v in
+                           DFD_FLOWS_TOOL_SCHEMA["input_schema"]["properties"]["flows"]
+                           ["items"]["properties"].items() if k != "fact_ids"},
+                        "citations": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {"file": {"type": "string"},
+                                               "line": {"type": "integer"}},
+                                "required": ["file", "line"],
+                            },
+                            "description": "Where in the source this flow is evidenced.",
+                        },
+                    },
+                    "required": ["id", "source", "destination", "description", "citations"],
+                },
+            },
+        },
+        "required": ["flows"],
+    },
+}
+
 
 def schema_version(dfd: dict) -> int:
     """A DFD with no declared version is v1 -- that covers the four hand-authored files, none of

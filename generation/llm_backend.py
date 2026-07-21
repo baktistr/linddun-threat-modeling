@@ -146,9 +146,22 @@ class AzureFoundryBackend(LLMBackend):
             messages=[{"role": "user", "content": prompt}],
             max_completion_tokens=max_tokens,
         )
-        for call in resp.choices[0].message.tool_calls or []:
+        choice = resp.choices[0]
+        for call in choice.message.tool_calls or []:
             if call.function.name == name:
-                return json.loads(call.function.arguments)
+                try:
+                    return json.loads(call.function.arguments)
+                except json.JSONDecodeError as e:
+                    # A truncated tool call is cut mid-JSON and fails to parse. Turn that into an
+                    # actionable budget error rather than a cryptic decode error four frames up --
+                    # exactly the "reads as a model failure rather than a budget one" trap the
+                    # max_tokens parameter exists to avoid.
+                    if choice.finish_reason == "length":
+                        raise RuntimeError(
+                            f"tool response for {name!r} was truncated at "
+                            f"max_completion_tokens={max_tokens} (finish_reason=length); the "
+                            f"payload did not fit. Raise the budget for this call.") from e
+                    raise
         return {}
 
 

@@ -521,6 +521,187 @@ def test_llm_arm_drops_uncitable_elements():
     check(not flows and fl_rejected, "a flow touching a rejected element is itself rejected")
 
 
+def test_m4_anchorable_subset_and_restricted_recall():
+    """M4: the hand baseline restricted to the anchorable subset, so the derived DFD is never
+    blamed for flows it structurally lacks. Pins the subset accounting and the restricted recall
+    against the committed hand output, so neither the re-anchoring nor the matcher can silently
+    move the comparison.
+    """
+    print("\n[M4: hand baseline restricted to the anchorable subset]")
+    from scripts.compare_derived_threats import anchorable_subset, score_recall
+
+    hand_gold = json.loads((config.KB_DIR / "scenarios" / "kidstube" /
+                            "gold_standard_threats.json").read_text())["threats"]
+    derived_meta = json.loads((config.KB_DIR / "scenarios" / "kidstube_derived" /
+                               "gold_standard_threats.json").read_text())["_meta"]
+    hand_dfd = _hand_dfd()
+
+    anchorable = anchorable_subset(hand_gold, derived_meta)
+    check(len(anchorable) == 27,
+          f"27 of 41 gold threats anchor to a flow the derived DFD has (got {len(anchorable)})")
+    check({t["id"] for t in hand_gold} - anchorable == set(derived_meta["unanchored_threat_ids"]),
+          "the excluded ids are exactly the derived gold's deliberately-unanchored 14")
+
+    gen_path = config.ROOT / "storage" / "generated" / "kidstube_grounded.json"
+    if not gen_path.exists():
+        print("  skip  no committed kidstube_grounded.json to score")
+        return
+    from generation.generate import load_generated
+    gen = load_generated(str(gen_path))
+    full = score_recall(gen, hand_gold, "kidstube", hand_dfd)
+    restricted = score_recall(gen, [t for t in hand_gold if t["id"] in anchorable],
+                              "kidstube", hand_dfd)
+    check(full.matched == 32, f"hand baseline recalls the published 32/41 (got {full.matched})")
+    check(restricted.n_gold == 27 and restricted.matched <= full.matched,
+          f"restriction scores on 27 and cannot add matches (got gold={restricted.n_gold}, "
+          f"match={restricted.matched})")
+    check(restricted.matched == 19,
+          f"19 of the 27 anchorable gold threats are recalled by grounded (got {restricted.matched})")
+
+
+def test_naive_arm_has_no_confabulation_guard():
+    """The llm_naive arm's defining property: it drops the confabulation guard the `llm` arm relies
+    on. An element citing nothing, or a hallucinated line, SURVIVES here -- that absence is what the
+    open-vocabulary ablation measures. Structural well-formedness (unique ids, valid types, declared
+    endpoints) is still enforced, because a malformed graph is broken in any vocabulary.
+    """
+    print("\n[llm_naive: no confabulation guard, by design]")
+    from adapters.synthesize import _accept_elements, _accept_elements_naive, _accept_flows_naive
+
+    raw = [
+        {"id": "P1", "type": "Process", "name": "Authentication Service",
+         "citations": [{"file": "backend/routes/auth.js", "line": 12}]},
+        # the two the model's world-knowledge wants to invent -- one uncited, one citing a ghost line
+        {"id": "P4", "type": "Process", "name": "AI Recommendation Engine", "citations": []},
+        {"id": "EE3", "type": "ExternalEntity", "name": "Third-Party Advertisers",
+         "citations": [{"file": "backend/nope.js", "line": 999}]},
+        {"id": "P1", "type": "Process", "name": "dup id"},          # rejected: duplicate
+        {"id": "Z", "type": "Widget", "name": "bad type"},          # rejected: not an element type
+    ]
+    kept, rejected = _accept_elements_naive(raw)
+    check({e["id"] for e in kept} == {"P1", "P4", "EE3"},
+          f"uncited / ghost-cited elements SURVIVE -- the absent guard is the measurement "
+          f"(kept {sorted(e['id'] for e in kept)})")
+    check(any("duplicate" in r for r in rejected) and any("malformed" in r for r in rejected),
+          "structural well-formedness is still enforced (dup id, bad type rejected)")
+    check(next(e for e in kept if e["id"] == "EE3")["provenance"] == [{"file": "backend/nope.js",
+                                                                       "line": 999}],
+          "the ghost citation is kept verbatim, for verify_dfd to catch -- not silently dropped")
+
+    # The contrast the whole ablation rests on: the closed arm DROPS exactly these two.
+    closed_kept, _ = _accept_elements(raw, {"Fsomethingreal"})
+    check("P4" not in {e["id"] for e in closed_kept} and "EE3" not in {e["id"] for e in closed_kept},
+          "the closed `llm` arm drops P4/EE3 -- so the two arms differ in exactly the guard")
+
+    flows, frej = _accept_flows_naive(
+        [{"id": "DF1", "source": "P1", "destination": "P4", "description": "to the AI engine",
+          "citations": [{"file": "a.js", "line": 1}]},
+         {"id": "DF2", "source": "P1", "destination": "GHOST", "description": "dangling",
+          "citations": []}],
+        {e["id"] for e in kept})
+    check([f["id"] for f in flows] == ["DF1"] and any("GHOST" in r for r in frej),
+          "a flow to a non-emitted element is still rejected (graph well-formedness, not grounding)")
+
+
+def test_naive_prompts_build_without_format_errors():
+    """Both naive prompts are assembled with str.format, and the instructions legitimately contain
+    literal braces ('{file, line}'). A single unescaped brace raises KeyError at prompt-build time
+    -- AFTER the elements LLM call has already been billed. Building them offline here catches that
+    whole class of bug before it can burn a live call."""
+    print("\n[llm_naive: prompts assemble offline, no str.format KeyError]")
+    from adapters.synthesize import _elements_prompt_naive, _flows_prompt_naive
+
+    src = "--- a.js\n    1| const x = 1;"
+    ep = _elements_prompt_naive(src)
+    check("{file, line}" in ep and src in ep,
+          "elements prompt renders the literal {file, line} guidance and the source")
+    fp = _flows_prompt_naive(src, [{"id": "P1", "type": "Process", "name": "Auth Service"}])
+    check("{file, line}" in fp and "P1" in fp and src in fp,
+          "flows prompt renders {file, line}, the accepted elements, and the source")
+
+
+def test_naive_open_citations_verified_against_source():
+    """The finding this arm exists to produce: an OPEN file:line citation can fail to verify, where
+    the closed arm's fact-id citation is resolvable ~1.00 by construction. Driven with committed
+    facts standing in for a re-parse (same commit), so it needs no live source checkout.
+    """
+    print("\n[llm_naive: open file:line citations are independently re-derived]")
+    facts, _ = _facts()
+    if facts is None:
+        print("  skip  no committed facts")
+        return
+    from adapters.verify_dfd import (NOT_CHECKED, _loc_index, _resolve_item_facts, verify_element,
+                                     verify_flow)
+    from adapters.resolve import MountTable
+
+    facts_by_id = {f.id: f for f in facts}
+    loc_index = _loc_index(facts_by_id)          # committed facts == a re-parse at the pinned commit
+    max_line: dict[str, int] = {}
+    for f in facts:
+        max_line[f.file] = max(max_line.get(f.file, 0), f.line)
+    line_counts = {file: n + 50 for file, n in max_line.items()}
+    reextracted = facts_by_id                    # non-None => facts_present is actually checked
+
+    mount = next(f for f in facts if f.construct == "express_mount")
+    collection = next(f for f in facts if f.construct == "mongo_collection")
+
+    def open_el(etype, loc):
+        e = {"id": "E", "type": etype, "name": "E", "provenance": [{"file": loc[0], "line": loc[1]}]}
+        return verify_element(e, facts_by_id, _resolve_item_facts(e, facts_by_id, loc_index),
+                              reextracted, loc_index, line_counts)
+
+    good = open_el("Process", (mount.file, mount.line))
+    check(good.citations_resolvable is True and good.evidence_type_consistent is True
+          and good.facts_present is True and good.all_valid is True,
+          "an open citation landing on a real matching construct verifies clean")
+
+    ghost_line = (mount.file, line_counts[mount.file] - 1)   # a real file, a line with no construct
+    ghost = open_el("Process", ghost_line)
+    check(ghost.citations_resolvable is True and ghost.facts_present is False
+          and not ghost.all_valid,
+          "a real line holding no construct: location resolves, facts_present fails (the drop)")
+
+    hallucinated = open_el("Process", ("backend/nope.js", 999))
+    check(hallucinated.citations_resolvable is False and not hallucinated.all_valid,
+          "a hallucinated file:line is caught -- an open vocabulary can point anywhere")
+
+    no_source = verify_element(
+        {"id": "E", "type": "Process", "name": "E",
+         "provenance": [{"file": mount.file, "line": mount.line}]},
+        facts_by_id, [], None, None, None)
+    check(no_source.citations_resolvable is NOT_CHECKED and no_source.all_valid is NOT_CHECKED,
+          "without a source to re-parse, an open citation is not_checked -- never a fake 1.00")
+
+    # A flow whose open citation genuinely links its endpoints reuses the closed arm's connection
+    # check unchanged, once the file:line resolves to the same fact.
+    route_to_mount = {r.fact_id: r.mount_path for r in MountTable.build(facts).routes}
+    triple = None
+    for f in facts:
+        if (f.construct == "db_access"
+                and route_to_mount.get(f.fields.get("route_fact_id")) == mount.fields["mount_path"]):
+            col = next((c for c in facts if c.construct == "mongo_collection"
+                        and c.fields["collection"] == f.fields.get("collection")), None)
+            if col:
+                triple = (f, col)
+                break
+    if triple is not None:
+        dba, col = triple
+        proc = {"id": "P1", "type": "Process", "name": "P1",
+                "provenance": [{"file": mount.file, "line": mount.line}]}
+        store = {"id": "DS1", "type": "DataStore", "name": "DS1",
+                 "provenance": [{"file": col.file, "line": col.line}]}
+        flow = {"id": "DF1", "source": "P1", "destination": "DS1", "description": "db op",
+                "provenance": [{"file": dba.file, "line": dba.line}]}
+        elements_by_id = {"P1": proc, "DS1": store}
+        element_facts = {"P1": _resolve_item_facts(proc, facts_by_id, loc_index),
+                         "DS1": _resolve_item_facts(store, facts_by_id, loc_index)}
+        fv = verify_flow(flow, elements_by_id, element_facts,
+                         _resolve_item_facts(flow, facts_by_id, loc_index), facts_by_id,
+                         route_to_mount, reextracted, loc_index, line_counts)
+        check(fv.evidence_connects_endpoints is True and fv.all_valid is True,
+              "a naive flow whose open citation truly links its endpoints verifies clean")
+
+
 def test_verifier_takes_no_llm_and_no_network():
     """generation/verify.py's contract, restated one level up: the verifier is deterministic.
     A verifier that asked a model whether the model was right would relocate the self-report
@@ -548,5 +729,9 @@ if __name__ == "__main__":
     test_verifier_rejects_bad_citations()
     test_verifier_takes_no_llm_and_no_network()
     test_llm_arm_drops_uncitable_elements()
+    test_naive_arm_has_no_confabulation_guard()
+    test_naive_prompts_build_without_format_errors()
+    test_naive_open_citations_verified_against_source()
+    test_m4_anchorable_subset_and_restricted_recall()
     print(f"\n{PASS} passed, {FAIL} failed")
     sys.exit(1 if FAIL else 0)

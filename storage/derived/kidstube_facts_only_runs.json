@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "mode": "facts_only",
+    "runs": 1,
+    "scenario": "kidstube",
+    "source_checked": true,
+    "facts": "adapters/data/kidstube_code_facts.json"
+  },
+  "runs": [
+    {
+      "run": 1,
+      "n_elements": 14,
+      "n_flows": 27,
+      "schema_errors": 0,
+      "el_matched": 10,
+      "el_missed": 0,
+      "el_ceiling": 2,
+      "el_precision": 0.7857142857142857,
+      "el_recall_derivable": 1.0,
+      "fl_matched": 9,
+      "fl_missed": 6,
+      "fl_precision": 0.3333333333333333,
+      "fl_recall_derivable": 0.6,
+      "cit_resolvable": 1.0,
+      "cit_type_ok": 1.0,
+      "cit_present": 1.0,
+      "cit_all_valid": 1.0,
+      "flow_evidence_connects": 1.0,
+      "flow_all_valid": 1.0,
+      "direction_matches": 1.0,
+      "names": [
+        "admin (actor role)",
+        "child (actor role)",
+        "parent (actor role)",
+        "/api/auth",
+        "/api/subprofiles",
+        "/api/users",
+        "/api/videos",
+        "MongoDB childprofiles collection",
+        "MongoDB tests collection",
+        "MongoDB users collection",
+        "MongoDB videos collection",
+        "File system (backend/uploads)",
+        "File system (backend/uploads/images)",
+        "Browser localStorage"
+      ],
+      "path": "storage/derived/kidstube_facts_only_run1.json"
+    }
+  ]
+}

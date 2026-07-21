@@ -147,6 +147,24 @@ def _key_from_facts(element: dict, facts: list[dict],
     return None
 
 
+def _cited_facts(element: dict, facts_by_id: dict[str, dict],
+                 loc_index: dict[tuple[str, int], list[dict]]) -> list[dict]:
+    """The facts an element cites, across both provenance vocabularies.
+
+    A fact_id resolves through the closed vocabulary (the facts_only / llm arms). A {file, line}
+    resolves through the fact sitting at that location (the llm_naive arm, whose citations are open
+    file:line). Resolving open citations to a construct is done HERE, by the evaluator against the
+    committed facts -- not by the model -- so the naive DFD can be scored by the same provenance-key
+    machinery as the closed arms without ever comparing element names.
+    """
+    cited = [facts_by_id[p["fact_id"]] for p in element.get("provenance", [])
+             if p.get("fact_id") in facts_by_id]
+    for p in element.get("provenance", []):
+        if "fact_id" not in p and "file" in p and "line" in p:
+            cited.extend(loc_index.get((p["file"], p["line"]), []))
+    return cited
+
+
 def derived_element_keys(dfd: dict, facts: list[dict]) -> dict[str, ElementKey]:
     """Compute every derived element's provenance key from the facts it cites.
 
@@ -156,14 +174,15 @@ def derived_element_keys(dfd: dict, facts: list[dict]) -> dict[str, ElementKey]:
     refuses. Such elements surface as unmatched derived elements and go to adjudication.
     """
     facts_by_id = {f["id"]: f for f in facts}
+    loc_index: dict[tuple[str, int], list[dict]] = {}
+    for f in facts:
+        loc_index.setdefault((f["file"], f["line"]), []).append(f)
     file_to_mount = {f["fields"]["router_file"]: f["fields"]["mount_path"]
                      for f in facts
                      if f["construct"] == "express_mount" and f["fields"].get("router_file")}
     out: dict[str, ElementKey] = {}
     for e in dfd["elements"]:
-        cited = [facts_by_id[p["fact_id"]] for p in e.get("provenance", [])
-                 if p.get("fact_id") in facts_by_id]
-        key = _key_from_facts(e, cited, file_to_mount)
+        key = _key_from_facts(e, _cited_facts(e, facts_by_id, loc_index), file_to_mount)
         if key is not None:
             out[e["id"]] = key
     return out

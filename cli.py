@@ -173,28 +173,46 @@ def _load_facts(path):
 
 
 def cmd_derive(args):
+    from pathlib import Path
     from adapters.emit import emit_scenario_dfd
     from adapters.synthesize import synthesize_facts_only
 
     path = _facts_path(args.scenario, args.facts)
-    if not path.exists():
-        raise SystemExit(f"no facts at {path} -- run `python cli.py extract --source-root PATH` first.")
-    facts, meta = _load_facts(path)
+    facts, meta = ([], {})
+    if path.exists():
+        facts, meta = _load_facts(path)
 
-    if args.mode == "facts_only":
-        dfd = synthesize_facts_only(facts, scenario_name=args.scenario)
-    elif args.mode == "llm":
-        from adapters.synthesize import synthesize_llm
-        dfd = synthesize_llm(facts, provider=args.provider, scenario_name=args.scenario)
+    if args.mode == "llm_naive":
+        # The one arm whose input is the raw repository, not the resolved facts -- that IS the
+        # ablation (adapters/synthesize.py). So it needs --source-root and can run with no
+        # committed facts at all, exactly as the main pipeline's `ungrounded` arm still needs the
+        # model but not the knowledge base.
+        from adapters.synthesize import synthesize_llm_naive
+        if not args.source_root:
+            raise SystemExit("--mode llm_naive reads the raw source and needs --source-root PATH "
+                             "(the one arm that cannot run from committed facts alone).")
+        root = Path(args.source_root).expanduser().resolve()
+        if not root.exists():
+            raise SystemExit(f"source root not found: {root}")
+        dfd = synthesize_llm_naive(root, provider=args.provider, scenario_name=args.scenario)
+        derived_from = {"repo": args.source_root, "commit": meta.get("commit") or _source_commit(root),
+                        "source_root": args.source_root, "adapter_mode": args.mode,
+                        "adapter_version": 1}
     else:
-        raise SystemExit(f"--mode {args.mode} is not built yet (M3). "
-                         f"Use --mode facts_only or --mode llm.")
+        if not path.exists():
+            raise SystemExit(f"no facts at {path} -- run `python cli.py extract "
+                             f"--source-root PATH` first.")
+        if args.mode == "facts_only":
+            dfd = synthesize_facts_only(facts, scenario_name=args.scenario)
+        else:
+            from adapters.synthesize import synthesize_llm
+            dfd = synthesize_llm(facts, provider=args.provider, scenario_name=args.scenario)
+        derived_from = {"repo": meta.get("source_repo"), "commit": meta.get("commit"),
+                        "facts": str(path.relative_to(config.ROOT)),
+                        "adapter_mode": args.mode, "adapter_version": 1}
 
     out = emit_scenario_dfd(
-        args.scenario, dfd,
-        derived_from={"repo": meta.get("source_repo"), "commit": meta.get("commit"),
-                      "facts": str(path.relative_to(config.ROOT)),
-                      "adapter_mode": args.mode, "adapter_version": 1},
+        args.scenario, dfd, derived_from=derived_from,
         purpose="Derived from source code by adapters/. Every element and flow cites the code "
                 "facts it was built from; adapters/verify_dfd.py re-derives those citations "
                 "against the source rather than trusting them.")
@@ -343,6 +361,9 @@ def main():
                           "llm: closed fact-id citation vocabulary. llm_naive: open file:line "
                           "vocabulary (the ablation baseline).")
     sd.add_argument("--provider", default=None, help="LLM provider for --mode llm/llm_naive.")
+    sd.add_argument("--source-root", default=None,
+                     help="Path to a checkout of the source repo. REQUIRED for --mode llm_naive, "
+                          "whose input is the raw source rather than the committed facts.")
     sd.set_defaults(func=cmd_derive)
 
     sw = sub.add_parser("verify-dfd", help="Re-derive every citation in a derived DFD. No LLM.")

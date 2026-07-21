@@ -62,7 +62,12 @@ def main():
     out_dir = config.ROOT / "storage" / "derived"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    from adapters.synthesize import synthesize_facts_only, synthesize_llm
+    if args.mode == "llm_naive" and source_root is None:
+        raise SystemExit("--mode llm_naive reads the raw source; pass --source-root PATH. It is "
+                         "also what makes citation verification (facts_present, and the open "
+                         "citations_resolvable) checkable rather than not_checked.")
+
+    from adapters.synthesize import synthesize_facts_only, synthesize_llm, synthesize_llm_naive
 
     rows = []
     for i in range(1, args.runs + 1):
@@ -70,6 +75,8 @@ def main():
         try:
             if args.mode == "facts_only":
                 dfd = synthesize_facts_only(facts)
+            elif args.mode == "llm_naive":
+                dfd = synthesize_llm_naive(source_root, provider=args.provider)
             else:
                 dfd = synthesize_llm(facts, provider=args.provider)
         except Exception as e:

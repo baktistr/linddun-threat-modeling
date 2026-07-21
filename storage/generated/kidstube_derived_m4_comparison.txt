@@ -1,0 +1,28 @@
+M4 comparison: threats on the derived DFD (kidstube_derived) vs. the hand DFD (kidstube),
+both on the same anchorable gold subset.
+
+Gold accounting (from kidstube_derived/gold_standard_threats.json _meta):
+  hand gold total                 41
+  anchorable (has a derived flow) 27
+  unanchored -> unresolved_location 14  = ceiling ['DF13', 'DF14'] (planned, no code) + adapter-miss ['DF4', 'DF5', 'DF7', 'DF8', 'DF12', 'DF16']
+  adapter DFD that produced the derived flows: facts_only
+
+mode        side                  gen  gold  match  RbM  SU  UL  raw_R  reach_R  cit_valid
+------------------------------------------------------------------------------------------
+grounded    hand (all gold)       118    41     32    9   0   0   0.78     0.78       1.00
+grounded    hand (anchorable)     118    27     19    8   0   0   0.70     0.70       1.00
+grounded    derived               144    41     14   13   0  14   0.34     0.52       1.00
+
+rag         hand (all gold)        82    41     23   18   0   0   0.56     0.56       0.96
+rag         hand (anchorable)      82    27     11   16   0   0   0.41     0.41       0.96
+rag         derived               129    41     12   15   0  14   0.29     0.44       0.99
+
+ungrounded  hand (all gold)       109    41     28   13   0   0   0.68     0.68       0.92
+ungrounded  hand (anchorable)     109    27     16   11   0   0   0.59     0.59       0.92
+ungrounded  derived               161    41     13   14   0  14   0.32     0.48       0.94
+
+Legend: RbM=reachable_but_missed  SU=structurally_unreachable  UL=unresolved_location
+  raw_R = matched / gold-in-this-row;  reach_R = matched / (matched + RbM) -- the honest
+  cross-DFD number, since it drops from the denominator what each DFD structurally can't
+  produce. Compare 'hand (anchorable)' reach_R against 'derived' reach_R for each mode.
+  Precision is UNRESTRICTED (see cli.py eval); citation validity is the metric grounding moves.
