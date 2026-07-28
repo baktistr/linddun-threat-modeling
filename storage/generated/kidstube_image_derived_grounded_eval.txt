@@ -1,0 +1,30 @@
+Eval report: scenario=kidstube_image_derived generated=storage/generated/kidstube_image_derived_grounded.json
+  n_generated=118 n_gold=41 strict_node_match=False
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               3   11    3   0.21   0.50   0.30
+I    Identifying           4   11    1   0.27   0.80   0.40
+Nr   Non-repudiation       2    9    0   0.18   1.00   0.31
+D    Detecting             0   10    2   0.00   0.00   0.00
+Dd   Data Disclosure      11   16    4   0.41   0.73   0.52
+U    Unawareness           4   17    0   0.19   1.00   0.32  *
+Nc   Non-compliance        5   15    2   0.25   0.71   0.37  *
+ALL                       29   89   12   0.25   0.71   0.36
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          1.00
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           1.00
+  n_threats_checked        118
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          12   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.71
+  recall (reachable-adjusted):      0.71   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario kidstube_image_derived --generated storage/generated/kidstube_image_derived_grounded.json` to label a sample of the 89 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

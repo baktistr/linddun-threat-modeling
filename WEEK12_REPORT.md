@@ -119,6 +119,54 @@ Uncalibrated is the default: that is what an open-vocabulary citation is worth a
 One box fails even after calibration — DF3's, which is also one of the three flows whose endpoints
 the model got wrong. The two error modes coincide on the same congested region.
 
+## Threats on the image-derived DFD, grounded (the M4-equivalent)
+
+`cli.py generate --scenario kidstube_image_derived` — 118 threats over 17 flows, then `cli.py
+eval` against the gold standard.
+
+**The gold transfers with no re-anchoring, and that is itself a result.** Matching is flow-anchored
+(`[DF1]`..`[DF17]` embedded in `interaction`), and the image adapter reused the flow ids printed on
+the diagram, so **41/41 gold threats anchor**. `kidstube_derived` needed
+`scripts/build_kidstube_derived_gold.py` to translate ids through the alignment map and still lost
+14 threats (2 planned-feature ceiling + 6 adapter-miss flows). Here the gold is copied verbatim,
+the denominator is the same 41 the hand DFD is scored on, and no anchorable-subset restriction
+applies. `structurally_unreachable = 0`, `unresolved_location = 0`.
+
+| Type | hand TP/FP/FN | hand P/R | image TP/FP/FN | image P/R |
+|---|---|---|---|---|
+| L Linking | 5/10/1 | 0.33 / 0.83 | 3/11/3 | 0.21 / 0.50 |
+| I Identifying | 4/12/1 | 0.25 / 0.80 | 4/11/1 | 0.27 / 0.80 |
+| Nr Non-repudiation | 2/8/0 | 0.20 / 1.00 | 2/9/0 | 0.18 / 1.00 |
+| D Detecting | 1/8/1 | 0.11 / 0.50 | 0/10/2 | 0.00 / 0.00 |
+| Dd Data Disclosure | 11/16/4 | 0.41 / 0.73 | 11/16/4 | 0.41 / 0.73 |
+| U Unawareness | 4/16/0 | 0.20 / 1.00 | 4/17/0 | 0.19 / 1.00 |
+| Nc Non-compliance | 5/16/2 | 0.24 / 0.71 | 5/15/2 | 0.25 / 0.71 |
+| **ALL** | **32/86/9** | **0.27 / 0.78** | **29/89/12** | **0.25 / 0.71** |
+
+Both runs generated exactly 118 threats. Recall falls **0.78 → 0.71**; precision is flat within
+noise (0.27 → 0.25, both automated lower bounds). Citation correctness is **1.00 on every axis**
+— `node_valid`, `type_applicable`, `location_valid` — identical to the hand baseline, so the
+image-derived DFD is a fully valid anchor target.
+
+**Deriving the DFD from a picture costs far less recall than deriving it from code.** On M4's
+27-threat subset, so all three sit on one denominator (the hand figure reproduces M4's published
+0.70 exactly, which validates the subset reconstruction):
+
+| DFD | recall (27 subset) | recall (all 41) |
+|---|---:|---:|
+| hand-authored | 0.70 | 0.78 |
+| **image-derived** | **0.67** | **0.71** |
+| source-derived (`facts_only`) | 0.52 | n/a — 14 threats unanchorable |
+
+The image adapter gives up **0.03**; the source adapter gives up **0.18**. Two reasons, and they
+compound: the diagram already encodes the analyst's element granularity and naming, so no
+abstraction has to be re-invented from routes and collections; and the analyst *drew the planned
+features*, so DF13/DF14 (AI Recommendation Engine, Third-Party Advertisers) are present — the
+derivability ceiling that is structural for code does not exist for a picture.
+
+The one category that collapses is **Detecting (1 TP → 0)**, on a 2-threat base, so n is too small
+to read as a finding.
+
 ## Tests
 
 **439 offline, all passing** (test_kb 77, test_generation 227, test_adapter 135, up from 107). The
@@ -144,8 +192,10 @@ is unchanged — both cases are still rejected; there are now three vocabularies
    a Week 8 *re-render*, not that original. The HW2 diagram is a real artifact from a real tool
    whose ground-truth transcription already exists — a genuine field test at no extra labelling
    cost, if the file can be recovered.
-4. **No threats generated on the image-derived DFD yet.** The M4-equivalent — does the thinner
-   description cost recall? — is unrun.
+4. **The thinner descriptions cost recall, but less than expected** — 0.78 → 0.71 on all 41. Only
+   `grounded` has been run; `rag` and `ungrounded` on the image-derived DFD are unrun, so the
+   grounding-order check (grounded > ungrounded > rag, which held on both the hand and
+   source-derived DFDs) is untested here.
 5. **`OpenAIBackend.call_tool` accepts `max_tokens` and never sends it.** Pre-existing, untouched
    here because newer models reject `max_tokens` in favour of `max_completion_tokens` (the lesson
    already documented in `AzureFoundryBackend`). It matters for the planned multi-model runs: on
