@@ -80,12 +80,12 @@ THREATS = [
      "assumptions": "Confirmed: JWT token stored in localStorage and valid for 7 days.",
      "severity": "High", "likelihood": "Med"},
 
-    {"id": 7, "interaction": "EE2-P1 [DF4]", "originator_id": "EE2", "tree_node": "L.1.2", "threat_type": "L",
+    {"id": 7, "interaction": "EE2-P1 [DF4]", "originator_id": "EE2", "tree_node": "L.1.1", "threat_type": "L",
      "title": "All child actions linked to parent account via shared credentials",
      "description": "Children log in with the parent's email and password; every child action carries the parent's account ObjectId, inherently linking child behavior to the parent's real identity. Children have no independent credentials.",
      "assumptions": "Confirmed by engineering documentation child login flow.",
      "severity": "Med", "likelihood": "High",
-     "mapping_note": "L.1.2 is an instance of L.1 (linking via unique identifier) applied to the parent account ObjectId; instance sub-ID, resolves to official L.1.1."},
+     "mapping_note": "Instance of official L.1.1 (unique identifier) applied to the parent account ObjectId. Was authored as a project-local sub-ID 'L.1.2'; retired 2026-07-28 because generation/verify.py rejects any node absent from threat_trees.json, so the gold was being held to a looser rule than the output it scores. The instance is distinguished by this note, not by the id -- see also threat 15, the other L.1.1 instance."},
 
     {"id": 8, "interaction": "EE2-P1 [DF4]", "originator_id": "DF4", "tree_node": "I.1.2", "threat_type": "I",
      "title": "Child identity revealed through parent credential reuse and weak six-digit code",
@@ -136,12 +136,12 @@ THREATS = [
      "severity": "High", "likelihood": "High",
      "mapping_note": "v3: added AB 2273 (AADC) cross-reference from Bilal HW2 #8 (age-appropriate transparency for child users)."},
 
-    {"id": 15, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "L.1.3", "threat_type": "L",
+    {"id": 15, "interaction": "P2-DS3 [DF9]", "originator_id": "DS3", "tree_node": "L.1.1", "threat_type": "L",
      "title": "Video interactions permanently linkable to identified users via ObjectId",
      "description": "Likes and comments store user ObjectId as foreign keys to DS1/DS2, permanently linking all content interactions to identified individuals and enabling long-term profiling.",
      "assumptions": "Confirmed by Video schema: likes[].user and comments[].user are ObjectId refs.",
      "severity": "Med", "likelihood": "High",
-     "mapping_note": "L.1.3 is an instance of L.1 (linking via unique identifier) applied to ObjectId foreign keys; instance sub-ID, resolves to official L.1.1."},
+     "mapping_note": "Instance of official L.1.1 (unique identifier) applied to ObjectId foreign keys in the Video schema. Was authored as a project-local sub-ID 'L.1.3'; retired 2026-07-28 for the same reason as threat 7. Distinguished from threat 7 (parent account ObjectId) by this note and by its flow anchor, not by the node id."},
 
     {"id": 16, "interaction": "DS2-P4 [DF13]", "originator_id": "P4", "tree_node": "Dd.4.1", "threat_type": "Dd",
      "title": "Planned sharing of children's browsing data with AI engine and third parties",
