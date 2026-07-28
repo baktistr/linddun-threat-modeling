@@ -27,7 +27,7 @@ adapters/                source code -> DFD (Week 10). extract/resolve -> code f
 scripts/                 gold/DFD builders, verifiers, DFD renderer, run summariser (regenerable)
 runs.py                  experiment layout: what identifies a run, and where its artifacts live
 storage/                 index/ (gitignored), generated/ + derived/ + adjudication/ (tracked)
-tests/                   test_kb.py (77), test_generation.py (227), test_adapter.py (165) — all offline
+tests/                   test_kb.py (77), test_generation.py (227), test_adapter.py (171) — all offline
 ```
 
 ## Install

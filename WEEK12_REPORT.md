@@ -210,9 +210,125 @@ Two bugs caught while building this, both in code written this week:
    the DFD cite `fact_id`s at all (the precondition of the alignment algorithm), and are the flow
    id sets *equal*. Sharing an id string is not sharing a referent.
 
+## The sweep — three models × three inputs, grounded
+
+Nine live conditions: **gpt-5.4 / gpt-4o-mini / grok-4.3** (one Azure endpoint, three deployment
+names) × **hand DFD / DFD image / source code**. Full numbers in `RESULTS_2026-07-28.md`; the
+findings that change what we claim are below.
+
+**Adding the hand-DFD control was the decisive move.** The image and source conditions conflate
+two stages — a model both derives the DFD *and* elicits threats, so a weak score could be either.
+Feeding all three models the identical hand-authored `dfd.json` holds Stage A constant:
+
+| model | hand DFD | from image | cost of reading the diagram |
+|---|---:|---:|---:|
+| gpt-5.4 | 0.83 | 0.76 | −0.07 |
+| gpt-4o-mini | 0.71 | 0.68 | −0.03 |
+| grok-4.3 | 0.54 | 0.46 | −0.08 |
+| **spread between models** | **0.29** | **0.30** | |
+
+**The input modality is a small, near-constant tax; the model is the large effect.** The image
+adapter costs 0.03–0.08 recall regardless of model strength, while the spread between models on
+the same input is ~0.30 — roughly four times larger. This also resolves grok-4.3: at 0.46 from the
+image it looked like a vision deficit, but it starts at 0.54 with a perfect DFD handed to it, so
+the deficit is elicitation and the image tax on top is ordinary.
+
+**Threat volume is a fixed model disposition, not an input effect.** grok-4.3 emitted *exactly* 55
+threats from both the hand DFD and the image; gpt-4o-mini 83 and 81. Recall and precision track
+volume directly — gpt-5.4 floods and buys recall with precision (137 threats, R 0.83, P 0.25),
+grok-4.3 is terse and does the reverse (55, R 0.54, P 0.40). **On F1 both smaller models beat
+gpt-5.4 in every condition** — and since all precision here is an automated lower bound, that is
+precisely the ordering manual FP adjudication would be most likely to overturn.
+
+**The source arm is both genuinely worse and badly measured, and the two must not be conflated.**
+Only 17 / 23 / 13 of 41 gold threats re-anchor, so each condition has a different achievable
+ceiling (P ≤ 0.07 / 0.37 / 0.21, R ≤ 0.41 / 0.56 / 0.32). gpt-5.4's source DFD has 36 flows of
+which only **5** carry a gold anchor, so 200 of its 239 threats were guaranteed false positives
+before the model wrote a word. Those three rows are not comparable to the other six or to each
+other. `scripts/compare_conditions.py` re-scores everything on the shared intersection for this
+reason.
+
+## Citation validity is structural but NOT absolute
+
+Eight of nine conditions score 1.00 on every axis. The exception is the finding:
+
+**`dfd_hand_gpt-4o-mini` = 0.99.** One threat of 83 cited `threat_type "Uc"` with
+`tree_node "U.1"`. `Uc` is not a LINDDUN type — the model blended `U` and `Nc`. `U.1` *is* a real
+node, so it is one invented token counted twice (`node_valid` and `type_applicable` both fail;
+`location_valid` stays 1.00). The threat itself was substantively reasonable; only its citation
+was malformed.
+
+What makes this worth reporting rather than rounding away: **`generation/schema.py` already
+declares that field as an enum** of the seven valid types, the call uses forced tool choice, and
+`Uc` came back anyway. The provider did not enforce the enum. So the honest claim is narrower and
+better than the one we had:
+
+> Grounded mode's *context* is exhaustive and correct — it supplies only valid nodes. The model's
+> *output* is not schema-enforced by the provider, so an invalid citation can still be emitted. It
+> is **caught deterministically after the fact rather than prevented**, which is exactly why
+> post-generation verification exists.
+
+That is the thesis working, not failing: a fabricated type slipped past a declared enum and
+`generation/verify.py` caught it with no model in the loop. A pipeline trusting the model's
+self-report would have shipped it. It also took the *smallest* model to surface — the two frontier
+models never did it, so running only gpt-5.4 would have left us believing the enum was enforced.
+
+## First head-to-head against PILLAR
+
+A PILLAR (Mollaeefar et al., EuroS&PW 2025) export of KidsTube, scored against our gold with our
+matcher via the new `scripts/score_pillar.py`:
+
+| | PILLAR | ours (image) |
+|---|---:|---:|
+| model | gpt-4o | gpt-4o-mini |
+| DFD | its own, 14 edges | ours, 17 flows |
+| findings | 105 | 81 |
+| P / R / F1 | 0.21 / 0.54 / 0.30 | 0.35 / 0.68 / 0.46 |
+| node citations resolving | **0.66** | **1.00** |
+
+**This is not a like-for-like win and must not be written up as one:** different model, different
+DFD (28 of PILLAR's 105 findings sit on edges our gold has no counterpart for, and it never saw 7
+of our flows), and our gold was authored against our DFD, which structurally favours us.
+
+The scoring script separates PILLAR's citation failures rather than lumping them, because most are
+not hallucinations: **0.52** exact, **+0.14** match after case-folding (`DD.1.1` vs our `Dd.1.1` —
+a convention, not an error), **0.12** below our KB's depth (parent node present; *our* subset stops
+shallower), **0.18** not identifiers at all (empty strings, or prose like `"Not applicable"` in an
+id field), and only **0.03** genuinely unresolvable.
+
+So the defensible claim is architectural, not scoreboard: PILLAR emits ids that mostly resolve but
+need case-folding, reach depths our KB lacks, and sometimes contain prose — **and it ships them
+unverified**. Ours are drawn from a deterministic mapping-table lookup and re-derived afterwards.
+That is the difference `ABSTRACT.md` asserts, now measured against the baseline system rather than
+argued from its paper.
+
+**And it exposes a limitation on our side.** `threat_trees.json` holds 51 nodes at max depth 4,
+with only 3–6 nodes each for `Nr`, `D`, `U`, `Nc`. PILLAR cites deeper (`Nc.1.1.3.2`) and 12% of
+its citations land in that gap. **A model cannot cite a node it was never given, so part of our
+1.00 is narrow coverage rather than pure correctness.** `WEEK4_REPORT.md` already carries this
+caveat for `regulations.md`; it now has to attach to `threat_trees.json` before the 1.00 is
+published.
+
+## A third evaluation bug — the flow-anchor regex assumed a `DF` prefix
+
+`eval/match.py`'s `FLOW_ID_RE` was `\[(DF\d+)\]`. gpt-4o-mini's source-derived DFD numbered its
+flows `F1..F13`; the gold was re-anchored correctly to `EE1-P1 [F1]`, and then **the matcher could
+not read the gold the pipeline had just written**. All 41 threats fell to `unresolved_location` and
+the condition reported a confident **0.00** that read as a model failure. Nothing enforces the `DF`
+convention — `adapters/schema.py` only *describes* it — so the reader was what had to give.
+Broadened to `\[([A-Za-z]*\d+)\]`, verified byte-identical on all 10 previously committed eval
+reports, and that condition's real score is 0.19 / 0.29 / 0.23.
+
+`scripts/summarize_runs.py` had been averaging that run into the index as a flat `0.00`; it now
+detects `unresolved_location == n_gold` and flags the run **UNSCORABLE**, excluding it from score
+means while still counting citation validity and volume, which do not depend on gold anchoring.
+
+Both are the same failure shape the project refuses everywhere else: a confident zero where the
+honest answer is "this cannot be measured".
+
 ## Tests
 
-**469 offline, all passing** (test_kb 77, test_generation 227, test_adapter 165, up from 107). The
+**475 offline, all passing** (test_kb 77, test_generation 227, test_adapter 171, up from 107). The
 new adapter tests cover the absent confabulation guard, `bbox` as a third vocabulary, the
 verifier's freedom from any model or network, scale calibration surfacing rather than hiding the
 frame mismatch, the text-only backend path staying a bare string, and an offline prompt-build
@@ -239,10 +355,29 @@ is unchanged — both cases are still rejected; there are now three vocabularies
    `grounded` has been run; `rag` and `ungrounded` on the image-derived DFD are unrun, so the
    grounding-order check (grounded > ungrounded > rag, which held on both the hand and
    source-derived DFDs) is untested here.
-5. **`OpenAIBackend.call_tool` accepts `max_tokens` and never sends it.** Pre-existing, untouched
-   here because newer models reject `max_tokens` in favour of `max_completion_tokens` (the lesson
-   already documented in `AzureFoundryBackend`). It matters for the planned multi-model runs: on
-   that backend a long payload will truncate with no budget error.
+5. **`OpenAIBackend.call_tool` accepted `max_tokens` and never sent it** — fixed while wiring the
+   sweep. Now sends `max_completion_tokens`, falling back to `max_tokens` on the 400 that rejects
+   it (a rejected request costs nothing, so the retry is free), and turns `finish_reason=length`
+   into a budget error.
+6. **n=1 on every sweep condition — these are point estimates, not comparisons.** Three
+   independent resampling swings of ~0.05 recall were measured this week: image/gpt-5.4
+   0.71 → 0.76, hand/gpt-5.4 0.78 → 0.83 (vs the Week 6 baseline), plus the Week 10 `llm` arm's
+   0.33–0.87 DFD flow-recall range. So gpt-5.4 vs gpt-4o-mini (0.76 vs 0.68 on the image) is only
+   marginally outside noise; only grok-4.3 is safely separated. **`--runs 3` on the six comparable
+   conditions is what turns the model comparison from suggestive into publishable.**
+7. **The source arm's flow counts are unexplained and BLOCKING.** It produced 36 / 13 / 18 flows
+   in this sweep against **107 / 110 / 115** in Week 10's three runs of the *same* arm and the
+   *same* model (gpt-5.4). That is far outside any previously observed variance. Until it is
+   understood, no source-arm number in `RESULTS_2026-07-28.md` should be cited — it could be
+   genuine variance, or something the `max_completion_tokens` change introduced.
+8. **`threat_trees.json` is a curated subset (51 nodes, max depth 4).** Surfaced by the PILLAR
+   comparison, which cites deeper. Part of our 1.00 citation validity is narrow coverage rather
+   than pure correctness, and the caveat `WEEK4_REPORT.md` already carries for `regulations.md`
+   now has to attach here too.
+9. **PILLAR has not been run under matched conditions.** The one export we have used a different
+   model (gpt-4o) and its own 14-edge DFD. `scripts/score_pillar.py` will score a matched run
+   (gpt-4o-mini, our 17-flow DFD reproduced in PILLAR's editor) the moment one exists. PILLAR has
+   no image ingestion, so the variable to match is the DFD, not the input modality.
 
 ## Still pending with advisor (carried from Weeks 1–11)
 
