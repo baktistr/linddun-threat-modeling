@@ -1,0 +1,45 @@
+{
+  "scenario": "kidstube",
+  "condition": "source_llm_grok-4-3",
+  "input": "source",
+  "arm": "llm",
+  "model": "grok-4-3",
+  "runs": {
+    "1": {
+      "model": "grok-4.3",
+      "backend": "azure",
+      "n_elements": 13,
+      "n_flows": 18
+    }
+  },
+  "by_mode": {
+    "grounded": {
+      "precision": {
+        "n": 1,
+        "mean": 0.1,
+        "sd": null
+      },
+      "recall": {
+        "n": 1,
+        "mean": 0.15,
+        "sd": null
+      },
+      "f1": {
+        "n": 1,
+        "mean": 0.12,
+        "sd": null
+      },
+      "citation_all_valid": {
+        "n": 1,
+        "mean": 1.0,
+        "sd": null
+      },
+      "n_generated": {
+        "n": 1,
+        "mean": 61.0,
+        "sd": null
+      },
+      "unscorable_runs": 0
+    }
+  }
+}

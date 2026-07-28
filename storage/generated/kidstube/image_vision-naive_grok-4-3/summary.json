@@ -1,0 +1,45 @@
+{
+  "scenario": "kidstube",
+  "condition": "image_vision-naive_grok-4-3",
+  "input": "image",
+  "arm": "vision-naive",
+  "model": "grok-4-3",
+  "runs": {
+    "1": {
+      "model": "grok-4.3",
+      "backend": "azure",
+      "n_elements": 12,
+      "n_flows": 17
+    }
+  },
+  "by_mode": {
+    "grounded": {
+      "precision": {
+        "n": 1,
+        "mean": 0.35,
+        "sd": null
+      },
+      "recall": {
+        "n": 1,
+        "mean": 0.46,
+        "sd": null
+      },
+      "f1": {
+        "n": 1,
+        "mean": 0.4,
+        "sd": null
+      },
+      "citation_all_valid": {
+        "n": 1,
+        "mean": 1.0,
+        "sd": null
+      },
+      "n_generated": {
+        "n": 1,
+        "mean": 55.0,
+        "sd": null
+      },
+      "unscorable_runs": 0
+    }
+  }
+}

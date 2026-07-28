@@ -1,0 +1,352 @@
+{
+  "_meta": {
+    "scenario": "kidstube (derived from source, llm)",
+    "adapter_mode": "llm",
+    "backend": "azure",
+    "model": "gpt-4o-mini",
+    "rejected_elements": [],
+    "rejected_flows": [
+      "F9: cites no resolvable fact",
+      "F11: cites no resolvable fact"
+    ],
+    "condition": "source_llm_gpt-4o-mini",
+    "run": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "Parent User",
+      "provenance": [
+        {
+          "fact_id": "F12ab920d"
+        },
+        {
+          "fact_id": "F54f07a00"
+        }
+      ],
+      "rationale": "The role_check facts indicate that 'parent' is a recognized actor in the system, which contributes to understanding how user interactions are managed."
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "Child User",
+      "provenance": [
+        {
+          "fact_id": "F54f07a00"
+        },
+        {
+          "fact_id": "F71b9bbd0"
+        }
+      ],
+      "rationale": "The presence of role_check facts for 'child' indicates that child users are also recognized actors in the system."
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "Admin User",
+      "provenance": [
+        {
+          "fact_id": "F15f81f5f"
+        }
+      ],
+      "rationale": "The role_check fact illustrates that 'admin' is a recognized role in the system, necessitating its representation as an external entity."
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "Authentication Service",
+      "provenance": [
+        {
+          "fact_id": "F8d4ae4f3"
+        },
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "F5633d31c"
+        },
+        {
+          "fact_id": "F3aab626f"
+        }
+      ],
+      "rationale": "The express_route facts indicate that this process handles multiple authentication-related endpoints such as registration, login, and profile management.",
+      "uncertainty_note": "[adapter: dropped unresolvable fact ids ['F90ccf0d']]"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "Child Profile Management",
+      "provenance": [
+        {
+          "fact_id": "F4e2da425"
+        },
+        {
+          "fact_id": "F80b239a4"
+        },
+        {
+          "fact_id": "F223c594b"
+        },
+        {
+          "fact_id": "F2e4e2c07"
+        }
+      ],
+      "rationale": "This process encompasses various CRUD operations related to child profiles, supported by corresponding express_routes and db_access facts."
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Video Management Service",
+      "provenance": [
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "Fbd644856"
+        },
+        {
+          "fact_id": "F9aeea67b"
+        },
+        {
+          "fact_id": "F38df087a"
+        }
+      ],
+      "rationale": "The express_route entities indicate that this process manages all aspects of video upload, retrieval, and interactions, supported by multiple db_access facts."
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "User Data Store",
+      "provenance": [
+        {
+          "fact_id": "F8d130874"
+        },
+        {
+          "fact_id": "F3cc74062"
+        },
+        {
+          "fact_id": "Fba55b95c"
+        }
+      ],
+      "rationale": "MongoDB collections related to user data illustrate persistent storage for user-related information."
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "Child Profile Data Store",
+      "provenance": [
+        {
+          "fact_id": "Fc12aadaf"
+        },
+        {
+          "fact_id": "F6c712160"
+        }
+      ],
+      "rationale": "The ChildProfile model collections signify storage for child profile-related data."
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "Video Data Store",
+      "provenance": [
+        {
+          "fact_id": "Fecdb6c1e"
+        },
+        {
+          "fact_id": "Fbd644856"
+        }
+      ],
+      "rationale": "MongoDB collections for videos indicate persistent data related to multimedia content."
+    }
+  ],
+  "flows": [
+    {
+      "id": "F1",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Parent registration (email, password, profile image)",
+      "provenance": [
+        {
+          "fact_id": "F8d4ae4f3"
+        },
+        {
+          "fact_id": "Fdaf9bef6"
+        },
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "Faa937398"
+        }
+      ]
+    },
+    {
+      "id": "F2",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Save parent data (email, password, profile image)",
+      "provenance": [
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "Fc8cd7ac9"
+        }
+      ]
+    },
+    {
+      "id": "F3",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Parent login (email, password)",
+      "provenance": [
+        {
+          "fact_id": "Fb9d96a8d"
+        },
+        {
+          "fact_id": "F50c3a963"
+        },
+        {
+          "fact_id": "F70fa6875"
+        }
+      ]
+    },
+    {
+      "id": "F4",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "Read parent data (email, password)",
+      "provenance": [
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "Faa937398"
+        }
+      ]
+    },
+    {
+      "id": "F5",
+      "source": "P1",
+      "destination": "EE2",
+      "description": "Return child information for parent",
+      "provenance": [
+        {
+          "fact_id": "F5633d31c"
+        },
+        {
+          "fact_id": "Fe4949aad"
+        }
+      ]
+    },
+    {
+      "id": "F6",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "Child profile creation (name, age, details)",
+      "provenance": [
+        {
+          "fact_id": "F80b239a4"
+        },
+        {
+          "fact_id": "Fca086277"
+        }
+      ]
+    },
+    {
+      "id": "F7",
+      "source": "P2",
+      "destination": "DS2",
+      "description": "Save child profile data",
+      "provenance": [
+        {
+          "fact_id": "F21e7f313"
+        }
+      ]
+    },
+    {
+      "id": "F8",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "Parent requests child profiles",
+      "provenance": [
+        {
+          "fact_id": "F4e2da425"
+        },
+        {
+          "fact_id": "F2338b1d5"
+        }
+      ]
+    },
+    {
+      "id": "F10",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "Child requests approved videos",
+      "provenance": [
+        {
+          "fact_id": "F6c712160"
+        },
+        {
+          "fact_id": "Fedc019a1"
+        }
+      ]
+    },
+    {
+      "id": "F12",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "Parent requests approved videos for child",
+      "provenance": [
+        {
+          "fact_id": "F6c712160"
+        },
+        {
+          "fact_id": "Fedc019a1"
+        }
+      ]
+    },
+    {
+      "id": "F13",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Save uploaded video data",
+      "provenance": [
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "F9336e362"
+        }
+      ]
+    },
+    {
+      "id": "F14",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "Child requests video details",
+      "provenance": [
+        {
+          "fact_id": "F9a95c32d"
+        },
+        {
+          "fact_id": "Ff13d5411"
+        }
+      ]
+    },
+    {
+      "id": "F15",
+      "source": "P3",
+      "destination": "DS3",
+      "description": "Retrieve video details for playback",
+      "provenance": [
+        {
+          "fact_id": "Fecf97666"
+        }
+      ]
+    }
+  ]
+}

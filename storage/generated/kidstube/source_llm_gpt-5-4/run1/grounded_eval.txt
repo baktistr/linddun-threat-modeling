@@ -1,0 +1,32 @@
+Eval report: scenario=kidstube generated=/home/baktistr/documents/CMU/linddun-threat-modeling/storage/generated/kidstube/source_llm_gpt-5-4/run1/grounded.json
+  n_generated=239 n_gold=41 strict_node_match=False
+
+NOTE: matching uses the flow id embedded in gold's `interaction` (e.g. [DF1]). 24 gold threats carry no flow id and can never be matched -- see this scenario's gold `_meta.unanchored_reason`.
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               3   27    3   0.10   0.50   0.17
+I    Identifying           0   33    5   0.00   0.00   0.00
+Nr   Non-repudiation       1   24    1   0.04   0.50   0.07
+D    Detecting             0   21    2   0.00   0.00   0.00
+Dd   Data Disclosure       6   46    9   0.12   0.40   0.18
+U    Unawareness           1   39    3   0.03   0.25   0.05  *
+Nc   Non-compliance        1   37    6   0.03   0.14   0.04  *
+ALL                       12  227   29   0.05   0.29   0.09
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          1.00
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           1.00
+  n_threats_checked        239
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed           5   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location            24   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.29
+  recall (reachable-adjusted):      0.71   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario kidstube --generated /home/baktistr/documents/CMU/linddun-threat-modeling/storage/generated/kidstube/source_llm_gpt-5-4/run1/grounded.json` to label a sample of the 227 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

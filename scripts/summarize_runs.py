@@ -33,6 +33,8 @@ import runs
 ALL_ROW = re.compile(r"^ALL\s+(\d+)\s+(\d+)\s+(\d+)\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)", re.M)
 CITATION = re.compile(r"^\s+all_valid_rate\s+([\d.]+)", re.M)
 N_GEN = re.compile(r"n_generated=(\d+)")
+N_GOLD = re.compile(r"n_gold=(\d+)")
+UNRESOLVED = re.compile(r"^\s+unresolved_location\s+(\d+)", re.M)
 
 
 def parse_eval(text: str) -> dict | None:
@@ -42,10 +44,17 @@ def parse_eval(text: str) -> dict | None:
     tp, fp, fn, p, r, f1 = m.groups()
     cit = CITATION.search(text)
     n = N_GEN.search(text)
+    gold = N_GOLD.search(text)
+    unres = UNRESOLVED.search(text)
+    # If EVERY gold threat is unresolved_location, the run's gold anchored nothing and its 0.00 is
+    # a property of the alignment, not of the model. Scoring it would put a confident zero in the
+    # index and drag any mean it entered -- exactly the failure the rest of this project refuses.
+    unscorable = bool(gold and unres and int(unres.group(1)) >= int(gold.group(1)))
     return {"tp": int(tp), "fp": int(fp), "fn": int(fn),
             "precision": float(p), "recall": float(r), "f1": float(f1),
             "citation_all_valid": float(cit.group(1)) if cit else None,
-            "n_generated": int(n.group(1)) if n else None}
+            "n_generated": int(n.group(1)) if n else None,
+            "unscorable": unscorable}
 
 
 def _stat(values: list[float]) -> dict:
@@ -83,9 +92,17 @@ def collect(scenario: str | None = None) -> dict:
 
 
 def summarize(entry: dict) -> dict:
-    return {mode: {k: _stat([r[k] for r in rows])
-                   for k in ("precision", "recall", "f1", "citation_all_valid", "n_generated")}
-            for mode, rows in entry["modes"].items()}
+    """Scores exclude unscorable runs; citation validity and volume still apply to them, since
+    those are measured on the generated threats and do not depend on the gold anchoring."""
+    out = {}
+    for mode, rows in entry["modes"].items():
+        good = [r for r in rows if not r.get("unscorable")]
+        out[mode] = {k: _stat([r[k] for r in good])
+                     for k in ("precision", "recall", "f1")}
+        out[mode].update({k: _stat([r[k] for r in rows])
+                          for k in ("citation_all_valid", "n_generated")})
+        out[mode]["unscorable_runs"] = len(rows) - len(good)
+    return out
 
 
 def _fmt(s: dict) -> str:
@@ -116,9 +133,10 @@ def render_index(data: dict) -> str:
             summ = summarize(entry)
             for mode in sorted(summ):
                 s = summ[mode]
+                flag = (f" **UNSCORABLE** ×{s['unscorable_runs']}" if s["unscorable_runs"] else "")
                 lines.append(
                     f"| `{cond}` | {parts['input']} | {parts['arm']} | {parts['model']} | {mode} "
-                    f"| {s['recall']['n']} | {_fmt(s['precision'])} | {_fmt(s['recall'])} "
+                    f"| {s['recall']['n']}{flag} | {_fmt(s['precision'])} | {_fmt(s['recall'])} "
                     f"| {_fmt(s['f1'])} | {_fmt(s['citation_all_valid'])} |")
             if not summ:
                 lines.append(f"| `{cond}` | {parts['input']} | {parts['arm']} | {parts['model']} "

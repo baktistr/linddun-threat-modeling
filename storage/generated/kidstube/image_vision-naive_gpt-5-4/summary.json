@@ -1,0 +1,45 @@
+{
+  "scenario": "kidstube",
+  "condition": "image_vision-naive_gpt-5-4",
+  "input": "image",
+  "arm": "vision-naive",
+  "model": "gpt-5-4",
+  "runs": {
+    "1": {
+      "model": "gpt-5.4",
+      "backend": "azure",
+      "n_elements": 12,
+      "n_flows": 17
+    }
+  },
+  "by_mode": {
+    "grounded": {
+      "precision": {
+        "n": 1,
+        "mean": 0.27,
+        "sd": null
+      },
+      "recall": {
+        "n": 1,
+        "mean": 0.76,
+        "sd": null
+      },
+      "f1": {
+        "n": 1,
+        "mean": 0.39,
+        "sd": null
+      },
+      "citation_all_valid": {
+        "n": 1,
+        "mean": 1.0,
+        "sd": null
+      },
+      "n_generated": {
+        "n": 1,
+        "mean": 116.0,
+        "sd": null
+      },
+      "unscorable_runs": 0
+    }
+  }
+}

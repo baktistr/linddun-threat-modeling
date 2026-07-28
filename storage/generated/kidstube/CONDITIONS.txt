@@ -1,0 +1,21 @@
+Cross-condition comparison -- kidstube, grounded
+  6 conditions; each anchors a different gold subset, so all are re-scored
+  on the INTERSECTION: 13 of 41 gold threats.
+  Recall-only by design (a restricted gold makes precision meaningless).
+
+  condition                                   el   fl   gen  anchor  R(own)  R(common)
+  image_vision-naive_gpt-4o-mini              11   17    81      41    0.68       0.69
+  image_vision-naive_gpt-5-4                  12   17   116      41    0.76       0.77
+  image_vision-naive_grok-4-3                 12   17    55      41    0.46       0.46
+  source_llm_gpt-5-4                          14   36   239      17    0.71       0.69
+  source_llm_grok-4-3                         13   18    61      13    0.46       0.46
+  source_llm_gpt-4o-mini                       9   13    62       0      --         --  UNSCORABLE
+
+  R(own)    = recall against the gold THAT condition can anchor -- not comparable
+              across conditions, because the denominators differ.
+  R(common) = recall on the shared intersection -- the comparable number.
+
+  UNSCORABLE (1): the re-anchoring mapped no gold threat at all, so eval reports 0.00 by construction. That is a property of the
+  alignment, NOT a measurement of the model, and it is held out of the intersection so it cannot empty everyone else's denominator.
+
+  28 gold threats anchorable by SOME condition but not all, excluded from the common subset: [1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 16, 17, 19, 20, 21, 22, 23, 24, 25, 26, 28, 30, 31, 33, 38, 39, 40, 41]
