@@ -8,6 +8,9 @@ Each row aggregates over the runs in one condition. `n=1` marks a point estimate
 
 | condition | input | arm | model | mode | runs | precision | recall | F1 | citation |
 |---|---|---|---|---|---:|---|---|---|---|
+| `dfd_hand_gpt-4o-mini` | dfd | hand | gpt-4o-mini | grounded | 1 | 0.35 (n=1) | 0.71 (n=1) | 0.47 (n=1) | 0.99 (n=1) |
+| `dfd_hand_gpt-5-4` | dfd | hand | gpt-5-4 | grounded | 1 | 0.25 (n=1) | 0.83 (n=1) | 0.38 (n=1) | 1.00 (n=1) |
+| `dfd_hand_grok-4-3` | dfd | hand | grok-4-3 | grounded | 1 | 0.40 (n=1) | 0.54 (n=1) | 0.46 (n=1) | 1.00 (n=1) |
 | `image_vision-naive_gpt-4o-mini` | image | vision-naive | gpt-4o-mini | grounded | 1 | 0.35 (n=1) | 0.68 (n=1) | 0.46 (n=1) | 1.00 (n=1) |
 | `image_vision-naive_gpt-5-4` | image | vision-naive | gpt-5-4 | grounded | 1 | 0.27 (n=1) | 0.76 (n=1) | 0.39 (n=1) | 1.00 (n=1) |
 | `image_vision-naive_grok-4-3` | image | vision-naive | grok-4-3 | grounded | 1 | 0.35 (n=1) | 0.46 (n=1) | 0.40 (n=1) | 1.00 (n=1) |

@@ -1,56 +1,29 @@
 [
   {
-    "condition": "image_vision-naive_gpt-5-4",
+    "condition": "dfd_hand_gpt-5-4",
     "run": 1,
     "status": "ok",
-    "n_threats": 116,
+    "n_threats": 137,
     "n_elements": 12,
     "n_flows": 17,
     "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
   },
   {
-    "condition": "source_llm_gpt-5-4",
+    "condition": "dfd_hand_gpt-4o-mini",
     "run": 1,
     "status": "ok",
-    "n_threats": 239,
-    "n_elements": 14,
-    "n_flows": 36,
-    "gold_note": "re-anchored through this run's alignment map (17/41 anchored)"
-  },
-  {
-    "condition": "image_vision-naive_gpt-4o-mini",
-    "run": 1,
-    "status": "ok",
-    "n_threats": 81,
-    "n_elements": 11,
+    "n_threats": 83,
+    "n_elements": 12,
     "n_flows": 17,
     "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
   },
   {
-    "condition": "source_llm_gpt-4o-mini",
-    "run": 1,
-    "status": "ok",
-    "n_threats": 62,
-    "n_elements": 9,
-    "n_flows": 13,
-    "gold_note": "re-anchored through this run's alignment map (0/41 anchored)"
-  },
-  {
-    "condition": "image_vision-naive_grok-4-3",
+    "condition": "dfd_hand_grok-4-3",
     "run": 1,
     "status": "ok",
     "n_threats": 55,
     "n_elements": 12,
     "n_flows": 17,
     "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
-  },
-  {
-    "condition": "source_llm_grok-4-3",
-    "run": 1,
-    "status": "ok",
-    "n_threats": 61,
-    "n_elements": 13,
-    "n_flows": 18,
-    "gold_note": "re-anchored through this run's alignment map (13/41 anchored)"
   }
 ]

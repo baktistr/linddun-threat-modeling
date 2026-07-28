@@ -41,7 +41,12 @@ NO_MODEL = "none"          # facts_only and any other arm with no model in the l
 
 INPUT_IMAGE = "image"
 INPUT_SOURCE = "source"
-INPUTS = (INPUT_IMAGE, INPUT_SOURCE)
+# The hand-authored dfd.json, fed straight to threat generation with no adapter in front. The
+# CONTROL: it holds the DFD identical across models, so a difference is threat elicitation alone.
+# Without it, an image or source condition conflates two stages -- a model that scores badly might
+# have derived a poor DFD, or elicited poorly from a good one, and the score cannot tell you which.
+INPUT_DFD = "dfd"
+INPUTS = (INPUT_IMAGE, INPUT_SOURCE, INPUT_DFD)
 
 
 def slug(value: str | None) -> str:

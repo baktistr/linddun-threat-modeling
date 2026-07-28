@@ -80,8 +80,11 @@ def resolve_gold(input_kind: str, dfd_path: Path, run_dir: Path) -> tuple[Path |
     return out, f"re-anchored through this run's alignment map ({41 - n_un}/41 anchored)"
 
 
+ARMS = {"image": "vision_naive", "source": "llm", "dfd": "hand"}
+
+
 def one_condition(model: str, input_kind: str, run: int, provider: str, dry: bool) -> dict:
-    arm = "vision_naive" if input_kind == "image" else "llm"
+    arm = ARMS[input_kind]
     cond = runs.condition(input_kind, arm, model)
     run_dir = runs.derived_dir(SCENARIO, cond, run)
     gen_dir = runs.generated_dir(SCENARIO, cond, run)
@@ -93,13 +96,22 @@ def one_condition(model: str, input_kind: str, run: int, provider: str, dry: boo
     run_dir.mkdir(parents=True, exist_ok=True)
     gen_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. adapter
-    _log(f"  [1/4] adapt ({arm}, {model})")
-    dfd = (derive_image if input_kind == "image" else derive_source)(
-        SCENARIO, model, run_dir, provider)
+    # 1. adapter -- except for the control, which has none: it uses the hand DFD unchanged, so
+    #    Stage A is held constant and any difference is Stage B (threat elicitation) alone.
+    dfd_path = run_dir / "dfd.json"
+    if input_kind == "dfd":
+        _log(f"  [1/4] no adapter -- hand-authored DFD ({model} varies Stage B only)")
+        dfd = json.loads((config.KB_DIR / "scenarios" / SCENARIO / "dfd.json").read_text())
+        dfd["_meta"] = {**dfd.get("_meta", {}), "adapter_mode": "hand", "backend": "none",
+                        "model": "none",
+                        "note": "control condition: the hand DFD verbatim, no adapter. The model "
+                                "named in the condition key generated the THREATS, not this DFD."}
+    else:
+        _log(f"  [1/4] adapt ({arm}, {model})")
+        dfd = (derive_image if input_kind == "image" else derive_source)(
+            SCENARIO, model, run_dir, provider)
     dfd["_meta"]["condition"] = cond
     dfd["_meta"]["run"] = run
-    dfd_path = run_dir / "dfd.json"
     dfd_path.write_text(json.dumps(dfd, indent=2) + "\n")
     _log(f"        {len(dfd['elements'])} elements, {len(dfd['flows'])} flows -> {dfd_path}")
 

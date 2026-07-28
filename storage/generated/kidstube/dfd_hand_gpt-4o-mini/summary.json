@@ -1,0 +1,45 @@
+{
+  "scenario": "kidstube",
+  "condition": "dfd_hand_gpt-4o-mini",
+  "input": "dfd",
+  "arm": "hand",
+  "model": "gpt-4o-mini",
+  "runs": {
+    "1": {
+      "model": "none",
+      "backend": "none",
+      "n_elements": 12,
+      "n_flows": 17
+    }
+  },
+  "by_mode": {
+    "grounded": {
+      "precision": {
+        "n": 1,
+        "mean": 0.35,
+        "sd": null
+      },
+      "recall": {
+        "n": 1,
+        "mean": 0.71,
+        "sd": null
+      },
+      "f1": {
+        "n": 1,
+        "mean": 0.47,
+        "sd": null
+      },
+      "citation_all_valid": {
+        "n": 1,
+        "mean": 0.99,
+        "sd": null
+      },
+      "n_generated": {
+        "n": 1,
+        "mean": 83.0,
+        "sd": null
+      },
+      "unscorable_runs": 0
+    }
+  }
+}

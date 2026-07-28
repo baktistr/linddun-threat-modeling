@@ -1,9 +1,12 @@
 Cross-condition comparison -- kidstube, grounded
-  6 conditions; each anchors a different gold subset, so all are re-scored
+  9 conditions; each anchors a different gold subset, so all are re-scored
   on the INTERSECTION: 7 of 41 gold threats.
   Recall-only by design (a restricted gold makes precision meaningless).
 
   condition                                   el   fl   gen  anchor  R(own)  R(common)
+  dfd_hand_gpt-4o-mini                        12   17    83      41    0.71       0.43
+  dfd_hand_gpt-5-4                            12   17   137      41    0.83       0.71
+  dfd_hand_grok-4-3                           12   17    55      41    0.54       0.43
   image_vision-naive_gpt-4o-mini              11   17    81      41    0.68       0.57
   image_vision-naive_gpt-5-4                  12   17   116      41    0.76       0.71
   image_vision-naive_grok-4-3                 12   17    55      41    0.46       0.29
