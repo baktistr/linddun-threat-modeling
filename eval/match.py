@@ -30,7 +30,16 @@ from dataclasses import dataclass, field
 
 from generation.schema import GeneratedThreat
 
-FLOW_ID_RE = re.compile(r"\[(DF\d+)\]")
+# The bracket already delimits the flow id, so the pattern must not ALSO insist on a prefix.
+# This read `\[(DF\d+)\]` until Week 12, which silently discarded any id not starting "DF" --
+# gpt-4o-mini's source-derived DFD numbered its flows F1..F13, the re-anchored gold was written
+# correctly as "EE1-P1 [F1]", and then this regex could not read the gold the pipeline had just
+# emitted. Every threat fell through to unresolved_location and the run scored a confident 0.00
+# that looked like a model failure. Nothing enforces the "DF" convention -- adapters/schema.py
+# only *describes* it -- so the reader is what had to give.
+# Still deliberately anchored to <optional letters><digits>: the historical multi-flow form
+# "[DF7/DF10]" (resolved in Week 7) must keep failing to parse rather than matching partially.
+FLOW_ID_RE = re.compile(r"\[([A-Za-z]*\d+)\]")
 
 FLOW_ANCHORED = "flow_anchored"
 LOCATION_ANCHORED = "location_anchored"

@@ -841,6 +841,27 @@ def test_vision_prompts_build_without_format_errors():
     check("{x, y, w, h}" in fp, "and the literal brace example survives formatting")
 
 
+def test_flow_anchor_regex_does_not_assume_a_prefix():
+    """The bracket delimits the flow id; the pattern must not also demand it start with "DF".
+
+    gpt-4o-mini's source-derived DFD numbered its flows F1..F13. The re-anchored gold was written
+    correctly as "EE1-P1 [F1]" and then the matcher could not read it, so all 41 gold threats fell
+    through to unresolved_location and the run scored a confident 0.00 that read as a model
+    failure. Nothing enforces the DF convention -- adapters/schema.py only describes it.
+    """
+    print("\n[eval: flow anchors are not prefix-bound]")
+    from eval.match import gold_flow_id
+
+    check(gold_flow_id({"interaction": "EE1-P1 [DF1]"}) == "DF1", "the DF convention still parses")
+    check(gold_flow_id({"interaction": "EE1-P1 [F1]"}) == "F1",
+          "a bare F-prefixed id parses (the gpt-4o-mini case that scored 0.00)")
+    check(gold_flow_id({"interaction": "EE1-P1 [Flow12]"}) == "Flow12", "any alpha prefix parses")
+    check(gold_flow_id({"interaction": "EE1-P1 [7]"}) == "7", "a bare number parses")
+    check(gold_flow_id({"interaction": "EE1-P1"}) is None, "no bracket still means no anchor")
+    check(gold_flow_id({"interaction": "P3-DS2 [DF7/DF10]"}) is None,
+          "the historical multi-flow form still fails to parse rather than matching partially")
+
+
 def test_run_condition_keys_round_trip():
     """A condition key must survive being written to a path and read back, because the run index
     reads keys off the filesystem rather than re-deriving them from metadata older artifacts
@@ -1002,6 +1023,7 @@ if __name__ == "__main__":
     test_vision_scale_calibration_is_reported_not_hidden()
     test_vision_image_content_is_only_built_when_an_image_is_given()
     test_vision_prompts_build_without_format_errors()
+    test_flow_anchor_regex_does_not_assume_a_prefix()
     test_run_condition_keys_round_trip()
     test_run_aggregation_never_fakes_a_spread()
     test_run_index_parses_a_real_eval_report()

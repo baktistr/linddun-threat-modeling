@@ -15,18 +15,18 @@
   "by_mode": {
     "grounded": {
       "precision": {
-        "n": 0,
-        "mean": null,
+        "n": 1,
+        "mean": 0.19,
         "sd": null
       },
       "recall": {
-        "n": 0,
-        "mean": null,
+        "n": 1,
+        "mean": 0.29,
         "sd": null
       },
       "f1": {
-        "n": 0,
-        "mean": null,
+        "n": 1,
+        "mean": 0.23,
         "sd": null
       },
       "citation_all_valid": {
@@ -39,7 +39,7 @@
         "mean": 62.0,
         "sd": null
       },
-      "unscorable_runs": 1
+      "unscorable_runs": 0
     }
   }
 }
