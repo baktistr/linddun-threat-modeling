@@ -86,6 +86,10 @@ def _as_openai_tool(schema: dict) -> dict:
 
 class LLMBackend(ABC):
     name: str
+    # Set by get_llm_backend(model=...). A sweep varies the model per run while every other
+    # setting stays put, so the override lives on the instance rather than in the environment --
+    # mutating config mid-process would leak into whatever ran next.
+    _model_override: str | None = None
 
     @property
     def model(self) -> str:
@@ -131,14 +135,14 @@ class AnthropicBackend(LLMBackend):
 
     @property
     def model(self) -> str:
-        return config.CLAUDE_MODEL
+        return self._model_override or config.CLAUDE_MODEL
 
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
                   image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
         resp = self.client.messages.create(
-            model=config.CLAUDE_MODEL,
+            model=self.model,
             max_tokens=max_tokens,
             tools=[tool_schema],
             tool_choice={"type": "tool", "name": name},
@@ -166,7 +170,7 @@ class OpenAIBackend(LLMBackend):
 
     @property
     def model(self) -> str:
-        return config.OPENAI_MODEL
+        return self._model_override or config.OPENAI_MODEL
 
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
@@ -183,7 +187,7 @@ class OpenAIBackend(LLMBackend):
         """
         name = tool_schema["name"]
         kwargs = dict(
-            model=config.OPENAI_MODEL,
+            model=self.model,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},
             messages=[{"role": "user", "content": _openai_content(prompt, image)}],
@@ -235,14 +239,14 @@ class AzureFoundryBackend(LLMBackend):
 
     @property
     def model(self) -> str:
-        return config.AZURE_AI_MODEL
+        return self._model_override or config.AZURE_AI_MODEL
 
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
                   image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
         resp = self.client.chat.completions.create(
-            model=config.AZURE_AI_MODEL,
+            model=self.model,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},
             messages=[{"role": "user", "content": _openai_content(prompt, image)}],
@@ -274,9 +278,17 @@ _BACKENDS: dict[str, type[LLMBackend]] = {
 }
 
 
-def get_llm_backend(provider: str | None = None) -> LLMBackend:
+def get_llm_backend(provider: str | None = None, model: str | None = None) -> LLMBackend:
+    """`model` overrides the configured model/deployment for this backend only.
+
+    Three deployments on one Azure resource differ by name alone, so a sweep needs to vary the
+    model without touching the endpoint, the key, or LLM_PROVIDER.
+    """
     name = (provider or config.LLM_PROVIDER).lower()
     cls = _BACKENDS.get(name)
     if cls is None:
         raise ValueError(f"Unknown LLM_PROVIDER '{name}'. Choose from {sorted(_BACKENDS)}.")
-    return cls()
+    backend = cls()
+    if model:
+        backend._model_override = model
+    return backend

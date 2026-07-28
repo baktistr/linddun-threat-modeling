@@ -397,7 +397,7 @@ def _accept_flows(raw: list[dict], element_ids: set[str],
     return kept, rejected
 
 
-def synthesize_llm(facts: list[CodeFact], provider: str | None = None,
+def synthesize_llm(facts: list[CodeFact], provider: str | None = None, model: str | None = None,
                    verbose: bool = True, scenario_name: str = "") -> dict:
     """Two calls: elements, then flows constrained to the accepted element ids.
 
@@ -409,7 +409,7 @@ def synthesize_llm(facts: list[CodeFact], provider: str | None = None,
     """
     from generation.llm_backend import get_llm_backend
 
-    backend = get_llm_backend(provider)
+    backend = get_llm_backend(provider, model)
     fact_ids = {f.id for f in facts}
 
     raw_elements = backend.call_tool(_elements_prompt(facts), DFD_ELEMENTS_TOOL_SCHEMA,
@@ -617,7 +617,7 @@ def _accept_flows_naive(raw: list[dict], element_ids: set[str]) -> tuple[list[di
     return kept, rejected
 
 
-def synthesize_llm_naive(source_root: Path, provider: str | None = None,
+def synthesize_llm_naive(source_root: Path, provider: str | None = None, model: str | None = None,
                          verbose: bool = True, scenario_name: str = "") -> dict:
     """Two calls -- elements, then flows -- over the RAW SOURCE, citing open {file, line}.
 
@@ -629,7 +629,7 @@ def synthesize_llm_naive(source_root: Path, provider: str | None = None,
     """
     from generation.llm_backend import get_llm_backend
 
-    backend = get_llm_backend(provider)
+    backend = get_llm_backend(provider, model)
     source = render_source(source_root)
 
     raw_elements = backend.call_tool(_elements_prompt_naive(source), DFD_ELEMENTS_NAIVE_TOOL_SCHEMA,

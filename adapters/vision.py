@@ -174,7 +174,8 @@ def _accept_flows(raw: list[dict], element_ids: set[str]) -> tuple[list[dict], l
 
 
 def synthesize_vision_naive(image_path: str | Path, provider: str | None = None,
-                            verbose: bool = True, scenario_name: str = "") -> dict:
+                            verbose: bool = True, scenario_name: str = "",
+                            model: str | None = None) -> dict:
     """Two calls -- elements, then flows -- over a DIAGRAM IMAGE, citing open pixel boxes.
 
     The two-call seam, the element-type list, and the naming/granularity guidance are held
@@ -184,7 +185,7 @@ def synthesize_vision_naive(image_path: str | Path, provider: str | None = None,
     from generation.llm_backend import ImageInput, get_llm_backend
 
     path = Path(image_path)
-    backend = get_llm_backend(provider)
+    backend = get_llm_backend(provider, model)
     image = ImageInput.from_path(path)
     w, h = image_size(path)
 

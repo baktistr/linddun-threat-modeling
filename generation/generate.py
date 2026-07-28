@@ -52,7 +52,8 @@ def _load_dfd(scenario: str) -> dict:
 
 def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str | None = None,
                           progress: bool = True,
-                          dfd_path: Path | str | None = None) -> list[GeneratedThreat]:
+                          dfd_path: Path | str | None = None,
+                          model: str | None = None) -> list[GeneratedThreat]:
     """`dfd_path` overrides the scenario's own dfd.json.
 
     A multi-model experiment produces one DFD per (input, arm, model, run) and they cannot all
@@ -64,7 +65,7 @@ def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str |
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}, got {mode!r}")
 
-    backend = get_llm_backend(provider)
+    backend = get_llm_backend(provider, model)
     dfd = json.loads(Path(dfd_path).read_text()) if dfd_path else _load_dfd(scenario)
     elements_by_id = {e["id"]: e for e in dfd["elements"]}
     # Only the two RAG modes need the vector index; the rest never touch it.
