@@ -186,8 +186,8 @@ THREATS = [
      "assumptions": "Assumed file system cleanup (DS4) and cross-collection cleanup (DS3) not triggered by API deletion.",
      "severity": "Med", "likelihood": "Med"},
 
-    {"id": 22, "interaction": "EE2-P2 [DF8]", "originator_id": "DF8", "tree_node": "D.1.1", "threat_type": "D",
-     "title": "Child search queries and actions observable on the network",
+    {"id": 22, "interaction": "EE2-P2 [DF8]", "originator_id": "DF8", "tree_node": "D.1", "threat_type": "D",
+     "node_remap_note": "Cited D.1.1 until 2026-07-28. That node was invented by this project's Week 1 RECONSTRUCTION of the LINDDUN trees and does not exist in the official trees (v241203, bundled at references/linddun-trees/). Retargeted to the official D.1 (Observed communications); threat content unchanged.", "title": "Child search queries and actions observable on the network",
      "description": "Child interactions are sent as HTTP API calls with JWT in the Authorization header. Without enforced HTTPS, exact search terms are visible to network observers; even with HTTPS, traffic patterns reveal behavior.",
      "assumptions": "No mention of HTTPS enforcement, HSTS headers, or TLS configuration in documentation.",
      "severity": "Med", "likelihood": "Med"},
@@ -248,8 +248,8 @@ THREATS = [
      "severity": "Med", "likelihood": "Med",
      "mapping_note": "Borderline / non-canonical: a content-moderation gap is a weak fit for Data Disclosure (it is not primarily a personal-data disclosure threat). Kept under Dd.3.2 (propagation) as least-bad; candidate for removal or re-scoping in advisor review."},
 
-    {"id": 31, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.3", "threat_type": "Nc",
-     "title": "Inadequate COPPA verifiable parental consent mechanism",
+    {"id": 31, "interaction": "EE1-P1 [DF1]", "originator_id": "P1", "tree_node": "Nc.1.2", "threat_type": "Nc",
+     "node_remap_note": "Cited Nc.1.3 until 2026-07-28. That node was invented by this project's Week 1 RECONSTRUCTION of the LINDDUN trees and does not exist in the official trees (v241203, bundled at references/linddun-trees/). Retargeted to the official Nc.1.2 (Generic regulatory noncompliance); threat content unchanged.", "title": "Inadequate COPPA verifiable parental consent mechanism",
      "description": "Parent uploads government ID and chooses a six-digit code, but P1 never verifies the ID belongs to the registrant. None of the FTC-approved §312.5 consent methods are implemented.",
      "assumptions": "No third-party identity verification or FTC-approved consent method documented.",
      "severity": "High", "likelihood": "High"},
@@ -278,8 +278,8 @@ THREATS = [
      "original_hw2_node": "Dd.4.5",
      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#33, split from the original three-flow threat -- see #32's note."},
 
-    {"id": 35, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "U.1.3", "threat_type": "U",
-     "title": "Per-second watch duration tracking creates undisclosed detailed behavioral profiles",
+    {"id": 35, "interaction": "P3-DS2 [DF10]", "originator_id": "DS2", "tree_node": "U.1.1", "threat_type": "U",
+     "node_remap_note": "Cited U.1.3 until 2026-07-28. That node was invented by this project's Week 1 RECONSTRUCTION of the LINDDUN trees and does not exist in the official trees (v241203, bundled at references/linddun-trees/). Retargeted to the official U.1.1 (Unawareness as data subject); threat content unchanged.", "title": "Per-second watch duration tracking creates undisclosed detailed behavioral profiles",
      "description": "VideoPlayer.js reports exact seconds watched via setInterval; DS2 stores watchDuration per second with a completion flag. This granularity is undisclosed, unnecessary, and builds detailed temporal profiles of children.",
      "assumptions": "Confirmed by VideoPlayer.js using setInterval and trackWatchHistory(videoId, totalWatchTime, true).",
      "severity": "Med", "likelihood": "High"},

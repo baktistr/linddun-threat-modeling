@@ -9,13 +9,13 @@ Each row aggregates over the runs in one condition. `n=1` marks a point estimate
 | condition | input | arm | model | mode | runs | precision | recall | F1 | citation |
 |---|---|---|---|---|---:|---|---|---|---|
 | `dfd_hand_gpt-4o-mini` | dfd | hand | gpt-4o-mini | grounded | 1 | 0.35 (n=1) | 0.71 (n=1) | 0.47 (n=1) | 0.99 (n=1) |
-| `dfd_hand_gpt-5-4` | dfd | hand | gpt-5-4 | grounded | 1 | 0.25 (n=1) | 0.83 (n=1) | 0.38 (n=1) | 1.00 (n=1) |
+| `dfd_hand_gpt-5-4` | dfd | hand | gpt-5-4 | grounded | 1 | 0.25 (n=1) | 0.83 (n=1) | 0.38 (n=1) | 0.83 (n=1) |
 | `dfd_hand_grok-4-3` | dfd | hand | grok-4-3 | grounded | 1 | 0.40 (n=1) | 0.54 (n=1) | 0.46 (n=1) | 1.00 (n=1) |
 | `image_vision-naive_gpt-4o-mini` | image | vision-naive | gpt-4o-mini | grounded | 1 | 0.35 (n=1) | 0.68 (n=1) | 0.46 (n=1) | 1.00 (n=1) |
-| `image_vision-naive_gpt-5-4` | image | vision-naive | gpt-5-4 | grounded | 1 | 0.27 (n=1) | 0.76 (n=1) | 0.39 (n=1) | 1.00 (n=1) |
-| `image_vision-naive_grok-4-3` | image | vision-naive | grok-4-3 | grounded | 1 | 0.35 (n=1) | 0.46 (n=1) | 0.40 (n=1) | 1.00 (n=1) |
+| `image_vision-naive_gpt-5-4` | image | vision-naive | gpt-5-4 | grounded | 1 | 0.27 (n=1) | 0.76 (n=1) | 0.39 (n=1) | 0.84 (n=1) |
+| `image_vision-naive_grok-4-3` | image | vision-naive | grok-4-3 | grounded | 1 | 0.35 (n=1) | 0.46 (n=1) | 0.40 (n=1) | 0.96 (n=1) |
 | `source_llm_gpt-4o-mini` | source | llm | gpt-4o-mini | grounded | 1 | 0.19 (n=1) | 0.29 (n=1) | 0.23 (n=1) | 1.00 (n=1) |
-| `source_llm_gpt-5-4` | source | llm | gpt-5-4 | grounded | 1 | 0.05 (n=1) | 0.29 (n=1) | 0.09 (n=1) | 1.00 (n=1) |
+| `source_llm_gpt-5-4` | source | llm | gpt-5-4 | grounded | 1 | 0.05 (n=1) | 0.29 (n=1) | 0.09 (n=1) | 0.84 (n=1) |
 | `source_llm_grok-4-3` | source | llm | grok-4-3 | grounded | 1 | 0.10 (n=1) | 0.15 (n=1) | 0.12 (n=1) | 1.00 (n=1) |
 
 ## Grandfathered (pre-Week-12 layout)

@@ -15,10 +15,10 @@ ALL                       16   40    2   0.29   0.89   0.43
 (* Non-compliance and Unawareness -- flagged as hardest to automate)
 
 Citation correctness (independently verified against the knowledge base, not self-reported):
-  node_valid_rate          1.00
+  node_valid_rate          0.88
   type_applicable_rate     1.00
   location_valid_rate      1.00
-  all_valid_rate           1.00
+  all_valid_rate           0.88
   n_threats_checked        56
 
 Reachability breakdown (gold threats not matched):

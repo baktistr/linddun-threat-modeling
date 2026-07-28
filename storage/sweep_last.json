@@ -1,29 +1,6 @@
 [
   {
     "condition": "dfd_hand_gpt-5-4",
-    "run": 1,
-    "status": "ok",
-    "n_threats": 137,
-    "n_elements": 12,
-    "n_flows": 17,
-    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
-  },
-  {
-    "condition": "dfd_hand_gpt-4o-mini",
-    "run": 1,
-    "status": "ok",
-    "n_threats": 83,
-    "n_elements": 12,
-    "n_flows": 17,
-    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
-  },
-  {
-    "condition": "dfd_hand_grok-4-3",
-    "run": 1,
-    "status": "ok",
-    "n_threats": 55,
-    "n_elements": 12,
-    "n_flows": 17,
-    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
+    "status": "dry-run"
   }
 ]

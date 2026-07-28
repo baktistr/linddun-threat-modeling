@@ -1,104 +1,1540 @@
 {
   "_meta": {
-    "source": "LINDDUN PRO Privacy Threat Modeling Tutorial v0.1 (April 2023) and the official LINDDUN threat type catalog (linddun.org/threat-types, linddun.org/linddun-go-categories)",
-    "source_url": "https://downloads.linddun.org/tutorials/pro/v0/tutorial.pdf",
-    "citation": "Laurens Sion and Wouter Joosen, LINDDUN PRO privacy threat modeling tutorial, Technical Report, KU Leuven, April 2023",
-    "note": "L, Dd, and D nodes are transcribed verbatim from the printed trees in the v0.1 tutorial. I, Nr, U, and Nc nodes are reconstructed from the official LINDDUN threat-type catalog (the v0.1 tutorial summarizes these four via type definitions only). The official trees expand each type into characteristics; the structure here follows the published sub-characteristics. IMPORTANT: verify against the latest full trees at https://downloads.linddun.org before publication -- the four reconstructed types are thin (Nr 3 nodes, Nc 4, I 6, U 6) and a 2026-07-28 comparison against PILLAR's output found 50 citations to nodes absent here, ALL of them in the reconstructed types and NONE in the verbatim ones. That distribution says the gap is ours, and it means any citation-validity rate measured against this file is bounded by its coverage, not only by the model's accuracy.",
-    "instance_sub_ids": "RETIRED 2026-07-28. Gold threats previously carried project-local sub-IDs (KidsTube threats 7 and 15 used L.1.2 and L.1.3) meaning 'another instance of the parent official node'. The convention was documented in prose and enforced nowhere: generation/verify.py rejects any node absent from this file, so the gold was held to a looser rule than the output it scores. Both were renumbered to the official L.1.1 they resolve to, and what distinguishes them now lives in each threat's mapping_note and flow anchor. Every gold standard in knowledge_base/scenarios/ now resolves 100% against this file.",
-    "id_convention": "Dotted IDs follow the official notation where available. A gold-standard ID like Dd.4.5 should be read as an instance under the official Dd.4 (Involved parties and exposure) family."
+    "source": "Official LINDDUN threat trees, full version v241203",
+    "source_url": "https://downloads.linddun.org/linddun-trees/tree-full/v241203/<Type>.pdf",
+    "source_files": "references/linddun-trees/v241203/ (bundled)",
+    "citation": "DistriNet, KU Leuven. LINDDUN threat trees (full), version v241203. https://linddun.org",
+    "built_by": "scripts/build_threat_trees.py",
+    "note": "Transcribed mechanically from the official per-type tree PDFs -- every node, with its title, description, examples, criteria, impact and additional info. This REPLACES the Week 1 encoding, in which only L/Dd/D came from printed trees and I/Nr/U/Nc were approximated from type definitions (WEEK1_REPORT.md flagged that as a Week 2 task; it was still open in Week 12). Citation-validity numbers from before this rebuild were measured against the incomplete tree and are not comparable to numbers measured after it.",
+    "id_convention": "Official notation, with ONE deviation: Data Disclosure nodes are written Dd.* here, not the official DD.*. That spelling has been in use since Week 1 and is baked into six gold standards and twelve generated threat sets; it is preserved to avoid a migration this rebuild does not need. Every other id is verbatim."
   },
   "threat_types": {
     "L": {
       "name": "Linking",
-      "definition": "Associating data items or actions to learn more about an individual or group. Linking relies on a recurring identifier, a combination of attributes (quasi-identifiers), or a profile that allows data to be singled out. Linking becomes problematic when it enables inference, singling out, or profiling.",
+      "description": "Learning more about an individual or a group by associating data items or user actions. Linking may lead to unwanted privacy implications, even if it does not reveal one’s identity.",
       "nodes": {
-        "L.1": {"title": "Linked data", "description": "Linking through identifiers."},
-        "L.1.1": {"title": "Unique identifier", "description": "Linking based on an identifier that is unique (globally or locally, within the system or across the context boundary)."},
-        "L.2": {"title": "Linkable data", "description": "Linking through the combination or analysis of data."},
-        "L.2.1": {"title": "Through combination", "description": "Linking through combination of data."},
-        "L.2.1.1": {"title": "Quasi-identifier combining data of a single individual", "description": "Linking through a set of attributes that can serve as a quasi-identifier."},
-        "L.2.1.2": {"title": "Combining data of different individuals", "description": "Linking through combining data of different individuals."},
-        "L.2.2": {"title": "Through profiling, derivation, or inference", "description": "Linking through derivation or inference."},
-        "L.2.2.1": {"title": "Profiling an individual", "description": "Personal data of an individual is analyzed for patterns to link data to that individual, based on the data or user actions."},
-        "L.2.2.2": {"title": "Profiling a group of individuals", "description": "Data of a single individual leads to insights about a larger group; knowledge transfers through known relations of group membership or similarity."},
-        "L.2.2.3": {"title": "Profiling an individual through (dis)similarity", "description": "Applying methods to assess uniqueness or similarity to predict relevant properties."}
+        "L.1": {
+          "title": "Linked data",
+          "description": "Linking through identifiers"
+        },
+        "L.1.1": {
+          "title": "Unique identifier",
+          "description": "Linking based on an identifier that is unique (globally or locally, within the system or across the context boundary)",
+          "examples": [
+            {
+              "name": "Email address as ID",
+              "text": "Using an email address as an identifier enables the linking of all activities to the same individual, even across multiple services."
+            },
+            {
+              "name": "IP addresses",
+              "text": "An IP address can be used to link multiple visits to the same individual."
+            },
+            {
+              "name": "Logged in web shop",
+              "text": "All product views in a web shop are linked to the same user because they are logged in."
+            },
+            {
+              "name": "User IDs",
+              "text": "User IDs can be used to link different requests to the same user."
+            }
+          ],
+          "criteria": [
+            "Is there an identifier (unique in system/session) or dataset? Is there other data associated with that identifier? Is there previous data with the same identifier to which new data can be linked?"
+          ],
+          "impact": [
+            {
+              "name": "Construct profile",
+              "text": "Unique identifiers facilitate the linking of new data items to a user profile, accumulating growing amounts of personal data associated with this profile. This can later lead to ‘Identifying’ threats."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Authenticated users",
+              "text": "Linking is especially easy for authenticated users, as all requests in the same session are linked."
+            }
+          ]
+        },
+        "L.2": {
+          "title": "Linkable data",
+          "description": "Linking through the combination or analysis of data"
+        },
+        "L.2.1": {
+          "title": "Through Combination",
+          "description": "Linking through combination"
+        },
+        "L.2.1.1": {
+          "title": "Quasi-identifier combining data of a single individual",
+          "description": "Linking through a set of attributes that can serve as a quasiidentifier",
+          "examples": [
+            {
+              "name": "Location trace",
+              "text": "A small set of locations can be used to uniquely link activity to a single user."
+            },
+            {
+              "name": "Age-gender-postalcode",
+              "text": "A subset of attributes may be sufficient to uniquely link data to a particular individual."
+            },
+            {
+              "name": "Browser fingerprint",
+              "text": "A browser fingerprint combines properties (OS, browser, display size, ...) that together are unique to a website visitor."
+            },
+            {
+              "name": "Fine-grained raw data",
+              "text": "Fine-grained raw data is stored that enables linking specific entries to individuals."
+            }
+          ],
+          "criteria": [
+            "Is there a set of attributes that can serve as an identifier? Is there other data sent together with that quasi-identifier? Is there existing data to link it to?"
+          ],
+          "impact": [
+            {
+              "name": "Construct profile",
+              "text": "The use of quasi-identifiers enables the linking of new data items to a user profile to gather increasing amounts of personal data, even without unique identifiers."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Combined properties",
+              "text": "Many requests contain a lot of different properties that, when combined, are unique to an individual."
+            }
+          ]
+        },
+        "L.2.1.2": {
+          "title": "Combining data of different individuals",
+          "description": "Linking through combining data",
+          "examples": [
+            {
+              "name": "Social network indirect relations",
+              "text": "Relations in a social network indirectly contain information about individuals not on that social network."
+            },
+            {
+              "name": "Contact lists",
+              "text": "Contact lists that are uploaded to services allow service providers to indirectly reconstruct the social graph of the involved individuals."
+            }
+          ],
+          "criteria": [
+            "Is data from multiple users combined? Are datasets or records combined?"
+          ],
+          "impact": [
+            {
+              "name": "Construct profile",
+              "text": "The combination of records from multiple different sources enables building a more comprehensive profile on an individual."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Data subject different from sender",
+              "text": "The data subject is not necessarily the sender of the data."
+            },
+            {
+              "name": "Quasi-identifiers",
+              "text": "Quasi-identifiers can be sufficient to link and combine data from multiple users."
+            }
+          ]
+        },
+        "L.2.2": {
+          "title": "Through Profiling, derivation, or inference",
+          "description": "Linking through derivation or inference"
+        },
+        "L.2.2.1": {
+          "title": "Profiling an individual",
+          "description": "Personal data of an individual can be analyzed for patterns to link data to that individual. Association is performed at the basis of the data or user actions.",
+          "examples": [
+            {
+              "name": "Facial expression analysis",
+              "text": "By applying sentiment analysis to faces in pictures, the emotional state of an individual can be derived."
+            },
+            {
+              "name": "Telemedicine e-health system",
+              "text": "The frequency of data exchanges from a health monitoring device allows an adversary to infer a patient’s medical condition."
+            },
+            {
+              "name": "Requests to external services",
+              "text": "External service requests may be linked to the same user by inferring they are sent in the context of an ongoing session."
+            },
+            {
+              "name": "Personalized shopping recommendations",
+              "text": "Shopping recommendations sent to consumers are based on the degree of similarity to other consumers."
+            }
+          ],
+          "criteria": [
+            "Are there patterns derivable from the data? Can (new) personal data be inferred from the linked data points?"
+          ],
+          "impact": [
+            {
+              "name": "Link additional data",
+              "text": "Deriving patterns from the data can facilitate the linking of data that was not intended to be linked."
+            },
+            {
+              "name": "Link requests",
+              "text": "Timing patterns of messages can be used to link requests to construct profiles."
+            },
+            {
+              "name": "Indirectly reveal sensitive data",
+              "text": "Indirect links can reveal sensitive data about individuals that are not involved in the original dataset."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Service usage",
+              "text": "The more data is collected and the more detailed it is, the easier it can become to discern patterns for linking."
+            }
+          ]
+        },
+        "L.2.2.2": {
+          "title": "Profiling a group of individuals",
+          "description": "Data of a single individual leads to insights about a larger group of individuals. Knowledge transfers to other individuals through known relations of group membership or similarity.",
+          "examples": [
+            {
+              "name": "DNA testing service",
+              "text": "Findings obtained through DNA analysis (e.g., genetic predisposition for certain illnesses) by an individual may also apply to their family members."
+            },
+            {
+              "name": "Energy consumption meter",
+              "text": "Readings obtained from an energy consumption meter do not apply to an individual but to households. Consumption patterns obtained for an individual (e.g. heating cost) may be generalized."
+            }
+          ],
+          "criteria": [
+            "Is there data being analyzed for patterns to generalize?"
+          ]
+        },
+        "L.2.2.3": {
+          "title": "Profiling an individual through (dis)similarity",
+          "description": "Applying methods to assess uniqueness or similarity to predict relevant properties.",
+          "examples": [
+            {
+              "name": "Salary statistics queries",
+              "text": "Querying the average salary with a strict set of criteria can reveal the salary of an individual employee."
+            },
+            {
+              "name": "Through writing style",
+              "text": "Patterns in a person’s writing style can be used to link multiple texts written by the same person."
+            },
+            {
+              "name": "Analyzing timing patterns",
+              "text": "Unique timing patterns could be recognized to link the use of a service to the same user."
+            },
+            {
+              "name": "Analyzing messages",
+              "text": "Messages can be analyzed for patterns (e.g., writing style, timing) to link them to the same user."
+            }
+          ],
+          "criteria": [
+            "Is the data from different individuals distinguishable? Is it possible to query data using distinguishable attributes?"
+          ],
+          "impact": [
+            {
+              "name": "Construct profile",
+              "text": "When users are distinguishable from one another, user profiles can be constructed to collect growing amounts of personal data associated with each profile. This can later lead to ‘Identifying’ threats."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Data without attributes",
+              "text": "Even data without clear attributes could contain patterns to allow distinguishing between different individuals."
+            }
+          ]
+        }
       }
     },
     "I": {
       "name": "Identifying",
-      "definition": "Learning the identity of an individual. Identifying threats arise when identity can be revealed through leaks, deduction, or inference when this is unintentional or undesired. Identifying is related to linking and can lead to unawareness and non-compliance issues.",
+      "description": "Identifying threats arise when the identity of individuals can be revealed through leaks, deduction, or inference in cases where this is not desired.",
       "nodes": {
-        "I.1": {"title": "Identified data", "description": "The system explicitly maintains or refers to the link to the identity (e.g. in content or metadata). Identity is directly revealed through identifying data such as name, government ID, or email."},
-        "I.1.1": {"title": "Identifying through explicit identifier", "description": "An explicit identifier (real name, government ID, account email) directly reveals the data subject's identity when collected, transmitted, or stored."},
-        "I.1.2": {"title": "Identifying through credential or identity reuse", "description": "Reuse of an identity-bearing credential (e.g. shared login, reused email) ties an action or record to an identified individual."},
-        "I.2": {"title": "Identifiable data", "description": "Identity can be derived indirectly, e.g. from pseudonyms, identity-revealing content, a small anonymity set, or metadata."},
-        "I.2.1": {"title": "Identifying through identity-revealing content or metadata", "description": "Identity is inferred from content or metadata (e.g. tokens, payloads, document metadata) that reveals who is involved."},
-        "I.2.2": {"title": "Identifying through small anonymity set or weak verification", "description": "Identity is deduced because the set of candidates is small, or because a weak verification mechanism fails to protect the identity boundary."}
+        "I.1": {
+          "title": "Identified information",
+          "description": "Identified Information is requested or processed."
+        },
+        "I.1.1": {
+          "title": "Processing of identified data",
+          "description": "The system requests and processes identified data",
+          "examples": [
+            {
+              "name": "Online service registration",
+              "text": "An online service requests full name and address during the registration process."
+            },
+            {
+              "name": "Identification based on username",
+              "text": "The username for a service contains identity data (e.g., “firstname.lastname”)."
+            }
+          ],
+          "criteria": [
+            "Does data sent to the system (potentially) contain identity data?"
+          ],
+          "impact": [
+            {
+              "name": "Data breach amplification",
+              "text": "Identified data can severely amplify the impact of a future data breach."
+            },
+            {
+              "name": "Reveal sensitive information about an individual",
+              "text": "Depending on the context, the identity may reveal very sensitive attributes (e.g., health records)."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Require identification",
+              "text": "Users often need to provide identified data even when not essential for the functionality."
+            },
+            {
+              "name": "Strong measures",
+              "text": "Identified data requires stronger security measures."
+            }
+          ]
+        },
+        "I.1.2": {
+          "title": "Identified information in metadata",
+          "description": "The metadata of files or communication involves identified information.",
+          "examples": [
+            {
+              "name": "Author information in document metadata",
+              "text": "A software product for authoring documents may automatically insert author information in the metadata of the produced documents."
+            }
+          ],
+          "criteria": [
+            "Does the system process data that has metadata associated with it? Does the associated metadata contain identified information?"
+          ],
+          "impact": [
+            {
+              "name": "Unintentional identification",
+              "text": "The presence of identifying data in metadata may lead to the unintentional identification of a data subject."
+            }
+          ]
+        },
+        "I.2": {
+          "title": "Identifiable information",
+          "description": "The system processes identifiable information from which the identity of the data subject may be derived."
+        },
+        "I.2.1": {
+          "title": "Pseudonym",
+          "description": "The data contains unique references to the identity of the data subject."
+        },
+        "I.2.1.1": {
+          "title": "Identifier",
+          "description": "The data contains a unique reference to the identity of the data subject.",
+          "examples": [
+            {
+              "name": "Online service username",
+              "text": "The (re)use of an email address facilitates easy combination with other data, leading to the identification of the individual."
+            },
+            {
+              "name": "IP addresses",
+              "text": "IP addresses in communication can be used to uniquely identify an individual."
+            },
+            {
+              "name": "Insufficient de-identification",
+              "text": "Globally unique identifiers (e.g., SSN) are replaced by internal ids. These are still tied to the actual identity."
+            }
+          ],
+          "criteria": [
+            "Is there a distinctive identifier used during interactions or when referring to an individual’s data?"
+          ],
+          "impact": [
+            {
+              "name": "De-anonymize",
+              "text": "Pseudonyms facilitate the aggregation of data on the same individual (see linking). Storing a substantial amount of data increases the possibility of identifying the individual behind it."
+            }
+          ]
+        },
+        "I.2.1.2": {
+          "title": "Quasi-identifier",
+          "description": "The data contains combinations of attributes that are unique to a data subject.",
+          "examples": [
+            {
+              "name": "Browser fingerprint",
+              "text": "Browser fingerprinting entails the combination of various properties to create a unique identifier, serving as a pseudonym for the user."
+            },
+            {
+              "name": "Dataset with quasi-identifiers",
+              "text": "A dataset removes names and reduces addresses to cities. Nevertheless, a combination of various attributes (city, birth date, language preference, etc.) could still be adequate to identify individuals."
+            }
+          ],
+          "criteria": [
+            "Can multiple attributes be combined to create a unique reference to an individual or their data?"
+          ],
+          "additional_info": [
+            {
+              "name": "Identifier reuse",
+              "text": "Identifying individuals through identifiers is easy when these identifiers are reused across multiple services or in publicly available data."
+            }
+          ]
+        },
+        "I.2.2": {
+          "title": "Revealing attributes",
+          "description": "A number of revealing attributes are included in the data which support the identification of the data subject.",
+          "examples": [
+            {
+              "name": "Feedback form",
+              "text": "When an individual shares detailed data (such as location, employer, device type, etc.) in a feedback form, the provided information may be revealing enough to uniquely identify that person."
+            }
+          ],
+          "criteria": [
+            "Is there free-form user provided data that is received or processed by the system? Is data collected that may reveal the identifying information?"
+          ],
+          "impact": [
+            {
+              "name": "Accidentally revealing identity",
+              "text": "Inadvertently providing identifiable attributes in user-submitted data can lead to the unintentional identification of the individual."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Data subject",
+              "text": "The data subject is not necessarily the source of the provided data."
+            }
+          ]
+        },
+        "I.2.3": {
+          "title": "The data subject is distinguishable from others",
+          "description": "The anonymity set is too small, which allows singling out an individual data subject.",
+          "examples": [
+            {
+              "name": "Individual queries",
+              "text": "User search queries, such as looking up nearby businesses or info about a rare illness, can be highly specific and may lead to identification."
+            },
+            {
+              "name": "Distinguishable website visitor",
+              "text": "A person’s consistent access at a particular time each week could link their visits even when they are not logged into their account."
+            },
+            {
+              "name": "Gait recognition",
+              "text": "An individual’s gait can be used to uniquely identify them."
+            },
+            {
+              "name": "Queries with small resultset",
+              "text": "Queries with a very small result set could deliver results unique to a particular individual."
+            },
+            {
+              "name": "Biometric authentication",
+              "text": "Authentication with biometrics (e.g., fingerprint or iris) work based on being able to uniquely link these biometric properties to a single user."
+            },
+            {
+              "name": "Face recognition",
+              "text": "The use of facial recognition processing on, for example, profile images can enable the derivation of attributes that can be combined to identify the depicted individual."
+            }
+          ],
+          "criteria": [
+            "Are requests or records sufficiently unique to differentiate them from those of a specific individual?"
+          ],
+          "impact": [
+            {
+              "name": "Reveal identity",
+              "text": "Even without identity information, user actions or data may be very specific and unintentionally reveal the identity."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Likelihood",
+              "text": "The likelihood depends on how distinguishable an individual is from others."
+            }
+          ]
+        }
       }
     },
     "Nr": {
       "name": "Non-repudiation",
-      "definition": "An individual is unable to deny a claim (knowing, having done, having said something) because the system retains attributable evidence. Two dimensions: (i) the strength of the evidence regarding the claim, and (ii) the strength of attributability to an individual. In privacy, non-repudiation is a threat (loss of plausible deniability), the inverse of its security-goal role.",
+      "description": "Non-repudiation threats pertain to situations where an individual can no longer deny specific claims.",
       "nodes": {
-        "Nr.1": {"title": "Retained evidence of a claim/action", "description": "The system retains evidence regarding a particular action or fact (log files, digital signatures, document metadata, watermarked data, persistent identifiers) that impacts deniability."},
-        "Nr.1.1": {"title": "Attributable persistent logging", "description": "Actions are logged with timestamps and attributable identifiers, creating an irrefutable record the individual cannot deny."},
-        "Nr.1.2": {"title": "Irrevocable attributed content", "description": "Content authored by the individual (e.g. comments, submissions) is stored with attribution and cannot be removed, permanently preventing deniability."}
+        "Nr.1": {
+          "title": "Attributable data evidence",
+          "description": "A data record or message is (or can be) attributed to a user or data subject."
+        },
+        "Nr.1.1": {
+          "title": "Data",
+          "description": "Data can be used to prevent an individual from denying certain claims.",
+          "examples": [
+            {
+              "name": "Logged transmissions",
+              "text": "Transmissions are logged as evidence of communication."
+            },
+            {
+              "name": "Random data could indicate encryption",
+              "text": "Random data could be an indication that there is encrypted data, especially if it concerns the full drive or external device."
+            },
+            {
+              "name": "Encrypted office document",
+              "text": "An encrypted office document still has the office file format, but requires a password to open it. This document format makes it clear that there is encrypted data."
+            },
+            {
+              "name": "Credentials",
+              "text": "An account with a corporate email address eliminates the employee’s deniability of having used that service."
+            },
+            {
+              "name": "Corporate email address",
+              "text": "The use of a corporate mail address makes it impossible to deny being affiliated with that organization."
+            },
+            {
+              "name": "Admin access logs",
+              "text": "System administrators can access log files linking an entry in an internal complaint system to the individual employee."
+            }
+          ],
+          "criteria": [
+            "Does the system record data affecting deniability? Does the data itself impact deniability claims?"
+          ],
+          "impact": [
+            {
+              "name": "Identifying information amplification.",
+              "text": "Identity information can magnify the impact."
+            },
+            {
+              "name": "Service context",
+              "text": "Depending on the context (e.g., medical, whistleblower), this can have a large impact on the data subject."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Data selection",
+              "text": "If deniability is required, do not store the data at all or remove any attributable data."
+            },
+            {
+              "name": "Credentials",
+              "text": "Avoid credentials with identity information."
+            }
+          ]
+        },
+        "Nr.1.2": {
+          "title": "Signed data",
+          "description": "Signed data can prevent deniability.",
+          "examples": [
+            {
+              "name": "Digital signatures",
+              "text": "A digitally signed email prevents the user from later denying having written the message."
+            },
+            {
+              "name": "DKIM",
+              "text": "A common spam countermeasure (DKIM) involves signing outgoing emails, this prevents users from denying the authenticity of leaked or stolen emails."
+            },
+            {
+              "name": "Blockchain storage",
+              "text": "Data stored on a blockchain cannot be modified, eliminating the deniability of claims related to this data."
+            }
+          ],
+          "criteria": [
+            "Is the data digitally signed? Which keys are used for signing? Who has access to these keys to verify signatures?"
+          ],
+          "impact": [
+            {
+              "name": "Prevent deniability",
+              "text": "Signatures provide strong non-repudiation, as they can also be verified by third parties. append-only storage: Append-only storage systems make it impossible for the data subject to later remove their personal data."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Requests",
+              "text": "Signed data applies not only to messages, but also to documents, requests, etc."
+            }
+          ]
+        },
+        "Nr.1.3": {
+          "title": "Metadata",
+          "description": "Metadata can contain unintended data impacting deniability claims about that data.",
+          "examples": [
+            {
+              "name": "Document metadata",
+              "text": "Author or revision metadata in documents prevents deniability."
+            }
+          ],
+          "criteria": [
+            "Does stored or transmitted data have associated metadata?"
+          ],
+          "impact": [
+            {
+              "name": "Unintentional metadata impacting deniability",
+              "text": "The unintentional inclusion of metadata with data or transmissions may impact deniability claims."
+            }
+          ]
+        },
+        "Nr.1.4": {
+          "title": "Embedded/Hidden Data",
+          "description": "Embedded or hidden data can be used to reveal additional information impacting deniability claims about the data.",
+          "examples": [
+            {
+              "name": "Watermarked Data",
+              "text": "Data watermarked with hidden artifacts (uniquely linked to a person) can be used to track the person revealing or disclosing the data afterwards."
+            },
+            {
+              "name": "Embedded remote resources",
+              "text": "Remote resources (e.g. image in email) are automatically loaded to track the user opening it."
+            },
+            {
+              "name": "Custom secrets",
+              "text": "Secrets shared with one person, or modified for each recipient can serve as evidence of the disclosure of that data by that person."
+            }
+          ],
+          "criteria": [
+            "Are there embedded data or hidden patterns in the data or transmissions? Does this data lead to undesirable deniability issues?"
+          ],
+          "impact": [
+            {
+              "name": "Hidden data impacting deniability claims",
+              "text": "Hidden/embedded data can prevent a user from denying claims about the data."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Active countermeasure",
+              "text": "This is also used as an explicit countermeasure to prevent people from sharing data."
+            }
+          ]
+        },
+        "Nr.2": {
+          "title": "Attributable action side-effect evidence",
+          "description": "Action side-effects can cause an action to be attributable to an individual.",
+          "examples": [
+            {
+              "name": "Read notifications",
+              "text": "Read notifications serve as evidence that the user has opened/read the message."
+            },
+            {
+              "name": "Browser history",
+              "text": "An individual’s browser history may be used to substantiate claims about their online activities."
+            },
+            {
+              "name": "Action logging",
+              "text": "Actions can be logged as evidence."
+            }
+          ],
+          "criteria": [
+            "Do (passive) interactions with the system (e.g., receiving a message) have side-effects (e.g., trigger transmissions, logging)? Is deniability of receipt a desired feature for the system?"
+          ],
+          "impact": [
+            {
+              "name": "Action side-effect impacting deniability",
+              "text": "Some actions may trigger side-effects that impact deniability claims regarding those actions."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Implicit",
+              "text": "These side-effects often happen implicitly or without user intervention."
+            }
+          ]
+        }
       }
     },
     "D": {
       "name": "Detecting",
-      "definition": "Becoming aware of data-subject involvement, membership, or participation by observing the existence of relevant information. Detecting does NOT require access to the data itself; observing existence, side-effects, or communication flows can be sufficient.",
+      "description": "Detecting threats pertain to situations where the involvement, participation, or membership of an individual can be deduced through observation.",
       "nodes": {
-        "D.1": {"title": "Observed communications", "description": "Detecting through observed communications. An adversary observing requests/flows can detect involvement even when content is encrypted."},
-        "D.1.1": {"title": "Network-observable actions", "description": "Requests and actions are observable on the network (e.g. unencrypted or pattern-revealing traffic), allowing an observer to detect a subject's activity."},
-        "D.2": {"title": "Application side-effect", "description": "Detecting through (trans)action side-effects (e.g. temporary files in the file system, URL preview fetches, scanners triggering requests)."},
-        "D.3": {"title": "System responses", "description": "The existence of an item of interest is revealed in a system response, evoked deliberately (probing) or given accidentally."}
+        "D.1": {
+          "title": "Observed communications",
+          "description": "Detecting through observed communications",
+          "examples": [
+            {
+              "name": "Infer user of a website",
+              "text": "Observing communication with a service to infer that a person is a user (e.g., adult website)."
+            },
+            {
+              "name": "Telemedicine e-health system",
+              "text": "Communication with a telemedicine service implies the user is a patient."
+            },
+            {
+              "name": "Tor network participant",
+              "text": "Participation in the Tor network can be determined by observing traffic."
+            },
+            {
+              "name": "Wireless transmissions",
+              "text": "Wireless transmissions are detectable by other devices nearby."
+            }
+          ],
+          "criteria": [
+            "Can the communication be observed? Can information be inferred from the observed communications?"
+          ],
+          "impact": [
+            {
+              "name": "Sensitive context",
+              "text": "In sensitive contexts (medical, whistleblower) detecting service usage may have a severe impact on the user."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Tor",
+              "text": "Services like Tor conceal the destination but the utilization of Tor can still be detected."
+            }
+          ]
+        },
+        "D.2": {
+          "title": "Application side effect",
+          "description": "Detecting through (trans)action side effects",
+          "examples": [
+            {
+              "name": "System logs",
+              "text": "Log files on a shared system reveal applications used or actions taken by other users."
+            },
+            {
+              "name": "Deleted application",
+              "text": "Deleted applications may leave behind traces (configuration, temporary files)."
+            },
+            {
+              "name": "Hidden data",
+              "text": "When steganography is used to hide data, the increased file size may still indicate the existence of that hidden data."
+            },
+            {
+              "name": "Detecting content tracing test result communication",
+              "text": "A user reporting a positive test result in a contact tracing app may trigger observable communication that discloses medical information."
+            }
+          ],
+          "criteria": [
+            "Do actions in the system have side effects (e.g., saving a file, writing to a log, triggering other transmissions)? Are these side effects observable?"
+          ],
+          "impact": [
+            {
+              "name": "Infer sensitive data",
+              "text": "Sensitive information may be deduced from observed side effects, such as communication."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Dummy traffic",
+              "text": "Dummy traffic can be used to conceal actual events."
+            }
+          ]
+        },
+        "D.3": {
+          "title": "System responses",
+          "description": "The existence of an item of interest is revealed in a system response (which can be evoked deliberately or given accidentally).",
+          "examples": [
+            {
+              "name": "Wrong password",
+              "text": "A ‘wrong password’ error message reveals the existence of the account."
+            },
+            {
+              "name": "Firewall",
+              "text": "A firewall responding with ‘port closed’ reveals the existence of a device at the IP address."
+            },
+            {
+              "name": "DB access denied",
+              "text": "An error message stating ‘insufficient access rights’ may inadvertently leak the existence of a specific record."
+            },
+            {
+              "name": "Bounced email",
+              "text": "The existence of email accounts can be inferred from bounced emails."
+            },
+            {
+              "name": "Address already registered",
+              "text": "An error message stating ‘address already registered’ when subscribing to a political newsletter reveals a current member."
+            },
+            {
+              "name": "Cached browser resources",
+              "text": "To speed up the loading of websites, browsers can provide certain remote resources from their local cache. This enables detecting which resources were already cached."
+            }
+          ],
+          "criteria": [
+            "Does the system show status messages (informational, warnings, errors) when retrieving data? Are the status messages distinct when an item (a file, user, ...) does not exist compared to not having access rights?"
+          ],
+          "impact": [
+            {
+              "name": "Detecting can lead to security threats",
+              "text": "Being able to detect the existence of certain items can be a stepping stone to security threats."
+            },
+            {
+              "name": "Existence",
+              "text": "Simply knowing the existence of data may be sufficient to infer sensitive information."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Redesign system response",
+              "text": "Prevent information leakage by not revealing the existence of items in system responses."
+            }
+          ]
+        }
       }
     },
     "Dd": {
       "name": "Data Disclosure",
-      "definition": "Cases in which explicit (intended/designed) or implicit (unintended/consequential) disclosure of personal data across a boundary is avoidable. The minimality principle is key: only collect, process, store, and share strictly required personal data.",
+      "description": "Data disclosure threats represent cases in which disclosures of personal data to, within, and from the system are considered problematic.",
       "nodes": {
-        "Dd.1": {"title": "Unnecessary data types", "description": "Data can be highly sensitive depending on context and should only be collected/processed when strictly required."},
-        "Dd.1.1": {"title": "Data type sensitivity", "description": "More sensitive data types are collected than functionally required by the system."},
-        "Dd.1.2": {"title": "Data type granularity", "description": "Disclosed personal data is of a more fine-grained level of granularity than needed."},
-        "Dd.1.3": {"title": "Data type encoding", "description": "The encoding of the data includes additional personal data that is not functionally needed (e.g. an ID image embedding far more than an age)."},
-        "Dd.2": {"title": "Excessive volume", "description": "Concerns the volume of personal data collected and processed."},
-        "Dd.2.1": {"title": "Amount", "description": "An excessive amount of personal data is processed beyond what is functionally needed."},
-        "Dd.2.2": {"title": "Frequency", "description": "Personal data is processed more frequently than functionally needed."},
-        "Dd.2.3": {"title": "Involved data subjects", "description": "Personal data is processed of more data subjects than functionally needed."},
-        "Dd.3": {"title": "Unnecessary processing", "description": "Whether the processing and treatment of personal data is actually necessary for the functional goals."},
-        "Dd.3.1": {"title": "Treatment, analysis, enrichment, transformation", "description": "Personal data is further treated, analyzed, and enriched in a way not necessary to achieve the functionality."},
-        "Dd.3.2": {"title": "Propagation", "description": "Data is accessible by or propagated to other services where it is not needed."},
-        "Dd.3.3": {"title": "Implicit data disclosure", "description": "Data is implicitly collected as a side-effect of explicit data disclosures or data flows (e.g. unencrypted transmission exposing data to network observers)."},
-        "Dd.3.4": {"title": "Duration/retention", "description": "Personal data is processed or kept longer than functionally needed."},
-        "Dd.4": {"title": "Involved parties and exposure", "description": "Distinction between exposure to known/anticipated external parties versus data published or broadcast broadly (which amplifies risk). Also covers insecure exposure of stored data."},
-        "Dd.4.1": {"title": "Involved parties", "description": "Personal data made accessible to more parties than functionally necessary."},
-        "Dd.4.1.1": {"title": "Predetermined set of parties", "description": "Parties with whom data is shared are known up front; the set is static and fixed."},
-        "Dd.4.1.2": {"title": "Dynamic set of parties", "description": "Parties with whom data is shared are determined dynamically and may change frequently."},
-        "Dd.4.2": {"title": "Availability/accessibility of data", "description": "Personal data is published or made accessible more broadly than necessary (e.g. insecure storage, broad access)."}
+        "Dd.1": {
+          "title": "Unnecessary data types",
+          "description": "Depending on the context, data can be perceived highly sensitive, and should therefore only be collected and processed when strictly required."
+        },
+        "Dd.1.1": {
+          "title": "Data type sensitivity",
+          "description": "More sensitive data types are collected than functionally required by the system.",
+          "examples": [
+            {
+              "name": "Patient health monitoring",
+              "text": "Tracking a patient’s weight is pertinent for dieting apps but not for a contact tracing application."
+            }
+          ],
+          "criteria": [
+            "Is the data more sensitive than strictly necessary?"
+          ],
+          "impact": [
+            {
+              "name": "Amplify data breach impact",
+              "text": "Processing excessively sensitive data amplifies the impact of a potential data breach, thereby increasing the consequences for the affected individuals."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Consider necessity",
+              "text": "When designing the system, assess whether all the data is genuinely necessary for providing the system’s functionality."
+            }
+          ]
+        },
+        "Dd.1.2": {
+          "title": "Data type granularity",
+          "description": "Disclosed personal data is of a more finegrained level of granularity than needed.",
+          "examples": [
+            {
+              "name": "Smart meter",
+              "text": "A smart meter shares realtime measurements rather than the aggregated consumption."
+            }
+          ],
+          "criteria": [
+            "Is the data more fine-grained than strictly necessary?"
+          ]
+        },
+        "Dd.1.3": {
+          "title": "Data type encoding",
+          "description": "The encoding of the data includes additional personal data that is not functionally needed.",
+          "examples": [
+            {
+              "name": "Camera app",
+              "text": "A camera application on a smartphone does not necessarily need to record the picture’s location."
+            },
+            {
+              "name": "Geo-tagged photos",
+              "text": "The transmission of geo-tagged pictures also includes location data of the individual that took the pictures."
+            },
+            {
+              "name": "Metadata",
+              "text": "Documents processed may automatically include metadata that contain personal data such as the author or reviewer of a document."
+            }
+          ],
+          "criteria": [
+            "Does the data encoding include additional (meta)data?"
+          ]
+        },
+        "Dd.2": {
+          "title": "Excessive volume",
+          "description": "The characteristic involves the volume of personal data that is collected and processed."
+        },
+        "Dd.2.1": {
+          "title": "Amount",
+          "description": "An excessive amount of personal data is processed beyond what is functionally needed.",
+          "examples": [
+            {
+              "name": "Data subject age",
+              "text": "A generic service that is not age-restricted should not request a user’s age."
+            }
+          ],
+          "criteria": [
+            "Is the amount of collected data necessary for the correct functioning of the system?"
+          ]
+        },
+        "Dd.2.2": {
+          "title": "Frequency",
+          "description": "Personal data is processed more frequently than functionally needed.",
+          "examples": [
+            {
+              "name": "Patient weight recording",
+              "text": "Recording patient weight on a weekly or monthly basis may suffice; collecting such information every half hour is unnecessary."
+            }
+          ],
+          "criteria": [
+            "Is the processing frequency necessary?"
+          ],
+          "impact": [
+            {
+              "name": "Frequent collection",
+              "text": "Regular data collection results in an increased dataset, potentially giving rise to additional privacy threats, such as data mining for patterns."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Consider frequency",
+              "text": "Evaluate whether regular data collection is necessary for the system’s functionality."
+            }
+          ]
+        },
+        "Dd.2.3": {
+          "title": "Involved data subjects",
+          "description": "Personal data is processed of more data subjects than functionally needed.",
+          "examples": [
+            {
+              "name": "Posting on social networks",
+              "text": "Posts on social networks frequently include personal data about other individuals."
+            }
+          ],
+          "criteria": [
+            "Are there more data subjects involved than necessary?"
+          ]
+        },
+        "Dd.3": {
+          "title": "Unnecessary processing",
+          "description": "This characteristic considers whether the processing and treatment of the personal data is actually necessary for achieving the functional goals of the system."
+        },
+        "Dd.3.1": {
+          "title": "Treatment, analysis, enrichment, transformation",
+          "description": "Personal data is further treated, analyzed, and enriched in a way that is not necessary to achieve the functionality of the system.",
+          "examples": [
+            {
+              "name": "Face recognition, emotion detection",
+              "text": "A camera application on a smartphone does not need to perform face-based recognition or emotion detection."
+            },
+            {
+              "name": "Text analysis",
+              "text": "Analyzing a user’s blog posts for language proficiency is unnecessary for blogging functionality."
+            },
+            {
+              "name": "Constructing profiles on individuals",
+              "text": "User profiles accumulate unnecessary details over time, tracking a broad range of actions or service usage that is not essential for the provided functionality."
+            },
+            {
+              "name": "Facial expression analysis",
+              "text": "Sentiment analysis can be applied to faces in pictures to derive the emotional state of the individual in the photo."
+            }
+          ],
+          "criteria": [
+            "Is the data enrichment/analysis necessary for the system’s functionality?"
+          ],
+          "impact": [
+            {
+              "name": "Processing can increase sensitivity",
+              "text": "Processing the data can be used to learn additional sensitive information."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Consider processing",
+              "text": "Evaluate which types of personal data processing are necessary for providing the system’s functionality."
+            }
+          ]
+        },
+        "Dd.3.2": {
+          "title": "Propagation",
+          "description": "Data is accessible by or propagated to other services where it is not needed.",
+          "examples": [
+            {
+              "name": "Propagation of location data",
+              "text": "Location data from a navigation application is propagated to all the other applications (e.g., calendar, mail)."
+            }
+          ],
+          "criteria": [
+            "Is the data necessary for the recipient?"
+          ]
+        },
+        "Dd.3.3": {
+          "title": "Implicit data disclosure",
+          "description": "Data is implicitly collected as a side-effect of explicit data disclosures or data flows.",
+          "examples": [
+            {
+              "name": "Service usage",
+              "text": "Data gathered on the usage of a service (such as connection times or durations)."
+            }
+          ],
+          "criteria": [
+            "Do service usage (patterns) reveal user data?"
+          ]
+        },
+        "Dd.3.4": {
+          "title": "Duration/retention",
+          "description": "Personal data is processed or kept longer than functionally needed.",
+          "examples": [
+            {
+              "name": "Retaining newsletter subscriber addresses",
+              "text": "Retaining the email addresses of newsletter subscribers long after they have unsubscribed."
+            }
+          ],
+          "criteria": [
+            "Is the data stored for longer time than necessary?"
+          ],
+          "impact": [
+            {
+              "name": "Storing data longer than needed",
+              "text": "Storing data longer than needed serves no further purpose and increases the impact of a data breach."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Consider storage policies",
+              "text": "Evaluate your storage policies. Consider how long you store personal data and whether you have a process to remove data you no longer need."
+            }
+          ]
+        },
+        "Dd.4": {
+          "title": "Involved parties and exposure",
+          "description": "Personal data is excessively exposed, either to external parties known and anticipated at design time (which are typically limited, targeted and scoped), or it is published or broadcasted by the system (which greatly amplifies the potential risk)."
+        },
+        "Dd.4.1": {
+          "title": "Involved parties",
+          "description": "Personal data made accessible to more parties than functionally necessary."
+        },
+        "Dd.4.1.1": {
+          "title": "Predetermined set of parties",
+          "description": "The parties with whom personal data is shared are known up front. This set of parties is static and fixed.",
+          "examples": [
+            {
+              "name": "Sharing data to advertisers",
+              "text": "In a health application, even if collecting patient weight data is considered necessary, sharing this data with third party advertisers is unnecessary and harmful."
+            },
+            {
+              "name": "Use of third party tracking and analytics services",
+              "text": "Using third party tracking and analytics services on websites involves transferring personal data about the user and their site usage to third parties."
+            },
+            {
+              "name": "Third party email delivery",
+              "text": "When using third party service providers for email delivery, personal data (e.g. about sender and recipients) is directly shared with these third parties."
+            },
+            {
+              "name": "Speech data",
+              "text": "Speech data sent to a third party transcription service can apart from speech content reveal additional information about the individual such as mother tongue, gender, etc."
+            }
+          ],
+          "criteria": [
+            "Are there more parties involved than necessary?"
+          ]
+        },
+        "Dd.4.1.2": {
+          "title": "Dynamic set of parties",
+          "description": "The parties with whom personal data is shared are determined dynamically and may change frequently.",
+          "examples": [
+            {
+              "name": "Shared with users",
+              "text": "Personal data is disclosed to other users of the service."
+            }
+          ],
+          "criteria": [
+            "Are there more parties involved than necessary?"
+          ]
+        },
+        "Dd.4.2": {
+          "title": "Availability/accessibility of data",
+          "description": "Personal data is published more broadly than necessary.",
+          "examples": [
+            {
+              "name": "Publishing research datasets",
+              "text": "In a medical application, while collecting patient weight data is deemed necessary, making such datasets publicly available would be unnecessary and harmful."
+            },
+            {
+              "name": "Doxing",
+              "text": "Posting personal data of other people to publicly shame them, extort them, or trigger vigilante attacks, etc."
+            },
+            {
+              "name": "Phone number search",
+              "text": "Searching user by phone number can be used to discover/confirm someone else’s phone number."
+            },
+            {
+              "name": "Lookup company founding data",
+              "text": "The original publication of a company’s foundation reveals the home addresses of the founders."
+            },
+            {
+              "name": "Query interface reveals personal data",
+              "text": "Query interfaces to searcj for people working in specific area, may reveal their location of employment."
+            },
+            {
+              "name": "Sending private messages over a social network",
+              "text": "Posting private messages to a person through a social network in a public forum that may be seen and monitored my many."
+            },
+            {
+              "name": "Collecting web traffic",
+              "text": "The lack of encryption enables an external adversary to read the personal data being exchanged with the system."
+            }
+          ],
+          "criteria": [
+            "How accessible is the data (public/limited/private)?"
+          ],
+          "impact": [
+            {
+              "name": "Excessive data exposure",
+              "text": "Overexposure of personal data may lead to unintended consequences, as others could reuse the data for unforeseen purposes."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Consider parties with whom data is shared",
+              "text": "Carefully assess the necessity of sharing personal data and ensure that the involved parties genuinely require access to that data."
+            }
+          ]
+        }
       }
     },
     "U": {
-      "name": "Unawareness and unintervenability",
-      "definition": "Lack of support offered to involved/affected individuals: insufficiently informing, involving, or empowering the data subject. Three potential lacks: (i) transparency, (ii) user feedback/awareness of impact, and (iii) intervenability (controls to influence data handling).",
+      "name": "Unawareness and Unintervenability",
+      "description": "Unawareness and unintervenability threats occur when individuals are insufficiently informed, involved, or empowered with respect to the processing of their personal data.",
       "nodes": {
-        "U.1": {"title": "Lack of transparency / awareness", "description": "Not properly informing data subjects about data collection and what happens with that data; users unaware of collection or impact."},
-        "U.1.1": {"title": "No notice of data collection", "description": "Data subjects are not informed that their data is collected or processed (e.g. silent tracking with no notice)."},
-        "U.1.2": {"title": "Covert processing / surveillance without transparency", "description": "Data is processed or disclosed to others (e.g. surveillance, profiling) without age-appropriate or adequate transparency to the data subject."},
-        "U.1.3": {"title": "Undisclosed granularity or purpose", "description": "The detail, granularity, or purpose of collection is not disclosed (e.g. fine-grained behavioral tracking not stated in the policy)."},
-        "U.2": {"title": "Lack of intervenability / control", "description": "Not providing data subjects with the controls or means to influence how their data is handled (access, correction, deletion)."},
-        "U.2.1": {"title": "Insufficient or contradicted controls", "description": "Promised controls (e.g. deletion) are absent, incomplete, or contradicted by actual data persistence."}
+        "U.1": {
+          "title": "Unawareness of processing",
+          "description": ""
+        },
+        "U.1.1": {
+          "title": "Unawareness as data subject",
+          "description": "Unawareness of processing focuses on data subjects not being aware about the collection, processing, storage, or disclosure of their personal data.",
+          "examples": [
+            {
+              "name": "Third parties",
+              "text": "Data subjects are not aware of the identities of the third parties with whom their data will be shared."
+            },
+            {
+              "name": "Notice unclear",
+              "text": "The privacy notice provided to the data subject was not presented in clear and plain language."
+            },
+            {
+              "name": "Unawareness of data collected by traffic cams",
+              "text": "Data subjects are unaware that traffic cameras collect not only number plates but also facial images."
+            },
+            {
+              "name": "Unawareness about collection of news consumption data",
+              "text": "Data subjects are unaware that their newspaper uses usage data for targeted advertising purposes."
+            },
+            {
+              "name": "Unaware of indirect collection for extensive profiling",
+              "text": "The data subject is unaware that their personal data is collected from third parties to construct more detailed user profiles for targeted advertising (e.g., Facebook)."
+            },
+            {
+              "name": "Marketing purpose",
+              "text": "The data subject is unaware the data may also be used for marketing purposes."
+            },
+            {
+              "name": "Purpose/retention",
+              "text": "The data subject was not informed why or for how long their personal data is processed."
+            }
+          ],
+          "criteria": [
+            "Are data subjects insufficiently informed about the processing of personal data, including the purposes and methods of the processing involved?"
+          ],
+          "impact": [
+            {
+              "name": "Unaware of data usage",
+              "text": "Insufficient transparency may lead to data subjects being unaware that their personal data is utilized for certain purposes, especially if those purposes are different from what was initially indicated."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Collection",
+              "text": "Data subjects must also be informed on any ‘indirect’ data collection, i.e. from third parties."
+            }
+          ]
+        },
+        "U.1.2": {
+          "title": "Unawareness as a user sharing personal data",
+          "description": "The user does not need to be the data subject.",
+          "examples": [
+            {
+              "name": "Social media picture",
+              "text": "A user posting a picture on social media may not be aware that others in the picture are automatically tagged with a facial recognition system."
+            },
+            {
+              "name": "DNA testing service",
+              "text": "Using a DNA testing service can entail sharing medical information about family members."
+            },
+            {
+              "name": "Address book sharing",
+              "text": "A service invites a user to share their address book to find contacts on a service."
+            }
+          ],
+          "criteria": [
+            "If a user shares personal data of others, is it clear what, why, and how that data is further processed?"
+          ],
+          "impact": [
+            {
+              "name": "Unaware of impact on family or friends",
+              "text": "Users may not realize that they are unintentionally sharing personal data belonging to other individuals."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Sharing other people’s data often omitted",
+              "text": "While users are often informed about the consequences of sharing their own data, systems rarely inform them about the impact of sharing data of others."
+            }
+          ]
+        },
+        "U.2": {
+          "title": "Lack of data subject control",
+          "description": "Lack of control considers the lack of control of a data subject to choose and customize which, how, and how long personal data is processed."
+        },
+        "U.2.1": {
+          "title": "Preferences",
+          "description": "The lack of control of a data subject to set preferences or consent in how personal data is processed (or collected/stored).",
+          "examples": [
+            {
+              "name": "Sharing preferences",
+              "text": "The data subject is unable to set appropriate preferences on which data is shared and why."
+            },
+            {
+              "name": "Consent",
+              "text": "The data subject is unable to set their consent preferences for the processing of personal data."
+            }
+          ],
+          "criteria": [
+            "Does the system enable the data subject to configure which personal data is processed and for what purposes? Can the data subject alter their preferences afterwards?"
+          ],
+          "impact": [
+            {
+              "name": "Violation of data subject rights",
+              "text": "Appropriate control mechanisms are required to record data subject preferences and keep track of how the data may be further processed."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Defaults",
+              "text": "Privacy-friendly settings should be the default."
+            },
+            {
+              "name": "Nudging",
+              "text": "Nudging can raise awareness and induce more privacy-preserving behavior."
+            },
+            {
+              "name": "Relevance",
+              "text": "Mainly relevant for systems directly collecting personal data from users."
+            }
+          ]
+        },
+        "U.2.2": {
+          "title": "Access",
+          "description": "The lack of control in accessing the personal data that is being processed.",
+          "examples": [
+            {
+              "name": "Access processed data",
+              "text": "The data subject is unable to access their personal data held and processed by the service."
+            },
+            {
+              "name": "Wearable sensor data",
+              "text": "The sensor data from a wearable is transmitted to a lifestyle tracking app, but the user cannot access statistics and information derived from their data."
+            },
+            {
+              "name": "No access mechanism",
+              "text": "It is not possible for a data subject to request access, neither directly through the system nor indirectly through a helpdesk."
+            }
+          ],
+          "criteria": [
+            "Do data subjects lack the ability to access the personal data being collected, processed, stored, or disclosed about them?"
+          ],
+          "impact": [
+            {
+              "name": "Violation of data subject rights",
+              "text": "Lack of access may violate the legal rights of data subjects."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Limitations",
+              "text": "The right to access is not always absolute. Limitations may exist depending on applicable laws (e.g., trade secrets, rights of other data subjects)."
+            },
+            {
+              "name": "Alternatives",
+              "text": "Access can also be obtained indirectly (e.g., a support ticket)."
+            }
+          ]
+        },
+        "U.2.3": {
+          "title": "Rectification/erasure",
+          "description": "The lack of control in rectifying incorrect data or removing personal data that is no longer relevant.",
+          "examples": [
+            {
+              "name": "Correct wrong data",
+              "text": "The data subject is unable to correct their personal data."
+            },
+            {
+              "name": "Account not deleted",
+              "text": "When a data subject deletes their social media account, the account is disabled, but the actual data is not erased."
+            },
+            {
+              "name": "Address change",
+              "text": "A data subject is unable to update their home address after relocating."
+            }
+          ],
+          "criteria": [
+            "Do data subjects have the ability to correct or delete their personal data?"
+          ],
+          "impact": [
+            {
+              "name": "Violation of data subject rights",
+              "text": "Data subjects have the right to rectify incorrect personal data or request the removal of data that is no longer relevant or needed."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Alternatives",
+              "text": "Rectification or erasure can also be performed indirectly (e.g., through a customer service ticket)."
+            }
+          ]
+        }
       }
     },
     "Nc": {
       "name": "Non-compliance",
-      "definition": "Lack of adherence to legislation, regulation, standards, and best practices, leading to incomplete management of risk. Focuses on the intersection between identified privacy threats and broader risk notions (legal, cybersecurity, organizational). Covers unlawful processing, lack of data lifecycle management, and lack of security hardening.",
+      "description": "Non-compliance threats arise when the system deviates from legislation, regulation, or standards and best practices, leading to the incomplete management of risk.",
       "nodes": {
-        "Nc.1": {"title": "Compliance-related problem", "description": "A compliance problem deriving from applicable L/I/Nr/D/Dd/U threats, translated into legal/regulatory risk (GDPR, COPPA, CCPA, etc.)."},
-        "Nc.1.1": {"title": "Unlawful processing or disclosure", "description": "Processing or disclosure of personal data without a lawful basis or required consent (e.g. sharing children's data without verifiable parental consent)."},
-        "Nc.1.2": {"title": "Violation of data-protection principle", "description": "Systematic violation of a core principle such as data minimization, purpose limitation, or storage limitation across the system."},
-        "Nc.1.3": {"title": "Inadequate consent or safeguard mechanism", "description": "A required consent, verification, or safeguard mechanism is missing or inadequate to meet the applicable regulation (e.g. no FTC-approved verifiable parental consent method)."}
+        "Nc.1": {
+          "title": "Regulatory noncompliance",
+          "description": "There are legal consequences of the threats and/or processing activities described."
+        },
+        "Nc.1.1": {
+          "title": "GDPR",
+          "description": "GDPR-related noncompliance threat characteristics"
+        },
+        "Nc.1.1.1": {
+          "title": "Insufficient data subject controls",
+          "description": "Support for the different data subject rights is lacking."
+        },
+        "Nc.1.1.2": {
+          "title": "Violation of data minimization principle",
+          "description": "More personal data is processed than is actually needed.",
+          "examples": [
+            {
+              "name": "Excessive personal data collected/processed",
+              "text": "The system collects or processes more data than is actually needed for the purposes of the processing."
+            },
+            {
+              "name": "Web shop",
+              "text": "A web shop collects gender, phone number, date of birth, etc., while none of this information is necessary for billing."
+            }
+          ],
+          "criteria": [
+            "Does the system collect or process more data than legally necessary?"
+          ],
+          "impact": [
+            {
+              "name": "Data breach amplification",
+              "text": "Having more data than needed amplifies the impact of data breaches."
+            },
+            {
+              "name": "GDPR",
+              "text": "Legislation such as the GDPR requires you not to process more than legally necessary for the processing."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Purpose",
+              "text": "The purpose of your processing determines what data you are allowed to process."
+            }
+          ]
+        },
+        "Nc.1.1.3": {
+          "title": "Unlawful processing of personal data",
+          "description": "Personal data is not processed in a lawful way"
+        },
+        "Nc.1.1.3.1": {
+          "title": "Invalid consent",
+          "description": "Personal data collection and processing does not rely on valid consent.",
+          "examples": [
+            {
+              "name": "Lack of consent management",
+              "text": "The processing relies on consent but there is no way for the data subject to give or revoke consent."
+            },
+            {
+              "name": "Involuntary consent",
+              "text": "The consent is not freely given but forced. A user cannot access the service without giving consent."
+            }
+          ],
+          "criteria": [
+            "Is the consent freely given, informed, specific, and unambiguous? Can consent be withdrawn? Can the consent be demonstrated?"
+          ],
+          "impact": [
+            {
+              "name": "GDPR",
+              "text": "Legislation such as the GDPR imposes specific requirements for valid consent, not meeting these can result in heavy fines."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Consent not only lawful ground",
+              "text": "While frequently used, consent is not the only mechanism you can rely on. If you do rely on it, you need to meet the requirements for a having a valid consent."
+            }
+          ]
+        },
+        "Nc.1.1.3.2": {
+          "title": "Lawfulness problems not related to consent",
+          "description": "Lawfulness problems not related to consent, such as incorrect lawful ground, automated decision making on sensitive personal data, etc.",
+          "examples": [
+            {
+              "name": "Smart TV",
+              "text": "A smart TV collects a user’s viewing data without consent or any other lawful ground."
+            },
+            {
+              "name": "Loan rejection",
+              "text": "A loan application is rejected without any possibility of human intervention."
+            },
+            {
+              "name": "Automated-decision making",
+              "text": "A system makes automated decisions but relies on legitimate interest rather than explicit consent or contract."
+            }
+          ],
+          "criteria": [
+            "Does the collection rely on valid, appropriate lawful grounds for a specific purpose? Are there special types of processing such as automated decisions?"
+          ],
+          "impact": [
+            {
+              "name": "GDPR",
+              "text": "The GDPR imposes specific requirements for valid processing of personal data. Not meeting these can result in heavy fines."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "AI/ML",
+              "text": "The use of machine learning techniques to process personal data or make decisions can impose additional requirements (e.g., transparency)."
+            }
+          ]
+        },
+        "Nc.1.1.4": {
+          "title": "Violation of storage limitation principle",
+          "description": "Personal data is stored longer than needed.",
+          "examples": [
+            {
+              "name": "Stored longer than necessary",
+              "text": "Personal data is stored for a longer period than actually necessary to perform the processing."
+            },
+            {
+              "name": "Old user accounts",
+              "text": "A website retains user account data long after users have closed their account and withdrawn their consent."
+            }
+          ],
+          "criteria": [
+            "Does the system store data longer than legally necessary?"
+          ],
+          "impact": [
+            {
+              "name": "Data breach amplification",
+              "text": "Having more data than needed amplifies the impact of data breaches."
+            },
+            {
+              "name": "GDPR",
+              "text": "Legislation such as the GDPR requires you not to process more than legally necessary for the processing."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Purpose",
+              "text": "Purpose restrictions not only apply to processing but also to storage."
+            }
+          ]
+        },
+        "Nc.1.2": {
+          "title": "Generic regulatory noncompliance",
+          "description": "A general description of non-compliance with regulations (nonspecific to a particular legal regime or environment)",
+          "examples": [
+            {
+              "name": "No legal ground for processing under GDPR",
+              "text": "The system processes information of EU citizens without a valid legal ground under GDPR."
+            },
+            {
+              "name": "Selling data in violation of the CCPA",
+              "text": "The system shares user information with third parties, violating ’Do Not Sell My Data’ rights under the CCPA."
+            }
+          ],
+          "criteria": [
+            "Will the system be used in jurisdictions with specific rules for personal data processing (e.g., the EU)? Does the system, or its processing activities, violate one or more rules in these applicable regulation(s)?"
+          ],
+          "impact": [
+            {
+              "name": "Fines and sanctions",
+              "text": "Non-compliance with local regulations may lead to hefty fines or other sanctions."
+            },
+            {
+              "name": "Reputational damage due to high-profile lawsuits",
+              "text": "High-profile complaint cases or lawsuits may lead to negative media exposure and reputational damage."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Perform a legal assessment",
+              "text": "Before processing any personal data, perform an assessment on the applicable regulations for your processing activities and system."
+            },
+            {
+              "name": "Document how the system will adhere to applicable regulation",
+              "text": "Document how your system will adhere to the applicable legal framework and regularly check that this is still the case."
+            }
+          ]
+        },
+        "Nc.2": {
+          "title": "Improper personal data management",
+          "description": "This characteristic groups a number of data management risks that may have privacy outcomes or vice versa, privacy threats that may lead to overarching data management problems.",
+          "examples": [
+            {
+              "name": "No principles for data retention",
+              "text": "There is no clear policy or mechanism to enforce deletion of data that is no longer needed."
+            },
+            {
+              "name": "No roles and responsibilities for data management defined",
+              "text": "The organizational roles and responsibilities surrounding data management in the system are not sufficiently defined."
+            }
+          ],
+          "criteria": [
+            "Is there a data lifecycle management policy defined for the data processed within the system? Does the policy outline clear principles for each phase of the data lifecycle (creation, storage, sharing and usage, archival, and destruction)?"
+          ],
+          "impact": [
+            {
+              "name": "Unmanaged data leading to privacy, security or availability issues",
+              "text": "Inadequate or nonexistent data lifecycle management can result in a loss of overview of the data within the system and its maintenance, posing concerns not only for privacy and data protection but also security and availability."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Continuous review of the data lifecycle management",
+              "text": "Data lifecycle management is a continuous process that must be consistently carried out as long as the system is designed, developed, and used."
+            }
+          ]
+        },
+        "Nc.3": {
+          "title": "Insufficient cybersecurity risk management",
+          "description": "A lack of proper cybersecurity risk management with specific attention to the interplay with privacy risks.",
+          "examples": [
+            {
+              "name": "No security assessment",
+              "text": "No security assessment was performed of the software."
+            },
+            {
+              "name": "Operational security",
+              "text": "There are no processes in place to ensure software and services are kept up to date."
+            },
+            {
+              "name": "Lacking internal access control mechanisms",
+              "text": "The organization does not use appropriate access control mechanisms to limit access of employees to personal data."
+            }
+          ],
+          "criteria": [
+            "Is there an established process to manage security risks and identify the required countermeasures? Does the system incorporate the required countermeasures? Are the countermeasures aligned with industry standards and best practices?"
+          ],
+          "impact": [
+            {
+              "name": "Security contributes to privacy",
+              "text": "The security of the system plays a crucial role in safeguarding the privacy of individuals whose data is processed. Personal data breaches can result in significant fines and reputational damage."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "STRIDE Threat Modeling",
+              "text": "Consider complementary methods like security threat modeling."
+            },
+            {
+              "name": "Security standards",
+              "text": "Consider adhering to standards such as ISO27001 or the CIS Security Controls."
+            }
+          ]
+        },
+        "Nc.4": {
+          "title": "Non-compliance with privacy standards and best practices",
+          "description": "",
+          "examples": [
+            {
+              "name": "ISO norm",
+              "text": "The system does not adhere to the best practices and principles outlined in the relevant ISO norms on data protection and privacy-by-design."
+            },
+            {
+              "name": "NIST Privacy Framework",
+              "text": "Privacy risks are not classified and managed using a standardized methodology such as the NIST Privacy Framework."
+            }
+          ],
+          "criteria": [
+            "Are there any (industry) specific privacy standards that are applicable to the system? Does the system adequately implement the principles and controls outlined in these standards?"
+          ],
+          "impact": [
+            {
+              "name": "Demonstrating compliance",
+              "text": "Non-adherence to industry standards and best practices makes it more difficult to demonstrate compliance with applicable laws."
+            }
+          ],
+          "additional_info": [
+            {
+              "name": "Industry-specific guidance",
+              "text": "Check whether there is industry-specific guidance on data processing for your sector (e.g., healthcare, manufacturing)."
+            }
+          ]
+        }
       }
     }
   }
