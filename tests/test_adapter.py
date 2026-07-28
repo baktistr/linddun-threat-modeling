@@ -841,6 +841,140 @@ def test_vision_prompts_build_without_format_errors():
     check("{x, y, w, h}" in fp, "and the literal brace example survives formatting")
 
 
+def test_run_condition_keys_round_trip():
+    """A condition key must survive being written to a path and read back, because the run index
+    reads keys off the filesystem rather than re-deriving them from metadata older artifacts
+    may not carry."""
+    print("\n[runs: condition keys]")
+    import runs
+
+    check(runs.slug("gpt-5.4") == "gpt-5-4", "model ids are path-sanitised (dots -> dashes)")
+    check(runs.slug("anthropic/claude-sonnet-5") == "anthropic-claude-sonnet-5",
+          "slashes too -- they would otherwise become directory separators")
+    check(runs.slug(None) == "none" and runs.slug("") == "none",
+          "a missing model is 'none', never empty")
+
+    cond = runs.condition("image", "vision_naive", "gpt-5.4")
+    check(cond == "image_vision-naive_gpt-5-4", f"condition key is <input>_<arm>_<model> ({cond})")
+    parsed = runs.parse_condition(cond)
+    check(parsed == {"input": "image", "arm": "vision-naive", "model": "gpt-5-4"},
+          "and parses back to its three parts")
+    check(runs.parse_condition(runs.condition("source", "llm_naive", None))["model"] == "none",
+          "a model-free arm round-trips as 'none'")
+
+    try:
+        runs.condition("diagram", "x", "y")
+        check(False, "an unknown input kind is rejected")
+    except ValueError:
+        check(True, "an unknown input kind is rejected")
+
+
+def test_run_aggregation_never_fakes_a_spread():
+    """n=1 must report sd as unknown, not 0.00. Zero spread and unknown spread are different
+    claims, and the llm arm's 0.33-0.87 range is exactly why the difference matters."""
+    print("\n[runs: aggregation]")
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+    import summarize_runs as sr
+
+    one = sr._stat([0.71])
+    check(one["n"] == 1 and one["mean"] == 0.71 and one["sd"] is None,
+          "a single run reports sd=None, not 0.00")
+    check("n=1" in sr._fmt(one), "and renders as an explicit point estimate")
+
+    three = sr._stat([0.33, 0.73, 0.87])
+    check(three["n"] == 3 and abs(three["mean"] - 0.6433) < 0.001, "means are computed over runs")
+    check(three["sd"] is not None and three["sd"] > 0.2,
+          "and the llm arm's real spread survives aggregation")
+    check(sr._stat([])["mean"] is None, "no runs reports nothing rather than zero")
+
+
+def test_run_index_parses_a_real_eval_report():
+    """The index reads committed eval reports; if the ALL row moves, every row goes blank."""
+    print("\n[runs: eval report parsing]")
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+    import summarize_runs as sr
+
+    report = (config.ROOT / "storage" / "generated"
+              / "kidstube_image_derived_grounded_eval.txt")
+    if not report.exists():
+        check(True, "(committed image eval report absent -- skipped)")
+        return
+    parsed = sr.parse_eval(report.read_text())
+    check(parsed is not None, "the ALL row is found in a real report")
+    check((parsed["tp"], parsed["fp"], parsed["fn"]) == (29, 89, 12),
+          f"TP/FP/FN read correctly {(parsed['tp'], parsed['fp'], parsed['fn'])}")
+    check(parsed["recall"] == 0.71 and parsed["precision"] == 0.25, "P/R read correctly")
+    check(parsed["citation_all_valid"] == 1.00, "citation all_valid_rate read correctly")
+    check(parsed["n_generated"] == 118, "n_generated read correctly")
+
+
+def test_explicit_dfd_and_gold_overrides():
+    """--dfd/--gold must load the same content the scenario defaults do, or every experiment run
+    is scored against something other than what it was generated from."""
+    print("\n[generate/eval: explicit path overrides]")
+    from eval.run_eval import _load_dfd, _load_gold
+
+    scen_dfd = _load_dfd("kidstube_image_derived")
+    path_dfd = _load_dfd("ignored", config.KB_DIR / "scenarios" / "kidstube_image_derived"
+                         / "dfd.json")
+    check(scen_dfd == path_dfd, "an explicit --dfd loads exactly the scenario's own DFD")
+
+    scen_gold = _load_gold("kidstube")
+    path_gold = _load_gold("ignored", config.KB_DIR / "scenarios" / "kidstube"
+                           / "gold_standard_threats.json")
+    check(scen_gold == path_gold, "an explicit --gold loads exactly the scenario's own gold")
+
+    import json as _json
+    import tempfile
+    with tempfile.TemporaryDirectory() as d:
+        bare = Path(d) / "gold.json"
+        bare.write_text(_json.dumps(scen_gold))
+        check(_load_gold("ignored", bare) == scen_gold,
+              "a bare-list gold (what a re-anchoring script may emit) loads too")
+
+
+def test_gold_rebuild_guards_its_own_precondition():
+    """Re-anchoring keys derived elements by the CODE FACTS they cite, so it is inapplicable to a
+    DFD that cites pixel boxes. And an id-overlap test must be exact, not a subset: kidstube_derived
+    numbers its 27 flows DF1..DF27, which CONTAINS the hand DFD's DF1..DF17 while meaning entirely
+    different flows. A subset test would skip the re-anchoring that DFD absolutely needs."""
+    print("\n[gold rebuild: preconditions]")
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+    import build_kidstube_derived_gold as bg
+
+    hand = _hand_dfd("kidstube")
+    image = json.loads((config.KB_DIR / "scenarios" / "kidstube_image_derived"
+                        / "dfd.json").read_text())
+    source = json.loads((config.KB_DIR / "scenarios" / "kidstube_derived"
+                         / "dfd.json").read_text())
+
+    check(bg.cites_code_facts(source), "the source-derived DFD cites fact_ids -- re-anchorable")
+    check(not bg.cites_code_facts(image),
+          "the image-derived DFD cites bboxes, not fact_ids -- NOT re-anchorable this way")
+
+    check(bg.flow_ids_identical(image, hand),
+          "the image DFD's flow ids are exactly the hand DFD's -- hand gold applies verbatim")
+    check(not bg.flow_ids_identical(source, hand),
+          "the source DFD's are not, despite DF1..DF17 being a SUBSET of its DF1..DF27")
+    check({f["id"] for f in hand["flows"]} <= {f["id"] for f in source["flows"]},
+          "...and that subset really does hold -- which is exactly why the test must be equality")
+
+
+def test_every_derived_artifact_is_attributable():
+    """Which model produced a derived DFD is the axis the experiment varies. An artifact that
+    does not say is not comparable, and 'absent' must not be usable as 'deterministic'."""
+    print("\n[metadata: model attribution]")
+    for scen in ("kidstube_derived", "kidstube_image_derived"):
+        meta = json.loads((config.KB_DIR / "scenarios" / scen / "dfd.json").read_text())["_meta"]
+        df = meta.get("derived_from", {})
+        check("model" in df and df["model"], f"{scen} records which model produced it")
+        check("backend" in df and df["backend"], f"{scen} records which backend produced it")
+    facts_only = json.loads((config.KB_DIR / "scenarios" / "kidstube_derived"
+                             / "dfd.json").read_text())["_meta"]
+    check(facts_only["derived_from"]["model"] == "none",
+          "facts_only records model='none' EXPLICITLY -- it is deterministic, not unrecorded")
+
+
 if __name__ == "__main__":
     test_schema_backward_compatible()
     test_schema_rejects_broken_dfds()
@@ -868,5 +1002,11 @@ if __name__ == "__main__":
     test_vision_scale_calibration_is_reported_not_hidden()
     test_vision_image_content_is_only_built_when_an_image_is_given()
     test_vision_prompts_build_without_format_errors()
+    test_run_condition_keys_round_trip()
+    test_run_aggregation_never_fakes_a_spread()
+    test_run_index_parses_a_real_eval_report()
+    test_explicit_dfd_and_gold_overrides()
+    test_gold_rebuild_guards_its_own_precondition()
+    test_every_derived_artifact_is_attributable()
     print(f"\n{PASS} passed, {FAIL} failed")
     sys.exit(1 if FAIL else 0)

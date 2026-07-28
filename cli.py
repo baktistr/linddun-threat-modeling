@@ -69,15 +69,17 @@ def cmd_generate(args):
         mode = resolve_mode(rag=args.rag, ungrounded=args.ungrounded, framework=args.framework)
     except ValueError as e:
         raise SystemExit(str(e))
-    threats = generate_for_scenario(args.scenario, mode=mode, provider=args.provider)
-    path = save_generated(args.scenario, mode, threats)
-    print(f"Generated {len(threats)} threats ({mode}) for scenario '{args.scenario}' -> {path}")
+    threats = generate_for_scenario(args.scenario, mode=mode, provider=args.provider,
+                                    dfd_path=args.dfd)
+    path = save_generated(args.scenario, mode, threats, out=args.out)
+    print(f"Generated {len(threats)} threats ({mode}) for scenario '{args.scenario}'"
+          + (f" from {args.dfd}" if args.dfd else "") + f" -> {path}")
 
 
 def cmd_eval(args):
     from eval.run_eval import run_eval
     report = run_eval(args.scenario, args.generated, strict=args.strict, by_node=args.by_node,
-                      framework=args.framework)
+                      framework=args.framework, dfd_path=args.dfd, gold_path=args.gold)
     print(report)
     if args.out:
         from pathlib import Path
@@ -210,6 +212,13 @@ def cmd_derive(args):
         derived_from = {"repo": meta.get("source_repo"), "commit": meta.get("commit"),
                         "facts": str(path.relative_to(config.ROOT)),
                         "adapter_mode": args.mode, "adapter_version": 1}
+
+    # Which model produced this artifact is the axis a multi-model experiment varies, so it is
+    # recorded on the artifact rather than inferred later from whatever .env happened to say.
+    # facts_only records model="none" EXPLICITLY: absent would be ambiguous between "deterministic"
+    # and "nobody wrote it down". See runs.py.
+    derived_from["backend"] = dfd["_meta"].get("backend", "none")
+    derived_from["model"] = dfd["_meta"].get("model", "none")
 
     out = emit_scenario_dfd(
         args.scenario, dfd, derived_from=derived_from,
@@ -352,6 +361,12 @@ def main():
                           "chosen --framework's KB), vs. the default deterministic/exhaustive "
                           "grounding or --ungrounded's no context at all. Mutually exclusive "
                           "with --ungrounded.")
+    sg.add_argument("--dfd", default=None,
+                     help="Generate against this DFD instead of the scenario's own dfd.json. "
+                          "--scenario still names the SYSTEM; only the DFD moves. Use for "
+                          "per-model experiment runs (see runs.py).")
+    sg.add_argument("--out", default=None,
+                     help="Write threats here instead of storage/generated/<scenario>_<mode>.json.")
     sg.add_argument("--provider", choices=["anthropic", "openai", "azure"], default=None,
                      help="Override LLM_PROVIDER from config/.env for this run.")
     sg.set_defaults(func=cmd_generate)
@@ -366,6 +381,12 @@ def main():
     se.add_argument("--framework", choices=["linddun", "panoptic"], default="linddun",
                      help="Score against LINDDUN threat_type/tree_node (default), or PANOPTIC "
                           "panoptic_action membership (for mode=panoptic_* generated output).")
+    se.add_argument("--dfd", default=None,
+                     help="Score against this DFD instead of the scenario's own. Must be the "
+                          "same DFD the threats were generated from.")
+    se.add_argument("--gold", default=None,
+                     help="Score against this gold instead of the scenario's own -- an LLM arm "
+                          "assigns its own flow ids, so each run needs its gold re-anchored.")
     se.set_defaults(func=cmd_eval)
 
     sj = sub.add_parser("adjudicate")

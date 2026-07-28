@@ -122,10 +122,35 @@ def reanchor(threat: dict, element_map: dict[str, str], flow_map: dict[str, str]
     return t
 
 
-def build(identity: bool) -> dict:
+def cites_code_facts(dfd: dict) -> bool:
+    """True if anything in this DFD cites a fact_id.
+
+    The precondition of the whole re-anchoring algorithm: alignment_maps() keys derived elements
+    by the CODE FACTS they cite. A DFD that cites pixel boxes (the image adapter) has no fact_ids
+    at all, so the alignment would map nothing and emit a gold with every threat unanchored --
+    scoring a confident, meaningless 0.00. Test the precondition rather than inferring it.
+    """
+    return any("fact_id" in p
+               for item in dfd.get("elements", []) + dfd.get("flows", [])
+               for p in item.get("provenance", []))
+
+
+def flow_ids_identical(derived_dfd: dict, hand_dfd: dict) -> bool:
+    """Exact set equality of flow ids -- deliberately NOT a subset test.
+
+    kidstube_derived numbers its own 27 flows DF1..DF27, which coincidentally CONTAINS the hand
+    DFD's DF1..DF17 while meaning entirely different flows. A subset test reports that DFD as
+    id-preserving and skips the re-anchoring it absolutely needs. Sharing an id string is not
+    sharing a referent.
+    """
+    return {f["id"] for f in derived_dfd["flows"]} == {f["id"] for f in hand_dfd["flows"]}
+
+
+def build(identity: bool, derived_dfd_path: Path | None = None) -> dict:
     hand_gold = _load(HAND_SCENARIO, "gold_standard_threats.json")
     hand_dfd = _load(HAND_SCENARIO, "dfd.json")
-    derived_dfd = json.loads((scenario_dir(DERIVED_SCENARIO) / "dfd.json").read_text())
+    derived_dfd = json.loads((derived_dfd_path or
+                              (scenario_dir(DERIVED_SCENARIO) / "dfd.json")).read_text())
 
     element_map, flow_map = (identity_maps(hand_dfd) if identity
                              else alignment_maps(derived_dfd, hand_dfd))
@@ -181,10 +206,43 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--identity", action="store_true",
                     help="M0: derived DFD is a byte-identical copy, so ids pass through unchanged.")
+    ap.add_argument("--derived-dfd", default=None,
+                    help="Re-anchor against this DFD instead of the committed kidstube_derived "
+                         "one. Every (arm, model, run) assigns its own flow ids and so needs its "
+                         "own gold -- see runs.py.")
+    ap.add_argument("--out", default=None,
+                    help="Write the gold here instead of into the kidstube_derived scenario dir. "
+                         "Required with --derived-dfd unless you mean to overwrite it.")
     args = ap.parse_args()
 
-    gold = build(identity=args.identity)
-    path = emit_scenario_gold(DERIVED_SCENARIO, gold)
+    derived_path = Path(args.derived_dfd) if args.derived_dfd else None
+    if derived_path and not args.out:
+        raise SystemExit("--derived-dfd needs --out; refusing to overwrite the committed "
+                         "kidstube_derived gold with a gold built for a different DFD.")
+
+    if derived_path:
+        hand_dfd = _load(HAND_SCENARIO, "dfd.json")
+        derived = json.loads(derived_path.read_text())
+        if not cites_code_facts(derived):
+            if flow_ids_identical(derived, hand_dfd):
+                print(f"{derived_path} cites no code facts and uses exactly the hand DFD's flow "
+                      f"ids -- no re-anchoring is needed or possible. Point `eval --gold` at "
+                      f"knowledge_base/scenarios/{HAND_SCENARIO}/gold_standard_threats.json; all "
+                      f"41 anchors resolve unchanged and the denominator stays the full 41.")
+                raise SystemExit(0)
+            raise SystemExit(
+                f"{derived_path} cites no code facts, so the alignment map cannot be built from "
+                f"it, and its flow ids differ from the hand DFD's, so the hand gold does not "
+                f"apply either. Re-anchoring a non-fact-cited DFD this way would emit 41 "
+                f"unanchored threats and score a confident 0.00. Refusing.")
+
+    gold = build(identity=args.identity, derived_dfd_path=derived_path)
+    if args.out:
+        path = Path(args.out)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(gold, indent=2) + "\n")
+    else:
+        path = emit_scenario_gold(DERIVED_SCENARIO, gold)
     n = len(gold["threats"])
     unanchored = gold["_meta"]["unanchored_threat_ids"]
     print(f"Wrote {n} re-anchored gold threats -> {path}")

@@ -8,7 +8,10 @@
       "commit": "8e98a1f5254fc85b7f09130b3f71fe5f5da851c4",
       "facts": "adapters/data/kidstube_code_facts.json",
       "adapter_mode": "facts_only",
-      "adapter_version": 1
+      "adapter_version": 1,
+      "backend": "none",
+      "model": "none",
+      "backfilled": "backend/model added Week 12; this arm is deterministic so no model was ever involved"
     },
     "purpose": "Derived from source code by adapters/. Every element and flow cites the code facts it was built from; adapters/verify_dfd.py re-derives those citations against the source rather than trusting them."
   },

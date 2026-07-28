@@ -24,9 +24,10 @@ adapters/                source code -> DFD (Week 10). extract/resolve -> code f
                          synthesize -> DFD citing fact ids; verify_dfd -> re-derives every citation
                          DFD image -> DFD (Week 12). vision.py -> DFD citing pixel boxes;
                          verify_vision.py -> re-derives every box against the image
-scripts/                 gold/DFD builders, verifiers, DFD renderer (all regenerable)
+scripts/                 gold/DFD builders, verifiers, DFD renderer, run summariser (regenerable)
+runs.py                  experiment layout: what identifies a run, and where its artifacts live
 storage/                 index/ (gitignored), generated/ + derived/ + adjudication/ (tracked)
-tests/                   test_kb.py (77), test_generation.py (227), test_adapter.py (135) — all offline
+tests/                   test_kb.py (77), test_generation.py (227), test_adapter.py (165) — all offline
 ```
 
 ## Install
@@ -90,6 +91,38 @@ product: recall and precision require knowing the right answer.
 PYTHONPATH=. python tests/test_kb.py && PYTHONPATH=. python tests/test_generation.py \
   && PYTHONPATH=. python tests/test_adapter.py
 ```
+
+## Multi-model experiments
+
+A `scenario` is a *system* (KidsTube, genomic). A `condition` is an *experimental setting* —
+`<input>_<arm>_<model>` — and lives entirely under `storage/`, so scenario directories never
+become an experiment log. `runs.py` owns the layout:
+
+```
+storage/derived/<scenario>/<condition>/run<n>/dfd.json    # adapter output
+                                             /gold.json   # only if flow ids moved
+storage/generated/<scenario>/<condition>/run<n>/<mode>.json
+```
+
+```bash
+# one condition, one run
+python cli.py derive-image --image diagram.png --scenario kidstube_image_derived --provider azure
+python cli.py generate --scenario kidstube --dfd  storage/derived/kidstube/image_vision-naive_gpt-5-4/run1/dfd.json \
+                                           --out  storage/generated/kidstube/image_vision-naive_gpt-5-4/run1/grounded.json
+python cli.py eval     --scenario kidstube --dfd  .../run1/dfd.json --generated .../run1/grounded.json
+
+PYTHONPATH=. python scripts/summarize_runs.py --write     # aggregates runs -> storage/RUNS.md
+```
+
+`--scenario` still names the system (and supplies its gold); only `--dfd` moves. **`run<n>` is
+never optional**: the `llm` arm's flow recall spans 0.33–0.87 across three runs of the *same*
+model, so one run per model would report sampling noise as a model difference. Comparisons
+aggregate over runs first — `summarize_runs.py` reports `n=1` as a point estimate rather than
+printing a spread of 0.00.
+
+The Week 10–12 artifacts (`storage/derived/kidstube_llm_run1.json`,
+`knowledge_base/scenarios/kidstube_derived/`) are grandfathered in the old flat layout, since
+committed eval reports cite those paths.
 
 ## Scenarios
 

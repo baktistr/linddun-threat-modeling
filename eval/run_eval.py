@@ -19,18 +19,30 @@ def _node_titles() -> dict[str, str]:
     return {nid: n.get("title", "") for tt in trees.values() for nid, n in tt.get("nodes", {}).items()}
 
 
-def _load_gold(scenario: str) -> list[dict]:
-    path = config.KB_DIR / "scenarios" / scenario / "gold_standard_threats.json"
+def _load_gold(scenario: str, gold_path=None) -> list[dict]:
+    """`gold_path` overrides the scenario's own gold, for a per-condition re-anchored copy.
+
+    An LLM adapter arm assigns its own flow ids, so each (arm, model, run) needs its gold
+    re-anchored through that run's alignment map -- the gold cannot be shared across conditions
+    the way the scenario's own can. Accepts either the wrapped {"_meta", "threats"} form or a
+    bare list, since a re-anchored gold written by a script may be either.
+    """
+    from pathlib import Path
+    path = Path(gold_path) if gold_path else (
+        config.KB_DIR / "scenarios" / scenario / "gold_standard_threats.json")
     if not path.exists():
         raise FileNotFoundError(
-            f"No gold_standard_threats.json for scenario '{scenario}' -- eval requires a "
-            f"gold-backed scenario (expected {path})."
+            f"No gold standard at {path} -- eval requires a gold-backed scenario."
         )
-    return json.loads(path.read_text())["threats"]
+    data = json.loads(path.read_text())
+    return data if isinstance(data, list) else data["threats"]
 
 
-def _load_dfd(scenario: str) -> dict:
-    return json.loads((config.KB_DIR / "scenarios" / scenario / "dfd.json").read_text())
+def _load_dfd(scenario: str, dfd_path=None) -> dict:
+    from pathlib import Path
+    path = Path(dfd_path) if dfd_path else (
+        config.KB_DIR / "scenarios" / scenario / "dfd.json")
+    return json.loads(path.read_text())
 
 
 def _load_panoptic_categories() -> dict[str, str]:
@@ -99,13 +111,13 @@ def run_eval_panoptic(scenario: str, generated_path: str) -> str:
 
 
 def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: bool = False,
-            framework: str = "linddun") -> str:
+            framework: str = "linddun", dfd_path=None, gold_path=None) -> str:
     if framework == "panoptic":
         return run_eval_panoptic(scenario, generated_path)
 
     generated = load_generated(generated_path)
-    gold = _load_gold(scenario)
-    dfd = _load_dfd(scenario)
+    gold = _load_gold(scenario, gold_path)
+    dfd = _load_dfd(scenario, dfd_path)
 
     match = match_threats(generated, gold, scenario=scenario, dfd=dfd, strict=strict)
     scores = per_category_scores(generated, gold, match.gen_to_gold, match.matched_gold_ids)

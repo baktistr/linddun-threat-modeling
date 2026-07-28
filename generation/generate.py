@@ -51,12 +51,21 @@ def _load_dfd(scenario: str) -> dict:
 
 
 def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str | None = None,
-                          progress: bool = True) -> list[GeneratedThreat]:
+                          progress: bool = True,
+                          dfd_path: Path | str | None = None) -> list[GeneratedThreat]:
+    """`dfd_path` overrides the scenario's own dfd.json.
+
+    A multi-model experiment produces one DFD per (input, arm, model, run) and they cannot all
+    live in one scenario directory. Without this override, comparing N models would mean minting
+    N scenario directories -- turning knowledge_base/scenarios/ into an experiment log and
+    duplicating each gold standard N times. The scenario is still named because it identifies the
+    SYSTEM (and, for eval, its gold); only the DFD moves. See runs.py.
+    """
     if mode not in MODES:
         raise ValueError(f"mode must be one of {MODES}, got {mode!r}")
 
     backend = get_llm_backend(provider)
-    dfd = _load_dfd(scenario)
+    dfd = json.loads(Path(dfd_path).read_text()) if dfd_path else _load_dfd(scenario)
     elements_by_id = {e["id"]: e for e in dfd["elements"]}
     # Only the two RAG modes need the vector index; the rest never touch it.
     retriever = Retriever.load() if mode in ("rag", "panoptic_rag") else None
@@ -115,9 +124,11 @@ def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str |
     return all_threats
 
 
-def save_generated(scenario: str, mode: str, threats: list[GeneratedThreat]) -> Path:
-    GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    path = GENERATED_DIR / f"{scenario}_{mode}.json"
+def save_generated(scenario: str, mode: str, threats: list[GeneratedThreat],
+                   out: Path | str | None = None) -> Path:
+    """`out` overrides the flat `<scenario>_<mode>.json` name, for per-condition run output."""
+    path = Path(out) if out else GENERATED_DIR / f"{scenario}_{mode}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps([t.to_dict() for t in threats], indent=2))
     return path
 

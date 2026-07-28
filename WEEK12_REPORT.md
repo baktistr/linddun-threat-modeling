@@ -167,9 +167,52 @@ derivability ceiling that is structural for code does not exist for a picture.
 The one category that collapses is **Detecting (1 TP → 0)**, on a 2-threat base, so n is too small
 to read as a finding.
 
+## Multi-model experiment plumbing
+
+Everything above ran as a single model on a single input. Varying the model needed four things,
+because nothing in the repo carried a model at all — a second model would have silently
+overwritten the first, in both `storage/derived/` and `storage/generated/`.
+
+**`runs.py` — what identifies a run.** `condition = <input>_<arm>_<model>`, artifacts under
+`storage/derived/<scenario>/<condition>/run<n>/`. Scenario directories stay one-per-system rather
+than becoming an experiment log. `run<n>` is part of the key from the start, not optional: the
+`llm` arm's flow recall spans 0.33–0.87 across three runs of the *same* model, so a one-run-per-
+model table would present sampling noise as a model difference.
+
+**`--dfd` / `--gold` / `--out` on `generate` and `eval`.** The enabling change — without it every
+condition needs its own scenario directory. `--scenario` still names the system (and supplies its
+gold); only the DFD moves. Verified by re-running the committed image eval through the explicit
+paths and diffing: byte-identical.
+
+**Model recorded on every artifact.** `LLMBackend.model` exposes the concrete model behind the
+provider (`azure` is not an answer to "which model produced this DFD?"), and both adapters write
+it into `_meta`. `kidstube_derived` was backfilled — and the correct value turned out to be
+`model: "none"`, not the Azure model I expected: **it is the `facts_only` arm, which is
+deterministic and never had a model in the loop.** Recorded explicitly rather than left absent,
+since absent is ambiguous between "deterministic" and "nobody wrote it down".
+
+**`scripts/summarize_runs.py`** aggregates runs within a condition to mean ± sd and writes
+`storage/RUNS.md`. A condition with n=1 reports sd as `-`, never `0.00`: zero spread and unknown
+spread are different claims.
+
+Two bugs caught while building this, both in code written this week:
+
+1. **`OpenAIBackend.call_tool` accepted `max_tokens` and never sent it** (pre-existing). A
+   16000-token adapter payload would have run under the endpoint default and truncated mid-JSON —
+   the exact failure the Azure backend already documents. Now sends `max_completion_tokens`,
+   falling back to `max_tokens` on the 400 that rejects it (a rejected request costs nothing, so
+   the retry is free), and turns `finish_reason=length` into a budget error.
+2. **My own id-passthrough check was unsound.** It tested whether the hand DFD's flow ids were a
+   *subset* of the derived DFD's, to detect when re-anchoring is unnecessary. But
+   `kidstube_derived` numbers its 27 flows `DF1..DF27`, which coincidentally *contains*
+   `DF1..DF17` while meaning entirely different flows — so the check declared it id-preserving and
+   would have skipped the re-anchoring it absolutely needs. Replaced with two sound tests: does
+   the DFD cite `fact_id`s at all (the precondition of the alignment algorithm), and are the flow
+   id sets *equal*. Sharing an id string is not sharing a referent.
+
 ## Tests
 
-**439 offline, all passing** (test_kb 77, test_generation 227, test_adapter 135, up from 107). The
+**469 offline, all passing** (test_kb 77, test_generation 227, test_adapter 165, up from 107). The
 new adapter tests cover the absent confabulation guard, `bbox` as a third vocabulary, the
 verifier's freedom from any model or network, scale calibration surfacing rather than hiding the
 frame mismatch, the text-only backend path staying a bare string, and an offline prompt-build

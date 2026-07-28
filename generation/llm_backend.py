@@ -87,6 +87,17 @@ def _as_openai_tool(schema: dict) -> dict:
 class LLMBackend(ABC):
     name: str
 
+    @property
+    def model(self) -> str:
+        """The concrete model/deployment behind this backend.
+
+        Separate from `name` (the provider) because that is the axis a multi-model experiment
+        varies: "azure" is not an answer to "which model produced this DFD?". Every derived
+        artifact records it, so a run stays attributable after the config that produced it moves
+        on -- see runs.py.
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
@@ -117,6 +128,10 @@ class AnthropicBackend(LLMBackend):
             raise RuntimeError("ANTHROPIC_API_KEY not set (see .env.example).")
         import anthropic
         self.client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
+
+    @property
+    def model(self) -> str:
+        return config.CLAUDE_MODEL
 
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
@@ -149,19 +164,50 @@ class OpenAIBackend(LLMBackend):
             kwargs["base_url"] = config.OPENAI_BASE_URL
         self.client = openai.OpenAI(**kwargs)
 
+    @property
+    def model(self) -> str:
+        return config.OPENAI_MODEL
+
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
                   image: ImageInput | None = None) -> dict:
+        """Sends the token budget, unlike before.
+
+        This method accepted `max_tokens` and never passed it on, so a 16000-token adapter
+        payload silently ran under whatever the endpoint's default was and truncated mid-JSON --
+        the exact failure the Azure backend already documents, and one that reads as a model
+        failure rather than a budget one. Newer models want `max_completion_tokens` while
+        OpenAI-compatible endpoints (Groq, Together, Ollama) still take `max_tokens`, so try the
+        modern name and fall back on the 400 that rejects it. A rejected request costs nothing,
+        so the retry is free; sending neither was not.
+        """
         name = tool_schema["name"]
-        resp = self.client.chat.completions.create(
+        kwargs = dict(
             model=config.OPENAI_MODEL,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},
             messages=[{"role": "user", "content": _openai_content(prompt, image)}],
         )
-        for call in resp.choices[0].message.tool_calls or []:
+        try:
+            resp = self.client.chat.completions.create(
+                **kwargs, max_completion_tokens=max_tokens)
+        except Exception as e:                       # openai.BadRequestError, kept SDK-agnostic
+            if "max_completion_tokens" not in str(e) and "max_tokens" not in str(e):
+                raise
+            resp = self.client.chat.completions.create(**kwargs, max_tokens=max_tokens)
+        choice = resp.choices[0]
+        for call in choice.message.tool_calls or []:
             if call.function.name == name:
-                return json.loads(call.function.arguments)
+                try:
+                    return json.loads(call.function.arguments)
+                except json.JSONDecodeError as e:
+                    # Same budget-vs-model distinction the Azure backend already makes.
+                    if choice.finish_reason == "length":
+                        raise RuntimeError(
+                            f"tool response for {name!r} was truncated at {max_tokens} tokens "
+                            f"(finish_reason=length); the payload did not fit. Raise the budget "
+                            f"for this call.") from e
+                    raise
         return {}
 
 
@@ -186,6 +232,10 @@ class AzureFoundryBackend(LLMBackend):
             api_key=config.AZURE_AI_API_KEY,
             api_version=config.AZURE_AI_API_VERSION,
         )
+
+    @property
+    def model(self) -> str:
+        return config.AZURE_AI_MODEL
 
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
