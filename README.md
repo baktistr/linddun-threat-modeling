@@ -22,9 +22,11 @@ generation/              per-flow prompts -> threats; llm_backend.py (Anthropic/
 eval/                    match.py, metrics.py, reachability.py, adjudicate.py, run_eval.py
 adapters/                source code -> DFD (Week 10). extract/resolve -> code facts with file:line;
                          synthesize -> DFD citing fact ids; verify_dfd -> re-derives every citation
+                         DFD image -> DFD (Week 12). vision.py -> DFD citing pixel boxes;
+                         verify_vision.py -> re-derives every box against the image
 scripts/                 gold/DFD builders, verifiers, DFD renderer (all regenerable)
 storage/                 index/ (gitignored), generated/ + derived/ + adjudication/ (tracked)
-tests/                   test_kb.py (77), test_generation.py (227), test_adapter.py (90) — all offline
+tests/                   test_kb.py (77), test_generation.py (227), test_adapter.py (135) — all offline
 ```
 
 ## Install
@@ -85,7 +87,8 @@ product: recall and precision require knowing the right answer.
 ### Tests
 
 ```bash
-python tests/test_kb.py && python tests/test_generation.py && python tests/test_adapter.py
+PYTHONPATH=. python tests/test_kb.py && PYTHONPATH=. python tests/test_generation.py \
+  && PYTHONPATH=. python tests/test_adapter.py
 ```
 
 ## Scenarios

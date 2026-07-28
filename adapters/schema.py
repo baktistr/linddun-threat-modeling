@@ -250,6 +250,74 @@ DFD_FLOWS_NAIVE_TOOL_SCHEMA = {
 }
 
 
+# The vision arm's variant: an OPEN citation vocabulary over PIXELS. The model reads a diagram
+# image and self-reports the bounding box it read each element or flow from, exactly as
+# llm_naive self-reports a file:line. Same ablation, one modality over -- and the same absence of
+# a guard, since no detector produced a candidate list for it to pick from.
+_BBOX_CITATIONS = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "x": {"type": "integer"}, "y": {"type": "integer"},
+            "w": {"type": "integer"}, "h": {"type": "integer"},
+            "label_text": {"type": "string",
+                           "description": "The text you read inside or beside this region."},
+        },
+        "required": ["x", "y", "w", "h", "label_text"],
+    },
+    "description": "Where in the IMAGE this comes from, as pixel boxes with the origin top-left.",
+}
+
+DFD_ELEMENTS_VISION_TOOL_SCHEMA = {
+    "name": "emit_dfd_elements",
+    "description": DFD_ELEMENTS_TOOL_SCHEMA["description"],
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "elements": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        **{k: v for k, v in
+                           DFD_ELEMENTS_TOOL_SCHEMA["input_schema"]["properties"]["elements"]
+                           ["items"]["properties"].items() if k != "fact_ids"},
+                        "citations": _BBOX_CITATIONS,
+                    },
+                    "required": ["id", "type", "name", "citations"],
+                },
+            },
+        },
+        "required": ["elements"],
+    },
+}
+
+DFD_FLOWS_VISION_TOOL_SCHEMA = {
+    "name": "emit_dfd_flows",
+    "description": DFD_FLOWS_TOOL_SCHEMA["description"],
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "flows": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        **{k: v for k, v in
+                           DFD_FLOWS_TOOL_SCHEMA["input_schema"]["properties"]["flows"]
+                           ["items"]["properties"].items() if k != "fact_ids"},
+                        "citations": _BBOX_CITATIONS,
+                    },
+                    "required": ["id", "source", "destination", "description", "citations"],
+                },
+            },
+        },
+        "required": ["flows"],
+    },
+}
+
+
 def schema_version(dfd: dict) -> int:
     """A DFD with no declared version is v1 -- that covers the four hand-authored files, none of
     which will ever be rewritten just to carry a version stamp."""
@@ -257,10 +325,15 @@ def schema_version(dfd: dict) -> int:
 
 
 def _validate_provenance(prov, where: str, errors: list[str]) -> None:
-    """A provenance entry cites EITHER a fact_id (closed vocabulary, the `llm`/`facts_only` arms)
-    OR a file+line (open vocabulary, the `llm_naive` arm) -- never both, never neither. Both at
-    once would let a caller quietly disagree with itself about which vocabulary is in force, and
-    the whole point of the split is that the two are measured separately."""
+    """A provenance entry cites exactly ONE vocabulary -- never two, never none.
+
+      fact_id            closed, the `llm`/`facts_only` arms
+      file + line        open over source text, the `llm_naive` arm
+      bbox               open over image pixels, the `vision_naive` arm (adapters/vision.py)
+
+    Two at once would let a caller quietly disagree with itself about which vocabulary is in
+    force, and the whole point of the split is that they are measured separately.
+    """
     if not isinstance(prov, list):
         errors.append(f"{where}: 'provenance' must be a list")
         return
@@ -270,13 +343,22 @@ def _validate_provenance(prov, where: str, errors: list[str]) -> None:
             continue
         has_fact = "fact_id" in p
         has_loc = "file" in p and "line" in p
-        if has_fact and has_loc:
-            errors.append(f"{where}: provenance[{i}] cites both a fact_id and a file:line "
-                          f"(pick one vocabulary)")
-        elif not has_fact and not has_loc:
-            errors.append(f"{where}: provenance[{i}] cites neither a fact_id nor a file+line")
+        has_bbox = "bbox" in p
+        n = sum((has_fact, has_loc, has_bbox))
+        if n > 1:
+            errors.append(f"{where}: provenance[{i}] cites more than one vocabulary "
+                          f"(fact_id/file:line/bbox -- pick one)")
+        elif n == 0:
+            errors.append(f"{where}: provenance[{i}] cites no vocabulary "
+                          f"(expected a fact_id, a file+line, or a bbox)")
         if has_loc and not isinstance(p.get("line"), int):
             errors.append(f"{where}: provenance[{i}] 'line' must be an int, got {p.get('line')!r}")
+        if has_bbox:
+            box = p["bbox"]
+            if (not isinstance(box, list) or len(box) != 4
+                    or not all(isinstance(v, int) for v in box)):
+                errors.append(f"{where}: provenance[{i}] 'bbox' must be [x, y, w, h] of ints, "
+                              f"got {box!r}")
 
 
 def validate_dfd(dfd: dict) -> list[str]:

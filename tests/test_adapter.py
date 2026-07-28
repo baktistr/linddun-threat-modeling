@@ -72,12 +72,12 @@ def test_schema_rejects_broken_dfds():
 
     d = copy.deepcopy(base)
     d["elements"][0]["provenance"] = [{"fact_id": "F0001", "file": "a.js", "line": 3}]
-    check(any("both a fact_id and a file:line" in e for e in validate_dfd(d)),
+    check(any("more than one vocabulary" in e for e in validate_dfd(d)),
           "provenance citing both vocabularies at once is rejected")
 
     d = copy.deepcopy(base)
     d["elements"][0]["provenance"] = [{"note": "trust me"}]
-    check(any("neither a fact_id nor a file+line" in e for e in validate_dfd(d)),
+    check(any("cites no vocabulary" in e for e in validate_dfd(d)),
           "provenance citing nothing is rejected")
 
     d = copy.deepcopy(base)
@@ -712,6 +712,135 @@ def test_verifier_takes_no_llm_and_no_network():
         check(forbidden not in src, f"verify_dfd.py never imports/mentions {forbidden!r}")
 
 
+def test_vision_arm_has_no_confabulation_guard():
+    """The image arm's absent guard, mirroring test_naive_arm_has_no_confabulation_guard.
+
+    An element citing a box that lands nowhere -- or citing nothing at all -- must be KEPT, so
+    that verify_vision.py gets to report it. If acceptance quietly dropped it, the arm would
+    measure the guard instead of the model.
+    """
+    print("\n[vision arm: no confabulation guard]")
+    from adapters.vision import _accept_elements, _accept_flows
+
+    raw = [{"id": "P1", "type": "Process", "name": "Invented Service",
+            "citations": [{"x": 999999, "y": 999999, "w": 10, "h": 10, "label_text": "nope"}]},
+           {"id": "EE1", "type": "ExternalEntity", "name": "Uncited Actor", "citations": []}]
+    kept, rejected = _accept_elements(raw)
+    check(len(kept) == 2, "an element citing an off-image box is kept, not dropped")
+    check(rejected == [], "and nothing is rejected for citing badly")
+    check(kept[1]["provenance"] == [], "an element citing nothing keeps empty provenance")
+
+    malformed = [{"id": "P2", "type": "Process", "name": "Bad Box",
+                  "citations": [{"x": "a", "y": 1, "w": 1, "h": 1, "label_text": "x"}]}]
+    kept2, _ = _accept_elements(malformed)
+    check(kept2[0]["provenance"] == [],
+          "a malformed box is dropped so the DFD stays schema-valid, but the element survives")
+
+    flows, fl_rejected = _accept_flows(
+        [{"id": "DF1", "source": "P1", "destination": "GHOST", "description": "x",
+          "citations": []}], {"P1", "EE1"})
+    check(flows == [] and len(fl_rejected) == 1,
+          "a flow to a non-emitted element IS rejected (malformed in any vocabulary)")
+
+
+def test_vision_provenance_is_a_third_vocabulary():
+    """bbox provenance validates, and mixing vocabularies does not."""
+    print("\n[schema: bbox is a third citation vocabulary]")
+    dfd = {"_meta": {"schema_version": 2},
+           "elements": [{"id": "P1", "type": "Process", "name": "S",
+                         "provenance": [{"bbox": [1, 2, 3, 4], "label_text": "S"}]}],
+           "flows": []}
+    check(validate_dfd(dfd) == [], "a bbox-cited element is schema-valid")
+
+    mixed = copy.deepcopy(dfd)
+    mixed["elements"][0]["provenance"] = [{"bbox": [1, 2, 3, 4], "fact_id": "F1"}]
+    check(any("more than one vocabulary" in e for e in validate_dfd(mixed)),
+          "citing a bbox AND a fact_id is rejected")
+
+    bad = copy.deepcopy(dfd)
+    bad["elements"][0]["provenance"] = [{"bbox": [1, 2, "3"]}]
+    check(any("bbox" in e for e in validate_dfd(bad)),
+          "a bbox that is not four ints is rejected")
+
+    none = copy.deepcopy(dfd)
+    none["elements"][0]["provenance"] = [{"label_text": "S"}]
+    check(any("no vocabulary" in e for e in validate_dfd(none)),
+          "provenance citing no vocabulary at all is still rejected")
+
+
+def test_vision_verifier_takes_no_llm_and_no_network():
+    """Same rule as verify_dfd: a verifier that asks a model whether the model was right is not a
+    verifier. This one only ever does arithmetic over pixels."""
+    print("\n[verify_vision: deterministic by construction]")
+    src = (config.ROOT / "adapters" / "verify_vision.py").read_text()
+    for forbidden in ("llm_backend", "get_llm_backend", "anthropic", "openai", "requests"):
+        check(forbidden not in src, f"verify_vision.py never imports/mentions {forbidden!r}")
+
+
+def test_vision_scale_calibration_is_reported_not_hidden():
+    """A citation in the wrong coordinate frame must not silently pass, and the frame correction
+    must be visible in the report either way -- the gap between the two rates IS the finding."""
+    print("\n[verify_vision: scale calibration]")
+    import numpy as np
+    from adapters.verify_vision import calibrate_scale, ink_coverage, verify_element_or_flow
+
+    # Two small blobs, each exactly 2x where its citation says. Kept tight on purpose: with big
+    # boxes many scales overlap and the fixture would not discriminate between them.
+    grey = np.full((400, 400), 255, dtype=np.uint8)
+    grey[200:204, 200:204] = 0
+    grey[300:304, 100:104] = 0
+    dfd = {"elements": [{"id": "P1", "type": "Process", "name": "S",
+                         "provenance": [{"bbox": [100, 100, 2, 2]}]},
+                        {"id": "P2", "type": "Process", "name": "T",
+                         "provenance": [{"bbox": [50, 150, 2, 2]}]}], "flows": []}
+
+    check(ink_coverage(dfd, grey, 1.0) == 0.0, "at stated coordinates the boxes land on nothing")
+    scale, cov = calibrate_scale(dfd, grey)
+    check(scale == 2.0 and cov == 1.0, f"calibration recovers the 2.0 frame (got {scale}, {cov})")
+
+    v = verify_element_or_flow(dfd["elements"][0], "element", grey, 400, 400, scale=1.0)
+    check(v.citations_resolvable is True, "the box is in bounds -- resolvable passes")
+    check(v.region_has_content is False, "but it lands on no content -- that check fails")
+    check(v.all_valid is False, "so all_valid is False, not a quiet pass")
+
+    empty = {"elements": [{"id": "P1", "type": "Process", "name": "S", "provenance": []}],
+             "flows": []}
+    ve = verify_element_or_flow(empty["elements"][0], "element", grey, 400, 400)
+    check(ve.all_valid is False and "cites no image region" in ve.reasons[0],
+          "an item citing no region at all fails rather than vacuously passing")
+
+
+def test_vision_image_content_is_only_built_when_an_image_is_given():
+    """The text-only path must stay byte-identical over the wire now that images exist -- every
+    existing generation run depends on it."""
+    print("\n[llm_backend: image is opt-in]")
+    from generation.llm_backend import ImageInput, _anthropic_content, _openai_content
+
+    check(_openai_content("hi", None) == "hi", "openai content with no image is a bare string")
+    check(_anthropic_content("hi", None) == "hi", "anthropic content with no image is a bare string")
+
+    img = ImageInput("QUJD", "image/png")
+    o = _openai_content("hi", img)
+    check(isinstance(o, list) and o[1]["image_url"]["url"].startswith("data:image/png;base64,"),
+          "openai wraps the image as a data: URL part")
+    a = _anthropic_content("hi", img)
+    check(isinstance(a, list) and a[1]["source"]["media_type"] == "image/png",
+          "anthropic wraps the image as a base64 source block")
+
+
+def test_vision_prompts_build_without_format_errors():
+    """The llm_naive lesson: a literal {x, y, w, h} in a prompt is a str.format KeyError that only
+    fires AFTER the first call has been billed. Assemble both prompts with no model."""
+    print("\n[vision prompts build offline]")
+    from adapters.vision import _elements_prompt, _flows_prompt
+
+    ep = _elements_prompt(800, 600)
+    check("800 x 600" in ep, "the elements prompt states the real pixel dimensions")
+    fp = _flows_prompt(800, 600, [{"id": "P1", "type": "Process", "name": "Auth"}])
+    check("P1" in fp and "Auth" in fp, "the flows prompt carries the accepted elements")
+    check("{x, y, w, h}" in fp, "and the literal brace example survives formatting")
+
+
 if __name__ == "__main__":
     test_schema_backward_compatible()
     test_schema_rejects_broken_dfds()
@@ -733,5 +862,11 @@ if __name__ == "__main__":
     test_naive_prompts_build_without_format_errors()
     test_naive_open_citations_verified_against_source()
     test_m4_anchorable_subset_and_restricted_recall()
+    test_vision_arm_has_no_confabulation_guard()
+    test_vision_provenance_is_a_third_vocabulary()
+    test_vision_verifier_takes_no_llm_and_no_network()
+    test_vision_scale_calibration_is_reported_not_hidden()
+    test_vision_image_content_is_only_built_when_an_image_is_given()
+    test_vision_prompts_build_without_format_errors()
     print(f"\n{PASS} passed, {FAIL} failed")
     sys.exit(1 if FAIL else 0)

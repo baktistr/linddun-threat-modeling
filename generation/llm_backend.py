@@ -18,14 +18,57 @@ truncates mid-JSON with no error when it doesn't fit -- the tool call simply fai
 looks like a model failure rather than a budget one.
 """
 from __future__ import annotations
+import base64
 import json
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from pathlib import Path
 
 import config
 from generation.schema import THREAT_TOOL_SCHEMA
 
 TOOL_NAME = THREAT_TOOL_SCHEMA["name"]
 DEFAULT_MAX_TOKENS = 2000
+
+
+@dataclass(frozen=True)
+class ImageInput:
+    """An image to send alongside the prompt, for the DFD-image adapter (adapters/vision.py).
+
+    Carried as base64 rather than a path so backends never touch the filesystem, and so the same
+    ImageInput can be replayed against several providers -- the two vendor message shapes differ
+    only in how they wrap these same bytes.
+    """
+    b64: str
+    media_type: str = "image/png"
+
+    @staticmethod
+    def from_path(path: str | Path) -> "ImageInput":
+        p = Path(path)
+        suffix = p.suffix.lower()
+        media = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+                 ".gif": "image/gif", ".webp": "image/webp"}.get(suffix)
+        if media is None:
+            raise ValueError(f"unsupported image type {suffix!r} for {p}")
+        return ImageInput(base64.b64encode(p.read_bytes()).decode(), media)
+
+
+def _openai_content(prompt: str, image: ImageInput | None):
+    """OpenAI-compatible message content. A bare string when there's no image, so the text-only
+    path over the wire is byte-identical to what it was before images existed."""
+    if image is None:
+        return prompt
+    return [{"type": "text", "text": prompt},
+            {"type": "image_url",
+             "image_url": {"url": f"data:{image.media_type};base64,{image.b64}"}}]
+
+
+def _anthropic_content(prompt: str, image: ImageInput | None):
+    if image is None:
+        return prompt
+    return [{"type": "text", "text": prompt},
+            {"type": "image", "source": {"type": "base64", "media_type": image.media_type,
+                                         "data": image.b64}}]
 
 
 def _as_openai_tool(schema: dict) -> dict:
@@ -46,11 +89,17 @@ class LLMBackend(ABC):
 
     @abstractmethod
     def call_tool(self, prompt: str, tool_schema: dict,
-                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+                  max_tokens: int = DEFAULT_MAX_TOKENS,
+                  image: ImageInput | None = None) -> dict:
         """Return the arguments of the model's forced call to `tool_schema`.
 
         Returns {} if the model produced no parseable call -- callers must treat that as "no
         answer", never as "an empty answer that happens to be valid".
+
+        `image` is the DFD-image adapter's input. It is a parameter here for the same reason
+        `max_tokens` is: welding image handling into one backend would mean either duplicating
+        three providers' auth, or the adapter reaching for a vendor SDK directly. Every text-only
+        caller is unaffected -- with image=None the message content stays a bare string.
         """
 
     def generate_threats(self, prompt: str) -> dict:
@@ -70,14 +119,15 @@ class AnthropicBackend(LLMBackend):
         self.client = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
 
     def call_tool(self, prompt: str, tool_schema: dict,
-                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+                  max_tokens: int = DEFAULT_MAX_TOKENS,
+                  image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
         resp = self.client.messages.create(
             model=config.CLAUDE_MODEL,
             max_tokens=max_tokens,
             tools=[tool_schema],
             tool_choice={"type": "tool", "name": name},
-            messages=[{"role": "user", "content": prompt}],
+            messages=[{"role": "user", "content": _anthropic_content(prompt, image)}],
         )
         for block in resp.content:
             if block.type == "tool_use" and block.name == name:
@@ -100,13 +150,14 @@ class OpenAIBackend(LLMBackend):
         self.client = openai.OpenAI(**kwargs)
 
     def call_tool(self, prompt: str, tool_schema: dict,
-                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+                  max_tokens: int = DEFAULT_MAX_TOKENS,
+                  image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
         resp = self.client.chat.completions.create(
             model=config.OPENAI_MODEL,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},
-            messages=[{"role": "user", "content": prompt}],
+            messages=[{"role": "user", "content": _openai_content(prompt, image)}],
         )
         for call in resp.choices[0].message.tool_calls or []:
             if call.function.name == name:
@@ -137,13 +188,14 @@ class AzureFoundryBackend(LLMBackend):
         )
 
     def call_tool(self, prompt: str, tool_schema: dict,
-                  max_tokens: int = DEFAULT_MAX_TOKENS) -> dict:
+                  max_tokens: int = DEFAULT_MAX_TOKENS,
+                  image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
         resp = self.client.chat.completions.create(
             model=config.AZURE_AI_MODEL,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},
-            messages=[{"role": "user", "content": prompt}],
+            messages=[{"role": "user", "content": _openai_content(prompt, image)}],
             max_completion_tokens=max_tokens,
         )
         choice = resp.choices[0]

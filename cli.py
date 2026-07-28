@@ -220,6 +220,42 @@ def cmd_derive(args):
           f"({args.mode}) -> {out}")
 
 
+def cmd_derive_image(args):
+    """DFD image -> derived scenario. The third input adapter (adapters/vision.py)."""
+    from pathlib import Path
+    from adapters.emit import emit_scenario_dfd
+    from adapters.vision import synthesize_vision_naive
+
+    image = Path(args.image).expanduser().resolve()
+    if not image.exists():
+        raise SystemExit(f"image not found: {image}")
+
+    dfd = synthesize_vision_naive(image, provider=args.provider, scenario_name=args.scenario)
+    out = emit_scenario_dfd(
+        args.scenario, dfd,
+        derived_from={"image": str(image), "image_size": dfd["_meta"]["image_size"],
+                      "adapter_mode": dfd["_meta"]["adapter_mode"],
+                      "backend": dfd["_meta"]["backend"], "adapter_version": 1},
+        purpose="Derived from a DFD image by adapters/vision.py. Every element and flow cites "
+                "the pixel region it was read from; adapters/verify_vision.py re-derives those "
+                "boxes against the image rather than trusting them.")
+    print(f"Derived {len(dfd['elements'])} elements, {len(dfd['flows'])} flows "
+          f"(vision_naive) -> {out}")
+
+
+def cmd_verify_image(args):
+    import json
+    from adapters.verify_vision import format_verification_report, verify_vision_dfd
+
+    dfd = json.loads((config.KB_DIR / "scenarios" / args.scenario / "dfd.json").read_text())
+    image = args.image or dfd.get("_meta", {}).get("derived_from", {}).get("image")
+    if not image:
+        raise SystemExit(f"{args.scenario} has no _meta.derived_from.image -- pass --image PATH.")
+    scale = None if args.calibrate else 1.0
+    vs, used, _ = verify_vision_dfd(dfd, image, scale=scale)
+    print(format_verification_report(vs, image, used, dfd))
+
+
 def cmd_verify_dfd(args):
     import json
     from pathlib import Path
@@ -365,6 +401,25 @@ def main():
                      help="Path to a checkout of the source repo. REQUIRED for --mode llm_naive, "
                           "whose input is the raw source rather than the committed facts.")
     sd.set_defaults(func=cmd_derive)
+
+    si = sub.add_parser("derive-image", help="DFD image -> DFD, emitted as a *_derived scenario.")
+    si.add_argument("--image", required=True, help="Path to the DFD diagram (PNG/JPEG/WebP).")
+    si.add_argument("--scenario", default="kidstube_image_derived",
+                     help="Derived scenario to write. Must end in _derived.")
+    si.add_argument("--provider", default=None,
+                     help="LLM provider. The backend must be able to see images.")
+    si.set_defaults(func=cmd_derive_image)
+
+    sq = sub.add_parser("verify-image",
+                        help="Re-derive every cited pixel box against the image. No LLM.")
+    sq.add_argument("--scenario", default="kidstube_image_derived")
+    sq.add_argument("--image", default=None,
+                     help="Defaults to _meta.derived_from.image in the scenario's dfd.json.")
+    sq.add_argument("--calibrate", action="store_true",
+                     help="Search for the global scale that best maps cited coordinates onto the "
+                          "image. Off by default: the uncalibrated rate is what the citations are "
+                          "worth as emitted. Both are printed either way.")
+    sq.set_defaults(func=cmd_verify_image)
 
     sw = sub.add_parser("verify-dfd", help="Re-derive every citation in a derived DFD. No LLM.")
     sw.add_argument("--scenario", default="kidstube_derived")
