@@ -16,27 +16,27 @@
     "grounded": {
       "precision": {
         "n": 1,
-        "mean": 0.05,
+        "mean": 0.04,
         "sd": null
       },
       "recall": {
         "n": 1,
-        "mean": 0.29,
+        "mean": 0.27,
         "sd": null
       },
       "f1": {
         "n": 1,
-        "mean": 0.09,
+        "mean": 0.07,
         "sd": null
       },
       "citation_all_valid": {
         "n": 1,
-        "mean": 0.84,
+        "mean": 1.0,
         "sd": null
       },
       "n_generated": {
         "n": 1,
-        "mean": 239.0,
+        "mean": 257.0,
         "sd": null
       },
       "unscorable_runs": 0

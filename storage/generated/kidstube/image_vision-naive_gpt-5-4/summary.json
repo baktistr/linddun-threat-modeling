@@ -16,7 +16,7 @@
     "grounded": {
       "precision": {
         "n": 1,
-        "mean": 0.27,
+        "mean": 0.23,
         "sd": null
       },
       "recall": {
@@ -26,17 +26,17 @@
       },
       "f1": {
         "n": 1,
-        "mean": 0.39,
+        "mean": 0.35,
         "sd": null
       },
       "citation_all_valid": {
         "n": 1,
-        "mean": 0.84,
+        "mean": 1.0,
         "sd": null
       },
       "n_generated": {
         "n": 1,
-        "mean": 116.0,
+        "mean": 135.0,
         "sd": null
       },
       "unscorable_runs": 0

@@ -21,7 +21,7 @@
       },
       "recall": {
         "n": 1,
-        "mean": 0.54,
+        "mean": 0.56,
         "sd": null
       },
       "f1": {
@@ -36,7 +36,7 @@
       },
       "n_generated": {
         "n": 1,
-        "mean": 55.0,
+        "mean": 58.0,
         "sd": null
       },
       "unscorable_runs": 0

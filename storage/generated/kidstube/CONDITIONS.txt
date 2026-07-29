@@ -4,15 +4,15 @@ Cross-condition comparison -- kidstube, grounded
   Recall-only by design (a restricted gold makes precision meaningless).
 
   condition                                   el   fl   gen  anchor  R(own)  R(common)
-  dfd_hand_gpt-4o-mini                        12   17    83      41    0.71       0.43
-  dfd_hand_gpt-5-4                            12   17   137      41    0.83       0.71
-  dfd_hand_grok-4-3                           12   17    55      41    0.54       0.43
-  image_vision-naive_gpt-4o-mini              11   17    81      41    0.68       0.57
-  image_vision-naive_gpt-5-4                  12   17   116      41    0.76       0.71
-  image_vision-naive_grok-4-3                 12   17    55      41    0.46       0.29
-  source_llm_gpt-4o-mini                       9   13    62      23    0.52       0.43
-  source_llm_gpt-5-4                          14   36   239      17    0.71       0.57
-  source_llm_grok-4-3                         13   18    61      13    0.46       0.29
+  dfd_hand_gpt-4o-mini                        12   17    81      41    0.68       0.43
+  dfd_hand_gpt-5-4                            12   17   137      41    0.78       0.57
+  dfd_hand_grok-4-3                           12   17    58      41    0.56       0.29
+  image_vision-naive_gpt-4o-mini              11   17    77      41    0.66       0.43
+  image_vision-naive_gpt-5-4                  12   17   135      41    0.76       0.57
+  image_vision-naive_grok-4-3                 12   17    61      41    0.59       0.43
+  source_llm_gpt-4o-mini                       9   13    57      23    0.52       0.29
+  source_llm_gpt-5-4                          14   36   257      17    0.65       0.57
+  source_llm_grok-4-3                         13   18    67      13    0.46       0.43
 
   R(own)    = recall against the gold THAT condition can anchor -- not comparable
               across conditions, because the denominators differ.

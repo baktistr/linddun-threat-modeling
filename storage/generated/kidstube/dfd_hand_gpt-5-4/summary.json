@@ -16,22 +16,22 @@
     "grounded": {
       "precision": {
         "n": 1,
-        "mean": 0.25,
+        "mean": 0.23,
         "sd": null
       },
       "recall": {
         "n": 1,
-        "mean": 0.83,
+        "mean": 0.78,
         "sd": null
       },
       "f1": {
         "n": 1,
-        "mean": 0.38,
+        "mean": 0.36,
         "sd": null
       },
       "citation_all_valid": {
         "n": 1,
-        "mean": 0.83,
+        "mean": 1.0,
         "sd": null
       },
       "n_generated": {

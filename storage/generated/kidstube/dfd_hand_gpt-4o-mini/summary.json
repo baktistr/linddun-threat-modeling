@@ -21,12 +21,12 @@
       },
       "recall": {
         "n": 1,
-        "mean": 0.71,
+        "mean": 0.68,
         "sd": null
       },
       "f1": {
         "n": 1,
-        "mean": 0.47,
+        "mean": 0.46,
         "sd": null
       },
       "citation_all_valid": {
@@ -36,7 +36,7 @@
       },
       "n_generated": {
         "n": 1,
-        "mean": 83.0,
+        "mean": 81.0,
         "sd": null
       },
       "unscorable_runs": 0
