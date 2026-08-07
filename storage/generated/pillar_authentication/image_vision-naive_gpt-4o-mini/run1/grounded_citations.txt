@@ -1,0 +1,12 @@
+Citation validity -- pillar_authentication / image_vision-naive_gpt-4o-mini run1
+  34 generated threats, grounded, over 8 flows
+  NO GOLD STANDARD EXISTS for this system, so precision/recall/F1 are not computed.
+  These checks are gold-free: they re-derive each citation against the knowledge base.
+
+  node_valid_rate        0.97
+  type_applicable_rate   1.00
+  location_valid_rate    1.00
+  all_valid_rate         0.97
+
+  1 failing citation(s):
+    L/L.1.2 @ DF4: tree_node 'L.1.2' not found under type 'L'

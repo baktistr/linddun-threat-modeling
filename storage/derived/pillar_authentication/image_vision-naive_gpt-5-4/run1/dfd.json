@@ -1,0 +1,462 @@
+{
+  "_meta": {
+    "scenario": "pillar_authentication (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "gpt-5.4",
+    "image_size": [
+      2207,
+      1120
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_gpt-5-4",
+    "run": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "user",
+      "provenance": [
+        {
+          "bbox": [
+            848,
+            106,
+            146,
+            72
+          ],
+          "label_text": "user"
+        }
+      ],
+      "rationale": "The label appears inside a rectangle, which denotes an external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            119,
+            298,
+            320,
+            69
+          ],
+          "label_text": "face authentication system"
+        }
+      ],
+      "rationale": "The label appears inside an ellipse on the left side of the diagram, which denotes a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            64,
+            494,
+            398,
+            64
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "rationale": "The label appears inside a large ellipse, which denotes a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "biometric comparison",
+      "provenance": [
+        {
+          "bbox": [
+            495,
+            495,
+            240,
+            67
+          ],
+          "label_text": "biometric comparison"
+        }
+      ],
+      "rationale": "The label appears inside an ellipse in the center-lower area, which denotes a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            778,
+            299,
+            284,
+            66
+          ],
+          "label_text": "face authentication system"
+        }
+      ],
+      "rationale": "The label appears inside a separate ellipse on the right side of the diagram, which denotes a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "P5",
+      "type": "Process",
+      "name": "ML-based feature extraction",
+      "provenance": [
+        {
+          "bbox": [
+            764,
+            493,
+            302,
+            67
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "rationale": "The label appears inside an ellipse below the right-side authentication process, which denotes a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "camera",
+      "provenance": [
+        {
+          "bbox": [
+            1102,
+            491,
+            151,
+            75
+          ],
+          "label_text": "camera"
+        }
+      ],
+      "rationale": "The label appears inside a rectangle, which denotes an external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "ML Moldel",
+      "provenance": [
+        {
+          "bbox": [
+            843,
+            646,
+            146,
+            68
+          ],
+          "label_text": "ML Moldel"
+        }
+      ],
+      "rationale": "The label appears inside a cylindrical/open-topped datastore shape near the bottom center-right.",
+      "confidence": "medium",
+      "uncertainty_note": "The label is drawn as 'ML Moldel' in the diagram; this appears misspelled, but the name is reported exactly as shown."
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            1292,
+            491,
+            179,
+            77
+          ],
+          "label_text": "biometric database"
+        }
+      ],
+      "rationale": "The label appears inside a cylindrical/open-topped datastore shape on the right, which denotes a data store.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF_0",
+      "source": "P4",
+      "destination": "EE1",
+      "description": "DF_0",
+      "provenance": [
+        {
+          "bbox": [
+            1307,
+            183,
+            68,
+            48
+          ],
+          "label_text": "DF_0"
+        },
+        {
+          "bbox": [
+            1211,
+            106,
+            200,
+            72
+          ],
+          "label_text": "user"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_7",
+      "source": "EE1",
+      "destination": "P4",
+      "description": "DF_7",
+      "provenance": [
+        {
+          "bbox": [
+            1391,
+            183,
+            70,
+            49
+          ],
+          "label_text": "DF_7"
+        },
+        {
+          "bbox": [
+            1211,
+            106,
+            200,
+            72
+          ],
+          "label_text": "user"
+        },
+        {
+          "bbox": [
+            1120,
+            299,
+            412,
+            72
+          ],
+          "label_text": "face authentication system"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_1",
+      "source": "P4",
+      "destination": "EE2",
+      "description": "DF_1",
+      "provenance": [
+        {
+          "bbox": [
+            1579,
+            471,
+            74,
+            43
+          ],
+          "label_text": "DF_1"
+        },
+        {
+          "bbox": [
+            1119,
+            299,
+            412,
+            72
+          ],
+          "label_text": "face authentication system"
+        },
+        {
+          "bbox": [
+            1567,
+            492,
+            234,
+            99
+          ],
+          "label_text": "camera"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_5",
+      "source": "P4",
+      "destination": "DS2",
+      "description": "DF_5",
+      "provenance": [
+        {
+          "bbox": [
+            1849,
+            470,
+            74,
+            43
+          ],
+          "label_text": "DF_5"
+        },
+        {
+          "bbox": [
+            1119,
+            299,
+            412,
+            72
+          ],
+          "label_text": "face authentication system"
+        },
+        {
+          "bbox": [
+            1860,
+            492,
+            266,
+            101
+          ],
+          "label_text": "biometric database"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_2",
+      "source": "P1",
+      "destination": "P2",
+      "description": "DF_2",
+      "provenance": [
+        {
+          "bbox": [
+            345,
+            470,
+            76,
+            46
+          ],
+          "label_text": "DF_2"
+        },
+        {
+          "bbox": [
+            169,
+            299,
+            492,
+            72
+          ],
+          "label_text": "face authentication system"
+        },
+        {
+          "bbox": [
+            93,
+            589,
+            578,
+            77
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_3",
+      "source": "P4",
+      "destination": "P5",
+      "description": "DF_3",
+      "provenance": [
+        {
+          "bbox": [
+            1327,
+            470,
+            76,
+            45
+          ],
+          "label_text": "DF_3"
+        },
+        {
+          "bbox": [
+            1119,
+            299,
+            412,
+            72
+          ],
+          "label_text": "face authentication system"
+        },
+        {
+          "bbox": [
+            1102,
+            588,
+            433,
+            77
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_4",
+      "source": "P5",
+      "destination": "DS1",
+      "description": "DF_4",
+      "provenance": [
+        {
+          "bbox": [
+            1325,
+            759,
+            76,
+            46
+          ],
+          "label_text": "DF_4"
+        },
+        {
+          "bbox": [
+            1102,
+            588,
+            433,
+            77
+          ],
+          "label_text": "ML-based feature extraction"
+        },
+        {
+          "bbox": [
+            1203,
+            821,
+            204,
+            101
+          ],
+          "label_text": "ML Moldel"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_6",
+      "source": "P4",
+      "destination": "P3",
+      "description": "DF_6",
+      "provenance": [
+        {
+          "bbox": [
+            1052,
+            469,
+            76,
+            45
+          ],
+          "label_text": "DF_6"
+        },
+        {
+          "bbox": [
+            1119,
+            299,
+            412,
+            72
+          ],
+          "label_text": "face authentication system"
+        },
+        {
+          "bbox": [
+            708,
+            590,
+            366,
+            76
+          ],
+          "label_text": "biometric comparison"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

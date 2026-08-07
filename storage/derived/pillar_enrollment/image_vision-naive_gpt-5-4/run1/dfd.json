@@ -1,0 +1,390 @@
+{
+  "_meta": {
+    "scenario": "pillar_enrollment (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "gpt-5.4",
+    "image_size": [
+      1867,
+      1127
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_gpt-5-4",
+    "run": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "user",
+      "provenance": [
+        {
+          "bbox": [
+            530,
+            106,
+            146,
+            72
+          ],
+          "label_text": "user"
+        },
+        {
+          "bbox": [
+            516,
+            49,
+            176,
+            143
+          ],
+          "label_text": "Boundary 1 / user"
+        }
+      ],
+      "rationale": "A rectangle labeled 'user' is drawn inside Boundary 1, so by the stated notation it is an external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "face authentication enrollment system",
+      "provenance": [
+        {
+          "bbox": [
+            409,
+            298,
+            388,
+            72
+          ],
+          "label_text": "face authentication enrollment system"
+        }
+      ],
+      "rationale": "An ellipse labeled 'face authentication enrollment system' appears centrally in the diagram, indicating a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "ML-based feature extraction",
+      "provenance": [
+        {
+          "bbox": [
+            73,
+            492,
+            300,
+            63
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "rationale": "An ellipse labeled 'ML-based feature extraction' is shown on the left within Boundary 2, matching the process shape.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            403,
+            492,
+            397,
+            67
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "rationale": "An ellipse labeled 'appropriateness check + preprocessing' is shown below the main process, so it is a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "camera",
+      "provenance": [
+        {
+          "bbox": [
+            841,
+            489,
+            144,
+            105
+          ],
+          "label_text": "camera"
+        },
+        {
+          "bbox": [
+            828,
+            434,
+            173,
+            143
+          ],
+          "label_text": "Boundary 3 / camera"
+        }
+      ],
+      "rationale": "A rectangle labeled 'camera' appears within Boundary 3, which by the legend corresponds to an external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "ML Moldel",
+      "provenance": [
+        {
+          "bbox": [
+            149,
+            647,
+            146,
+            95
+          ],
+          "label_text": "ML Moldel"
+        }
+      ],
+      "rationale": "An open-topped bar/cylinder shape labeled 'ML Moldel' is drawn at bottom left, indicating a data store.",
+      "confidence": "high",
+      "uncertainty_note": "The label appears to read 'ML Moldel' in the diagram, which may be a misspelling, but I am preserving the drawn text exactly."
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            1026,
+            489,
+            178,
+            104
+          ],
+          "label_text": "biometric database"
+        },
+        {
+          "bbox": [
+            1014,
+            434,
+            206,
+            142
+          ],
+          "label_text": "Boundary 4 / biometric database"
+        }
+      ],
+      "rationale": "An open-topped bar/cylinder shape labeled 'biometric database' is drawn on the right, indicating a data store.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF_0",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "DF_0",
+      "provenance": [
+        {
+          "bbox": [
+            591,
+            199,
+            66,
+            34
+          ],
+          "label_text": "DF_0"
+        },
+        {
+          "bbox": [
+            530,
+            107,
+            147,
+            70
+          ],
+          "label_text": "user"
+        },
+        {
+          "bbox": [
+            407,
+            298,
+            392,
+            73
+          ],
+          "label_text": "face authentication enrollment system"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_1",
+      "source": "P1",
+      "destination": "EE2",
+      "description": "DF_1",
+      "provenance": [
+        {
+          "bbox": [
+            800,
+            390,
+            47,
+            49
+          ],
+          "label_text": "DF_1"
+        },
+        {
+          "bbox": [
+            407,
+            298,
+            392,
+            73
+          ],
+          "label_text": "face authentication enrollment system"
+        },
+        {
+          "bbox": [
+            840,
+            489,
+            145,
+            73
+          ],
+          "label_text": "camera"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_2",
+      "source": "P1",
+      "destination": "P3",
+      "description": "DF_2",
+      "provenance": [
+        {
+          "bbox": [
+            603,
+            397,
+            47,
+            44
+          ],
+          "label_text": "DF_2"
+        },
+        {
+          "bbox": [
+            407,
+            298,
+            392,
+            73
+          ],
+          "label_text": "face authentication enrollment system"
+        },
+        {
+          "bbox": [
+            402,
+            489,
+            399,
+            69
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_3",
+      "source": "P1",
+      "destination": "P2",
+      "description": "DF_3",
+      "provenance": [
+        {
+          "bbox": [
+            371,
+            397,
+            47,
+            44
+          ],
+          "label_text": "DF_3"
+        },
+        {
+          "bbox": [
+            407,
+            298,
+            392,
+            73
+          ],
+          "label_text": "face authentication enrollment system"
+        },
+        {
+          "bbox": [
+            73,
+            490,
+            300,
+            67
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_4",
+      "source": "P2",
+      "destination": "DS1",
+      "description": "DF_4",
+      "provenance": [
+        {
+          "bbox": [
+            225,
+            587,
+            46,
+            41
+          ],
+          "label_text": "DF_4"
+        },
+        {
+          "bbox": [
+            73,
+            490,
+            300,
+            67
+          ],
+          "label_text": "ML-based feature extraction"
+        },
+        {
+          "bbox": [
+            150,
+            646,
+            145,
+            101
+          ],
+          "label_text": "ML Moldel"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_5",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "DF_5",
+      "provenance": [
+        {
+          "bbox": [
+            999,
+            397,
+            46,
+            41
+          ],
+          "label_text": "DF_5"
+        },
+        {
+          "bbox": [
+            407,
+            298,
+            392,
+            73
+          ],
+          "label_text": "face authentication enrollment system"
+        },
+        {
+          "bbox": [
+            1055,
+            489,
+            185,
+            76
+          ],
+          "label_text": "biometric database"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+PILLAR DFD exports -- vision_naive + grounded, three models
+  images : knowledge_base/PILLAR/dfd_authentication.png, dfd_Enrollment.png
+  n=1 per condition -- POINT ESTIMATES. Measured resampling swings of ~0.05 recall on
+  kidstube mean any small gap here is noise (RESULTS_2026-07-28.md §7).
+  NO GOLD STANDARD exists for either system: no precision, recall or F1 is reported.
+
+  scenario               model           el  fl  threats  box@emit  box@cal  scale   cite
+  pillar_authentication  gpt-4o-mini      8   8       34      0.35     0.58   1.25   0.97
+  pillar_authentication  gpt-5.4          9   8       54      0.59     0.62   1.35   1.00
+  pillar_authentication  grok-4.3         9   8       28      0.41     0.71   1.30   1.00
+  pillar_enrollment      gpt-4o-mini      7   6       27      0.46     0.77   1.25   1.00
+  pillar_enrollment      gpt-5.4          7   6       36      0.50     0.93   1.30   1.00
+  pillar_enrollment      grok-4.3         7   6       19      0.39     0.69   1.25   1.00
+
+  pillar_authentication -- what each model read off the same picture:
+    gpt-4o-mini    flows ['DF1', 'DF2', 'DF3', 'DF4', 'DF5', 'DF6', 'DF7', 'DF0']
+    gpt-5.4        flows ['DF_0', 'DF_7', 'DF_1', 'DF_5', 'DF_2', 'DF_3', 'DF_4', 'DF_6']
+    grok-4.3       flows ['DF_0', 'DF_7', 'DF_2', 'DF_6', 'DF_3', 'DF_1', 'DF_5', 'DF_4']
+    gpt-4o-mini    elements ['user', 'face authentication system', 'appropriateness check + preprocessing', 'biometric comparison', 'ML-based feature extraction', 'ML Model', 'camera', 'biometric database']
+    gpt-5.4        elements ['user', 'face authentication system', 'appropriateness check + preprocessing', 'biometric comparison', 'face authentication system', 'ML-based feature extraction', 'camera', 'ML Moldel', 'biometric database']
+    grok-4.3       elements ['user', 'camera', 'face authentication system', 'appropriateness check + preprocessing', 'biometric comparison', 'ML-based feature extraction', 'face authentication system', 'ML Model', 'biometric database']
+
+  pillar_enrollment -- what each model read off the same picture:
+    gpt-4o-mini    flows ['DF_0', 'DF_1', 'DF_2', 'DF_3', 'DF_4', 'DF_5']
+    gpt-5.4        flows ['DF_0', 'DF_1', 'DF_2', 'DF_3', 'DF_4', 'DF_5']
+    grok-4.3       flows ['DF_0', 'DF_1', 'DF_2', 'DF_3', 'DF_4', 'DF_5']
+    gpt-4o-mini    elements ['user', 'face authentication enrollment system', 'appropriateness check + preprocessing', 'ML-based feature extraction', 'ML Model', 'camera', 'biometric database']
+    gpt-5.4        elements ['user', 'face authentication enrollment system', 'ML-based feature extraction', 'appropriateness check + preprocessing', 'camera', 'ML Moldel', 'biometric database']
+    grok-4.3       elements ['user', 'face authentication enrollment system', 'ML-based feature extraction', 'appropriateness check + preprocessing', 'ML Moldel', 'camera', 'biometric database']

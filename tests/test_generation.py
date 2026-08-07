@@ -555,6 +555,66 @@ def test_llm_backend_routing():
         config.AZURE_AI_ENDPOINT = saved_endpoint
 
 
+def test_gateway_retry_is_narrow_and_never_rerolls_an_answer():
+    """A 5xx is transport; a 4xx is our bug; a bad answer is a RESULT.
+
+    Generation is one call per flow, so a single gateway 500 discards every flow already paid for
+    -- at the ~17% per-call rate measured on grok-4.3 an 8-flow run fails ~78% of the time. Hence
+    the retry. But retrying must never widen past transport: re-rolling a model that answered
+    badly would quietly turn "what the model said" into "what it said once we stopped asking",
+    which is the one thing this project cannot let a number mean.
+    """
+    print("\n[gateway retry: 5xx only, no network]")
+    from generation.llm_backend import AzureFoundryBackend, GATEWAY_RETRIES
+
+    class Boom(Exception):
+        def __init__(self, status):
+            super().__init__(f"status {status}")
+            self.status_code = status
+
+    backend = AzureFoundryBackend.__new__(AzureFoundryBackend)   # no __init__: no client, no key
+
+    calls = {"n": 0}
+
+    def flaky(**kwargs):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise Boom(500)
+        return "recovered"
+
+    backend.client = type("C", (), {"chat": type("Ch", (), {"completions": type(
+        "Co", (), {"create": staticmethod(flaky)})()})()})()
+    check(backend._create_with_retry() == "recovered",
+          f"a 500 is retried and the call recovers (took {calls['n']} attempts)")
+
+    calls["n"] = 0
+
+    def always_400(**kwargs):
+        calls["n"] += 1
+        raise Boom(400)
+
+    backend.client.chat.completions.create = staticmethod(always_400)
+    try:
+        backend._create_with_retry()
+        check(False, "a 400 must surface immediately")
+    except Boom:
+        check(calls["n"] == 1, f"a 400 is NOT retried -- surfaced after {calls['n']} attempt")
+
+    calls["n"] = 0
+
+    def always_500(**kwargs):
+        calls["n"] += 1
+        raise Boom(503)
+
+    backend.client.chat.completions.create = staticmethod(always_500)
+    try:
+        backend._create_with_retry()
+        check(False, "an unrecoverable 5xx must still raise")
+    except Boom:
+        check(calls["n"] == GATEWAY_RETRIES,
+              f"retries are bounded at {GATEWAY_RETRIES}, then the error surfaces")
+
+
 def test_matcher_genomic_location_based():
     print("\n[matcher: genomic uses dfd_source_id/dfd_destination_id, not flow_id string]")
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
@@ -706,6 +766,7 @@ def main():
     test_reachability_kidstube_all_resolved_after_v4_split()
     test_reachability_recall_property()
     test_llm_backend_routing()
+    test_gateway_retry_is_narrow_and_never_rerolls_an_answer()
     test_matcher_genomic_location_based()
     test_matcher_genomic_without_dfd_falls_back_to_coarse()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")

@@ -787,6 +787,29 @@ def test_vision_verifier_takes_no_llm_and_no_network():
         check(forbidden not in src, f"verify_vision.py never imports/mentions {forbidden!r}")
 
 
+def test_vision_ink_check_survives_a_dark_theme_export():
+    """region_has_content must be able to FAIL whatever the diagram's theme.
+
+    The check was `grey < 200` -- dark marks on a light page. A dark-theme export (PILLAR's, for
+    one) puts ~90% of its pixels below that, so the canvas itself reads as ink and every box
+    passes, including one over empty space. A check that cannot fail is worse than no check: it
+    reports 1.00 and the 1.00 means nothing. Background is measured; ink is deviation from it.
+    """
+    print("\n[verify_vision: ink detection is polarity-aware]")
+    import numpy as np
+    from adapters.verify_vision import _has_ink, background_level
+
+    for theme, bg_val, mark in (("light", 255, 0), ("dark", 64, 240)):
+        grey = np.full((400, 400), bg_val, dtype=np.uint8)
+        grey[200:240, 200:240] = mark
+        check(background_level(grey) == bg_val,
+              f"{theme} theme: background read off the image as {bg_val}")
+        check(_has_ink(grey, [200, 200, 40, 40]) is True,
+              f"{theme} theme: a box over the drawn mark lands on content")
+        check(_has_ink(grey, [10, 10, 40, 40]) is False,
+              f"{theme} theme: a box over empty canvas does NOT -- the check can still fail")
+
+
 def test_vision_scale_calibration_is_reported_not_hidden():
     """A citation in the wrong coordinate frame must not silently pass, and the frame correction
     must be visible in the report either way -- the gap between the two rates IS the finding."""
@@ -1049,6 +1072,7 @@ if __name__ == "__main__":
     test_vision_arm_has_no_confabulation_guard()
     test_vision_provenance_is_a_third_vocabulary()
     test_vision_verifier_takes_no_llm_and_no_network()
+    test_vision_ink_check_survives_a_dark_theme_export()
     test_vision_scale_calibration_is_reported_not_hidden()
     test_vision_image_content_is_only_built_when_an_image_is_given()
     test_vision_prompts_build_without_format_errors()

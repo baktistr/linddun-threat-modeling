@@ -1,0 +1,23 @@
+Vision DFD verification -- dfd_Enrollment.png (1867x1127)
+  7 elements, 6 flows, 13 cited boxes
+  canvas background grey 64 (dark theme), ink = |pixel - 64| > 55
+
+  citations_resolvable (box inside the image)   1.00
+  region_has_content   (box lands on ink)       0.38
+  all_valid                                     0.38
+
+  (checks above scored at scale 1.0)
+
+  per-box ink coverage at stated coordinates    0.38
+  per-box ink coverage at best global rescale   0.69  (scale 1.25)
+  -> the citations are real but expressed in a ~1494x902 canvas, not the 1867x1127 the model was given.
+
+  8 item(s) with citation problems:
+    P1: cited box [650, 320, 450, 60] holds no drawn content
+    P2: cited box [200, 420, 350, 60] holds no drawn content
+    DS2: cited box [1100, 530, 220, 70] holds no drawn content
+    DF_1: cited box [1150, 420, 55, 22] holds no drawn content
+    DF_2: cited box [980, 380, 55, 20] holds no drawn content
+    DF_3: cited box [620, 340, 55, 20] holds no drawn content
+    DF_4: cited box [680, 620, 55, 20] holds no drawn content
+    DF_5: cited box [1380, 420, 55, 22] holds no drawn content

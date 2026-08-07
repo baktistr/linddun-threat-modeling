@@ -1,0 +1,247 @@
+[
+  {
+    "scenario": "pillar_authentication",
+    "condition": "image_vision-naive_gpt-4o-mini",
+    "run": 1,
+    "status": "ok",
+    "model": "gpt-4o-mini",
+    "derive_attempts": null,
+    "n_elements": 8,
+    "n_flows": 8,
+    "element_names": [
+      "user",
+      "face authentication system",
+      "appropriateness check + preprocessing",
+      "biometric comparison",
+      "ML-based feature extraction",
+      "ML Model",
+      "camera",
+      "biometric database"
+    ],
+    "flow_ids": [
+      "DF1",
+      "DF2",
+      "DF3",
+      "DF4",
+      "DF5",
+      "DF6",
+      "DF7",
+      "DF0"
+    ],
+    "n_threats": 34,
+    "box_coverage_as_emitted": 0.346,
+    "box_coverage_calibrated": 0.577,
+    "box_scale": 1.25,
+    "citations": {
+      "n": 34,
+      "node_valid": 0.9705882352941176,
+      "type_applicable": 1.0,
+      "location_valid": 1.0,
+      "all_valid": 0.9705882352941176
+    },
+    "n_citation_failures": 1
+  },
+  {
+    "scenario": "pillar_authentication",
+    "condition": "image_vision-naive_gpt-5-4",
+    "run": 1,
+    "status": "ok",
+    "model": "gpt-5.4",
+    "derive_attempts": null,
+    "n_elements": 9,
+    "n_flows": 8,
+    "element_names": [
+      "user",
+      "face authentication system",
+      "appropriateness check + preprocessing",
+      "biometric comparison",
+      "face authentication system",
+      "ML-based feature extraction",
+      "camera",
+      "ML Moldel",
+      "biometric database"
+    ],
+    "flow_ids": [
+      "DF_0",
+      "DF_7",
+      "DF_1",
+      "DF_5",
+      "DF_2",
+      "DF_3",
+      "DF_4",
+      "DF_6"
+    ],
+    "n_threats": 54,
+    "box_coverage_as_emitted": 0.594,
+    "box_coverage_calibrated": 0.625,
+    "box_scale": 1.35,
+    "citations": {
+      "n": 54,
+      "node_valid": 1.0,
+      "type_applicable": 1.0,
+      "location_valid": 1.0,
+      "all_valid": 1.0
+    },
+    "n_citation_failures": 0
+  },
+  {
+    "scenario": "pillar_authentication",
+    "condition": "image_vision-naive_grok-4-3",
+    "run": 1,
+    "status": "ok",
+    "model": "grok-4.3",
+    "derive_attempts": 3,
+    "n_elements": 9,
+    "n_flows": 8,
+    "element_names": [
+      "user",
+      "camera",
+      "face authentication system",
+      "appropriateness check + preprocessing",
+      "biometric comparison",
+      "ML-based feature extraction",
+      "face authentication system",
+      "ML Model",
+      "biometric database"
+    ],
+    "flow_ids": [
+      "DF_0",
+      "DF_7",
+      "DF_2",
+      "DF_6",
+      "DF_3",
+      "DF_1",
+      "DF_5",
+      "DF_4"
+    ],
+    "n_threats": 28,
+    "box_coverage_as_emitted": 0.412,
+    "box_coverage_calibrated": 0.706,
+    "box_scale": 1.3,
+    "citations": {
+      "n": 28,
+      "node_valid": 1.0,
+      "type_applicable": 1.0,
+      "location_valid": 1.0,
+      "all_valid": 1.0
+    },
+    "n_citation_failures": 0
+  },
+  {
+    "scenario": "pillar_enrollment",
+    "condition": "image_vision-naive_gpt-4o-mini",
+    "run": 1,
+    "status": "ok",
+    "model": "gpt-4o-mini",
+    "derive_attempts": null,
+    "n_elements": 7,
+    "n_flows": 6,
+    "element_names": [
+      "user",
+      "face authentication enrollment system",
+      "appropriateness check + preprocessing",
+      "ML-based feature extraction",
+      "ML Model",
+      "camera",
+      "biometric database"
+    ],
+    "flow_ids": [
+      "DF_0",
+      "DF_1",
+      "DF_2",
+      "DF_3",
+      "DF_4",
+      "DF_5"
+    ],
+    "n_threats": 27,
+    "box_coverage_as_emitted": 0.462,
+    "box_coverage_calibrated": 0.769,
+    "box_scale": 1.25,
+    "citations": {
+      "n": 27,
+      "node_valid": 1.0,
+      "type_applicable": 1.0,
+      "location_valid": 1.0,
+      "all_valid": 1.0
+    },
+    "n_citation_failures": 0
+  },
+  {
+    "scenario": "pillar_enrollment",
+    "condition": "image_vision-naive_gpt-5-4",
+    "run": 1,
+    "status": "ok",
+    "model": "gpt-5.4",
+    "derive_attempts": null,
+    "n_elements": 7,
+    "n_flows": 6,
+    "element_names": [
+      "user",
+      "face authentication enrollment system",
+      "ML-based feature extraction",
+      "appropriateness check + preprocessing",
+      "camera",
+      "ML Moldel",
+      "biometric database"
+    ],
+    "flow_ids": [
+      "DF_0",
+      "DF_1",
+      "DF_2",
+      "DF_3",
+      "DF_4",
+      "DF_5"
+    ],
+    "n_threats": 36,
+    "box_coverage_as_emitted": 0.5,
+    "box_coverage_calibrated": 0.929,
+    "box_scale": 1.3,
+    "citations": {
+      "n": 36,
+      "node_valid": 1.0,
+      "type_applicable": 1.0,
+      "location_valid": 1.0,
+      "all_valid": 1.0
+    },
+    "n_citation_failures": 0
+  },
+  {
+    "scenario": "pillar_enrollment",
+    "condition": "image_vision-naive_grok-4-3",
+    "run": 1,
+    "status": "ok",
+    "model": "grok-4.3",
+    "derive_attempts": 1,
+    "n_elements": 7,
+    "n_flows": 6,
+    "element_names": [
+      "user",
+      "face authentication enrollment system",
+      "ML-based feature extraction",
+      "appropriateness check + preprocessing",
+      "ML Moldel",
+      "camera",
+      "biometric database"
+    ],
+    "flow_ids": [
+      "DF_0",
+      "DF_1",
+      "DF_2",
+      "DF_3",
+      "DF_4",
+      "DF_5"
+    ],
+    "n_threats": 19,
+    "box_coverage_as_emitted": 0.385,
+    "box_coverage_calibrated": 0.692,
+    "box_scale": 1.25,
+    "citations": {
+      "n": 19,
+      "node_valid": 1.0,
+      "type_applicable": 1.0,
+      "location_valid": 1.0,
+      "all_valid": 1.0
+    },
+    "n_citation_failures": 0
+  }
+]

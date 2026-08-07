@@ -1,0 +1,23 @@
+Vision DFD verification -- dfd_authentication.png (2207x1120)
+  9 elements, 8 flows, 32 cited boxes
+  canvas background grey 64 (dark theme), ink = |pixel - 64| > 55
+
+  citations_resolvable (box inside the image)   1.00
+  region_has_content   (box lands on ink)       0.47
+  all_valid                                     0.47
+
+  (checks above scored at scale 1.0)
+
+  per-box ink coverage at stated coordinates    0.59
+  per-box ink coverage at best global rescale   0.62  (scale 1.35)
+
+  9 item(s) with citation problems:
+    EE1: cited box [848, 106, 146, 72] holds no drawn content
+    P1: cited box [119, 298, 320, 69] holds no drawn content
+    P4: cited box [778, 299, 284, 66] holds no drawn content
+    DF_7: cited box [1120, 299, 412, 72] holds no drawn content
+    DF_1: cited box [1579, 471, 74, 43] holds no drawn content
+    DF_5: cited box [1849, 470, 74, 43] holds no drawn content
+    DF_2: cited box [169, 299, 492, 72] holds no drawn content
+    DF_3: cited box [1119, 299, 412, 72] holds no drawn content
+    DF_6: cited box [1119, 299, 412, 72] holds no drawn content

@@ -1,0 +1,380 @@
+{
+  "_meta": {
+    "scenario": "pillar_authentication (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "gpt-4o-mini",
+    "image_size": [
+      2207,
+      1120
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_gpt-4o-mini",
+    "run": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "user",
+      "provenance": [
+        {
+          "bbox": [
+            2135,
+            56,
+            65,
+            35
+          ]
+        },
+        {
+          "bbox": [
+            2125,
+            51,
+            82,
+            55
+          ]
+        },
+        {
+          "bbox": [
+            2155,
+            54,
+            72,
+            40
+          ]
+        }
+      ],
+      "rationale": "An actor outside the system interacting with the face authentication system.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            815,
+            220,
+            261,
+            59
+          ]
+        },
+        {
+          "bbox": [
+            826,
+            215,
+            240,
+            43
+          ]
+        },
+        {
+          "bbox": [
+            850,
+            218,
+            293,
+            57
+          ]
+        }
+      ],
+      "rationale": "A component that transforms data received from the user and processes it through various steps.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            898,
+            304,
+            277,
+            51
+          ]
+        },
+        {
+          "bbox": [
+            880,
+            260,
+            328,
+            104
+          ]
+        }
+      ],
+      "rationale": "A process that checks and prepares data before it is sent for further analysis.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "biometric comparison",
+      "provenance": [
+        {
+          "bbox": [
+            776,
+            478,
+            221,
+            50
+          ]
+        },
+        {
+          "bbox": [
+            783,
+            470,
+            211,
+            61
+          ]
+        }
+      ],
+      "rationale": "This process compares biometric data to determine identity matches.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "ML-based feature extraction",
+      "provenance": [
+        {
+          "bbox": [
+            811,
+            556,
+            233,
+            51
+          ]
+        },
+        {
+          "bbox": [
+            821,
+            550,
+            213,
+            50
+          ]
+        }
+      ],
+      "rationale": "A process that extracts relevant features from the data using machine learning techniques.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "ML Model",
+      "provenance": [
+        {
+          "bbox": [
+            1085,
+            668,
+            134,
+            52
+          ]
+        },
+        {
+          "bbox": [
+            1097,
+            662,
+            130,
+            54
+          ]
+        }
+      ],
+      "rationale": "Storage that holds the machine learning model used for processing data.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "camera",
+      "provenance": [
+        {
+          "bbox": [
+            1083,
+            800,
+            90,
+            36
+          ]
+        },
+        {
+          "bbox": [
+            1068,
+            794,
+            134,
+            35
+          ]
+        }
+      ],
+      "rationale": "An external device that captures biometric data for processing.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            1567,
+            770,
+            215,
+            55
+          ]
+        },
+        {
+          "bbox": [
+            1577,
+            764,
+            205,
+            63
+          ]
+        }
+      ],
+      "rationale": "A storage location for biometric data used for comparisons and verifications.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE2",
+      "destination": "P1",
+      "description": "DF_1: camera",
+      "provenance": [
+        {
+          "bbox": [
+            1030,
+            311,
+            138,
+            32
+          ],
+          "label_text": "DF_1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "P2",
+      "description": "DF_2: face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            760,
+            396,
+            115,
+            24
+          ],
+          "label_text": "DF_2"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF3",
+      "source": "P1",
+      "destination": "P3",
+      "description": "DF_3: face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            792,
+            436,
+            115,
+            24
+          ],
+          "label_text": "DF_3"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF4",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "DF_4: ML Model",
+      "provenance": [
+        {
+          "bbox": [
+            845,
+            589,
+            115,
+            24
+          ],
+          "label_text": "DF_4"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF5",
+      "source": "P3",
+      "destination": "DS2",
+      "description": "DF_5: biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            855,
+            450,
+            115,
+            24
+          ],
+          "label_text": "DF_5"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF6",
+      "source": "P2",
+      "destination": "P3",
+      "description": "DF_6: appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            815,
+            460,
+            115,
+            24
+          ],
+          "label_text": "DF_6"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF7",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "DF_7: user",
+      "provenance": [
+        {
+          "bbox": [
+            816,
+            330,
+            115,
+            24
+          ],
+          "label_text": "DF_7"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF0",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "DF_0: user",
+      "provenance": [
+        {
+          "bbox": [
+            816,
+            329,
+            115,
+            24
+          ],
+          "label_text": "DF_0"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,254 @@
+{
+  "_meta": {
+    "scenario": "pillar_enrollment (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "gpt-4o-mini",
+    "image_size": [
+      1867,
+      1127
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_gpt-4o-mini",
+    "run": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "user",
+      "provenance": [
+        {
+          "bbox": [
+            1089,
+            88,
+            57,
+            28
+          ],
+          "label_text": "user"
+        }
+      ],
+      "rationale": "Identified as an external actor providing data to the system.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "face authentication enrollment system",
+      "provenance": [
+        {
+          "bbox": [
+            654,
+            291,
+            277,
+            90
+          ],
+          "label_text": "face authentication enrollment system"
+        }
+      ],
+      "rationale": "Represents the main process handling face authentication enrollment.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            635,
+            406,
+            327,
+            59
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "rationale": "Indicates a process that checks and preprocesses data.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "ML-based feature extraction",
+      "provenance": [
+        {
+          "bbox": [
+            635,
+            493,
+            226,
+            59
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "rationale": "Indicates a process that extracts features using machine learning.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "ML Model",
+      "provenance": [
+        {
+          "bbox": [
+            648,
+            566,
+            167,
+            66
+          ],
+          "label_text": "ML Model"
+        }
+      ],
+      "rationale": "Represents a data store where the ML model is saved or utilized.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "camera",
+      "provenance": [
+        {
+          "bbox": [
+            1233,
+            712,
+            56,
+            28
+          ],
+          "label_text": "camera"
+        }
+      ],
+      "rationale": "Identified as an external actor providing data to the system.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            1246,
+            804,
+            241,
+            62
+          ],
+          "label_text": "biometric database"
+        }
+      ],
+      "rationale": "Represents a data store where biometric data is held.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF_0",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "DF_0: user input",
+      "provenance": [
+        {
+          "bbox": [
+            564,
+            151,
+            64,
+            23
+          ],
+          "label_text": "DF_0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_1",
+      "source": "EE2",
+      "destination": "P1",
+      "description": "DF_1: video feed",
+      "provenance": [
+        {
+          "bbox": [
+            498,
+            384,
+            68,
+            24
+          ],
+          "label_text": "DF_1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_2",
+      "source": "P1",
+      "destination": "P2",
+      "description": "DF_2: processed data",
+      "provenance": [
+        {
+          "bbox": [
+            648,
+            357,
+            96,
+            21
+          ],
+          "label_text": "DF_2"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_3",
+      "source": "P2",
+      "destination": "P1",
+      "description": "DF_3: appropriateness result",
+      "provenance": [
+        {
+          "bbox": [
+            633,
+            185,
+            74,
+            21
+          ],
+          "label_text": "DF_3"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_4",
+      "source": "P3",
+      "destination": "DS1",
+      "description": "DF_4: features",
+      "provenance": [
+        {
+          "bbox": [
+            658,
+            525,
+            84,
+            21
+          ],
+          "label_text": "DF_4"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_5",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "DF_5: stored data",
+      "provenance": [
+        {
+          "bbox": [
+            673,
+            475,
+            85,
+            21
+          ],
+          "label_text": "DF_5"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

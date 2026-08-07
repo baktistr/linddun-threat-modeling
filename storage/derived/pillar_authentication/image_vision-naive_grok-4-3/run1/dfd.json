@@ -1,0 +1,327 @@
+{
+  "_meta": {
+    "scenario": "pillar_authentication (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "grok-4.3",
+    "image_size": [
+      2207,
+      1120
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_grok-4-3",
+    "run": 1,
+    "derive_attempts": 3
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "user",
+      "provenance": [
+        {
+          "bbox": [
+            920,
+            70,
+            220,
+            90
+          ],
+          "label_text": "user"
+        }
+      ],
+      "rationale": "Rectangle shape with label 'user' inside the top blue dashed boundary indicates an external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "camera",
+      "provenance": [
+        {
+          "bbox": [
+            1180,
+            530,
+            170,
+            80
+          ],
+          "label_text": "camera"
+        }
+      ],
+      "rationale": "Light blue rectangle labeled 'camera' inside Boundary 3 identifies this external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            180,
+            230,
+            280,
+            70
+          ],
+          "label_text": "face authentication system"
+        }
+      ],
+      "rationale": "Ellipse shape labeled 'face authentication system' on the left side of Boundary 2.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            170,
+            430,
+            360,
+            65
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "rationale": "Ellipse directly below P1 connected by DF_2 arrow.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "biometric comparison",
+      "provenance": [
+        {
+          "bbox": [
+            480,
+            380,
+            260,
+            60
+          ],
+          "label_text": "biometric comparison"
+        }
+      ],
+      "rationale": "Ellipse shape receiving flow DF_6 and labeled as shown.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "ML-based feature extraction",
+      "provenance": [
+        {
+          "bbox": [
+            680,
+            480,
+            310,
+            60
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "rationale": "Ellipse in the lower middle of Boundary 2 with outgoing DF_4 to the datastore.",
+      "confidence": "high"
+    },
+    {
+      "id": "P5",
+      "type": "Process",
+      "name": "face authentication system",
+      "provenance": [
+        {
+          "bbox": [
+            870,
+            290,
+            300,
+            65
+          ],
+          "label_text": "face authentication system"
+        }
+      ],
+      "rationale": "Second ellipse instance labeled 'face authentication system' receiving DF_0/DF_7 and connected to other processes.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "ML Model",
+      "provenance": [
+        {
+          "bbox": [
+            740,
+            680,
+            210,
+            85
+          ],
+          "label_text": "ML Model"
+        }
+      ],
+      "rationale": "Open-topped bar (datastore symbol) at bottom center receiving DF_4.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            1480,
+            480,
+            230,
+            90
+          ],
+          "label_text": "biometric database"
+        }
+      ],
+      "rationale": "Open-topped bar symbol inside Boundary 4 with incoming DF_5 arrow.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF_0",
+      "source": "P5",
+      "destination": "EE1",
+      "description": "face authentication result",
+      "provenance": [
+        {
+          "bbox": [
+            1050,
+            180,
+            80,
+            30
+          ],
+          "label_text": "DF_0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_7",
+      "source": "EE1",
+      "destination": "P5",
+      "description": "face image / authentication request",
+      "provenance": [
+        {
+          "bbox": [
+            1100,
+            200,
+            80,
+            30
+          ],
+          "label_text": "DF_7"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_2",
+      "source": "P1",
+      "destination": "P2",
+      "description": "face image",
+      "provenance": [
+        {
+          "bbox": [
+            450,
+            380,
+            60,
+            25
+          ],
+          "label_text": "DF_2"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_6",
+      "source": "P5",
+      "destination": "P3",
+      "description": "extracted features",
+      "provenance": [
+        {
+          "bbox": [
+            850,
+            420,
+            60,
+            25
+          ],
+          "label_text": "DF_6"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_3",
+      "source": "P5",
+      "destination": "P4",
+      "description": "preprocessed face data",
+      "provenance": [
+        {
+          "bbox": [
+            1050,
+            480,
+            60,
+            25
+          ],
+          "label_text": "DF_3"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_1",
+      "source": "EE2",
+      "destination": "P5",
+      "description": "captured face image",
+      "provenance": [
+        {
+          "bbox": [
+            1350,
+            350,
+            60,
+            25
+          ],
+          "label_text": "DF_1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_5",
+      "source": "P5",
+      "destination": "DS2",
+      "description": "biometric template",
+      "provenance": [
+        {
+          "bbox": [
+            1550,
+            380,
+            60,
+            25
+          ],
+          "label_text": "DF_5"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_4",
+      "source": "P4",
+      "destination": "DS1",
+      "description": "feature vector",
+      "provenance": [
+        {
+          "bbox": [
+            1050,
+            750,
+            60,
+            25
+          ],
+          "label_text": "DF_4"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

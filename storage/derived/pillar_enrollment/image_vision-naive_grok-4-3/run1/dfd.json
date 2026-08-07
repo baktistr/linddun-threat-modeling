@@ -1,0 +1,255 @@
+{
+  "_meta": {
+    "scenario": "pillar_enrollment (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "grok-4.3",
+    "image_size": [
+      1867,
+      1127
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_grok-4-3",
+    "run": 1,
+    "derive_attempts": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "user",
+      "provenance": [
+        {
+          "bbox": [
+            780,
+            120,
+            180,
+            70
+          ],
+          "label_text": "user"
+        }
+      ],
+      "rationale": "Light blue rectangle containing the label 'user' identifies this as an ExternalEntity per standard DFD shape.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "face authentication enrollment system",
+      "provenance": [
+        {
+          "bbox": [
+            650,
+            320,
+            450,
+            60
+          ],
+          "label_text": "face authentication enrollment system"
+        }
+      ],
+      "rationale": "Ellipse shape with this label indicates a Process that handles authentication data flows.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "ML-based feature extraction",
+      "provenance": [
+        {
+          "bbox": [
+            200,
+            420,
+            350,
+            60
+          ],
+          "label_text": "ML-based feature extraction"
+        }
+      ],
+      "rationale": "Ellipse containing the label shows this ML component as a Process.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "appropriateness check + preprocessing",
+      "provenance": [
+        {
+          "bbox": [
+            550,
+            480,
+            420,
+            55
+          ],
+          "label_text": "appropriateness check + preprocessing"
+        }
+      ],
+      "rationale": "Ellipse shape labeled with this text marks it as a Process for data checking.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "ML Moldel",
+      "provenance": [
+        {
+          "bbox": [
+            280,
+            620,
+            200,
+            70
+          ],
+          "label_text": "ML Moldel"
+        }
+      ],
+      "rationale": "Open-topped bar (cylinder) shape with the label identifies the DataStore.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "camera",
+      "provenance": [
+        {
+          "bbox": [
+            850,
+            520,
+            160,
+            70
+          ],
+          "label_text": "camera"
+        }
+      ],
+      "rationale": "Rectangle with light blue fill and label 'camera' denotes an ExternalEntity.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "biometric database",
+      "provenance": [
+        {
+          "bbox": [
+            1100,
+            530,
+            220,
+            70
+          ],
+          "label_text": "biometric database"
+        }
+      ],
+      "rationale": "Open-topped bar shape labeled as biometric database is a DataStore.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF_0",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "DF_0",
+      "provenance": [
+        {
+          "bbox": [
+            920,
+            180,
+            60,
+            25
+          ],
+          "label_text": "DF_0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_1",
+      "source": "P1",
+      "destination": "EE2",
+      "description": "DF_1",
+      "provenance": [
+        {
+          "bbox": [
+            1150,
+            420,
+            55,
+            22
+          ],
+          "label_text": "DF_1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_2",
+      "source": "P1",
+      "destination": "P3",
+      "description": "DF_2",
+      "provenance": [
+        {
+          "bbox": [
+            980,
+            380,
+            55,
+            20
+          ],
+          "label_text": "DF_2"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_3",
+      "source": "P1",
+      "destination": "P2",
+      "description": "DF_3",
+      "provenance": [
+        {
+          "bbox": [
+            620,
+            340,
+            55,
+            20
+          ],
+          "label_text": "DF_3"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_4",
+      "source": "P2",
+      "destination": "DS1",
+      "description": "DF_4",
+      "provenance": [
+        {
+          "bbox": [
+            680,
+            620,
+            55,
+            20
+          ],
+          "label_text": "DF_4"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF_5",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "DF_5",
+      "provenance": [
+        {
+          "bbox": [
+            1380,
+            420,
+            55,
+            22
+          ],
+          "label_text": "DF_5"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

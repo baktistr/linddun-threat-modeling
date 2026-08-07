@@ -30,6 +30,10 @@ from generation.schema import THREAT_TOOL_SCHEMA
 TOOL_NAME = THREAT_TOOL_SCHEMA["name"]
 DEFAULT_MAX_TOKENS = 2000
 
+# Gateway 5xx retry budget -- see AzureFoundryBackend._create_with_retry for the measurement.
+GATEWAY_RETRIES = 4
+GATEWAY_BACKOFF_SECONDS = 2
+
 
 @dataclass(frozen=True)
 class ImageInput:
@@ -241,11 +245,39 @@ class AzureFoundryBackend(LLMBackend):
     def model(self) -> str:
         return self._model_override or config.AZURE_AI_MODEL
 
+    def _create_with_retry(self, **kwargs):
+        """Retry a 5xx from the gateway. Transport failure, not a model answer.
+
+        Measured on grok-4.3: 1 failure in 6 identical image calls, always a bare 500 ("Failed to
+        reconstruct non-streaming response"), and the failing call ran 49s against 15-31s for the
+        successes -- a gateway timeout wearing a 500. Per call that is survivable; across a run it
+        is not, because generation is one call per flow and ANY failure discards every flow already
+        paid for. At ~17% per call an 8-flow run fails ~78% of the time, which is exactly what a
+        grok-4.3 PILLAR run did: 6 consecutive whole-run failures whose 8 flows all succeeded when
+        retried individually.
+
+        Deliberately narrow. Only 5xx and only from the transport: a 4xx is a request this code
+        built wrong and must surface immediately, and a model that answers badly is a result, never
+        something to re-roll until it agrees.
+        """
+        import time
+        last = None
+        for attempt in range(1, GATEWAY_RETRIES + 1):
+            try:
+                return self.client.chat.completions.create(**kwargs)
+            except Exception as e:
+                status = getattr(e, "status_code", None)
+                if status is None or status < 500 or attempt == GATEWAY_RETRIES:
+                    raise
+                last = e
+                time.sleep(GATEWAY_BACKOFF_SECONDS * attempt)
+        raise last                                          # unreachable; kept for the type
+
     def call_tool(self, prompt: str, tool_schema: dict,
                   max_tokens: int = DEFAULT_MAX_TOKENS,
                   image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
-        resp = self.client.chat.completions.create(
+        resp = self._create_with_retry(
             model=self.model,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},
