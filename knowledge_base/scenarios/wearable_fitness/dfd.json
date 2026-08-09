@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "scenario": "Wearable Fitness & Health Tracking App",
+    "source": "Hand-authored for this repo (2026-08-08) from the author's own scenario specification -- the sixth evaluation scenario, the second of the two the abstract previously listed as planned. Not transcribed from an external assignment or authoritative report; same provenance caveat as smart_home and family_location.",
+    "purpose": "A wearable with GPS plus a companion app: the user logs calorie intake and weight, the device streams exercise and location telemetry, and an analytics service infers health conditions (eating-disorder or diabetes indicators) and daily routines from data queried across sessions. Everything is hosted at a third-party cloud provider. Special-category health inference and cross-session location linkability are the privacy core. All flows Process-mediated so every interaction is reachable with no mapping-table caveats."
+  },
+  "elements": [
+    { "id": "EE1", "type": "ExternalEntity", "name": "User (wearer)" },
+    { "id": "EE2", "type": "ExternalEntity", "name": "Cloud Hosting Provider" },
+    { "id": "P1", "type": "Process", "name": "Wearable Device" },
+    { "id": "P2", "type": "Process", "name": "Companion Mobile App" },
+    { "id": "P3", "type": "Process", "name": "Health Analytics Service" },
+    { "id": "DS1", "type": "DataStore", "name": "Health Log Store" },
+    { "id": "DS2", "type": "DataStore", "name": "Location History Store" }
+  ],
+  "flows": [
+    { "id": "DF1", "source": "EE1", "destination": "P1",
+      "description": "Wearing the device continuously captures sensor telemetry (heart rate, step counts, GPS position, timestamps)" },
+    { "id": "DF2", "source": "P1", "destination": "P2",
+      "description": "Device syncs sensor batches to the companion app (exercise sessions, GPS traces, device id, timestamps)" },
+    { "id": "DF3", "source": "EE1", "destination": "P2",
+      "description": "User manually logs calorie intake, meals, and weight entries in the companion app" },
+    { "id": "DF4", "source": "P2", "destination": "DS1",
+      "description": "App writes health logs (calorie intake, weight history, exercise sessions) to the health log store" },
+    { "id": "DF5", "source": "P2", "destination": "DS2",
+      "description": "App writes GPS location traces with timestamps to the location history store" },
+    { "id": "DF6", "source": "DS1", "destination": "P3",
+      "description": "Analytics service reads calorie, weight, and exercise logs across sessions for health-condition analysis" },
+    { "id": "DF7", "source": "DS2", "destination": "P3",
+      "description": "Analytics service queries location history across sessions to derive daily routine and movement patterns" },
+    { "id": "DF8", "source": "P3", "destination": "P2",
+      "description": "Analytics returns inferred insights to the app (health-condition risk indicators, routine summaries, trend flags)" },
+    { "id": "DF9", "source": "P2", "destination": "EE1",
+      "description": "App dashboard displays trends and inferred condition indicators (eating-disorder or diabetes risk signals) to the user" },
+    { "id": "DF10", "source": "P3", "destination": "EE2",
+      "description": "Analytics data, models, and the full health and location dataset are hosted and replicated at the third-party cloud provider" }
+  ]
+}

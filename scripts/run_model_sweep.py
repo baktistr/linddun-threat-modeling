@@ -58,6 +58,13 @@ def derive_source(scenario: str, model: str, out_dir: Path, provider: str) -> di
     return synthesize_llm(facts, provider=provider, scenario_name=scenario, model=model)
 
 
+def load_facts(scenario: str) -> list:
+    from adapters.schema import CodeFact
+    raw = json.loads((config.ROOT / "adapters" / "data"
+                      / f"{scenario}_code_facts.json").read_text())
+    return [CodeFact.from_dict(f) for f in (raw["facts"] if isinstance(raw, dict) else raw)]
+
+
 def resolve_gold(input_kind: str, dfd_path: Path, run_dir: Path) -> tuple[Path | None, str]:
     """(gold path, note). None means this run cannot be scored on flow-anchored gold."""
     sys.path.insert(0, str(config.ROOT / "scripts"))
@@ -81,10 +88,18 @@ def resolve_gold(input_kind: str, dfd_path: Path, run_dir: Path) -> tuple[Path |
 
 
 ARMS = {"image": "vision_naive", "source": "llm", "dfd": "hand"}
+# The fusion inputs' arm is the ENRICHMENT arm (adapters/enrich.py), chosen per invocation:
+# enrich_llm is the proposal (closed fact-id vocabulary), enrich_facts the deterministic bar.
+FUSION_INPUTS = ("image-src", "dfd-src")
 
 
-def one_condition(model: str, input_kind: str, run: int, provider: str, dry: bool) -> dict:
-    arm = ARMS[input_kind]
+def arm_for(input_kind: str, enrich_arm: str) -> str:
+    return enrich_arm if input_kind in FUSION_INPUTS else ARMS[input_kind]
+
+
+def one_condition(model: str, input_kind: str, run: int, provider: str, dry: bool,
+                  enrich_arm: str = "enrich_llm") -> dict:
+    arm = arm_for(input_kind, enrich_arm)
     cond = runs.condition(input_kind, arm, model)
     run_dir = runs.derived_dir(SCENARIO, cond, run)
     gen_dir = runs.generated_dir(SCENARIO, cond, run)
@@ -99,19 +114,35 @@ def one_condition(model: str, input_kind: str, run: int, provider: str, dry: boo
     # 1. adapter -- except for the control, which has none: it uses the hand DFD unchanged, so
     #    Stage A is held constant and any difference is Stage B (threat elicitation) alone.
     dfd_path = run_dir / "dfd.json"
-    if input_kind == "dfd":
-        _log(f"  [1/4] no adapter -- hand-authored DFD ({model} varies Stage B only)")
+    if input_kind in ("dfd", "dfd-src"):
+        _log(f"  [1/4] no adapter -- hand-authored DFD"
+             + (" (to be enriched)" if input_kind == "dfd-src" else
+                f" ({model} varies Stage B only)"))
         dfd = json.loads((config.KB_DIR / "scenarios" / SCENARIO / "dfd.json").read_text())
         dfd["_meta"] = {**dfd.get("_meta", {}), "adapter_mode": "hand", "backend": "none",
                         "model": "none",
                         "note": "control condition: the hand DFD verbatim, no adapter. The model "
                                 "named in the condition key generated the THREATS, not this DFD."}
     else:
-        _log(f"  [1/4] adapt ({arm}, {model})")
-        dfd = (derive_image if input_kind == "image" else derive_source)(
+        base_arm = "vision_naive" if input_kind == "image-src" else arm
+        _log(f"  [1/4] adapt ({base_arm}, {model})")
+        dfd = (derive_source if input_kind == "source" else derive_image)(
             SCENARIO, model, run_dir, provider)
+    if input_kind in FUSION_INPUTS:
+        from adapters.enrich import enrich_dfd, format_enrichment_report
+        _log(f"  [1b ] enrich ({arm}, "
+             f"{'no model' if arm == 'enrich_facts' else model})")
+        facts = load_facts(SCENARIO)
+        base = dfd
+        dfd = enrich_dfd(base, facts, arm=arm, provider=provider, model=model, verbose=False)
+        report = format_enrichment_report(base, dfd, facts)
+        (run_dir / "enrichment.txt").write_text(report + "\n")
+        _log("        " + "\n        ".join(report.splitlines()[:3]))
+        if "VIOLATED" in report:
+            raise RuntimeError(f"enrichment contract violated -- see {run_dir}/enrichment.txt")
     dfd["_meta"]["condition"] = cond
     dfd["_meta"]["run"] = run
+    dfd["_meta"]["code"] = config.code_state()
     dfd_path.write_text(json.dumps(dfd, indent=2) + "\n")
     _log(f"        {len(dfd['elements'])} elements, {len(dfd['flows'])} flows -> {dfd_path}")
 
@@ -149,6 +180,8 @@ def main():
     ap.add_argument("--inputs", nargs="+", default=["image", "source"], choices=list(runs.INPUTS))
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--provider", default="azure")
+    ap.add_argument("--enrich-arm", default="enrich_llm", choices=["enrich_llm", "enrich_facts"],
+                    help="Which adapters/enrich.py arm the image-src/dfd-src inputs use.")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
@@ -162,12 +195,12 @@ def main():
             for run in range(1, args.runs + 1):
                 try:
                     results.append(one_condition(model, input_kind, run, args.provider,
-                                                 args.dry_run))
+                                                 args.dry_run, enrich_arm=args.enrich_arm))
                 except Exception as e:
                     _log(f"  FAILED: {type(e).__name__}: {e}")
                     traceback.print_exc()
                     results.append({"condition": runs.condition(
-                        input_kind, "vision_naive" if input_kind == "image" else "llm", model),
+                        input_kind, arm_for(input_kind, args.enrich_arm), model),
                         "run": run, "status": "failed", "error": f"{type(e).__name__}: {e}"})
 
     _log("\n" + "=" * 70)

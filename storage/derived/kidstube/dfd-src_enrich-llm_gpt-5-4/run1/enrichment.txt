@@ -1,0 +1,6 @@
+Enrichment verification -- arm=enrich_llm model=gpt-5.4
+  flows enriched        14/17
+  mean description len  38 -> 215 chars
+  rejected enrichments  0
+
+  contract: HOLDS

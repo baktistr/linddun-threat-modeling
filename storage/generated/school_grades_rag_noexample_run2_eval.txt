@@ -1,0 +1,32 @@
+Eval report: scenario=school_grades generated=storage/generated/school_grades_rag_noexample_run2.json
+  n_generated=78 n_gold=20 strict_node_match=False
+
+NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) against the generated threat's flow in dfd.json. 0 gold threats have dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               3    2    0   0.60   1.00   0.75
+I    Identifying           3   13    0   0.19   1.00   0.32
+Nr   Non-repudiation       1    7    1   0.12   0.50   0.20
+D    Detecting             2   12    0   0.14   1.00   0.25
+Dd   Data Disclosure       3    4    2   0.43   0.60   0.50
+U    Unawareness           1   12    1   0.08   0.50   0.13  *
+Nc   Non-compliance        2   13    1   0.13   0.67   0.22  *
+ALL                       15   63    5   0.19   0.75   0.31
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          0.92
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           0.92
+  n_threats_checked        78
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed           5   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.75
+  recall (reachable-adjusted):      0.75   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario school_grades --generated storage/generated/school_grades_rag_noexample_run2.json` to label a sample of the 63 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

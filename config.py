@@ -77,3 +77,36 @@ AZURE_AI_ENDPOINT = os.environ.get("AZURE_AI_ENDPOINT", "")
 AZURE_AI_API_KEY = os.environ.get("AZURE_AI_API_KEY", "")
 AZURE_AI_MODEL = os.environ.get("AZURE_AI_MODEL", "gpt-4o")
 AZURE_AI_API_VERSION = os.environ.get("AZURE_AI_API_VERSION", "2024-12-01-preview")
+
+
+# Sampling temperature for every generation call. Pinned at 0 because nothing used to set it, so
+# every run went out at the provider default of 1.0 -- full sampling -- and the resulting spread
+# (recall ~0.10, citation validity 0.02-0.04 between repeats of one condition) was noise the
+# experiment was paying for by default rather than a property of the task. An evaluation that
+# reports point estimates has to pin the sampler first and repeat second.
+#
+# Set GENERATION_TEMPERATURE=none to send nothing and take the deployment's default -- the setting
+# to use when the QUESTION is about sampling diversity (e.g. whether unioning several runs elicits
+# more threats than one greedy pass), which is a different experiment, not this one's baseline.
+_temp_raw = os.environ.get("GENERATION_TEMPERATURE", "0")
+GENERATION_TEMPERATURE: float | None = (
+    None if _temp_raw.strip().lower() in ("", "none", "default") else float(_temp_raw))
+
+
+def code_state() -> str:
+    """The commit the running code came from, with '-dirty' when tracked files carry
+    uncommitted changes.
+
+    Stamped into every sweep artifact's _meta. RESULTS_2026-08-07.md is why: the model sweep's
+    source-arm runs were produced by a working tree whose adapter threading was only committed
+    afterwards (the recording commit's own code would have raised a TypeError), and the 36-flow
+    outlier that resulted could not be traced to any tree. 'unknown' is recorded when git or the
+    checkout is unavailable, rather than guessed.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(["git", "describe", "--always", "--dirty"], cwd=ROOT,
+                             capture_output=True, text=True, timeout=5, check=True)
+        return out.stdout.strip() or "unknown"
+    except Exception:
+        return "unknown"

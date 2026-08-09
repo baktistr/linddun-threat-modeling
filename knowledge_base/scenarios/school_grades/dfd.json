@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "scenario": "School Grades Management Portal",
+    "source": "Hand-authored for this repo (2026-08-08) from the author's own scenario specification -- the fifth evaluation scenario, one of the two the abstract previously listed as planned. Not transcribed from an external assignment or authoritative report; same provenance caveat as smart_home and family_location.",
+    "purpose": "A K-12 grades portal: students submit assignments and view their own grades, parents view their child's grades, teachers review and grade, an admin manages accounts, and the whole application plus its databases run on a third-party cloud hosting provider. Minors' education records at a third-party processor is the privacy core. All flows Process-mediated so every interaction is reachable with no mapping-table caveats."
+  },
+  "elements": [
+    { "id": "EE1", "type": "ExternalEntity", "name": "Student" },
+    { "id": "EE2", "type": "ExternalEntity", "name": "Parent" },
+    { "id": "EE3", "type": "ExternalEntity", "name": "Teacher" },
+    { "id": "EE4", "type": "ExternalEntity", "name": "School Administrator" },
+    { "id": "EE5", "type": "ExternalEntity", "name": "Cloud Hosting Provider" },
+    { "id": "P1", "type": "Process", "name": "Grades Portal Web App" },
+    { "id": "P2", "type": "Process", "name": "Assignment & Grading Service" },
+    { "id": "DS1", "type": "DataStore", "name": "Assignment Store" },
+    { "id": "DS2", "type": "DataStore", "name": "Grade Records Database" },
+    { "id": "DS3", "type": "DataStore", "name": "Account Directory" }
+  ],
+  "flows": [
+    { "id": "DF1", "source": "EE1", "destination": "P1",
+      "description": "Student logs in and submits an assignment (work file, student id, course, submission timestamp)" },
+    { "id": "DF2", "source": "P1", "destination": "P2",
+      "description": "Portal routes the submission and grading requests to the assignment & grading service (student id, course, file reference, requesting role)" },
+    { "id": "DF3", "source": "P2", "destination": "DS1",
+      "description": "Grading service stores the submitted assignment file with student id, course, and submission time" },
+    { "id": "DF4", "source": "EE3", "destination": "P1",
+      "description": "Teacher logs in and requests the queue of submissions to review for their courses" },
+    { "id": "DF5", "source": "P1", "destination": "EE3",
+      "description": "Portal displays student submissions to the teacher (student names, work content, submission times)" },
+    { "id": "DF6", "source": "EE3", "destination": "P1",
+      "description": "Teacher records a grade and written feedback for a student's assignment (grade, feedback text, student id, grader id)" },
+    { "id": "DF7", "source": "P2", "destination": "DS2",
+      "description": "Grading service writes the grade record (student id, course, grade, feedback, grader id, timestamp)" },
+    { "id": "DF8", "source": "EE1", "destination": "P1",
+      "description": "Student requests their own grades and feedback" },
+    { "id": "DF9", "source": "P1", "destination": "EE1",
+      "description": "Portal displays the student's own grades and teacher feedback to the student" },
+    { "id": "DF10", "source": "EE2", "destination": "P1",
+      "description": "Parent logs in and requests their child's grades (parent account linked to child account)" },
+    { "id": "DF11", "source": "P1", "destination": "EE2",
+      "description": "Portal displays the child's grades, feedback, and submission history to the parent" },
+    { "id": "DF12", "source": "EE4", "destination": "P1",
+      "description": "Administrator creates, modifies, and disables accounts and parent-child links (names, emails, roles, relationships)" },
+    { "id": "DF13", "source": "P2", "destination": "DS3",
+      "description": "Grading service writes account records and parent-child relationship links to the account directory" },
+    { "id": "DF14", "source": "P2", "destination": "EE5",
+      "description": "Nightly database backup and hosting replication ships full grade records, assignments, and account directory to the third-party cloud hosting provider" },
+    { "id": "DF15", "source": "DS2", "destination": "P2",
+      "description": "Grading service reads grade records to build student, parent, and teacher views" }
+  ]
+}

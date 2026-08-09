@@ -1033,6 +1033,140 @@ def test_gold_rebuild_guards_its_own_precondition():
           "...and that subset really does hold -- which is exactly why the test must be equality")
 
 
+def _enrich_fixture():
+    """A tiny image-derived DFD (bbox provenance, thin descriptions) + two code facts."""
+    from adapters.schema import CodeFact
+    dfd = {"_meta": {"schema_version": 2},
+           "elements": [
+               {"id": "EE1", "type": "ExternalEntity", "name": "Parent User",
+                "provenance": [{"bbox": [0, 0, 10, 10]}]},
+               {"id": "P1", "type": "Process", "name": "Auth Service",
+                "provenance": [{"bbox": [20, 0, 10, 10]}]},
+               {"id": "DS1", "type": "DataStore", "name": "User Database",
+                "provenance": [{"bbox": [40, 0, 10, 10]}]}],
+           "flows": [
+               {"id": "DF1", "source": "EE1", "destination": "P1",
+                "description": "parent registration (email, password)",
+                "provenance": [{"bbox": [0, 0, 30, 10]}]},
+               {"id": "DF2", "source": "P1", "destination": "DS1",
+                "description": "store account in users collection",
+                "provenance": [{"bbox": [20, 0, 30, 10]}]}]}
+    facts = [
+        CodeFact(id="Faaa11111", construct="http_route", file="routes/auth.js", line=10,
+                 fields={"method": "POST", "path": "/api/auth/register",
+                         "body_fields": ["email", "password"]}),
+        CodeFact(id="Fbbb22222", construct="db_access", file="routes/auth.js", line=22,
+                 fields={"collection": "users", "op": "insertOne"}),
+    ]
+    return dfd, facts
+
+
+def test_enrichment_structure_is_read_only():
+    """Enrichment may only APPEND semantics. Ids, endpoints, elements, provenance: untouched.
+
+    This is what keeps the whole experiment scoreable: an enriched image DFD still reproduces the
+    hand DFD's flow ids, so resolve_gold takes the identity path and the denominator stays 41/41.
+    A fusion stage that edited structure would be a fourth adapter, not an enrichment."""
+    print("\n[enrich: structure is read-only]")
+    from adapters.enrich import MARKER, enrich_dfd, verify_enrichment
+    dfd, facts = _enrich_fixture()
+    before = copy.deepcopy(dfd)
+
+    out = enrich_dfd(dfd, facts, arm="enrich_facts", verbose=False)
+    check(dfd == before, "the input dict is never mutated")
+    check(out["elements"] == dfd["elements"], "elements byte-identical")
+    check([f["id"] for f in out["flows"]] == [f["id"] for f in dfd["flows"]],
+          "flow ids identical and in order")
+    for o, e in zip(dfd["flows"], out["flows"]):
+        check(e["description"].startswith(o["description"]),
+              f"{e['id']}: original description preserved as prefix")
+        check(o.get("provenance") == e.get("provenance"),
+              f"{e['id']}: provenance untouched (enrichment cites via its own key)")
+    enriched = [f for f in out["flows"] if "enrichment" in f]
+    check(len(enriched) >= 1 and all(MARKER in f["description"] for f in enriched),
+          f"{len(enriched)} flow(s) enriched, each appended behind the marker")
+    check(not any("fact_id" in p for item in out["elements"] + out["flows"]
+                  for p in item.get("provenance", [])),
+          "no fact_id anywhere in provenance -- cites_code_facts stays False, gold path stable")
+    check(validate_dfd(out) == [], "the enriched DFD still conforms to the schema")
+    check(verify_enrichment(dfd, out, facts) == [], "verify_enrichment: contract HOLDS")
+
+
+def test_enrichment_closed_vocabulary():
+    """An enrichment names a real flow and cites resolvable facts, or it is dropped -- the same
+    discipline as _accept_flows: hallucination-resistance as an invariant, not an instruction."""
+    print("\n[enrich: closed vocabulary]")
+    from adapters.enrich import _accept_enrichments
+    flow_ids, fact_ids = {"DF1", "DF2"}, {"Faaa11111", "Fbbb22222"}
+
+    kept, rejected = _accept_enrichments([
+        {"flow_id": "DF1", "data_note": "email, password", "fact_ids": ["Faaa11111", "Fzzz"]},
+        {"flow_id": "DF9", "data_note": "invented flow", "fact_ids": ["Faaa11111"]},
+        {"flow_id": "DF2", "data_note": "ghost evidence", "fact_ids": ["Fnope"]},
+        {"flow_id": "DF1", "data_note": "duplicate", "fact_ids": ["Fbbb22222"]},
+        {"flow_id": "DF2", "data_note": "", "fact_ids": ["Fbbb22222"]},
+    ], flow_ids, fact_ids)
+    check(list(kept) == ["DF1"], f"only the well-formed entry survives (kept {list(kept)})")
+    check(kept["DF1"]["fact_ids"] == ["Faaa11111"],
+          "unresolvable fact ids are filtered from a kept entry")
+    check(len(rejected) == 4,
+          f"invented flow, ghost citation, duplicate, empty note all rejected ({len(rejected)})")
+
+
+def test_enrich_facts_arm_is_deterministic_and_llm_free():
+    """The bar arm must be reproducible and must never reach for a model, even implicitly."""
+    print("\n[enrich: deterministic arm]")
+    import generation.llm_backend as lb
+    from adapters.enrich import enrich_dfd
+    dfd, facts = _enrich_fixture()
+
+    saved = lb.get_llm_backend
+    lb.get_llm_backend = lambda *a, **k: (_ for _ in ()).throw(
+        AssertionError("enrich_facts touched the LLM backend"))
+    try:
+        a = enrich_dfd(dfd, facts, arm="enrich_facts", verbose=False)
+        b = enrich_dfd(dfd, facts, arm="enrich_facts", verbose=False)
+    finally:
+        lb.get_llm_backend = saved
+    check(a == b, "two runs are byte-identical")
+    check(a["_meta"]["enrichment"]["model"] == "none",
+          "records model='none' EXPLICITLY -- deterministic, not unrecorded")
+
+
+def test_enrichment_verifier_catches_violations():
+    """verify_enrichment re-derives the contract from the artifacts; every clause can fail."""
+    print("\n[enrich: verifier can fail]")
+    from adapters.enrich import enrich_dfd, verify_enrichment
+    dfd, facts = _enrich_fixture()
+    out = enrich_dfd(dfd, facts, arm="enrich_facts", verbose=False)
+
+    for tamper, expect, msg in (
+        (lambda d: d["flows"][0].update(destination="DS1"), "endpoints changed",
+         "a rerouted flow is caught"),
+        (lambda d: d["flows"][0].update(description="rewritten"), "not preserved as prefix",
+         "a rewritten description is caught"),
+        (lambda d: d["flows"][0]["provenance"].append({"fact_id": "Faaa11111"}),
+         "fact_id in provenance", "a fact_id smuggled into provenance is caught"),
+        (lambda d: d["flows"][0].setdefault("enrichment", {"fact_ids": []})["fact_ids"].append(
+            "Fghost"), "unresolvable fact id", "an unresolvable enrichment citation is caught"),
+    ):
+        broken = copy.deepcopy(out)
+        tamper(broken)
+        problems = verify_enrichment(dfd, broken, facts)
+        check(any(expect in p for p in problems), msg)
+
+
+def test_fusion_condition_keys_round_trip():
+    """image-src/dfd-src are hyphenated BECAUSE parse_condition splits on underscores."""
+    print("\n[enrich: fusion condition keys]")
+    import runs
+    for input_kind in ("image-src", "dfd-src"):
+        cond = runs.condition(input_kind, "enrich_llm", "gpt-5.4")
+        parsed = runs.parse_condition(cond)
+        check(parsed["input"] == input_kind and parsed["model"] == "gpt-5-4",
+              f"{cond} round-trips (input={parsed['input']}, arm={parsed['arm']})")
+
+
 def test_every_derived_artifact_is_attributable():
     """Which model produced a derived DFD is the axis the experiment varies. An artifact that
     does not say is not comparable, and 'absent' must not be usable as 'deterministic'."""
@@ -1082,6 +1216,11 @@ if __name__ == "__main__":
     test_run_index_parses_a_real_eval_report()
     test_explicit_dfd_and_gold_overrides()
     test_gold_rebuild_guards_its_own_precondition()
+    test_enrichment_structure_is_read_only()
+    test_enrichment_closed_vocabulary()
+    test_enrich_facts_arm_is_deterministic_and_llm_free()
+    test_enrichment_verifier_catches_violations()
+    test_fusion_condition_keys_round_trip()
     test_every_derived_artifact_is_attributable()
     print(f"\n{PASS} passed, {FAIL} failed")
     sys.exit(1 if FAIL else 0)

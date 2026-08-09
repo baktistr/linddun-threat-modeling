@@ -1,6 +1,20 @@
 [
   {
-    "condition": "dfd_hand_gpt-5-4",
-    "status": "dry-run"
+    "condition": "dfd-src_enrich-llm_gpt-5-4",
+    "run": 1,
+    "status": "ok",
+    "n_threats": 138,
+    "n_elements": 12,
+    "n_flows": 17,
+    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
+  },
+  {
+    "condition": "image-src_enrich-llm_gpt-5-4",
+    "run": 1,
+    "status": "ok",
+    "n_threats": 130,
+    "n_elements": 12,
+    "n_flows": 17,
+    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
   }
 ]

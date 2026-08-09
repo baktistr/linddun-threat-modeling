@@ -615,6 +615,88 @@ def test_gateway_retry_is_narrow_and_never_rerolls_an_answer():
               f"retries are bounded at {GATEWAY_RETRIES}, then the error surfaces")
 
 
+def test_temperature_is_pinned_and_degrades_honestly():
+    """The sampler must be pinned, and 'we asked for temperature=0' must not be reported as
+    'the deployment ran at temperature=0'.
+
+    Nothing set temperature until 2026-08-08, so every run went out at the provider default of
+    1.0 and the measured spread between repeats was sampling noise the experiment was paying for
+    by default. Reasoning-class deployments reject the parameter outright (as this project's
+    gpt-5.4 rejects max_tokens), so the fallback has to exist -- and when it fires, the run is NOT
+    greedy and the artifact has to say so rather than inherit the claim."""
+    print("\n[temperature: pinned, with an honest fallback]")
+    from generation.llm_backend import LLMBackend
+
+    check(config.GENERATION_TEMPERATURE == 0,
+          f"default generation temperature is pinned at 0 (got {config.GENERATION_TEMPERATURE})")
+
+    def probe(model_name):
+        class Probe(LLMBackend):
+            name = "probe"
+            @property
+            def model(self): return model_name
+            def call_tool(self, *a, **k): return {}
+        return Probe()
+
+    seen = []
+    b = probe("accepts")
+    b._sampled(lambda **kw: seen.append(kw), model="m")
+    check(seen[0].get("temperature") == 0, "the pinned temperature is sent on a normal call")
+    check(b.temperature_applied is True, "and the deployment records that it was accepted")
+
+    def refuses(**kw):
+        if "temperature" in kw:
+            raise RuntimeError("400: 'temperature' is not supported with this model")
+        return "ok"
+
+    b2 = probe("refuses")
+    check(b2._sampled(refuses, model="m") == "ok", "a deployment refusing temperature still runs")
+    check(b2.temperature_applied is False,
+          "and is recorded as NOT temperature-pinned -- the run is not greedy and must not claim to be")
+    check(b.temperature_applied is True,
+          "support is tracked per deployment, so one refusing model does not mislabel another")
+
+    calls = {"n": 0}
+    def count(**kw):
+        calls["n"] += 1
+        if "temperature" in kw:
+            raise RuntimeError("400: temperature unsupported")
+        return "ok"
+    probe("refuses")._sampled(count, model="m")
+    check(calls["n"] == 1,
+          "a FRESH backend for a known-refusing deployment skips the doomed attempt (no wasted call)")
+
+    def unrelated(**kw):
+        raise RuntimeError("500: gateway exploded")
+    try:
+        probe("healthy")._sampled(unrelated, model="m")
+        check(False, "an unrelated error must propagate")
+    except RuntimeError as e:
+        check("gateway" in str(e), "an unrelated error is NOT swallowed by the temperature fallback")
+
+
+def test_sweep_artifacts_record_the_code_state():
+    """Every sweep artifact must say WHICH CODE produced it, dirtiness included.
+
+    RESULTS_2026-08-07.md: the model sweep's source-arm runs came from a working tree whose
+    adapter threading was only committed afterwards -- the recording commit's own code would have
+    raised a TypeError -- and the resulting 36-flow outlier could not be traced to any tree.
+    `git describe --always --dirty` in _meta is the cheapest stamp that makes that class of
+    archaeology unnecessary."""
+    print("\n[code_state: sweep artifacts are traceable to a tree]")
+    import subprocess
+    state = config.code_state()
+    check(bool(state) and state != "unknown",
+          f"code_state() reads this repo's git state: {state!r}")
+    head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=config.ROOT,
+                          capture_output=True, text=True).stdout.strip()
+    check(state.split("-dirty")[0] == head,
+          f"the stamp names HEAD ({state!r} vs {head!r}), so an artifact can be checked out")
+    for script in ("run_model_sweep.py", "run_pillar_image_sweep.py"):
+        src = (config.ROOT / "scripts" / script).read_text()
+        check("code_state()" in src, f"{script} stamps code_state into its artifacts")
+
+
 def test_matcher_genomic_location_based():
     print("\n[matcher: genomic uses dfd_source_id/dfd_destination_id, not flow_id string]")
     dfd = json.loads((config.KB_DIR / "scenarios/genomic/dfd.json").read_text())
@@ -767,6 +849,8 @@ def main():
     test_reachability_recall_property()
     test_llm_backend_routing()
     test_gateway_retry_is_narrow_and_never_rerolls_an_answer()
+    test_temperature_is_pinned_and_degrades_honestly()
+    test_sweep_artifacts_record_the_code_state()
     test_matcher_genomic_location_based()
     test_matcher_genomic_without_dfd_falls_back_to_coarse()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")

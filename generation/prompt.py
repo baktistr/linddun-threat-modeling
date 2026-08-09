@@ -60,7 +60,13 @@ def build_rag_prompt(flow: dict, elements_by_id: dict, hits: list) -> str:
     lookup. Retrieval can miss the right passage, so -- unlike the deterministic prompt, which
     tells the model tree_node MUST come from the listed set -- this one frames the context as
     guidance, not an authoritative menu (mirroring how PriMod4AI's own RAG prompt template treats
-    retrieved context as guidance the model combines with its own expertise, not a hard constraint)."""
+    retrieved context as guidance the model combines with its own expertise, not a hard constraint).
+
+    Deliberately NO example node id in the instructions. The wording used to show 'e.g. "Dd.1.1"',
+    and that depth-2 example was a measured depth-priming confound: retrieval surfaces a
+    Detecting-tree id in 0 of 63 flow prompts, so on shallow branches OUR example was the only
+    node-id shape the model reliably saw -- and 91% of all invalid citations across ten ablation
+    runs were plausible deepenings (D.1.1, L.1.2) of nodes the official trees keep shallow."""
     src_line = _element_line(elements_by_id, flow["source"])
     dst_line = _element_line(elements_by_id, flow["destination"])
 
@@ -86,8 +92,8 @@ Instructions:
 - Identify any genuine privacy threats for THIS flow, classified under one of LINDDUN's seven
   threat types (L, I, Nr, D, Dd, U, Nc). Do not pad the list -- omit types with no real evidence.
 - originator_id must be exactly "{flow['source']}" or "{flow['destination']}" (whichever element the threat is actually located at).
-- tree_node should be a LINDDUN Pro threat-tree node id (e.g. "Dd.1.1"): use one from the retrieved
-  context if it genuinely applies, or your own best judgement if the context doesn't cover it.
+- tree_node should be a LINDDUN Pro threat-tree node id: use one from the retrieved context if it
+  genuinely applies, or your own best judgement if the context doesn't cover it.
 - If you are not confident in a citation, say so in uncertainty_note rather than asserting it silently.
 Respond using the emit_threats tool."""
 

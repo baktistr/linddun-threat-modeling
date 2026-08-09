@@ -1,0 +1,191 @@
+{
+  "_meta": {
+    "scenario": "Wearable Fitness & Health Tracking App",
+    "source": "Hand-authored for this repo (2026-08-08), grounded in the official LINDDUN v241203 threat-tree nodes -- NOT transcribed from an external human-authored assignment or an authoritative third-party report. Weaker evidentiary status than KidsTube (human HW2) or Genomic (NIST SP 1800-43C) until independently reviewed. Same caveat as smart_home's and family_location's gold standards.",
+    "count": 20,
+    "type_distribution": { "L": 4, "I": 2, "Nr": 2, "D": 2, "Dd": 5, "U": 2, "Nc": 3 },
+    "field_notes": "dfd_source_id/dfd_destination_id anchor each threat to a real dfd.json flow (location-based matching, same convention as smart_home/family_location/genomic). All flows are Process-mediated, so every threat is structurally reachable."
+  },
+  "threats": [
+    {
+      "id": 1,
+      "dfd_source_id": "DS2", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "L.1.1", "threat_type": "L",
+      "title": "Device ID links every GPS trace across sessions into one movement history",
+      "description": "Location queries join traces through the persistent device/user identifier, so every session's GPS data accumulates into a single linked movement history. The cross-session queryability is by design -- which makes the linkage complete rather than incidental.",
+      "assumptions": "Location records carry a stable device or account identifier.",
+      "severity": "High", "likelihood": "High"
+    },
+    {
+      "id": 2,
+      "dfd_source_id": "DS2", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "L.2.2.1", "threat_type": "L",
+      "title": "Cross-session location queries derive the user's daily routine",
+      "description": "Recurring positions and timings across sessions yield home location, workplace, gym schedule, and deviations from routine -- a behavioral profile of the individual's physical life derived from data collected for exercise tracking.",
+      "assumptions": "Location history is retained across sessions and queryable in aggregate.",
+      "severity": "High", "likelihood": "High"
+    },
+    {
+      "id": 3,
+      "dfd_source_id": "DS1", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "L.2.2.3", "threat_type": "L",
+      "title": "Eating and exercise patterns matched against cohort signatures flag disorder-like behavior",
+      "description": "The analytics service compares an individual's calorie, weight, and exercise trajectory with population patterns to flag eating-disorder or diabetes indicators -- profiling through (dis)similarity that attaches a medical suspicion to the user from lifestyle logs.",
+      "assumptions": "Condition inference uses cohort or population comparison models.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 4,
+      "dfd_source_id": "P3", "dfd_destination_id": "EE2", "originator_id": "EE2",
+      "tree_node": "L.2.1.1", "threat_type": "L",
+      "title": "Host can link health and location datasets through shared quasi-identifiers",
+      "description": "The cloud provider stores both the health logs and the location history. Shared timestamps, device ids, and activity sessions let anyone with host-level access join the two into a single dataset pairing medical indicators with physical whereabouts.",
+      "assumptions": "Both datasets are replicated to the same provider without customer-held-key encryption.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 5,
+      "dfd_source_id": "DS2", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "I.2.1.2", "threat_type": "I",
+      "title": "Home location from nightly GPS clusters re-identifies 'de-identified' traces",
+      "description": "The cluster of positions where the device rests every night is a quasi-identifier: joined with any address dataset it resolves the trace to a household and usually to a person, defeating any pseudonymization applied to the location history.",
+      "assumptions": "Traces include overnight periods; pseudonymization does not coarsen home-adjacent points.",
+      "severity": "High", "likelihood": "High"
+    },
+    {
+      "id": 6,
+      "dfd_source_id": "DS1", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "I.2.2", "threat_type": "I",
+      "title": "Inferred health condition is a revealing attribute attached to the profile",
+      "description": "The analysis output -- an eating-disorder or diabetes risk flag -- is itself a revealing attribute: attached to the account, it discloses a probable medical condition to anyone who can read the profile, regardless of how the underlying logs were protected.",
+      "assumptions": "Inference results are stored with the user profile rather than ephemerally displayed.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 7,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P2", "originator_id": "P2",
+      "tree_node": "Nr.1.1", "threat_type": "Nr",
+      "title": "Logged weight and calorie entries are undeniable evidence of health state",
+      "description": "Manually-entered weight and calorie records are stored attributably: in an insurance dispute, custody case, or employment matter, the user cannot plausibly repudiate their own logged health data, which was recorded for personal tracking rather than evidence.",
+      "assumptions": "Entries are timestamped and bound to the authenticated account.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 8,
+      "dfd_source_id": "DS2", "dfd_destination_id": "P3", "originator_id": "DS2",
+      "tree_node": "Nr.1.3", "threat_type": "Nr",
+      "title": "GPS metadata attaches undeniable presence-at-place evidence to the user",
+      "description": "Timestamped location records constitute metadata evidence that the wearer was at a specific place at a specific time -- discoverable in legal proceedings and unrepudiable, precisely because the device recorded it automatically and continuously.",
+      "assumptions": "Location history is retained and subject to subpoena or export.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 9,
+      "dfd_source_id": "P1", "dfd_destination_id": "P2", "originator_id": "P1",
+      "tree_node": "D.1", "threat_type": "D",
+      "title": "Sync traffic reveals device presence and workout timing to observers",
+      "description": "The device-to-app radio sync is observable without reading payloads: anyone monitoring the local radio environment or network can detect that this person wears a health tracker and infer workout and sleep windows from sync bursts.",
+      "assumptions": "Sync occurs over observable radio (BLE/Wi-Fi) with characteristic traffic patterns.",
+      "severity": "Low", "likelihood": "Med"
+    },
+    {
+      "id": 10,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE1", "originator_id": "P2",
+      "tree_node": "D.2", "threat_type": "D",
+      "title": "App notifications reveal condition tracking to anyone seeing the screen",
+      "description": "Dashboard badges and push notifications ('log your meal', 'glucose trend alert') are application side effects visible on the lock screen, revealing to household members or colleagues that the user tracks a health condition.",
+      "assumptions": "Notifications are enabled with content preview by default.",
+      "severity": "Low", "likelihood": "High"
+    },
+    {
+      "id": 11,
+      "dfd_source_id": "P3", "dfd_destination_id": "EE2", "originator_id": "EE2",
+      "tree_node": "Dd.1.1", "threat_type": "Dd",
+      "title": "Special-category health and location data shipped to the host at full sensitivity",
+      "description": "The replication sends raw calorie/weight logs, inferred condition flags, and full-precision location traces -- the most sensitive data types the system holds -- to a commercial third party, when aggregates or encrypted blobs would serve the hosting purpose.",
+      "assumptions": "Replication is of raw records, not aggregates or ciphertext.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 12,
+      "dfd_source_id": "P2", "dfd_destination_id": "DS2", "originator_id": "DS2",
+      "tree_node": "Dd.1.2", "threat_type": "Dd",
+      "title": "GPS stored at full precision and frequency where coarse data would suffice",
+      "description": "Route mapping needs meter-level traces only during workouts, yet the store receives continuous full-precision positions. The excess granularity is what makes routine derivation and re-identification possible.",
+      "assumptions": "Sampling continues outside workout sessions at full precision.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 13,
+      "dfd_source_id": "P1", "dfd_destination_id": "P2", "originator_id": "P1",
+      "tree_node": "Dd.2.2", "threat_type": "Dd",
+      "title": "Continuous sensor sampling far exceeds what daily summaries need",
+      "description": "The device streams heart rate, steps, and position continuously; the user-facing features are daily and per-workout summaries. The collection frequency is disclosure volume the product does not need and the user cannot see.",
+      "assumptions": "No on-device aggregation before sync.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 14,
+      "dfd_source_id": "DS1", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "Dd.3.1", "threat_type": "Dd",
+      "title": "Analysis enriches lifestyle logs into medical inferences the user never asked for",
+      "description": "The user logs meals and weight to track fitness; the analytics service transforms these into eating-disorder and diabetes indicators -- treatment and enrichment that creates new, more sensitive data than was ever collected.",
+      "assumptions": "Condition inference runs by default for all users.",
+      "severity": "High", "likelihood": "High"
+    },
+    {
+      "id": 15,
+      "dfd_source_id": "P2", "dfd_destination_id": "DS2", "originator_id": "DS2",
+      "tree_node": "Dd.3.4", "threat_type": "Dd",
+      "title": "Location history retained indefinitely across sessions",
+      "description": "The store keeps every trace ever synced -- the cross-session queryability the product advertises requires it -- so years of movement history accumulate with no retention bound, all exposed by any single future compromise.",
+      "assumptions": "No retention limit or automatic deletion on location records.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 16,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P1", "originator_id": "EE1",
+      "tree_node": "U.1.1", "threat_type": "U",
+      "title": "User is unaware GPS collection continues outside workouts",
+      "description": "The wearer reasonably models the device as recording during exercise; in fact position is captured continuously, including commutes, workplaces, and homes. The data subject is unaware of the scope of processing they are undergoing.",
+      "assumptions": "No indicator distinguishes workout recording from ambient collection.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 17,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P2", "originator_id": "P2",
+      "tree_node": "U.2.1", "threat_type": "U",
+      "title": "No preference control to keep tracking while refusing condition inference",
+      "description": "The app offers tracking as a bundle: a user who wants exercise logs but not eating-disorder screening has no preference to express that. Lack of granular controls forces consent to the most invasive processing to get the basic service.",
+      "assumptions": "Inference cannot be disabled independently of tracking.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 18,
+      "dfd_source_id": "DS1", "dfd_destination_id": "P3", "originator_id": "P3",
+      "tree_node": "Nc.1.1.3.1", "threat_type": "Nc",
+      "title": "Blanket ToS consent is invalid for inferring medical conditions",
+      "description": "Deriving eating-disorder and diabetes indicators is processing of special-category health data (GDPR Art. 9) that requires explicit, specific consent. A general fitness-app terms-of-service acceptance does not meet that bar, making the inference unlawful as consented.",
+      "assumptions": "Consent is a single ToS checkbox at signup with no Art. 9-specific consent.",
+      "severity": "High", "likelihood": "High"
+    },
+    {
+      "id": 19,
+      "dfd_source_id": "P1", "dfd_destination_id": "P2", "originator_id": "P1",
+      "tree_node": "Nc.1.1.2", "threat_type": "Nc",
+      "title": "Continuous GPS collection violates data minimization for a fitness product",
+      "description": "The purposes the user signed up for -- exercise and intake tracking -- do not require ambient location capture. Collecting it anyway, because the sensor is there, is a textbook violation of the minimization principle rather than a security defect.",
+      "assumptions": "Ambient collection serves analytics breadth, not a user-facing feature.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 20,
+      "dfd_source_id": "P3", "dfd_destination_id": "EE2", "originator_id": "P3",
+      "tree_node": "Nc.4", "threat_type": "Nc",
+      "title": "Health dataset hosted without privacy-standard safeguards or assessment",
+      "description": "Hosting inferred medical indicators and location history at a third party without a DPIA, certification, or recognized privacy-standard compliance (e.g., ISO 27701) disregards the best-practice bar expected for special-category data, independent of any specific regulation's text.",
+      "assumptions": "No DPIA or privacy certification covers the analytics hosting arrangement.",
+      "severity": "Med", "likelihood": "Med"
+    }
+  ]
+}

@@ -34,6 +34,13 @@ DEFAULT_MAX_TOKENS = 2000
 GATEWAY_RETRIES = 4
 GATEWAY_BACKOFF_SECONDS = 2
 
+# Whether a (provider, model) deployment accepts `temperature`, learned at first use. Keyed by
+# deployment rather than held per backend instance because it IS a property of the deployment:
+# a sweep builds a fresh backend per run, and a per-instance flag would both forget what the last
+# run learned (paying for a refused call again) and report None to any caller that asks after the
+# fact -- which is exactly how the first version of this got the provenance field wrong.
+_TEMPERATURE_SUPPORT: dict[tuple[str, str], bool] = {}
+
 
 @dataclass(frozen=True)
 class ImageInput:
@@ -94,6 +101,36 @@ class LLMBackend(ABC):
     # setting stays put, so the override lives on the instance rather than in the environment --
     # mutating config mid-process would leak into whatever ran next.
     _model_override: str | None = None
+    @property
+    def temperature_applied(self) -> bool | None:
+        """Did this deployment accept the pinned temperature? None = not yet attempted.
+
+        Recorded into artifacts rather than assumed: "we set temperature=0" and "the deployment
+        honoured temperature=0" are different claims, and only the second licenses describing a
+        run as greedy decoding.
+        """
+        return _TEMPERATURE_SUPPORT.get((self.name, self.model))
+
+    def _sampled(self, create, **kwargs):
+        """Issue a request with the pinned sampling temperature, dropping it if refused.
+
+        Reasoning-class deployments reject `temperature` outright rather than ignoring it --
+        exactly as this project's gpt-5.4 rejects `max_tokens` (see OpenAIBackend.call_tool). A
+        refused request costs nothing, so attempting the pinned value and falling back is free;
+        never sending it would silently leave every run at the provider default of 1.0.
+        """
+        key = (self.name, self.model)
+        if config.GENERATION_TEMPERATURE is None or _TEMPERATURE_SUPPORT.get(key) is False:
+            return create(**kwargs)
+        try:
+            resp = create(**kwargs, temperature=config.GENERATION_TEMPERATURE)
+            _TEMPERATURE_SUPPORT[key] = True
+            return resp
+        except Exception as e:
+            if "temperature" not in str(e).lower():
+                raise
+            _TEMPERATURE_SUPPORT[key] = False
+            return create(**kwargs)
 
     @property
     def model(self) -> str:
@@ -145,7 +182,8 @@ class AnthropicBackend(LLMBackend):
                   max_tokens: int = DEFAULT_MAX_TOKENS,
                   image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
-        resp = self.client.messages.create(
+        resp = self._sampled(
+            self.client.messages.create,
             model=self.model,
             max_tokens=max_tokens,
             tools=[tool_schema],
@@ -197,12 +235,13 @@ class OpenAIBackend(LLMBackend):
             messages=[{"role": "user", "content": _openai_content(prompt, image)}],
         )
         try:
-            resp = self.client.chat.completions.create(
-                **kwargs, max_completion_tokens=max_tokens)
+            resp = self._sampled(self.client.chat.completions.create,
+                                 **kwargs, max_completion_tokens=max_tokens)
         except Exception as e:                       # openai.BadRequestError, kept SDK-agnostic
             if "max_completion_tokens" not in str(e) and "max_tokens" not in str(e):
                 raise
-            resp = self.client.chat.completions.create(**kwargs, max_tokens=max_tokens)
+            resp = self._sampled(self.client.chat.completions.create,
+                                 **kwargs, max_tokens=max_tokens)
         choice = resp.choices[0]
         for call in choice.message.tool_calls or []:
             if call.function.name == name:
@@ -277,7 +316,8 @@ class AzureFoundryBackend(LLMBackend):
                   max_tokens: int = DEFAULT_MAX_TOKENS,
                   image: ImageInput | None = None) -> dict:
         name = tool_schema["name"]
-        resp = self._create_with_retry(
+        resp = self._sampled(
+            self._create_with_retry,
             model=self.model,
             tools=[_as_openai_tool(tool_schema)],
             tool_choice={"type": "function", "function": {"name": name}},

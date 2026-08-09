@@ -46,7 +46,11 @@ INPUT_SOURCE = "source"
 # Without it, an image or source condition conflates two stages -- a model that scores badly might
 # have derived a poor DFD, or elicited poorly from a good one, and the score cannot tell you which.
 INPUT_DFD = "dfd"
-INPUTS = (INPUT_IMAGE, INPUT_SOURCE, INPUT_DFD)
+# Fusion conditions (adapters/enrich.py): the DFD named by the prefix, plus code-fact enrichment
+# of its flow descriptions. Hyphenated, never underscored -- parse_condition() splits on "_".
+INPUT_IMAGE_SRC = "image-src"
+INPUT_DFD_SRC = "dfd-src"
+INPUTS = (INPUT_IMAGE, INPUT_SOURCE, INPUT_DFD, INPUT_IMAGE_SRC, INPUT_DFD_SRC)
 
 
 def slug(value: str | None) -> str:

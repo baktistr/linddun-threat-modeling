@@ -123,6 +123,7 @@ def one_condition(scenario: str, image: Path, model: str, run: int, provider: st
     dfd["_meta"]["condition"] = cond
     dfd["_meta"]["run"] = run
     dfd["_meta"]["derive_attempts"] = attempts
+    dfd["_meta"]["code"] = config.code_state()
     dfd_path = run_dir / "dfd.json"
     dfd_path.write_text(json.dumps(dfd, indent=2) + "\n")
     n_el, n_fl = len(dfd["elements"]), len(dfd["flows"])

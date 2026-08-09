@@ -1,0 +1,191 @@
+{
+  "_meta": {
+    "scenario": "School Grades Management Portal",
+    "source": "Hand-authored for this repo (2026-08-08), grounded in the official LINDDUN v241203 threat-tree nodes -- NOT transcribed from an external human-authored assignment or an authoritative third-party report. Weaker evidentiary status than KidsTube (human HW2) or Genomic (NIST SP 1800-43C) until independently reviewed. Same caveat as smart_home's and family_location's gold standards.",
+    "count": 20,
+    "type_distribution": { "L": 3, "I": 3, "Nr": 2, "D": 2, "Dd": 5, "U": 2, "Nc": 3 },
+    "field_notes": "dfd_source_id/dfd_destination_id anchor each threat to a real dfd.json flow (location-based matching, same convention as smart_home/family_location/genomic). All flows are Process-mediated, so every threat is structurally reachable."
+  },
+  "threats": [
+    {
+      "id": 1,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P1", "originator_id": "P1",
+      "tree_node": "L.1.1", "threat_type": "L",
+      "title": "Persistent student ID links every submission and grade into one longitudinal record",
+      "description": "The same student identifier anchors every assignment submission and grade across courses and school years, so the portal accumulates a single linkable academic history of a minor from first enrollment to graduation, whether or not any single record is sensitive on its own.",
+      "assumptions": "Student accounts persist across school years under one identifier.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 2,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE5", "originator_id": "EE5",
+      "tree_node": "L.2.1.1", "threat_type": "L",
+      "title": "Cloud host can link grade and account datasets through shared quasi-identifiers",
+      "description": "The nightly backup ships grade records and the account directory to the same third-party host. Even if direct identifiers were stripped, shared quasi-identifiers (course roster, timestamps, parent-child links) let the host's staff or systems join the datasets and attribute grades to named families.",
+      "assumptions": "Backups are not end-to-end encrypted against the host; both datasets land in host-accessible storage.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 3,
+      "dfd_source_id": "DS2", "dfd_destination_id": "P2", "originator_id": "DS2",
+      "tree_node": "L.2.2.1", "threat_type": "L",
+      "title": "Accumulated grade history enables longitudinal performance profiling of a minor",
+      "description": "Reading grade records across terms supports building a performance profile of a child -- trends, failures, teacher comments -- that goes far beyond any single grade lookup and can follow the student into later schooling.",
+      "assumptions": "No aggregation limits or purpose binding on reads of historical grade records.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 4,
+      "dfd_source_id": "P1", "dfd_destination_id": "EE3", "originator_id": "EE3",
+      "tree_node": "I.1.1", "threat_type": "I",
+      "title": "Teacher review processes fully identified student work where pseudonymous review would suffice",
+      "description": "Submissions are displayed to teachers with student names attached. Grading could proceed on pseudonymous submissions with identity resolved only at grade recording; instead every review session processes identified data of minors, enabling bias and unnecessary identification.",
+      "assumptions": "The review queue shows student names rather than submission pseudonyms.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 5,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE5", "originator_id": "EE5",
+      "tree_node": "I.2.1.2", "threat_type": "I",
+      "title": "Backups re-identifiable at the host through course-roster quasi-identifiers",
+      "description": "Even a 'de-identified' backup of grade data contains course membership, grade, and timing combinations unique to individual students; the hosting provider can re-identify records by joining against any roster or public class list.",
+      "assumptions": "Any de-identification applied before backup leaves course/time/grade combinations intact.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 6,
+      "dfd_source_id": "EE4", "dfd_destination_id": "P1", "originator_id": "P1",
+      "tree_node": "I.1.2", "threat_type": "I",
+      "title": "Admin operations carry identified metadata about students in logs",
+      "description": "Account-management actions (create, disable, re-link parent to child) are logged with the names and identifiers of the affected students and parents, so operational logs become a secondary identified dataset outside the grade database's access controls.",
+      "assumptions": "Admin actions are logged with full identifiers rather than opaque account references.",
+      "severity": "Low", "likelihood": "Med"
+    },
+    {
+      "id": 7,
+      "dfd_source_id": "EE3", "dfd_destination_id": "P1", "originator_id": "P1",
+      "tree_node": "Nr.1.1", "threat_type": "Nr",
+      "title": "Recorded grading actions are permanently attributable to the teacher",
+      "description": "Every grade and feedback entry is stored with the grader's identity and timestamp, so a teacher cannot later dispute or contextualize a recorded grading action; the record functions as non-repudiable evidence in employment or parental disputes.",
+      "assumptions": "Grade records retain grader id and timestamps indefinitely.",
+      "severity": "Low", "likelihood": "High"
+    },
+    {
+      "id": 8,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P1", "originator_id": "P1",
+      "tree_node": "Nr.2", "threat_type": "Nr",
+      "title": "Submission timestamps create attributable evidence of a student's activity patterns",
+      "description": "Submission events record exactly when a student was active -- late-night work, last-minute submissions, absence periods. These side-effect records are attributable to the student and can be used against them (e.g., in disciplinary or custody proceedings) with no way to deny the pattern.",
+      "assumptions": "Submission timestamps are retained and reportable per student.",
+      "severity": "Low", "likelihood": "Med"
+    },
+    {
+      "id": 9,
+      "dfd_source_id": "EE2", "dfd_destination_id": "P1", "originator_id": "P1",
+      "tree_node": "D.3", "threat_type": "D",
+      "title": "Portal responses reveal whether a given child is enrolled and has records",
+      "description": "Differences in the portal's responses to a parent-view request (empty grade list vs. access denied vs. unknown account) let a requester detect whether a specific child attends the school and has grade records, before any authorization check completes.",
+      "assumptions": "Error and empty-state responses are distinguishable to the requester.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 10,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE5", "originator_id": "EE5",
+      "tree_node": "D.1", "threat_type": "D",
+      "title": "Host observes traffic patterns that reveal school events and family behavior",
+      "description": "The hosting provider sees request volumes and timing even without reading payloads: grade-posting bursts reveal exam periods, and per-account access patterns reveal which families check grades obsessively and which never do.",
+      "assumptions": "Host-level traffic metadata is available to the provider's operations staff.",
+      "severity": "Low", "likelihood": "High"
+    },
+    {
+      "id": 11,
+      "dfd_source_id": "P1", "dfd_destination_id": "EE2", "originator_id": "EE2",
+      "tree_node": "Dd.1.1", "threat_type": "Dd",
+      "title": "Parent view discloses sensitive feedback text beyond the grade itself",
+      "description": "The parent view returns the teacher's full written feedback and submission history, which can include disciplinary observations and personal remarks about the child -- data types more sensitive than the grade the parent needs, disclosed by default.",
+      "assumptions": "Feedback text is shown to parents verbatim rather than summarized or gated.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 12,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE5", "originator_id": "EE5",
+      "tree_node": "Dd.4.1.1", "threat_type": "Dd",
+      "title": "Full plaintext database accessible to the hosting provider's personnel",
+      "description": "The backup and hosting arrangement makes the complete grade and account database available to a party outside the school's predetermined set (teachers, admin, the family itself): the cloud provider's operators, subcontractors, and lawful-access processes.",
+      "assumptions": "No customer-held-key encryption; the provider can technically read stored data.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 13,
+      "dfd_source_id": "P2", "dfd_destination_id": "DS2", "originator_id": "DS2",
+      "tree_node": "Dd.3.4", "threat_type": "Dd",
+      "title": "Grades retained indefinitely, long past any educational purpose",
+      "description": "Grade records are written with no retention limit, so a child's complete academic record -- including failures and teacher remarks -- persists years after graduation, available to any future breach or repurposing.",
+      "assumptions": "No retention schedule or deletion process exists for grade records.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 14,
+      "dfd_source_id": "P1", "dfd_destination_id": "EE3", "originator_id": "EE3",
+      "tree_node": "Dd.2.1", "threat_type": "Dd",
+      "title": "Teachers can access records of students they do not teach",
+      "description": "The review interface scopes by request rather than by enforced course assignment, so a teacher can retrieve submissions and grades for the whole school -- a volume of minors' records far exceeding what their role requires.",
+      "assumptions": "Role checks verify 'is a teacher' but not 'teaches this student'.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 15,
+      "dfd_source_id": "P2", "dfd_destination_id": "DS1", "originator_id": "DS1",
+      "tree_node": "Dd.4.2", "threat_type": "Dd",
+      "title": "Stored assignment files readable by any staff role without need-to-know",
+      "description": "Submitted work (essays, personal reflections, images) rests in the assignment store with coarse access control, so personal content authored by children is readable by staff and systems with no relationship to the class it was written for.",
+      "assumptions": "Assignment store permissions are per-system, not per-course.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 16,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P1", "originator_id": "EE1",
+      "tree_node": "U.1.1", "threat_type": "U",
+      "title": "Students are unaware their work and grades flow to parents and a third-party host",
+      "description": "The student -- the data subject, and a minor -- submits work without being told that grades and feedback are automatically visible to their parent and that submissions are replicated to an external hosting provider. The processing happens without the subject's awareness.",
+      "assumptions": "No student-facing notice describes parent visibility or third-party hosting.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 17,
+      "dfd_source_id": "EE1", "dfd_destination_id": "P1", "originator_id": "P1",
+      "tree_node": "U.2.3", "threat_type": "U",
+      "title": "No mechanism for students or parents to correct or erase erroneous records",
+      "description": "The portal offers no rectification or erasure path: a wrongly-entered grade, a feedback comment about the wrong student, or a stale parent-child link can only be fixed by informal appeal to the admin, with no data-subject-facing control.",
+      "assumptions": "Correction requires out-of-band contact with the school administrator.",
+      "severity": "Med", "likelihood": "Med"
+    },
+    {
+      "id": 18,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE5", "originator_id": "P2",
+      "tree_node": "Nc.1.1.3.2", "threat_type": "Nc",
+      "title": "Minors' education records processed by a third party without a lawful basis",
+      "description": "Shipping identifiable education records of minors to a commercial hosting provider requires a lawful basis and a processor agreement (GDPR Art. 6/28; FERPA's school-official exception in the US). Hosting convenience alone does not establish either, making the replication unlawful processing rather than a consent defect.",
+      "assumptions": "No data-processing agreement or legitimate-interest assessment covers the hosting arrangement.",
+      "severity": "High", "likelihood": "Med"
+    },
+    {
+      "id": 19,
+      "dfd_source_id": "P2", "dfd_destination_id": "DS3", "originator_id": "P2",
+      "tree_node": "Nc.1.1.2", "threat_type": "Nc",
+      "title": "Account directory collects more family data than the portal needs",
+      "description": "Account creation records parent contact details, home addresses, and relationship metadata beyond what authenticating a parent-child link requires -- a data-minimization violation that concentrates family PII in a store whose only necessary content is credentials and the link itself.",
+      "assumptions": "Registration forms collect address/contact fields not used by any portal function.",
+      "severity": "Med", "likelihood": "High"
+    },
+    {
+      "id": 20,
+      "dfd_source_id": "P2", "dfd_destination_id": "EE5", "originator_id": "EE5",
+      "tree_node": "Nc.3", "threat_type": "Nc",
+      "title": "No security requirements imposed on the hosting provider for children's records",
+      "description": "The school relies on the provider's default posture: no contractual encryption-at-rest requirement, no breach-notification terms, no audit rights. For a database of minors' education records this is insufficient cybersecurity risk management, independent of whether a breach has yet occurred.",
+      "assumptions": "The hosting contract is a standard commercial tier without education-specific safeguards.",
+      "severity": "High", "likelihood": "Med"
+    }
+  ]
+}

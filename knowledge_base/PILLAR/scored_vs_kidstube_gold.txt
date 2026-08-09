@@ -1,6 +1,6 @@
 PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type + same flow)
   export : knowledge_base/PILLAR/linddun_pro_full_analysis.json
-  model  : gpt-4o (per user; export carries no metadata)   [PILLAR's own 14-edge DFD]
+  model  : gpt-4o (per user; export carries no metadata)   [PILLAR's own 14-edge DFD; re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5) that replaced the 51-node curated subset -- resolvable rose 0.66 -> 0.82, depth-gap and unresolvable both to zero]
   unit   : 105 (edge x category) findings carrying 315 node citations.
            Our unit is one threat per (flow, node) -- counts are NOT directly comparable.
 
@@ -16,11 +16,11 @@ PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type +
     our flows PILLAR never analysed        : ['DF4', 'DF5', 'DF7', 'DF11', 'DF12', 'DF13', 'DF17']
 
   NODE CITATION VALIDITY (independently re-derived against threat_trees.json):
-    exact match in our KB       164  (0.52)
+    exact match in our KB       214  (0.68)
     match after case-folding     45  (0.14)   -- convention (DD.1.1 vs Dd.1.1), not a fabrication
-    below our KB's depth         39  (0.12)   -- parent exists; OUR subset stops shallower
+    below our KB's depth          0  (0.00)   -- parent exists; OUR subset stops shallower
     not an id at all             56  (0.18)   -- empty, or prose in an id field
-    unresolvable                 11  (0.03)
-    -> resolvable in our KB     209  (0.66)
+    unresolvable                  0  (0.00)
+    -> resolvable in our KB     259  (0.82)
 
-  Our KB holds 51 nodes, max depth 4. A model cannot cite a node it was never given, so 'below our KB's depth' is a limit on OUR coverage, not on PILLAR.
+  Our KB holds 65 nodes, max depth 5. A model cannot cite a node it was never given, so 'below our KB's depth' is a limit on OUR coverage, not on PILLAR.
