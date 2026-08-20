@@ -6,3 +6,6 @@ storage/index/
 venv/
 *.egg-info/
 .DS_Store
+
+# Windows download metadata
+*:Zone.Identifier

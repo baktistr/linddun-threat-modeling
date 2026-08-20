@@ -1,13 +1,15 @@
 PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type + same flow)
   export : knowledge_base/PILLAR/linddun_pro_full_analysis.json
-  model  : gpt-4o (per user; export carries no metadata)   [PILLAR's own 14-edge DFD; re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5) that replaced the 51-node curated subset -- resolvable rose 0.66 -> 0.82, depth-gap and unresolvable both to zero]
+  model  : gpt-4o-mini (per user; export carries no metadata -- same model our side ran, so
+           model capability is controlled in this comparison)   [PILLAR's own 14-edge DFD; re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5) that replaced the 51-node curated subset -- resolvable rose 0.66 -> 0.82, depth-gap and unresolvable both to zero]
   unit   : 105 (edge x category) findings carrying 315 node citations.
            Our unit is one threat per (flow, node) -- counts are NOT directly comparable.
 
   TP 22   FP 83   FN 19
   precision 0.21   recall 0.54   F1 0.30
 
-  DFD MISMATCH (the dominant confound -- PILLAR analysed its own DFD):
+  EDGE-SET MISMATCH (the dominant confound -- SAME elements, all 12 names identical to the
+  analyst-authored DFD; what differs is which edges were drawn over them: 14 vs 16, 10 shared):
     findings on edges our DFD does not have : 28 of 105 (can never match, whatever their quality)
       Child Profile Management -> Authentication Service  x7
       Parent User -> File System (backend/uploads/)  x7
