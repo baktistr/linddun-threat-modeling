@@ -178,22 +178,96 @@ def test_chunks():
           f"(got {sum(1 for c in chunks if c.source == 'panoptic')})")
 
 
+# (query, source_filter, substring expected in any top-k hit's section or text)
+_RETRIEVAL_CASES = [
+    ("government ID stored unencrypted", None, "government id"),
+    ("excessive data volume retained", "linddun", "Dd.2"),
+    ("children not informed about tracking", None, "unaware"),
+    ("unable to deny an action they took", "linddun", "non-repudiation"),
+    ("mapping table external entity to process", "linddun", "ExternalEntity"),
+    ("profiling children behavioral data", "scenarios", "profil"),
+]
+
+
 def test_retrieval_quality():
     print("\n[retrieval quality]")
     r = Retriever.load()
-    # (query, source_filter, substring expected in any top-k hit's section or text)
-    cases = [
-        ("government ID stored unencrypted", None, "government id"),
-        ("excessive data volume retained", "linddun", "Dd.2"),
-        ("children not informed about tracking", None, "unaware"),
-        ("unable to deny an action they took", "linddun", "non-repudiation"),
-        ("mapping table external entity to process", "linddun", "ExternalEntity"),
-        ("profiling children behavioral data", "scenarios", "profil"),
-    ]
-    for query, source, expect in cases:
+    for query, source, expect in _RETRIEVAL_CASES:
         hits = r.search(query, k=5, source=source)
         blob = " ".join((h.chunk.section + " " + h.chunk.text) for h in hits).lower()
         check(expect.lower() in blob, f"query {query!r} -> finds {expect!r}")
+
+
+def test_bm25_backend():
+    print("\n[bm25 backend]")
+    from retrieval.embeddings import Bm25Backend, tokenize
+
+    # tokenizer keeps LINDDUN node IDs whole -- the highest-signal terms in this corpus
+    check("Dd.1.1" in tokenize("see node Dd.1.1 for detail"), "tokenizer keeps 'Dd.1.1' as one token")
+
+    # --- IDF: falls toward zero for corpus-wide terms, never negative ---
+    corpus = ["alpha data"] + ["beta data"] * 19  # 'data' in 20/20 docs, 'alpha' in 1/20
+    be = Bm25Backend()
+    be.fit(corpus)
+    idf_rare = float(be.idf[be.vocab["alpha"]])
+    idf_everywhere = float(be.idf[be.vocab["data"]])
+    check(idf_rare > idf_everywhere, f"rare term outweighs ubiquitous term ({idf_rare:.2f} > {idf_everywhere:.2f})")
+    check(idf_everywhere >= 0, f"ubiquitous-term idf floors at 0, never negative (got {idf_everywhere:.4f})")
+    check(idf_everywhere < 0.1, f"term in every doc contributes ~nothing (got {idf_everywhere:.4f})")
+
+    # --- TF saturation: 50 occurrences is not 10x the weight of 5 ---
+    be = Bm25Backend()
+    docs = ["alpha " * 5 + "pad", "alpha " * 50 + "pad"]
+    be.fit(docs)
+    m = be.transform(docs)
+    j = be.vocab["alpha"]
+    ratio = float(m[1, j]) / float(m[0, j])
+    check(ratio < 2.0, f"tf 5->50 grows less than 2x, i.e. saturates (got {ratio:.2f}x)")
+
+    # --- length normalization is real, and b turns it off ---
+    short, long_ = "alpha", "alpha " + " ".join(f"filler{i}" for i in range(60))
+    w = {}
+    for b in (0.0, 0.75):
+        be = Bm25Backend(b=b)
+        be.fit([short, long_])
+        m = be.transform([short, long_])
+        j = be.vocab["alpha"]
+        w[b] = (float(m[0, j]), float(m[1, j]))
+    check(abs(w[0.0][0] - w[0.0][1]) < 1e-6, "b=0 makes document length irrelevant")
+    check(w[0.75][0] > w[0.75][1], f"b=0.75 favours the shorter document ({w[0.75][0]:.2f} > {w[0.75][1]:.2f})")
+
+    # --- query side is presence-only, so repeating a query term changes nothing ---
+    be = Bm25Backend()
+    be.fit(["alpha beta gamma", "alpha delta"])
+    q1, q2 = be.transform_query(["alpha"])[0], be.transform_query(["alpha alpha alpha"])[0]
+    check(bool((q1 == q2).all()), "query-side term frequency is ignored (standard Okapi)")
+
+    # --- end to end, same quality bar as the configured backend ---
+    r = Retriever.load("bm25")
+    check(r.backend.name == "bm25", f"bm25 index serves a bm25 backend (got {r.backend.name!r})")
+    check(len(r.chunks) == r.matrix.shape[0],
+          f"chunk count matches matrix rows ({len(r.chunks)} vs {r.matrix.shape[0]})")
+    for query, source, expect in _RETRIEVAL_CASES:
+        hits = r.search(query, k=5, source=source)
+        blob = " ".join((h.chunk.section + " " + h.chunk.text) for h in hits).lower()
+        check(expect.lower() in blob, f"bm25 query {query!r} -> finds {expect!r}")
+
+
+def test_index_chunk_pairing():
+    print("\n[index integrity]")
+    # Every persisted index must carry its own chunk list. A shared sidecar written by
+    # a later, larger corpus would silently re-label an older matrix's rows.
+    import pickle
+    from retrieval.index import index_path
+    for name in ("tfidf", "bm25"):
+        path = index_path(name)
+        if not path.exists():
+            continue
+        with open(path, "rb") as f:
+            blob = pickle.load(f)
+        check(blob.get("chunks") is not None, f"{path.name} embeds its chunk list")
+        check(len(blob["chunks"]) == blob["matrix"].shape[0],
+              f"{path.name}: {len(blob['chunks'])} chunks == {blob['matrix'].shape[0]} matrix rows")
 
 
 def main():
@@ -206,6 +280,8 @@ def main():
     test_panoptic_taxonomy()
     test_chunks()
     test_retrieval_quality()
+    test_bm25_backend()
+    test_index_chunk_pairing()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")
     sys.exit(1 if FAIL else 0)
 

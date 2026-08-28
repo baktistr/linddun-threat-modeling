@@ -34,7 +34,7 @@ answers, and by what mechanism.
    ┌──────────┴──────────┐                  │                             │
    │                     │                  ▼                             │
 ctx.valid==False   ctx.valid==True    top-k chunks by                     │
-   │                     │            hybrid dense+keyword                │
+   │                     │            hybrid BM25+keyword                 │
    ▼                     ▼            similarity (may miss                │
 SKIP -- no LLM   build_grounded_      the right passage)                  │
 call (structural  prompt(): flow            │                             │
@@ -158,7 +158,8 @@ hits = retriever.search(query, k=config.TOP_K, source="linddun", exclude_kinds=[
 `build_flow_query()` turns the flow into the same source/destination/description text every mode
 sees, phrased as a query string (e.g. `"Parent User (ExternalEntity) -> Authentication Service
 (Process): parent registration (email, password, name, govt ID, six-digit code)"`). The retriever
-embeds that query and does hybrid dense-cosine + keyword-overlap top-k search over the **same
+scores that query with Okapi BM25 and blends in keyword overlap (0.8/0.2, after scaling the
+unbounded BM25 sum by its per-query max) for a hybrid top-k search over the **same
 `linddun` corpus** the deterministic mode's `mapping_table.json`/`threat_trees.json` are drawn
 from — restricting to `source="linddun"` isolates *retrieval mechanism* as the only variable
 against the deterministic `grounded` mode, rather than also changing *what knowledge is available*.

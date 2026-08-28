@@ -1,0 +1,60 @@
+resuming: 1 cell(s) already recorded, 29 to run
+[1/29] kidstube tfidf run1: n=85 P=0.28 R=0.59 F1=0.38 cite=0.96
+[2/29] kidstube tfidf run2: n=84 P=0.30 R=0.61 F1=0.40 cite=0.95
+[3/29] kidstube tfidf run3: n=89 P=0.29 R=0.63 F1=0.40 cite=0.98
+[4/29] kidstube bm25 run1: n=87 P=0.26 R=0.56 F1=0.36 cite=0.97
+[5/29] kidstube bm25 run2: n=92 P=0.26 R=0.59 F1=0.36 cite=0.96
+[6/29] kidstube bm25 run3: n=91 P=0.30 R=0.66 F1=0.41 cite=0.99
+[7/29] smart_home tfidf run1: n=47 P=0.26 R=0.67 F1=0.37 cite=0.94
+[8/29] smart_home tfidf run2: n=44 P=0.23 R=0.56 F1=0.32 cite=0.93
+[9/29] smart_home tfidf run3: n=47 P=0.23 R=0.61 F1=0.34 cite=0.94
+[10/29] smart_home bm25 run2: n=49 P=0.31 R=0.83 F1=0.45 cite=1.0
+[11/29] smart_home bm25 run3: n=48 P=0.29 R=0.78 F1=0.42 cite=1.0
+[12/29] family_location tfidf run1: n=67 P=0.25 R=0.85 F1=0.39 cite=0.97
+[13/29] family_location tfidf run2: n=70 P=0.23 R=0.80 F1=0.36 cite=0.97
+[14/29] family_location tfidf run3: n=68 P=0.24 R=0.80 F1=0.36 cite=0.97
+[15/29] family_location bm25 run1: n=78 P=0.23 R=0.90 F1=0.37 cite=0.96
+[16/29] family_location bm25 run2: n=75 P=0.24 R=0.90 F1=0.38 cite=0.99
+[17/29] family_location bm25 run3: n=75 P=0.21 R=0.80 F1=0.34 cite=0.96
+[18/29] school_grades tfidf run1: n=78 P=0.22 R=0.85 F1=0.35 cite=0.92
+[19/29] school_grades tfidf run2: n=74 P=0.19 R=0.70 F1=0.30 cite=0.97
+[20/29] school_grades tfidf run3: n=75 P=0.19 R=0.70 F1=0.29 cite=0.96
+[21/29] school_grades bm25 run1: n=79 P=0.20 R=0.80 F1=0.32 cite=0.91
+[22/29] school_grades bm25 run2: n=79 P=0.20 R=0.80 F1=0.32 cite=1.0
+[23/29] school_grades bm25 run3: n=83 P=0.18 R=0.75 F1=0.29 cite=0.95
+[24/29] wearable_fitness tfidf run1: n=49 P=0.33 R=0.80 F1=0.46 cite=0.94
+[25/29] wearable_fitness tfidf run2: n=48 P=0.31 R=0.75 F1=0.44 cite=0.92
+[26/29] wearable_fitness tfidf run3: n=52 P=0.29 R=0.75 F1=0.42 cite=0.92
+[27/29] wearable_fitness bm25 run1: n=51 P=0.29 R=0.75 F1=0.42 cite=0.9
+[28/29] wearable_fitness bm25 run2: n=51 P=0.29 R=0.75 F1=0.42 cite=0.92
+[29/29] wearable_fitness bm25 run3: n=52 P=0.31 R=0.80 F1=0.44 cite=0.9
+
+RAG arm: retrieval backend sweep -- tfidf vs bm25, mean (sd) over runs
+  model {'gpt-5.4'}; temperature {0.0}; deployment honoured it: {True}
+  mode 'rag' only; k={5}; index chunks {475} (both backends over the same corpus)
+  code 179971a-dirty
+
+  Both conditions read the same corpus with the same filters. The only variable is the
+  scoring function. Recall is quantised at 1/|gold| (0.05 on the 20-threat scenarios),
+  so a difference below that is unmeasurable however many runs are made.
+
+  scenario           backend  runs        n_gen             P             R            F1      citation
+  kidstube           tfidf       3        86 (3)  0.29 (0.01)  0.61 (0.02)  0.39 (0.01)  0.96 (0.02)
+  kidstube           bm25        3        90 (3)  0.27 (0.02)  0.60 (0.05)  0.38 (0.03)  0.97 (0.02)
+  smart_home         tfidf       3        46 (2)  0.24 (0.02)  0.61 (0.06)  0.34 (0.03)  0.94 (0.01)
+  smart_home         bm25        3        48 (1)  0.31 (0.02)  0.81 (0.03)  0.44 (0.02)  1.00 (0.00)
+  family_location    tfidf       3        68 (2)  0.24 (0.01)  0.82 (0.03)  0.37 (0.02)  0.97 (0.00)
+  family_location    bm25        3        76 (2)  0.23 (0.02)  0.87 (0.06)  0.36 (0.02)  0.97 (0.02)
+  school_grades      tfidf       3        76 (2)  0.20 (0.02)  0.75 (0.09)  0.31 (0.03)  0.95 (0.03)
+  school_grades      bm25        3        80 (2)  0.19 (0.01)  0.78 (0.03)  0.31 (0.02)  0.95 (0.05)
+  wearable_fitness   tfidf       3        50 (2)  0.31 (0.02)  0.77 (0.03)  0.44 (0.02)  0.93 (0.01)
+  wearable_fitness   bm25        3        51 (1)  0.30 (0.01)  0.77 (0.03)  0.43 (0.01)  0.91 (0.01)
+
+  Paired across scenarios (each scenario one block), mean of per-scenario means:
+    citation    bm25 - tfidf  mean  +0.011  sd 0.031  n=5  favours bm25 in 3/5
+    recall      bm25 - tfidf  mean  +0.055  sd 0.084  n=5  favours bm25 in 3/5
+    precision   bm25 - tfidf  mean  +0.003  sd 0.036  n=5  favours bm25 in 1/5
+    f1          bm25 - tfidf  mean  +0.012  sd 0.049  n=5  favours bm25 in 1/5
+    n_generated bm25 - tfidf  mean   +4.00  sd 2.415  n=5  favours bm25 in 5/5
+
+(written to /home/baktistr/documents/CMU/linddun-threat-modeling/storage/generated/RAG_BACKEND_SWEEP.txt)

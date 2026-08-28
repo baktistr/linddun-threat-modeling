@@ -90,8 +90,20 @@ flow cites the pixel box it was read from, and each box is re-checked against th
 what is lost here: a diagram's edge labels are short, so the flow descriptions come back far
 thinner than the ones a person types into the JSON.
 
-There is also an optional **enrichment** step: keep a DFD file whose structure you trust, and add
-data details from code. It may only lengthen descriptions. It may never change structure.
+There is a fourth path, and it does not build a DFD file — it improves one. **Enrichment** keeps
+the structure of a DFD file you already trust, every element and flow id and endpoint untouched,
+and lets the model add from the code facts the data detail an analyst rarely types out: which
+fields cross a flow, which token rides along with them, where an upload actually lands. Two rules
+make it checkable. A description may only grow, with the original wording kept as its opening. And
+every addition must cite a code fact id, re-parsed from the source afterwards, or it is thrown
+away. Because no flow id ever changes, the gold standard still applies word for word, so any
+change in score comes from the added detail and nothing else.
+
+We ran it on two DFD files of the same system. On the analyst-written one it enriched 14 of 17
+flows, descriptions grew from 38 to 215 characters, and recall went 0.80 to 0.85 with citation
+validity still 1.00. On the picture-derived one it enriched 15 of 17 and changed nothing worth
+reporting, 0.76 to 0.73. Both numbers, and the reason only the first one counts for much, are in
+Results section 5.
 
 ## From source code to a DFD file, step by step
 

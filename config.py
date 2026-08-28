@@ -1,12 +1,30 @@
 """Central configuration for the LINDDUN RAG knowledge base.
 
 Embedding backend is pluggable via the EMBEDDING_BACKEND env var:
-  - "tfidf"  (default): zero-dependency, runs anywhere, good enough for week-1 demo
+  - "bm25"   (default): Okapi BM25 -- saturating TF, tunable length
+                        normalization, and IDF that actually discounts the
+                        corpus-wide vocabulary. Zero-dependency (numpy +
+                        sklearn's stop-word list).
+  - "tfidf"          : the earlier default; TF-IDF cosine over 1-2 grams.
   - "sbert"          : sentence-transformers local model (better semantic recall)
   - "anthropic"      : (placeholder) Voyage/Anthropic-recommended embeddings
 
-The default is deliberately tfidf so the repo runs with no model downloads.
-Switch to sbert once you've validated the pipeline and want better retrieval.
+BM25 is the default because it is what "retrieval baseline" means to a reader of
+this work: the rag arm exists to reproduce retrieval-based prior work as a
+controlled ablation, and Okapi BM25 is the standard lexical retriever that claim
+is measured against. TF-IDF cosine was the week-1 placeholder chosen for having
+no model downloads, and BM25 costs nothing on that axis either.
+
+Consequence, stated rather than left implicit: every threat set generated through
+RESULTS_2026-08-08.md used tfidf. Those rag-arm artifacts were produced by a
+different retriever than the one this code now serves, and must be regenerated
+before their numbers are quoted alongside code at this commit. The grounded and
+ungrounded arms never touch the index and are unaffected.
+
+bm25 and tfidf are both lexical, so neither fixes vocabulary mismatch between
+scenario prose and LINDDUN's formal wording; sbert is the arm that tests that.
+Each backend persists to its own index file, so they can be built once and
+switched between by env var without a rebuild.
 """
 from __future__ import annotations
 import os
@@ -50,7 +68,32 @@ CHUNK_OVERLAP = int(os.environ.get("CHUNK_OVERLAP", "100"))
 TOP_K = int(os.environ.get("TOP_K", "5"))
 
 # Embedding backend
-EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "tfidf").lower()
+EMBEDDING_BACKEND = os.environ.get("EMBEDDING_BACKEND", "bm25").lower()
+
+# Which chunk kinds the rag arm refuses to retrieve. Default is the long-standing
+# ["gold_threat"] -- never let the gold answers leak into the retrieved context.
+# Measured 2026-08-26: under that default only 2-8% of retrieved context is tree_node
+# chunks; the flow query's DFD type vocabulary ("Process", "ExternalEntity", "DataStore")
+# matches the 7 mapping-table chunks almost verbatim and crowds the threat trees out.
+# Set RAG_EXCLUDE_KINDS to probe that, e.g. tree-nodes-only:
+#   RAG_EXCLUDE_KINDS=gold_threat,mapping_row,mapping_invalid,type_definition,raw_json,untyped
+# "untyped" means the chunks with no `kind` (the methodology prose).
+def _parse_exclude_kinds(raw: str) -> list:
+    kinds = []
+    for part in raw.split(","):
+        part = part.strip()
+        if part:
+            kinds.append(None if part == "untyped" else part)
+    return kinds
+
+
+RAG_EXCLUDE_KINDS = _parse_exclude_kinds(os.environ.get("RAG_EXCLUDE_KINDS", "gold_threat"))
+
+# BM25 parameters (EMBEDDING_BACKEND=bm25). Defaults are the standard Okapi values.
+# k1 controls how fast term frequency saturates; b controls how hard document length
+# is normalized (b=0 disables length normalization entirely, b=1 applies it fully).
+BM25_K1 = float(os.environ.get("BM25_K1", "1.5"))
+BM25_B = float(os.environ.get("BM25_B", "0.75"))
 
 # LLM generation layer (cli.py ask, generation/). Not required for retrieval.
 # Provider is pluggable so threat generation isn't locked to one vendor -- see generation/llm_backend.py.

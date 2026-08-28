@@ -47,7 +47,8 @@ Working bibliography for this project (AI-assisted, grounded LINDDUN Pro privacy
 ## G. Retrieval-augmented generation & grounding (architecture basis)
 
 - Lewis, P., et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.* NeurIPS. <https://arxiv.org/abs/2005.11401>
-- Karpukhin, V., et al. (2020). *Dense Passage Retrieval for Open-Domain Question Answering.* EMNLP. <https://arxiv.org/abs/2004.04906> — dense side of hybrid retrieval.
+- Robertson, S., & Zaragoza, H. (2009). *The Probabilistic Relevance Framework: BM25 and Beyond.* Foundations and Trends in Information Retrieval, 3(4), 333-389. <https://doi.org/10.1561/1500000019> — the default retrieval backend (Okapi BM25).
+- Karpukhin, V., et al. (2020). *Dense Passage Retrieval for Open-Domain Question Answering.* EMNLP. <https://arxiv.org/abs/2004.04906> — basis for the optional `sbert` dense backend; not the default.
 
 ## Notes on positioning
 

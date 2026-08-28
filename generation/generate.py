@@ -53,8 +53,15 @@ def _load_dfd(scenario: str) -> dict:
 def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str | None = None,
                           progress: bool = True,
                           dfd_path: Path | str | None = None,
-                          model: str | None = None) -> list[GeneratedThreat]:
+                          model: str | None = None,
+                          retrieval_backend: str | None = None) -> list[GeneratedThreat]:
     """`dfd_path` overrides the scenario's own dfd.json.
+
+    `retrieval_backend` overrides config.EMBEDDING_BACKEND for the two RAG modes only, so a sweep
+    can vary the retriever per run the way `model` varies the deployment -- on the call rather
+    than in the environment. Mutating config mid-process would leak into whatever ran next, which
+    for a retrieval backend means a later run silently scoring against the wrong index. None
+    (the default) keeps the configured backend, so every existing caller is unaffected.
 
     A multi-model experiment produces one DFD per (input, arm, model, run) and they cannot all
     live in one scenario directory. Without this override, comparing N models would mean minting
@@ -68,8 +75,15 @@ def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str |
     backend = get_llm_backend(provider, model)
     dfd = json.loads(Path(dfd_path).read_text()) if dfd_path else _load_dfd(scenario)
     elements_by_id = {e["id"]: e for e in dfd["elements"]}
-    # Only the two RAG modes need the vector index; the rest never touch it.
-    retriever = Retriever.load() if mode in ("rag", "panoptic_rag") else None
+    # Only the two RAG modes need the retrieval index; the rest never touch it.
+    retriever = Retriever.load(retrieval_backend) if mode in ("rag", "panoptic_rag") else None
+    if retriever is not None and progress:
+        # Which retriever produced a rag threat set is not recoverable from the saved
+        # JSON (it is a bare list of threats, with no _meta), and the backend is
+        # env-switchable. Naming it here puts it in the run log, so a rag artifact can
+        # always be traced to the retriever that generated it.
+        print(f"[rag] retrieving with '{retriever.backend.name}' over "
+              f"{len(retriever.chunks)} chunks, k={config.TOP_K}", flush=True)
     # Only panoptic_grounded needs the full taxonomy; load once, not per flow.
     taxonomy = _load_panoptic_taxonomy() if mode == "panoptic_grounded" else None
 
@@ -94,7 +108,7 @@ def generate_for_scenario(scenario: str, mode: str = "grounded", provider: str |
             # and "retrieved vs. deterministic context" as the only variable vs. grounded.
             query = build_flow_query(flow, elements_by_id)
             hits = retriever.search(query, k=config.TOP_K, source="linddun",
-                                    exclude_kinds=["gold_threat"])
+                                    exclude_kinds=config.RAG_EXCLUDE_KINDS)
             prompt = build_rag_prompt(flow, elements_by_id, hits)
         elif mode == "panoptic_grounded":
             # No gate here either, and for a different reason than rag's: PANOPTIC has no

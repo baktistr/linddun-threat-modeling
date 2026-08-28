@@ -16,7 +16,7 @@ knowledge_base/          curated source-of-truth (the durable asset)
   panoptic/              MITRE PANOPTIC taxonomy (5 domains, 13 activities, 100 sub-activities)
   scenarios/<name>/      system_description.md + dfd.json + gold_standard_threats.json
 
-ingestion/ retrieval/    chunking, pluggable embeddings, hybrid (dense+keyword) index
+ingestion/ retrieval/    chunking, pluggable backends (bm25 default), hybrid (BM25+keyword) index
 generation/              per-flow prompts -> threats; llm_backend.py (Anthropic/OpenAI/Azure);
                          verify.py re-checks every citation against the KB
 eval/                    match.py, metrics.py, reachability.py, adjudicate.py, run_eval.py
