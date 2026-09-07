@@ -819,6 +819,93 @@ def test_gold_location_convention_is_read_from_the_catalog():
           "a catalog with no embedded flow ids is location-anchored")
 
 
+def test_position_is_the_third_linddun_location():
+    """LINDDUN Pro elicits at three positions; the schema only ever had room for two.
+
+    The tutorial (knowledge_base/linddun/threat_types_and_methodology.md, from LINDDUN PRO
+    Tutorial v0.1) defines Source, Data Flow and Destination, and Table 4.1 lists all three for
+    every threat type on every valid interaction. `originator_id` alone can only name an ELEMENT,
+    so a data-flow threat -- the tutorial's own example, "meta-data about source and destination
+    used to link flows" -- had nowhere to go. Models either coerced it onto an endpoint or
+    answered "fl", the token the prompt's own legend teaches, and were then scored as having
+    fabricated a citation."""
+    print("\n[position: the flow is a legal location, not a fabricated one]")
+    dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
+    flow = next(f for f in dfd["flows"] if f["id"] == "DF3")
+    src, dst = flow["source"], flow["destination"]
+
+    def v(position, originator_id):
+        return verify_threat(GeneratedThreat(
+            flow_id="DF3", originator_id=originator_id, threat_type="L", tree_node="L.1.1",
+            title="t", description="d", position=position), dfd)
+
+    check(v("S", src).location_valid, "S with the source id verifies")
+    check(v("D", dst).location_valid, "D with the destination id verifies")
+    check(v("fl", flow["id"]).location_valid,
+          "fl with the FLOW's own id verifies -- the case that previously could not be expressed")
+
+    check(not v("S", dst).location_valid,
+          "S naming the destination fails: the pair must agree, not merely both exist")
+    check(not v("fl", src).location_valid, "fl naming an element fails")
+    check(not v("D", "DS5").location_valid,
+          "an off-flow element fails -- the old rule accepted any element in the whole DFD")
+    check(not v("X", src).location_valid and v("X", src).position_applicable is False,
+          "a position outside S/fl/D is neither valid nor applicable")
+
+    # Applicability is a separate question, checked against the mapping table the way tree_node is
+    # checked against the trees.
+    check(v("fl", flow["id"]).position_applicable is True,
+          "fl is applicable for L at Process->ExternalEntity per mapping_table.json")
+
+    legacy = v("", src)
+    check(legacy.location_valid and legacy.position_applicable is None,
+          "an artifact with no position keeps the old lenient rule and reports position UNKNOWN")
+    check(legacy.all_valid,
+          "and an unrunnable position check cannot fail a threat that predates the field")
+
+
+def test_position_rate_is_reported_over_threats_that_cited_one():
+    """A pre-position artifact has an unknown position rate, never a perfect one."""
+    print("\n[position: the rate never counts unknowns as passes]")
+    from eval.metrics import citation_correctness
+    from generation.verify import VerificationResult
+
+    mixed = [VerificationResult(True, True, True, True),
+             VerificationResult(True, True, True, False),
+             VerificationResult(True, True, True, None)]     # predates the field
+    stats = citation_correctness(mixed)
+    check(stats["n_position_cited"] == 2,
+          f"only the two threats that cited a position are counted (got {stats['n_position_cited']})")
+    check(abs(stats["position_applicable_rate"] - 0.5) < 1e-9,
+          f"rate is 1/2, not 2/3 (got {stats['position_applicable_rate']})")
+
+    legacy_only = [VerificationResult(True, True, True, None) for _ in range(3)]
+    check("position_applicable_rate" not in citation_correctness(legacy_only),
+          "with nothing cited the key is absent, so an old eval report is byte-unchanged")
+
+
+def test_prompt_stops_teaching_fl_as_an_originator_id():
+    """The prompt's legend defines fl=flow and repeats it seven times as a position. Before
+    `position` existed there was no field that accepted it, so the instruction has to say
+    explicitly where it belongs -- 131 citations across four sweeps put it in the wrong one."""
+    print("\n[prompt: fl is directed to the position field]")
+    from generation.prompt import build_grounded_prompt
+    from retrieval.interaction_context import get_interaction_context, effective_type
+    dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
+    els = {e["id"]: e for e in dfd["elements"]}
+    flow = next(f for f in dfd["flows"] if f["id"] == "DF3")
+    ctx = get_interaction_context(effective_type(els[flow["source"]]),
+                                  effective_type(els[flow["destination"]]))
+    p = build_grounded_prompt(flow, els, ctx)
+
+    check("fl=flow" in p, "the legend that caused this is still present (it is the methodology's)")
+    check('"fl" is a position' in p, "and the instruction now says where fl belongs")
+    check(f'"{flow["id"]}" (this flow) for fl' in p,
+          "the prompt names the flow id as the answer for the fl position")
+    for tok in ("S", "fl", "D"):
+        check(f'"{tok}"' in p, f"position value {tok!r} is offered to the model")
+
+
 def test_malformed_threat_is_dropped_and_counted_not_fatal():
     """A threat missing a field its own tool schema marks `required` must cost that threat, not
     the whole run -- and must be counted, because it is a property of the model under test.
@@ -991,6 +1078,9 @@ def main():
     test_sweep_artifacts_record_the_code_state()
     test_matcher_genomic_location_based()
     test_matcher_genomic_without_dfd_falls_back_to_coarse()
+    test_position_is_the_third_linddun_location()
+    test_position_rate_is_reported_over_threats_that_cited_one()
+    test_prompt_stops_teaching_fl_as_an_originator_id()
     test_malformed_threat_is_dropped_and_counted_not_fatal()
     test_concurrency_changes_issue_order_and_nothing_else()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")

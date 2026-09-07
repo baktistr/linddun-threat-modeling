@@ -48,7 +48,8 @@ Flow description: {flow['description']}
 
 Instructions:
 - For each applicable threat type listed above, decide whether a genuine threat exists for THIS flow, using only the flow description and context given. Do not pad the list to cover every type -- omit types with no real evidence.
-- originator_id must be exactly "{flow['source']}" or "{flow['destination']}" (whichever element the threat is actually located at).
+- position says WHERE the threat arises, per LINDDUN Pro: "S" at the source element (its act of sharing causes the threat), "fl" at the data flow itself (data in transit -- data-centric threats such as meta-data about the parties being used to link or identify them), or "D" at the destination element (what the recipient does with the data on receipt).
+- originator_id must be the id naming that position: "{flow['source']}" for S, "{flow['destination']}" for D, or "{flow['id']}" (this flow) for fl. Do not answer "fl" here -- "fl" is a position, and it belongs in the position field.
 - tree_node must be one of the node ids listed above under the chosen threat_type.
 - If you are not confident in a citation, say so in uncertainty_note rather than asserting it silently.
 Respond using the emit_threats tool."""
@@ -91,7 +92,8 @@ Instructions:
   found by similarity search and may not cover the most relevant methodology passage for this flow.
 - Identify any genuine privacy threats for THIS flow, classified under one of LINDDUN's seven
   threat types (L, I, Nr, D, Dd, U, Nc). Do not pad the list -- omit types with no real evidence.
-- originator_id must be exactly "{flow['source']}" or "{flow['destination']}" (whichever element the threat is actually located at).
+- position says WHERE the threat arises, per LINDDUN Pro: "S" at the source element (its act of sharing causes the threat), "fl" at the data flow itself (data in transit -- data-centric threats such as meta-data about the parties being used to link or identify them), or "D" at the destination element (what the recipient does with the data on receipt).
+- originator_id must be the id naming that position: "{flow['source']}" for S, "{flow['destination']}" for D, or "{flow['id']}" (this flow) for fl. Do not answer "fl" here -- "fl" is a position, and it belongs in the position field.
 - tree_node should be a LINDDUN Pro threat-tree node id: use one from the retrieved context if it
   genuinely applies, or your own best judgement if the context doesn't cover it.
 - If you are not confident in a citation, say so in uncertainty_note rather than asserting it silently.
@@ -134,7 +136,8 @@ Instructions:
 - panoptic_action must be one of the sub-activity ids listed above (e.g. "PA03.09").
 - Also provide your best-effort threat_type: pick a LINDDUN type from the "LINDDUN types" listed for the chosen panoptic_action's parent activity.
 - tree_node: give your best LINDDUN Pro threat-tree node id for that type. If you're not confident, say so in uncertainty_note rather than asserting it silently.
-- originator_id must be exactly "{flow['source']}" or "{flow['destination']}" (whichever element the threat is actually located at).
+- position says WHERE the threat arises, per LINDDUN Pro: "S" at the source element (its act of sharing causes the threat), "fl" at the data flow itself (data in transit -- data-centric threats such as meta-data about the parties being used to link or identify them), or "D" at the destination element (what the recipient does with the data on receipt).
+- originator_id must be the id naming that position: "{flow['source']}" for S, "{flow['destination']}" for D, or "{flow['id']}" (this flow) for fl. Do not answer "fl" here -- "fl" is a position, and it belongs in the position field.
 Respond using the emit_threats tool."""
 
 
@@ -169,7 +172,8 @@ Instructions:
 - Identify any genuine privacy threats for THIS flow by finding which PANOPTIC Privacy Activity sub-item(s) apply. Do not pad the list -- omit activities with no real evidence.
 - panoptic_action should be a PANOPTIC sub-activity id (e.g. "PA03.09"): use one from the retrieved context if it genuinely applies, or your own best judgement if the context doesn't cover it.
 - Also provide your best-effort threat_type (a LINDDUN type) and tree_node.
-- originator_id must be exactly "{flow['source']}" or "{flow['destination']}" (whichever element the threat is actually located at).
+- position says WHERE the threat arises, per LINDDUN Pro: "S" at the source element (its act of sharing causes the threat), "fl" at the data flow itself (data in transit -- data-centric threats such as meta-data about the parties being used to link or identify them), or "D" at the destination element (what the recipient does with the data on receipt).
+- originator_id must be the id naming that position: "{flow['source']}" for S, "{flow['destination']}" for D, or "{flow['id']}" (this flow) for fl. Do not answer "fl" here -- "fl" is a position, and it belongs in the position field.
 - If you are not confident in a citation, say so in uncertainty_note rather than asserting it silently.
 Respond using the emit_threats tool."""
 
@@ -186,7 +190,8 @@ Flow {flow['id']}: {src_line} -> {dst_line}
 Flow description: {flow['description']}
 
 Identify any privacy threats for this flow. For each, give your best PANOPTIC sub-activity id (panoptic_action) and your best-effort LINDDUN threat_type and tree_node.
-- originator_id must be exactly "{flow['source']}" or "{flow['destination']}".
+- position says WHERE the threat arises, per LINDDUN Pro: "S" at the source element (its act of sharing causes the threat), "fl" at the data flow itself (data in transit -- data-centric threats such as meta-data about the parties being used to link or identify them), or "D" at the destination element (what the recipient does with the data on receipt).
+- originator_id must be the id naming that position: "{flow['source']}" for S, "{flow['destination']}" for D, or "{flow['id']}" (this flow) for fl. Do not answer "fl" here -- "fl" is a position, and it belongs in the position field.
 - If you are not confident in a panoptic_action id, say so in uncertainty_note rather than asserting it silently.
 Respond using the emit_threats tool."""
 
@@ -200,6 +205,7 @@ Flow {flow['id']}: {src_line} -> {dst_line}
 Flow description: {flow['description']}
 
 Identify any privacy threats for this flow. For each, classify it under a LINDDUN threat type (L, I, Nr, D, Dd, U, or Nc) and give your best LINDDUN Pro threat-tree node id.
-- originator_id must be exactly "{flow['source']}" or "{flow['destination']}".
+- position says WHERE the threat arises, per LINDDUN Pro: "S" at the source element (its act of sharing causes the threat), "fl" at the data flow itself (data in transit -- data-centric threats such as meta-data about the parties being used to link or identify them), or "D" at the destination element (what the recipient does with the data on receipt).
+- originator_id must be the id naming that position: "{flow['source']}" for S, "{flow['destination']}" for D, or "{flow['id']}" (this flow) for fl. Do not answer "fl" here -- "fl" is a position, and it belongs in the position field.
 - If you are not confident in a node id, say so in uncertainty_note rather than asserting it silently.
 Respond using the emit_threats tool."""

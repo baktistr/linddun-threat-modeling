@@ -172,9 +172,11 @@ def run_eval(scenario: str, generated_path: str, strict: bool = False, by_node: 
     lines.append("")
     lines.append("Citation correctness (independently verified against the knowledge base, not self-reported):")
     for k, v in citation_stats.items():
-        if k == "n":
+        if k in ("n", "n_position_cited"):
             continue
         lines.append(f"  {k:<24} {v:.2f}")
+    if "n_position_cited" in citation_stats:
+        lines.append(f"  n_position_cited         {citation_stats['n_position_cited']}")
     lines.append(f"  n_threats_checked        {citation_stats['n']}")
 
     rc = reachability_breakdown(gold, scenario, dfd, match.matched_gold_ids)

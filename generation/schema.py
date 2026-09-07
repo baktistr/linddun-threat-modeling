@@ -14,7 +14,7 @@ from dataclasses import dataclass, field, fields, asdict
 @dataclass
 class GeneratedThreat:
     flow_id: str                  # the dfd.json flow id this threat was generated for, e.g. "DF1"
-    originator_id: str            # DFD element id the threat is located at -- the location citation
+    originator_id: str            # where the threat sits: an element id for S/D, the FLOW id for fl
     threat_type: str              # one of L, I, Nr, D, Dd, U, Nc
     tree_node: str                # LINDDUN Pro threat-tree node id, e.g. "Dd.1.1" -- the methodology citation
     title: str
@@ -23,6 +23,11 @@ class GeneratedThreat:
     severity: str = ""
     likelihood: str = ""
     uncertainty_note: str = ""
+    position: str = ""            # LINDDUN Pro position: "S" (source) | "fl" (data flow) | "D" (destination).
+                                   # Empty = unrecorded, which is every artifact written before this field
+                                   # existed; it is NOT inferred from originator_id, because "the threat is
+                                   # at the flow" is exactly the claim under test and back-filling it would
+                                   # manufacture the evidence.
     grounded: bool = True         # whether this threat came from a grounded (any KB context) or ungrounded pipeline
     mode: str | None = None       # "grounded" | "rag" | "ungrounded" | "panoptic" -- which grounding mechanism
                                    # produced this. None (unset) is only ever seen loading a pre-RAG-ablation saved
@@ -61,9 +66,22 @@ THREAT_TOOL_SCHEMA = {
                 "items": {
                     "type": "object",
                     "properties": {
+                        "position": {
+                            "type": "string",
+                            "enum": ["S", "fl", "D"],
+                            "description": (
+                                "Where the threat arises, per LINDDUN Pro. 'S' = at the source element, "
+                                "which shares the data and whose act of sharing causes the threat. "
+                                "'fl' = at the data flow, i.e. data in transit -- data-centric threats such "
+                                "as meta-data about the parties being used to link or identify them. "
+                                "'D' = at the destination element, which receives the data and processes or "
+                                "stores it in a way that causes the threat."),
+                        },
                         "originator_id": {
                             "type": "string",
-                            "description": "The DFD element id (from the provided element list) where this threat is located.",
+                            "description": (
+                                "The id naming that position: the source element's id when position is 'S', "
+                                "the destination element's id when 'D', and THIS FLOW'S OWN id when 'fl'."),
                         },
                         "threat_type": {
                             "type": "string",
@@ -87,7 +105,8 @@ THREAT_TOOL_SCHEMA = {
                             "description": "If you are not confident this threat applies, or a citation is approximate, say so here instead of asserting it silently. Empty string if fully confident.",
                         },
                     },
-                    "required": ["originator_id", "threat_type", "tree_node", "title", "description"],
+                    "required": ["position", "originator_id", "threat_type", "tree_node", "title",
+                                 "description"],
                 },
             }
         },

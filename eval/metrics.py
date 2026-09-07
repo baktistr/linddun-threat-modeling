@@ -123,10 +123,20 @@ def per_panoptic_category_scores(generated: list[GeneratedThreat], gold: list[di
 
 def citation_correctness(verifications: list[VerificationResult]) -> dict:
     n = len(verifications) or 1
-    return {
+    out = {
         "node_valid_rate": sum(v.node_valid for v in verifications) / n,
         "type_applicable_rate": sum(v.type_applicable for v in verifications) / n,
         "location_valid_rate": sum(v.location_valid for v in verifications) / n,
-        "all_valid_rate": sum(v.all_valid for v in verifications) / n,
-        "n": len(verifications),
     }
+    # Reported over the threats that actually cited a position, never over all of them: a
+    # pre-position artifact has an UNKNOWN position rate, not a perfect one, and averaging the
+    # unknowns in as passes would manufacture the number this field exists to measure. The key is
+    # omitted entirely when nothing cited a position, so an old eval report is unchanged.
+    cited = [v for v in verifications if v.position_applicable is not None]
+    if cited:
+        out["position_applicable_rate"] = (sum(bool(v.position_applicable) for v in cited)
+                                           / len(cited))
+        out["n_position_cited"] = len(cited)
+    out["all_valid_rate"] = sum(v.all_valid for v in verifications) / n
+    out["n"] = len(verifications)
+    return out
