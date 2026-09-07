@@ -382,6 +382,9 @@ To test both, we ran the full ablation on a ladder of open-weight models served 
 
 † Not a methodology-citation failure; see "the 9B anomaly" below. ‡ Not a usable sample; see "the 27B refusal" below.
 
+![][image4]  
+Figure 4\. (a) Verified citation validity by grounding mechanism across the Qwen3.5 ladder, mean of five scenarios with between-scenario sd. (b) The grounded-minus-ungrounded margin against gpt-5.4's +0.17. The hatched 27B bars derive from that model's ungrounded refusal row and are shown for completeness only.
+
 **Methodology citation is 1.00 at every scale.** Separating the two things `all_valid_rate` folds together — the threat-tree node and the DFD location — gives the cleanest result in this report:
 
 *Table 13\. Grounded-mode node citation, verified against the official trees.*
@@ -409,7 +412,10 @@ From 4B upwards the margin sits in the same band as the frontier model. At 2B it
 
 **RAG does not merely underperform at 2B; it collapses.** Citation validity 0.139, against 0.343 for no context at all. The RAG prompt frames retrieved passages as *guidance* to be combined with the model's own judgement (mirroring PriMod4AI), and a 2B model cannot do that: given text to lean on, it produces node ids that look like the retrieved material rather than ids that exist. Below some capability floor, retrieval-as-guidance is worse than nothing. By 4B it recovers to ~0.80 and stays flat to 27B. Anyone proposing retrieval-based threat modelling on small local models should measure this before assuming retrieval is the safe option.
 
-**Recall inverts relative to the frontier result.** Section 1 found grounded best on recall in 5 of 5 scenarios at gpt-5.4. Here ungrounded beats grounded on recall and F1 at every rung of the ladder. The gate explains part of it — grounded mode skips flows no Process mediates while the other two attempt everything — but that gate is present at all scales and so cannot explain a reversal. The reading we prefer is that grounding buys these models *correctness but not coverage*: handed an exhaustive menu, a small model works the menu, whereas the frontier model uses it as a starting point. It is a real limitation of the method at small scale and should not be presented as a wash.
+![][image5]  
+Figure 5\. The counterpart to Figure 4: on the metrics that measure threat elicitation rather than citation, grounded mode is beaten at every rung. Plotting the two together is what stops the citation result from being read as a claim about coverage.
+
+**Recall inverts relative to the frontier result.** Section 1 found grounded best on recall in 5 of 5 scenarios at gpt-5.4. Here grounded is beaten on both at every rung: by ungrounded at 2B, 4B and 9B, and by rag at 27B, where the ungrounded arm refuses. The gate explains part of it — grounded mode skips flows no Process mediates while the other two attempt everything — but that gate is present at all scales and so cannot explain a reversal. The reading we prefer is that grounding buys these models *correctness but not coverage*: handed an exhaustive menu, a small model works the menu, whereas the frontier model uses it as a starting point. It is a real limitation of the method at small scale and should not be presented as a wash.
 
 **Three caveats that travel with this table.**
 
