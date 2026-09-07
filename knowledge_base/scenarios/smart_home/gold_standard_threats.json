@@ -26,7 +26,9 @@
       "description": "Guest unlock codes are not rotated per visit, so every entry event using the same code can be linked together into a single guest's visit history, even if the guest's real identity is otherwise unknown to the system.",
       "assumptions": "Guest access codes are reused across multiple visits rather than generated fresh each time.",
       "severity": "Low",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 2,
@@ -39,7 +41,9 @@
       "description": "Similar to KidsTube's JWT-in-localStorage pattern, temporary guest unlock codes are stored and transmitted to the Home Hub without encryption, so anyone intercepting local traffic or accessing the Hub's storage can capture a currently-valid code.",
       "assumptions": "No evidence of end-to-end encryption for the guest-code enrollment/verification path.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 3,
@@ -52,7 +56,9 @@
       "description": "The Local Event Log accumulates every sensor, door, and lock event indefinitely with no automatic deletion or archival policy, well beyond what active security monitoring requires.",
       "assumptions": "No retention/lifecycle job or documented deletion policy was found for the Local Event Log.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 4,
@@ -65,7 +71,9 @@
       "description": "The Home Hub uploads full-resolution, continuously-recorded video clips to cloud storage rather than only the shorter motion-triggered snippets that the stated security purpose requires, retaining substantially more footage volume than necessary.",
       "assumptions": "Cameras record continuously rather than only during a detected motion/door event window.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 5,
@@ -78,7 +86,9 @@
       "description": "Credentials or API keys used by the Home Hub to upload to Cloud Video Storage are hardcoded in firmware or reused across the homeowner's other cloud services; if leaked, they expose the entire historical video archive, not just a single clip.",
       "assumptions": "No evidence of per-device, rotatable, least-privilege credentials for the video-upload path.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 6,
@@ -92,7 +102,9 @@
       "description": "An adversary monitoring network traffic between the Home Hub and the Mobile App Backend can detect exactly when motion alerts fire -- and infer when the home is occupied or empty -- purely from traffic timing and volume, without decrypting the payload.",
       "assumptions": "No evidence that Hub-to-backend traffic is encrypted or padded to obscure event timing.",
       "severity": "Med",
-      "likelihood": "Low"
+      "likelihood": "Low",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 7,
@@ -105,7 +117,9 @@
       "description": "Someone with access to push-notification metadata (e.g. a shared family phone, or a compromised notification-service integration) can infer which room or entry point triggered an alert based on which notification template fired, without ever opening the app or accessing raw sensor data.",
       "assumptions": "Notification templates are camera/sensor-specific (e.g. \"front door\" vs. a generic alert) rather than uniformly worded.",
       "severity": "Low",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 8,
@@ -118,7 +132,9 @@
       "description": "Combining motion, door, and lock events across all of the homeowner's sensors over time reveals a detailed occupancy profile -- when they leave for work, when they're away for extended periods -- well beyond what any single sensor's individual event implies.",
       "assumptions": "Historical events across all sensors are jointly queryable, not siloed per device.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 9,
@@ -131,7 +147,9 @@
       "description": "Usage analytics shared with the third-party analytics vendor, though described as aggregated and non-identifying, can be combined with the vendor's other data sources (device/session identifiers, timing patterns) to reconstruct household-level behavioral profiles.",
       "assumptions": "The analytics payload includes device- or session-level identifiers rather than only fully aggregated, k-anonymized statistics.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 10,
@@ -145,7 +163,9 @@
       "description": "Sharing usage analytics with the third-party analytics vendor is on by default; the homeowner is never shown an explicit, purpose-specific consent screen distinguishing it from the core security-monitoring functionality during setup.",
       "assumptions": "The privacy policy discloses third-party sharing in general terms but the app has no dedicated consent toggle shown during onboarding.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "S",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 11,
@@ -158,7 +178,9 @@
       "description": "Once usage analytics reach the third-party vendor, the platform has no enforced technical or contractual control preventing that vendor from repurposing the data for targeted advertising or reselling it to downstream ad-tech intermediaries.",
       "assumptions": "Any data-sharing agreement with the analytics vendor is not technically enforced (e.g. no data-use audit or deletion-on-request mechanism).",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 12,
@@ -171,7 +193,9 @@
       "description": "Guests receiving a temporary unlock code are never shown any notice -- at the door, in an app, or otherwise -- that their entry and exit events are being logged and retained by the system.",
       "assumptions": "The guest-code flow has no notice or acknowledgment step beyond entering the code.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 13,
@@ -185,7 +209,9 @@
       "description": "The privacy policy and in-app disclosures describe data collection in general terms but do not specify a concrete retention period for video footage or event logs, nor precisely which third parties receive usage analytics beyond a generic \"analytics partners\" reference.",
       "assumptions": "No specific retention duration or itemized third-party recipient list is published in the homeowner-facing privacy documentation.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 14,
@@ -198,7 +224,9 @@
       "description": "Video clips retrieved for playback include timestamp and device metadata that directly identifies which household member (or guest) appears on camera at a given time, with no on-device redaction or blurring option before playback or export.",
       "assumptions": "Clip metadata and playback include full timestamp/location context with no built-in redaction feature.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 15,
@@ -211,7 +239,9 @@
       "description": "Cloud-stored video clips retain embedded device serial numbers and account identifiers in their metadata, so a leaked or improperly shared clip can be traced back to the homeowner's account even without any explicit identity label on the footage itself.",
       "assumptions": "Uploaded clips are not stripped of device/account metadata before storage.",
       "severity": "Med",
-      "likelihood": "Low"
+      "likelihood": "Low",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 16,
@@ -224,7 +254,9 @@
       "description": "Every guest entry via a temporary code is permanently logged with a timestamp attributable to that specific code, creating a persistent record that could later be used as evidence against the guest (e.g. in a dispute) without their awareness that such a record exists.",
       "assumptions": "Entry logs are retained indefinitely and are not disclosed to the guest at the time of entry.",
       "severity": "Low",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 17,
@@ -237,7 +269,9 @@
       "description": "Motion alerts forwarded from the Home Hub to the backend are irrevocably attributed to a specific sensor and timestamp, with no mechanism for the homeowner to later annotate or dispute a false-positive alert as inaccurate once it has been logged.",
       "assumptions": "The alert pipeline has no correction/annotation feature after an alert is generated and stored.",
       "severity": "Low",
-      "likelihood": "Low"
+      "likelihood": "Low",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 18,
@@ -250,7 +284,9 @@
       "description": "The system has no documented data-minimization review assessing whether the volume and continuity of video/audio capture is proportionate to the stated home-security purpose, a data-protection principle expected of continuous-surveillance consumer devices.",
       "assumptions": "No DPIA or data-minimization documentation was found for the camera/sensor capture configuration.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     }
   ]
 }

@@ -819,6 +819,55 @@ def test_gold_location_convention_is_read_from_the_catalog():
           "a catalog with no embedded flow ids is location-anchored")
 
 
+def test_gold_positions_are_read_off_the_catalog_never_inferred():
+    """The gold's positions must be what the analysts already asserted, not what the schema wants.
+
+    Every value comes from comparing the human-written originator_id against the flow's endpoints
+    and id. The three KidsTube `fl` threats are the ones that matter: expert analysts located
+    "Interception of identified parent data during registration transmission" at DF1 -- the FLOW --
+    unprompted, which is the same answer Qwen3.5-9B gave and was scored as fabricating. Anything
+    that does not resolve is left unset with a note, because a guessed position in the ground truth
+    would be evidence manufactured to fit the schema that wanted it."""
+    print("\n[gold: position recorded, never invented]")
+    import sys as _sys
+    _sys.path.insert(0, str(config.ROOT / "scripts"))
+    from add_gold_position import position_for
+
+    seen = {"S": 0, "fl": 0, "D": 0, "unset": 0}
+    for scenario in ("kidstube", "smart_home", "family_location", "school_grades",
+                     "wearable_fitness"):
+        dfd = json.loads((config.KB_DIR / "scenarios" / scenario / "dfd.json").read_text())
+        doc = json.loads((config.KB_DIR / "scenarios" / scenario
+                          / "gold_standard_threats.json").read_text())
+        threats = doc["threats"] if isinstance(doc, dict) else doc
+        flows = {f["id"]: f for f in dfd["flows"]}
+        for t in threats:
+            pos = t.get("position", "")
+            seen[pos or "unset"] += 1
+            check_silent = True
+            if not pos:
+                check(t.get("position_source") == "unresolved" and t.get("position_note"),
+                      f"{scenario} id={t['id']}: an unset position says why")
+                continue
+            # The recorded position must still agree with the catalog's own originator_id --
+            # this is what catches a hand edit that drifts from the data it claims to describe.
+            derived, _ = position_for(t, dfd)
+            check(derived == pos,
+                  f"{scenario} id={t['id']}: position {pos!r} re-derives from originator_id")
+            flow = flows.get((t.get("interaction") or "").split("[")[-1].rstrip("]")) \
+                or next((f for f in dfd["flows"] if f["source"] == t.get("dfd_source_id")
+                         and f["destination"] == t.get("dfd_destination_id")), None)
+            if flow:
+                expected = {"S": flow["source"], "D": flow["destination"], "fl": flow["id"]}[pos]
+                check(t["originator_id"] == expected,
+                      f"{scenario} id={t['id']}: originator_id names the {pos} of {flow['id']}")
+
+    check(seen["fl"] >= 3,
+          f"the gold carries flow-position threats ({seen['fl']} found) -- the position the "
+          f"schema could not previously express")
+    check(seen["S"] > 0 and seen["D"] > 0, "and both endpoint positions are represented")
+
+
 def test_position_is_the_third_linddun_location():
     """LINDDUN Pro elicits at three positions; the schema only ever had room for two.
 
@@ -1078,6 +1127,7 @@ def main():
     test_sweep_artifacts_record_the_code_state()
     test_matcher_genomic_location_based()
     test_matcher_genomic_without_dfd_falls_back_to_coarse()
+    test_gold_positions_are_read_off_the_catalog_never_inferred()
     test_position_is_the_third_linddun_location()
     test_position_rate_is_reported_over_threats_that_cited_one()
     test_prompt_stops_teaching_fl_as_an_originator_id()

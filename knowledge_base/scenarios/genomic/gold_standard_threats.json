@@ -44,7 +44,10 @@
       "dfd_destination_id": "S11-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Send the physical sample to be stored in the appropriate freezers",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 2,
@@ -77,7 +80,10 @@
       "dfd_destination_id": "S3-PH",
       "dfd_dataflow_type": "Sample Metadata",
       "dfd_context": "Send back to the wet lab the de-identified ID to be used for the sample",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 3,
@@ -110,7 +116,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Send the digital raw sequence data to be stored",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 4,
@@ -143,7 +152,10 @@
       "dfd_destination_id": "S5-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Send digital raw sequence data to Compute Nodes to operate on the data to transform it into objective-specific data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 5,
@@ -176,7 +188,10 @@
       "dfd_destination_id": "S13-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Send the generated context-relevant research data to the data delivery DMZ for making it available for delivery",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 6,
@@ -209,7 +224,10 @@
       "dfd_destination_id": "R2-RP",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 7,
@@ -241,7 +259,10 @@
       "dfd_destination_id": "R1-A",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "NCCoE Researcher retrieves the physical sample referenced by the physical sample request from the DNA Store",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 8,
@@ -273,7 +294,10 @@
       "dfd_destination_id": "S1-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 9,
@@ -306,7 +330,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 10,
@@ -338,7 +365,10 @@
       "dfd_destination_id": "C2-A",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Clinician retrieves the physical sample referenced by the physical sample request",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 11,
@@ -370,7 +400,10 @@
       "dfd_destination_id": "S1-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 12,
@@ -403,7 +436,10 @@
       "dfd_destination_id": "R4-RD",
       "dfd_dataflow_type": "Digital Sample Data Request",
       "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 13,
@@ -434,7 +470,10 @@
       "dfd_destination_id": "R1-A",
       "dfd_dataflow_type": "Digital Sample Data",
       "dfd_context": "NCCoE Researcher retrieves the digital sample data referenced by the digital sample data request from the Digital Sample Data Store",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 14,
@@ -468,7 +507,10 @@
       "dfd_destination_id": "S2-A",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Send the physical sample to the lab technician working on the relevant research project",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 15,
@@ -502,7 +544,10 @@
       "dfd_destination_id": "S3-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Send the physical sample to the wet lab to be sequenced",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 16,
@@ -534,7 +579,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 17,
@@ -566,7 +614,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 18,
@@ -595,7 +646,10 @@
       "dfd_destination_id": "R1-A",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "NCCoE Researcher retrieves the physical sample referenced by the physical sample request from the DNA Store",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 19,
@@ -624,7 +678,10 @@
       "dfd_destination_id": "S1-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "NCCoE Researcher sends the physical sample to the sequencing lab that will generate context-relevant research data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 20,
@@ -653,7 +710,10 @@
       "dfd_destination_id": "C2-A",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Clinician retrieves the physical sample referenced by the physical sample request",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 21,
@@ -682,7 +742,10 @@
       "dfd_destination_id": "S1-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Clinician sends the physical sample to the sequencing lab that will generate context-relevant research data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 22,
@@ -711,7 +774,10 @@
       "dfd_destination_id": "C3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 23,
@@ -740,7 +806,10 @@
       "dfd_destination_id": "C8-A",
       "dfd_dataflow_type": "Patient Re-identification Request",
       "dfd_context": "Genetic Counselor provides the results to the 3rd Party Previous Enrollment Entity to update their records for any studies the Patient is involved in",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 24,
@@ -769,7 +838,10 @@
       "dfd_destination_id": "R1-A",
       "dfd_dataflow_type": "Digital Sample Data",
       "dfd_context": "NCCoE Researcher retrieves the digital sample data referenced by the digital sample data request from the Digital Sample Data Store",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 25,
@@ -799,7 +871,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 26,
@@ -829,7 +904,10 @@
       "dfd_destination_id": "S4-PH",
       "dfd_dataflow_type": "Sample Metadata",
       "dfd_context": "Generate the de-identified ID to be used for the sample",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 27,
@@ -859,7 +937,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 28,
@@ -890,7 +971,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 29,
@@ -920,7 +1004,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 30,
@@ -950,7 +1037,10 @@
       "dfd_destination_id": "R5-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 31,
@@ -980,7 +1070,10 @@
       "dfd_destination_id": "R6-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 32,
@@ -1010,7 +1103,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 33,
@@ -1039,7 +1135,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 34,
@@ -1068,7 +1167,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 35,
@@ -1098,7 +1200,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 36,
@@ -1127,7 +1232,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 37,
@@ -1156,7 +1264,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 38,
@@ -1186,7 +1297,10 @@
       "dfd_destination_id": "R5-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 39,
@@ -1216,7 +1330,10 @@
       "dfd_destination_id": "R6-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 40,
@@ -1246,7 +1363,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 41,
@@ -1276,7 +1396,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 42,
@@ -1306,7 +1429,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Counselor meets with the Patient and reviews the test results with them, providing recommendations, next steps, and a copy of the results",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 43,
@@ -1336,7 +1462,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Interpreted Clinical Results and Professional Recommendations",
       "dfd_context": "Genetic Physician provides patient with their results and professional recommendations",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 44,
@@ -1366,7 +1495,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Outreach Attempt",
       "dfd_context": "3rd Party Previous Enrollment Entity informs Patient that a new record has been added to their file",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 45,
@@ -1397,7 +1529,10 @@
       "dfd_destination_id": "S5-A",
       "dfd_dataflow_type": "Tool Selection and Job Queue",
       "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 46,
@@ -1428,7 +1563,10 @@
       "dfd_destination_id": "C3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 47,
@@ -1459,7 +1597,10 @@
       "dfd_destination_id": "C3-A",
       "dfd_dataflow_type": "Final Clinical Report",
       "dfd_context": "Bioinformaticist pulls the final clinical report from the Clinical Result Generation App",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 48,
@@ -1490,7 +1631,10 @@
       "dfd_destination_id": "C11-CT",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the External EMR",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 49,
@@ -1521,7 +1665,10 @@
       "dfd_destination_id": "C10-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the Internal EMR",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 50,
@@ -1555,7 +1702,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 51,
@@ -1589,7 +1739,10 @@
       "dfd_destination_id": "S5-A",
       "dfd_dataflow_type": "Tool Selection and Job Queue",
       "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 52,
@@ -1620,7 +1773,10 @@
       "dfd_destination_id": "S11-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Retrieve the remainder of the physical sample once contextual retention requirements have been met",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 53,
@@ -1651,7 +1807,10 @@
       "dfd_destination_id": "S12-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Dispose of the remainder of the physical sample once contextual retention requirements have been met",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 54,
@@ -1682,7 +1841,10 @@
       "dfd_destination_id": "S3.2-PH",
       "dfd_dataflow_type": "Physical Sample Remnants",
       "dfd_context": "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 55,
@@ -1715,7 +1877,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data, Context-relevant Research Data",
       "dfd_context": "Operate on the raw sequence data to create context-relevant research data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 56,
@@ -1750,7 +1915,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 57,
@@ -1785,7 +1953,10 @@
       "dfd_destination_id": "R5-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 58,
@@ -1820,7 +1991,10 @@
       "dfd_destination_id": "R6-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 59,
@@ -1851,7 +2025,10 @@
       "dfd_destination_id": "R2-RP",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 60,
@@ -1882,7 +2059,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 61,
@@ -1913,7 +2093,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 62,
@@ -1944,7 +2127,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 63,
@@ -1977,7 +2163,10 @@
       "dfd_destination_id": "R2-RP",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 64,
@@ -2010,7 +2199,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 65,
@@ -2041,7 +2233,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data, Context-relevant Research Data",
       "dfd_context": "Operate on the raw sequence data to create context-relevant research data",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 66,
@@ -2072,7 +2267,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 67,
@@ -2103,7 +2301,10 @@
       "dfd_destination_id": "S5-A",
       "dfd_dataflow_type": "Tool Selection and Job Queue",
       "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 68,
@@ -2134,7 +2335,10 @@
       "dfd_destination_id": "C3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Cluster Filesystem sends the context-relevant research data to the Clinical Result Generation App to create a final clinical report",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 69,
@@ -2165,7 +2369,10 @@
       "dfd_destination_id": "C3-A",
       "dfd_dataflow_type": "Final Clinical Report",
       "dfd_context": "Bioinformaticist pulls the final clinical report from the Clinical Result Generation App",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 70,
@@ -2196,7 +2403,10 @@
       "dfd_destination_id": "C9-A",
       "dfd_dataflow_type": "Final Clinical Report",
       "dfd_context": "Bioinformaticist uploads the final clinical report onto the 3rd Party Portal",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 71,
@@ -2227,7 +2437,10 @@
       "dfd_destination_id": "C4-A",
       "dfd_dataflow_type": "Final Clinical Report",
       "dfd_context": "Genetic Counselor downloads the final clinical report from the 3rd Party Portal",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 72,
@@ -2259,7 +2472,10 @@
       "dfd_destination_id": "C2-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Genetic Counselor makes the context-relevant clinical data available for the Clinician to retrieve with additional input and analysis",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 73,
@@ -2291,7 +2507,10 @@
       "dfd_destination_id": "C11-CT",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the External EMR",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 74,
@@ -2323,7 +2542,10 @@
       "dfd_destination_id": "C10-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Genetic Physician logs the professional recommendations and clinical next steps in the Internal EMR",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 75,
@@ -2354,7 +2576,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 76,
@@ -2385,7 +2610,10 @@
       "dfd_destination_id": "R4-RD",
       "dfd_dataflow_type": "Digital Sample Data Request",
       "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 77,
@@ -2417,7 +2645,10 @@
       "dfd_destination_id": "R4-RD",
       "dfd_dataflow_type": "Digital Sample Data Request",
       "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 78,
@@ -2448,7 +2679,10 @@
       "dfd_destination_id": "R5-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 79,
@@ -2479,7 +2713,10 @@
       "dfd_destination_id": "R6-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 80,
@@ -2519,7 +2756,10 @@
       "dfd_destination_id": "R2-RP",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "NCCoE Researcher submits the physical sample request to obtain the physical sample from the DNA Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 81,
@@ -2559,7 +2799,10 @@
       "dfd_destination_id": "C1-A",
       "dfd_dataflow_type": "Physical Sample Request",
       "dfd_context": "Clinician provides patient with the test request form to obtain the physical sample that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 82,
@@ -2599,7 +2842,10 @@
       "dfd_destination_id": "R4-RD",
       "dfd_dataflow_type": "Digital Sample Data Request",
       "dfd_context": "NCCoE Researcher submits the digital sample request to obtain the digital sample data from the Digital Sample Data Store that will be sent to the sequencing lab",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 83,
@@ -2630,7 +2876,10 @@
       "dfd_destination_id": "S5-A",
       "dfd_dataflow_type": "Tool Selection and Job Queue",
       "dfd_context": "Bioinformaticist decides which tools to use on the sequence data and queues new jobs on the Compute Nodes.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 84,
@@ -2661,7 +2910,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 85,
@@ -2692,7 +2944,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 86,
@@ -2723,7 +2978,10 @@
       "dfd_destination_id": "R5-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 87,
@@ -2756,7 +3014,10 @@
       "dfd_destination_id": "R3-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the NCCoE-trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 88,
@@ -2789,7 +3050,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 89,
@@ -2822,7 +3086,10 @@
       "dfd_destination_id": "R5-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and trusted interested parties with access to the NCCoE-Managed Publishing Location to retrieve",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 90,
@@ -2855,7 +3122,10 @@
       "dfd_destination_id": "R6-A",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for researchers and interested parties to retrieve from the Externally-Managed Publishing Location",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 91,
@@ -2886,7 +3156,10 @@
       "dfd_destination_id": "S11-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Retrieve the remainder of the physical sample once contextual retention requirements have been met",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 92,
@@ -2917,7 +3190,10 @@
       "dfd_destination_id": "S12-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Dispose of the remainder of the physical sample once contextual retention requirements have been met",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 93,
@@ -2948,7 +3224,10 @@
       "dfd_destination_id": "S3.2-PH",
       "dfd_dataflow_type": "Physical Sample Remnants",
       "dfd_context": "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 94,
@@ -2979,7 +3258,10 @@
       "dfd_destination_id": "S6-A",
       "dfd_dataflow_type": "Sequence Data",
       "dfd_context": "Bioinformaticist reviews the sequence data and ensures there were no undetected sequencing issues.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 95,
@@ -3011,7 +3293,10 @@
       "dfd_destination_id": "C7-CR",
       "dfd_dataflow_type": "Context-relevant Research Data",
       "dfd_context": "Make the context-relevant research data available for the Trusted Data Recipient to retrieve from the Data Delivery DMZ",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 96,
@@ -3042,7 +3327,10 @@
       "dfd_destination_id": "S12-PH",
       "dfd_dataflow_type": "Physical Sample",
       "dfd_context": "Dispose of the remainder of the physical sample once contextual retention requirements have been met",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 97,
@@ -3073,7 +3361,10 @@
       "dfd_destination_id": "S3.1-PH",
       "dfd_dataflow_type": "Digital Data",
       "dfd_context": "Devices used to process genomic data should be decommissioned according to privacy best practices to avoid unintentional data leakage/disclosure when the device(s) are resold",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 98,
@@ -3104,7 +3395,10 @@
       "dfd_destination_id": "S3.1-PH",
       "dfd_dataflow_type": "Digital Data",
       "dfd_context": "Devices used to process genomic data should be acquired from the manufacturer or should be acquired after being refurbished according to privacy best practices to avoid unintentional data leakage/disclosure when the device(s) are purchased",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     },
     {
       "id": 99,
@@ -3135,7 +3429,10 @@
       "dfd_destination_id": "S3.2-PH",
       "dfd_dataflow_type": "Physical Sample Remnants",
       "dfd_context": "Flow cells used during the sequencing process should be cleaned according to best practices to eliminate any portion of the physical sample that may remain after a sequencing run to avoid unintentional data leakage/disclosure when the flow cell is reused for another sequencing run.",
-      "dfd_location_confidence": "high"
+      "dfd_location_confidence": "high",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "no originator_id in this catalog"
     }
   ]
 }

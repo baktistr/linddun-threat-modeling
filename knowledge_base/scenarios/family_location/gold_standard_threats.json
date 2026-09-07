@@ -26,7 +26,9 @@
       "description": "A persistent device or session identifier attached to every GPS ping lets anyone with access to the raw feed link the child's entire movement history together, even across app reinstalls or account renames.",
       "assumptions": "The location-ingestion identifier is not rotated or pseudonymized per session.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 2,
@@ -39,7 +41,9 @@
       "description": "The child's device transmits precise coordinates continuously (e.g. every few seconds), producing a detailed movement diary, when the stated purpose -- arrival/departure alerts -- only requires knowing zone-boundary crossings.",
       "assumptions": "Ping frequency is fixed and continuous rather than adaptive to proximity to a zone boundary.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 3,
@@ -52,7 +56,9 @@
       "description": "Combining the child's location pings over time reveals a detailed behavioral profile -- school schedule, extracurricular activities, friends' addresses -- well beyond the geofencing engine's immediate operational need.",
       "assumptions": "Historical pings are retained and accessible to the profiling/engine layer, not just the current ping.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 4,
@@ -66,7 +72,9 @@
       "description": "An adversary monitoring network traffic between the backend and the Geofencing Engine can detect exactly when the child enters or leaves a tracked zone purely from traffic timing/volume, without ever decrypting the payload.",
       "assumptions": "No evidence that internal service-to-service traffic is encrypted or padded to obscure event timing.",
       "severity": "Med",
-      "likelihood": "Low"
+      "likelihood": "Low",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 5,
@@ -79,7 +87,9 @@
       "description": "The Family Account Store retains the child's school name, home address, and friends'/hosts' addresses in the same table and under the same access-control and retention policy as low-sensitivity account metadata like display name or app theme preference.",
       "assumptions": "No field-level sensitivity classification or differential access control exists in the account store schema.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 6,
@@ -92,7 +102,9 @@
       "description": "Similar to KidsTube's JWT-in-localStorage pattern, the backend's credentials for the Location History Store are shared across environments and not rotated; if leaked, they expose a child's entire historical movement trail, not just a single session's data.",
       "assumptions": "The datastore credential is reused across staging and production, per common practice in comparably small teams.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "S",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 7,
@@ -105,7 +117,9 @@
       "description": "The primary parent can grant a secondary guardian ongoing access to the child's live location at any time, dynamically expanding who can observe the child, with no notification to or consent from the child themselves.",
       "assumptions": "The invite/grant flow requires only the parent's confirmation, not any child-facing acknowledgment.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "S",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 8,
@@ -118,7 +132,9 @@
       "description": "Location data shared with a secondary guardian includes the child's full name tied to live coordinates, with no option to share a coarser or pseudonymized view (e.g. \"at school\" instead of exact address) for lower-trust or extended-family viewers.",
       "assumptions": "The guardian-sharing feature has a single access tier (full detail) with no granularity control.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 9,
@@ -131,7 +147,9 @@
       "description": "If the parent's login credentials -- commonly reused across family apps -- are compromised, an attacker gains direct, fully identified access to the child's complete movement history under the parent's own authenticated session, no further inference needed.",
       "assumptions": "No additional authentication factor is required to view historical location data beyond the standard account login.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 10,
@@ -144,7 +162,9 @@
       "description": "Aggregated usage/engagement analytics sent to the advertising partner, though described as de-identified, can be combined with the partner's other data sources (device or ad identifiers, timing patterns) to reconstruct cross-app behavioral profiles of the family group.",
       "assumptions": "The analytics payload includes device- or session-level identifiers rather than only fully aggregated, k-anonymized statistics.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 11,
@@ -158,7 +178,9 @@
       "description": "Sharing usage analytics with a third-party advertising partner is on by default; the parent is never shown an explicit, purpose-specific consent screen before this sharing begins, and the child -- the actual data subject -- has no consent mechanism at all.",
       "assumptions": "The privacy policy discloses third-party sharing in general terms but the app has no dedicated consent toggle shown during onboarding.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "S",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 12,
@@ -171,7 +193,9 @@
       "description": "Once usage/engagement analytics reach the advertising partner, the app has no enforced technical or contractual control preventing that partner from further propagating or reselling the data to downstream ad-tech intermediaries.",
       "assumptions": "Any data-sharing agreement with the analytics partner is not technically enforced (e.g. no data-use audit or deletion-on-request mechanism).",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 13,
@@ -184,7 +208,9 @@
       "description": "Only the parent goes through onboarding and consent; the child -- whose location is the data being continuously collected -- is never shown any age-appropriate notice that this collection and sharing is happening at all.",
       "assumptions": "The child's device runs a lightweight tracking client with no user-facing onboarding or notice screen.",
       "severity": "High",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 14,
@@ -197,7 +223,9 @@
       "description": "The Location History Store accumulates GPS pings indefinitely with no automatic deletion, anonymization, or archival policy, meaning years of a child's precise movement history persist by default.",
       "assumptions": "No retention/lifecycle job or documented deletion policy was found for the Location History Store.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "S",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 15,
@@ -210,7 +238,9 @@
       "description": "Every parental action -- viewing the child's location, adding a guardian, changing geofence zones -- is logged with the parent's identity and retained indefinitely, creating a permanent, attributable record that could later be used as evidence of surveillance patterns in contexts like a custody dispute.",
       "assumptions": "Audit logs of parental actions have no retention limit and are not access-restricted beyond normal account authentication.",
       "severity": "Low",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 16,
@@ -223,7 +253,9 @@
       "description": "Once the child sends a manual SOS or check-in message with their location, it is permanently stored and attributed to them with no mechanism to retract or anonymize a message sent by accident or in a moment of distress.",
       "assumptions": "The check-in feature has no delete/undo affordance after submission.",
       "severity": "Low",
-      "likelihood": "Low"
+      "likelihood": "Low",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 17,
@@ -236,7 +268,9 @@
       "description": "The child has no in-app control to pause or temporarily disable location sharing (e.g. during a sensitive personal moment) -- only the parent can toggle tracking on or off, leaving the data subject with zero intervenability over their own data collection.",
       "assumptions": "The tracking on/off setting exists only in the parent-facing app, not the child's device client.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 18,
@@ -249,7 +283,9 @@
       "description": "The system stores full continuous GPS traces (latitude, longitude, altitude, speed) rather than the coarser \"entered/exited zone X\" events that the geofencing feature actually requires, retaining substantially more granular data than the stated purpose needs.",
       "assumptions": "The Geofencing Engine could operate on zone-crossing events derived at ingestion time rather than requiring the raw trace to be persisted afterward.",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 19,
@@ -262,7 +298,9 @@
       "description": "Collecting and continuously sharing a minor's precise real-time location has no documented data protection impact assessment or child-specific safeguard (e.g. verified parental consent, data minimization review), violating data-protection principles that apply specifically to children's location data.",
       "assumptions": "No DPIA or child-specific privacy-by-design documentation was found for the location-collection feature.",
       "severity": "High",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 20,
@@ -275,7 +313,9 @@
       "description": "Someone with access to push-notification metadata or logs (e.g. a shared family phone, or a compromised notification-service integration) can infer which geofenced zone the child entered based on which alert template fired, without ever accessing the raw coordinate data.",
       "assumptions": "Notification templates are zone-specific (e.g. \"arrived at school\" vs. a generic alert) rather than uniformly worded.",
       "severity": "Low",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     }
   ]
 }
