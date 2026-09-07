@@ -535,6 +535,46 @@ def source_files(repo_root: Path) -> list[Path]:
     return out
 
 
+# Language-agnostic discovery, for the arms that read source text instead of parsing it.
+#
+# source_files() above globs *.js, because everything downstream of it parses JavaScript with
+# tree-sitter. That suffix filter is a SECOND limitation on top of the Express/Mongoose pattern
+# matching, and the two are easy to conflate: an arm that stops using the patterns is still
+# JS-only if it discovers files through source_files(). Anything that reads raw text has no such
+# constraint, so it gets its own walker rather than inheriting a parser's.
+#
+# Config and schema files are in deliberately: a docker-compose service list or a .sql schema
+# often states a data flow no application file spells out. Lockfiles and minified bundles are out
+# -- they are bulk with no modelable content, and the budget below is the scarce resource.
+SOURCE_SUFFIXES = frozenset({
+    ".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".vue", ".svelte",
+    ".py", ".rb", ".go", ".rs", ".java", ".kt", ".kts", ".scala", ".swift",
+    ".c", ".h", ".cc", ".cpp", ".hpp", ".cs", ".php", ".ex", ".exs", ".erl",
+    ".sql", ".graphql", ".gql", ".proto", ".prisma",
+    ".yml", ".yaml", ".toml", ".ini", ".env", ".tf",
+})
+SKIP_DIRS_ANY = SKIP_DIRS | {"venv", ".venv", "__pycache__", "target", "vendor", "bin", "obj",
+                             ".next", ".nuxt", ".idea", ".vscode", "migrations"}
+SKIP_NAME_PARTS = (".min.", ".lock", "-lock.")
+
+
+def source_files_any(repo_root: Path, suffixes: frozenset[str] | None = None) -> list[Path]:
+    """Every plausibly-modelable source file, whatever the language. Sorted, so a re-run diffs
+    cleanly and any budget truncation downstream cuts at the same place every time."""
+    wanted = suffixes if suffixes is not None else SOURCE_SUFFIXES
+    out = []
+    for p in sorted(repo_root.rglob("*")):
+        if not p.is_file() or p.suffix.lower() not in wanted:
+            continue
+        rel_parts = p.relative_to(repo_root).parts
+        if any(part in SKIP_DIRS_ANY for part in rel_parts):
+            continue
+        if p.name.endswith(SKIP_FILE_SUFFIXES) or any(s in p.name for s in SKIP_NAME_PARTS):
+            continue
+        out.append(p)
+    return out
+
+
 def extract_repo(repo_root: Path) -> list[CodeFact]:
     """Every fact in the repository, sorted deterministically so a re-run diffs cleanly."""
     facts: list[CodeFact] = []

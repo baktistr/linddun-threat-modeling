@@ -1,0 +1,32 @@
+[
+  {
+    "flow_id": "DF15",
+    "originator_id": "DS4",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Unauthorized Access to Stored Government ID Images",
+    "description": "The File System (DS4) may lack sufficient access controls, allowing unauthorized parties to access stored government ID images, leading to potential data breaches.",
+    "assumptions": "Assumes DS4 does not enforce strict file permissions or encryption at rest.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF15",
+    "originator_id": "P1",
+    "threat_type": "Nc",
+    "tree_node": "Nc.1.1",
+    "title": "Non-Compliance with Data Protection Regulations",
+    "description": "The Authentication Service (P1) may store government ID images without ensuring compliance with legal requirements (e.g., GDPR), such as purpose limitation, data minimization, or retention policies.",
+    "assumptions": "Assumes P1 does not validate legal basis or implement required safeguards before storing sensitive data.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

@@ -1133,6 +1133,227 @@ def test_enrich_facts_arm_is_deterministic_and_llm_free():
           "records model='none' EXPLICITLY -- deterministic, not unrecorded")
 
 
+def _naive_source_tree(tmp: Path) -> Path:
+    """A deliberately multi-language, multi-framework tree -- none of it Express or Mongoose.
+
+    The point of the arm is that it works where extract.py's parser cannot, so the fixture is
+    chosen to be unparseable BY extract.py: if the arm ever silently started routing through the
+    JS pipeline, this tree would yield nothing and the tests below would fail."""
+    (tmp / "app").mkdir(parents=True, exist_ok=True)
+    (tmp / "app" / "views.py").write_text(
+        "from django.http import JsonResponse\n"
+        "def register(request):\n"
+        "    email = request.POST['email']\n"
+        "    pw = request.POST['password']\n"
+        "    Parent.objects.create(email=email, password_hash=hash(pw))\n"
+        "    return JsonResponse({'ok': True})\n")
+    (tmp / "app" / "models.rb").write_text(
+        "class Child < ActiveRecord::Base\n"
+        "  has_many :watch_events\n"
+        "end\n")
+    (tmp / "schema.sql").write_text(
+        "CREATE TABLE watch_history (\n"
+        "  child_id INT,\n"
+        "  video_id INT,\n"
+        "  watched_at TIMESTAMP\n"
+        ");\n")
+    (tmp / "docker-compose.yml").write_text(
+        "services:\n  db:\n    image: postgres:16\n")
+    (tmp / "package-lock.json").write_text("{}")          # bulk, must be skipped
+    (tmp / "app" / "bundle.min.js").write_text("var a=1;")  # minified, must be skipped
+    (tmp / "node_modules").mkdir(exist_ok=True)
+    (tmp / "node_modules" / "dep.js").write_text("module.exports = 1;")
+    return tmp
+
+
+def test_naive_enrichment_discovers_source_in_any_language():
+    """The arm's reason to exist: it must not inherit the JS-only suffix filter.
+
+    extract.source_files() globs *.js because everything downstream of it parses JavaScript. An
+    arm that only reads text has no such constraint, and inheriting one would leave it
+    pattern-independent but still language-locked -- which is the exact limitation it removes."""
+    print("\n[enrich naive: language-agnostic discovery]")
+    import tempfile
+    from adapters.extract import source_files, source_files_any
+    from adapters.enrich import render_source_any
+
+    with tempfile.TemporaryDirectory() as td:
+        root = _naive_source_tree(Path(td))
+        js_only = source_files(root)
+        found = {str(p.relative_to(root)).replace("\\", "/") for p in source_files_any(root)}
+
+        # The old walker finds exactly one thing here -- a minified bundle it has no business
+        # parsing -- and none of the four files that actually describe the system. That is the
+        # limitation this arm removes, stated as an assertion rather than a claim.
+        check([p.name for p in js_only] == ["bundle.min.js"],
+              f"the JS walker finds only a minified bundle, no modelable source "
+              f"(got {[p.name for p in js_only]})")
+        check({"app/views.py", "app/models.rb", "schema.sql", "docker-compose.yml"} <= found,
+              f"python, ruby, sql and compose are all discovered (got {sorted(found)})")
+        check("package-lock.json" not in found and "app/bundle.min.js" not in found,
+              "lockfiles and minified bundles are skipped as bulk with no modelable content")
+        check(not any(f.startswith("node_modules") for f in found),
+              "vendored dependencies are skipped")
+
+        rendered, omitted = render_source_any(root)
+        check("--- app/views.py" in rendered, "each file is headed by its path, as cited")
+        check("    3| " in rendered, "lines are numbered in a gutter the model can cite")
+        check(omitted == [], "nothing omitted when the tree fits the budget")
+
+        tiny, omitted_tiny = render_source_any(root, max_chars=120)
+        check(len(omitted_tiny) > 0 and len(tiny) <= 120 + 200,
+              f"a tight budget omits files rather than truncating mid-line "
+              f"({len(omitted_tiny)} omitted)")
+
+
+def test_naive_enrichment_open_vocabulary_is_not_guarded():
+    """The absent confabulation guard IS the experiment.
+
+    _accept_enrichments drops an entry citing no resolvable fact, which is what makes closed
+    citation validity ~1.00 by construction. Applying that here would manufacture the very number
+    this arm exists to measure, so an unresolvable file:line is kept, written, and counted against
+    validity instead. What is still guarded is structure -- an invented flow id would corrupt the
+    DFD whatever vocabulary it cites in."""
+    print("\n[enrich naive: open vocabulary, deliberately unguarded]")
+    from adapters.enrich import _accept_enrichments_naive
+
+    kept, rejected = _accept_enrichments_naive([
+        {"flow_id": "DF1", "data_note": "email, password",
+         "citations": [{"file": "app/views.py", "line": 3}]},
+        {"flow_id": "DF2", "data_note": "cites a file that does not exist",
+         "citations": [{"file": "nope.py", "line": 1}]},
+        {"flow_id": "DF3", "data_note": "cites nothing at all", "citations": []},
+        {"flow_id": "DF9", "data_note": "invented flow", "citations": [{"file": "a", "line": 1}]},
+        {"flow_id": "DF1", "data_note": "duplicate", "citations": [{"file": "a", "line": 1}]},
+        {"flow_id": "DF2", "data_note": "", "citations": [{"file": "a", "line": 1}]},
+    ], {"DF1", "DF2", "DF3"})
+
+    check(set(kept) == {"DF1", "DF2", "DF3"},
+          f"a bogus or empty citation does NOT drop the enrichment (kept {sorted(kept)})")
+    check(kept["DF2"]["citations"] == [{"file": "nope.py", "line": 1}],
+          "the unresolvable citation is written as claimed, for the verifier to judge")
+    check(any("DF9" in r for r in rejected) and any("duplicate" in r for r in rejected),
+          "invented flow ids and duplicates are still rejected -- structure is arm-independent")
+
+    malformed, _ = _accept_enrichments_naive(
+        [{"flow_id": "DF1", "data_note": "n",
+          "citations": [{"file": "a.py", "line": "not-an-int"}, {"line": 4}, "junk",
+                        {"file": "b.py", "line": 7}]}], {"DF1"})
+    check(malformed["DF1"]["citations"] == [{"file": "b.py", "line": 7}],
+          "malformed citation entries are dropped so the artifact stays schema-valid")
+
+
+def test_naive_enrichment_citation_validity_is_measured_not_assumed():
+    """The number the arm produces, re-derived against real files with no model in the loop.
+
+    Two failure modes stay separate for the same reason verify_dfd.py separates them: a file that
+    does not exist and a line past the end of one that does are different mistakes, and collapsing
+    them would hide which the model is making. A rate over zero citations is None, never 1.00."""
+    print("\n[enrich naive: citation validity is measured]")
+    import tempfile
+    from adapters.enrich import naive_citation_validity
+
+    with tempfile.TemporaryDirectory() as td:
+        root = _naive_source_tree(Path(td))
+        enriched = {"flows": [
+            {"id": "DF1", "enrichment": {"arm": "enrich_llm_naive",
+                                         "citations": [{"file": "app/views.py", "line": 3}]}},
+            {"id": "DF2", "enrichment": {"arm": "enrich_llm_naive",
+                                         "citations": [{"file": "ghost.py", "line": 1}]}},
+            {"id": "DF3", "enrichment": {"arm": "enrich_llm_naive",
+                                         "citations": [{"file": "schema.sql", "line": 9999}]}},
+        ]}
+        cv = naive_citation_validity(enriched, root)
+        check(cv["n_citations"] == 3 and cv["n_resolvable"] == 1,
+              f"1 of 3 citations resolves (got {cv['n_resolvable']}/{cv['n_citations']})")
+        check(cv["n_unknown_file"] == 1 and cv["n_line_out_of_range"] == 1,
+              "unknown-file and line-out-of-range are counted separately")
+        check(cv["validity"] == round(1 / 3, 4),
+              f"validity is a rate, rounded to 4dp like every other metric here "
+              f"(got {cv['validity']})")
+
+        empty = naive_citation_validity({"flows": []}, root)
+        check(empty["validity"] is None,
+              "no citations means UNKNOWN validity, never a fabricated 1.00")
+
+
+def test_naive_enrichment_holds_the_same_structural_contract():
+    """Reading raw source changes the vocabulary, not the invariants: structure stays read-only,
+    descriptions only grow, and nothing reaches provenance."""
+    print("\n[enrich naive: same structural contract as the closed arms]")
+    import tempfile
+    import generation.llm_backend as lb
+    from adapters.enrich import MARKER, enrich_dfd, verify_enrichment
+
+    dfd, _facts = _enrich_fixture()
+    flow_ids = [f["id"] for f in dfd["flows"]]
+
+    class StubBackend:
+        name, model = "stub", "stub-1"
+        def call_tool(self, prompt, schema, max_tokens=2000, image=None):
+            self.prompt = prompt
+            return {"enrichments": [
+                {"flow_id": flow_ids[0], "data_note": "email, password, ID image",
+                 "citations": [{"file": "app/views.py", "line": 3}]},
+                {"flow_id": flow_ids[1] if len(flow_ids) > 1 else flow_ids[0],
+                 "data_note": "watch history rows",
+                 "citations": [{"file": "ghost.py", "line": 42}]},
+            ]}
+
+    stub = StubBackend()
+    real = lb.get_llm_backend
+    lb.get_llm_backend = lambda *a, **k: stub
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            root = _naive_source_tree(Path(td))
+            before = copy.deepcopy(dfd)
+            out = enrich_dfd(dfd, [], arm="enrich_llm_naive", verbose=False, source_root=root)
+    finally:
+        lb.get_llm_backend = real
+
+    check(dfd == before, "the input dict is never mutated")
+    check(out["elements"] == dfd["elements"], "elements byte-identical")
+    check([f["id"] for f in out["flows"]] == flow_ids, "flow ids identical and in order")
+    for o, e in zip(dfd["flows"], out["flows"]):
+        check(e["description"].startswith(o["description"]),
+              f"{e['id']}: original description preserved as prefix")
+        check(o.get("provenance") == e.get("provenance"), f"{e['id']}: provenance untouched")
+    enriched = [f for f in out["flows"] if "enrichment" in f]
+    check(enriched and all(MARKER in f["description"] for f in enriched),
+          f"{len(enriched)} flow(s) enriched behind the marker")
+    check(all("citations" in f["enrichment"] and "fact_ids" not in f["enrichment"]
+              for f in enriched),
+          "the open arm records 'citations' and never 'fact_ids' -- vocabulary is readable "
+          "from the entry itself")
+    check(not any("fact_id" in p for item in out["elements"] + out["flows"]
+                  for p in item.get("provenance", [])),
+          "no fact_id in provenance -- cites_code_facts stays False, gold denominator stable")
+    check(validate_dfd(out) == [], "the enriched DFD still conforms to the schema")
+    check(verify_enrichment(dfd, out, []) == [],
+          "an unresolvable OPEN citation is a measurement, not a contract violation")
+    check("SOURCE (path, then line-numbered contents)" in stub.prompt
+          and "--- app/views.py" in stub.prompt,
+          "the model was shown raw line-numbered source, not a fact list")
+    check("CODE FACTS:" not in stub.prompt,
+          "and was given no fact list at all -- the arm's whole premise")
+    meta = out["_meta"]["enrichment"]
+    check(meta["arm"] == "enrich_llm_naive" and "source_files_omitted" in meta,
+          "coverage is recorded so a thin result cannot be mistaken for a model failure")
+
+
+def test_naive_enrichment_requires_a_source_root():
+    """The arm reads source; asking for it without one is a caller error, caught immediately
+    rather than producing a silently empty enrichment."""
+    print("\n[enrich naive: source_root is required]")
+    from adapters.enrich import enrich_dfd
+    dfd, facts = _enrich_fixture()
+    try:
+        enrich_dfd(dfd, facts, arm="enrich_llm_naive", verbose=False)
+        check(False, "missing source_root raises")
+    except ValueError as e:
+        check("source_root" in str(e), f"missing source_root raises ValueError ({e})")
+
+
 def test_enrichment_verifier_catches_violations():
     """verify_enrichment re-derives the contract from the artifacts; every clause can fail."""
     print("\n[enrich: verifier can fail]")
@@ -1220,6 +1441,11 @@ if __name__ == "__main__":
     test_enrichment_closed_vocabulary()
     test_enrich_facts_arm_is_deterministic_and_llm_free()
     test_enrichment_verifier_catches_violations()
+    test_naive_enrichment_discovers_source_in_any_language()
+    test_naive_enrichment_open_vocabulary_is_not_guarded()
+    test_naive_enrichment_citation_validity_is_measured_not_assumed()
+    test_naive_enrichment_holds_the_same_structural_contract()
+    test_naive_enrichment_requires_a_source_root()
     test_fusion_condition_keys_round_trip()
     test_every_derived_artifact_is_attributable()
     print(f"\n{PASS} passed, {FAIL} failed")

@@ -1,0 +1,62 @@
+[
+  {
+    "flow_id": "DF2",
+    "originator_id": "EE2",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Access Code Intercepted in Transit",
+    "description": "Temporary access code transmitted from Guest User to Home Hub could be intercepted if communication channel is unencrypted.",
+    "assumptions": "Assumes code is sent over network without encryption.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF2",
+    "originator_id": "P1",
+    "threat_type": "I",
+    "tree_node": "I.1.1",
+    "title": "Access Code Linked to Guest Identity",
+    "description": "Home Hub may log access codes with guest identifiers, enabling linkage of temporary codes to specific individuals.",
+    "assumptions": "Assumes Home Hub retains logs associating codes with guest data.",
+    "severity": "Med",
+    "likelihood": "High",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF2",
+    "originator_id": "P1",
+    "threat_type": "U",
+    "tree_node": "U.1.1",
+    "title": "Guest Unaware of Data Processing",
+    "description": "Guest may not be informed that their access code is processed/stored by the Home Hub.",
+    "assumptions": "Assumes no transparency about data handling practices.",
+    "severity": "Med",
+    "likelihood": "High",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF2",
+    "originator_id": "P1",
+    "threat_type": "Nc",
+    "tree_node": "Nc.1.1",
+    "title": "Non-Compliant Data Retention",
+    "description": "Home Hub may retain access codes longer than necessary for security purposes, violating data minimization principles.",
+    "assumptions": "Assumes no defined retention policy for temporary codes.",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

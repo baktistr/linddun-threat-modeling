@@ -135,7 +135,7 @@ There is also an optional enrichment step: keep a DFD file whose structure you t
 
 ## **Experimental protocol**
 
-* **Models**: gpt-5.4, gpt-4o-mini, grok-4.3 — one Azure endpoint, three deployments.  
+* **Models**: gpt-5.4, gpt-4o-mini, grok-4.3 — one Azure endpoint, three deployments. Section 8 adds four open-weight models (Qwen3.5 at 2B, 4B, 9B and 27B) served locally with vLLM on a single A100 80GB, so the ladder spans a 13x range of model size on identical prompts.  
 * **Output**: forced tool call. No free text is ever parsed.  
 * **Temperature**: 0\. Note this reduces randomness but does not remove it — three identical calls agreed on 8 of 10 cited nodes.  
 * **Repeats**: the main ablation is 3 runs per cell. 5 scenarios x 3 modes x 3 runs \= 45 runs, 567 calls. Everything else is a single run and is labelled as such.
@@ -356,6 +356,70 @@ To see whether any of this is specific to LINDDUN, we pointed the same pipeline 
 That number is low by design, not by failure: it requires an exact sub-activity id match against roughly a hundred candidates. A coarser category-level version is the obvious next step.
 
 What matters is that the architecture transferred unchanged: the deterministic lookup, the citation vocabulary, and the checker all worked against a taxonomy they were never designed for.
+
+## **8\. Open-weight models: does grounding still work when the model is small?**
+
+Every result above uses a hosted frontier model. That is an awkward recommendation for privacy work, because the DFD being analysed is exactly the artifact an organisation may not send to a third-party API. It also leaves the central claim untested on the axis that matters most for it: if deterministic grounding works by *supplying* knowledge rather than *eliciting* it, then it should help a small model more than a large one.
+
+To test both, we ran the full ablation on a ladder of open-weight models served locally: **Qwen3.5 at 2B, 4B, 9B and 27B parameters**, all bf16, on one A100 80GB via vLLM 0.28.0. Everything else is held identical to Section 1 — same five scenarios, same three grounding modes, same gold standards, same prompts, temperature 0, n=3. That is **180 runs and roughly 2,270 model calls**, and it is the same grid shape as Table 3, so the rows are directly comparable to gpt-5.4's.
+
+*Table 12\. The Qwen3.5 ladder, mean over 5 scenarios x 3 runs per cell.*
+
+| Model | Mode | n\_gen | Citation | R | P | F1 |
+| :---- | :---- | ----: | ----: | ----: | ----: | ----: |
+| Qwen3.5-2B | grounded | 89 | **1.000** | 0.457 | 0.126 | 0.195 |
+| Qwen3.5-2B | rag | 29 | 0.139 | 0.195 | 0.156 | 0.171 |
+| Qwen3.5-2B | ungrounded | 62 | 0.343 | 0.579 | 0.225 | 0.321 |
+| Qwen3.5-4B | grounded | 46 | **1.000** | 0.311 | 0.161 | 0.203 |
+| Qwen3.5-4B | rag | 44 | 0.801 | 0.405 | 0.225 | 0.285 |
+| Qwen3.5-4B | ungrounded | 61 | 0.816 | 0.695 | 0.275 | 0.393 |
+| Qwen3.5-9B | grounded | 47 | 0.914 † | 0.201 | 0.106 | 0.135 |
+| Qwen3.5-9B | rag | 43 | 0.793 | 0.491 | 0.279 | 0.348 |
+| Qwen3.5-9B | ungrounded | 59 | 0.764 | 0.626 | 0.260 | 0.365 |
+| Qwen3.5-27B | grounded | 75 | **1.000** | 0.548 | 0.176 | 0.262 |
+| Qwen3.5-27B | rag | 56 | 0.830 | 0.637 | 0.270 | 0.373 |
+| Qwen3.5-27B | ungrounded ‡ | 5 | 0.791 | 0.051 | 0.261 | 0.083 |
+
+† Not a methodology-citation failure; see "the 9B anomaly" below. ‡ Not a usable sample; see "the 27B refusal" below.
+
+**Methodology citation is 1.00 at every scale.** Separating the two things `all_valid_rate` folds together — the threat-tree node and the DFD location — gives the cleanest result in this report:
+
+*Table 13\. Grounded-mode node citation, verified against the official trees.*
+
+| Model | tree\_node valid | of | location invalid |
+| :---- | ----: | ----: | ----: |
+| Qwen3.5-2B | 1.0000 | 1338 | 0 |
+| Qwen3.5-4B | 1.0000 | 693 | 0 |
+| Qwen3.5-9B | 1.0000 | 698 | 85 |
+| Qwen3.5-27B | 1.0000 | 1125 | 0 |
+
+**3,854 grounded threats, across a 13x range of model size, and not one invalid tree-node citation.** A 2B model running on a single local GPU cites the LINDDUN methodology exactly as accurately as gpt-5.4 does. This is the strongest form of the paper's claim: the closed vocabulary is doing the work, and it does not require a capable model to do it.
+
+**The grounding advantage widens sharply as the model shrinks.** Comparing grounded against ungrounded citation validity within each model:
+
+| Model | grounded − ungrounded | grounded − rag |
+| :---- | ----: | ----: |
+| Qwen3.5-2B | **\+0.657** | **\+0.861** |
+| Qwen3.5-4B | \+0.184 | \+0.199 |
+| Qwen3.5-9B | \+0.150 | \+0.121 |
+| Qwen3.5-27B | \+0.209 | \+0.170 |
+| gpt-5.4 (Table 3\) | \+0.170 | \+0.068 |
+
+From 4B upwards the margin sits in the same band as the frontier model. At 2B it is roughly four times larger: two thirds of what the 2B cites from its own parametric knowledge is fabricated. Grounding substitutes for knowledge the model does not have, so it pays most where there is least to draw on. This is the deployability result — an organisation that cannot send its DFD to an API is not thereby forced to accept worse citations.
+
+**RAG does not merely underperform at 2B; it collapses.** Citation validity 0.139, against 0.343 for no context at all. The RAG prompt frames retrieved passages as *guidance* to be combined with the model's own judgement (mirroring PriMod4AI), and a 2B model cannot do that: given text to lean on, it produces node ids that look like the retrieved material rather than ids that exist. Below some capability floor, retrieval-as-guidance is worse than nothing. By 4B it recovers to ~0.80 and stays flat to 27B. Anyone proposing retrieval-based threat modelling on small local models should measure this before assuming retrieval is the safe option.
+
+**Recall inverts relative to the frontier result.** Section 1 found grounded best on recall in 5 of 5 scenarios at gpt-5.4. Here ungrounded beats grounded on recall and F1 at every rung of the ladder. The gate explains part of it — grounded mode skips flows no Process mediates while the other two attempt everything — but that gate is present at all scales and so cannot explain a reversal. The reading we prefer is that grounding buys these models *correctness but not coverage*: handed an exhaustive menu, a small model works the menu, whereas the frontier model uses it as a starting point. It is a real limitation of the method at small scale and should not be presented as a wash.
+
+**Three caveats that travel with this table.**
+
+*The 27B refusal.* The 27B produced about 5 threats per ungrounded run against 60–90 for every other model, with recall 0.051 and, on family\_location, zero true positives. Most flows returned an empty forced tool call, which the pipeline correctly records as "no answer". The model is declining to answer without context rather than answering badly. No grounding margin should be computed from that row, and the +0.209 above is reported only for completeness.
+
+*The 9B anomaly.* The 9B's grounded 0.914 contains no invalid tree nodes at all. All 85 failures are the DFD-location citation, and every one of them is the same corrupted literal — `originator_id` returned as `"fl"`, the first two characters of "flow", where the prompt names two valid element ids. It reproduces: an independent second pass of all 45 cells, with a model reload between, gave 0.914 against 0.931, failing on the same three scenarios and clean on the same two. It is scale-dependent in an odd direction (absent at 2B, 4B and 27B) and grows with DFD size. We report it as measured but do not treat it as a methodology-citation result.
+
+*Schema violations under local serving.* Forced tool calling with guided decoding was assumed to make a missing required field impossible, and across every hosted run in this report it never occurred. The 9B violated it routinely — emitting threat objects with no `threat_type` or no `tree_node` — at a rate that destroyed 12 of its first 36 cells before the pipeline was changed to drop and count such items rather than fail the run. The other three models never did it once. Schema compliance is therefore a property of the model and the serving stack, not a guarantee of the interface, and any local deployment should count it.
+
+A fourth caveat is methodological. Greedy decoding on a batching server is not bitwise deterministic: batch composition changes the arithmetic, and two runs of one scenario at concurrency 1 and 16 produced 166 and 136 threats under otherwise identical settings. Concurrency is therefore recorded in every row and held constant at 16 across the whole grid. It is a condition, not a tuning knob.
 
 # **Discussion**
 

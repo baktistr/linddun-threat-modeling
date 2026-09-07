@@ -1,0 +1,382 @@
+=== 05:47:08 serving Qwen/Qwen3.5-2B ===
+=== 05:51:22 sweeping Qwen/Qwen3.5-2B ===
+resuming: 1 cell(s) recorded overall, 45 to run for Qwen/Qwen3.5-2B
+[1/45] Qwen/Qwen3.5-2B kidstube grounded run1: n=121 P=0.19 R=0.56 F1=0.28 cite=1.0
+[2/45] Qwen/Qwen3.5-2B kidstube grounded run2: n=122 P=0.20 R=0.59 F1=0.29 cite=1.0
+[3/45] Qwen/Qwen3.5-2B kidstube grounded run3: n=157 P=0.15 R=0.59 F1=0.24 cite=1.0
+[4/45] Qwen/Qwen3.5-2B kidstube rag run1: n=44 P=0.16 R=0.17 F1=0.16 cite=0.27
+[5/45] Qwen/Qwen3.5-2B kidstube rag run2: n=44 P=0.16 R=0.17 F1=0.16 cite=0.27
+[6/45] Qwen/Qwen3.5-2B kidstube rag run3: n=43 P=0.16 R=0.17 F1=0.17 cite=0.26
+[7/45] Qwen/Qwen3.5-2B kidstube ungrounded run1: n=82 P=0.28 R=0.56 F1=0.37 cite=0.37
+[8/45] Qwen/Qwen3.5-2B kidstube ungrounded run2: n=79 P=0.27 R=0.51 F1=0.35 cite=0.38
+[9/45] Qwen/Qwen3.5-2B kidstube ungrounded run3: n=82 P=0.28 R=0.56 F1=0.37 cite=0.37
+[10/45] Qwen/Qwen3.5-2B smart_home grounded run1: n=58 P=0.14 R=0.44 F1=0.21 cite=1.0
+[11/45] Qwen/Qwen3.5-2B smart_home grounded run2: n=61 P=0.16 R=0.56 F1=0.25 cite=1.0
+[12/45] Qwen/Qwen3.5-2B smart_home grounded run3: n=61 P=0.16 R=0.56 F1=0.25 cite=1.0
+[13/45] Qwen/Qwen3.5-2B smart_home rag run1: n=19 P=0.21 R=0.22 F1=0.22 cite=0.16
+[14/45] Qwen/Qwen3.5-2B smart_home rag run2: n=20 P=0.20 R=0.22 F1=0.21 cite=0.15
+[15/45] Qwen/Qwen3.5-2B smart_home rag run3: n=20 P=0.20 R=0.22 F1=0.21 cite=0.15
+[16/45] Qwen/Qwen3.5-2B smart_home ungrounded run1: n=48 P=0.25 R=0.67 F1=0.36 cite=0.25
+[17/45] Qwen/Qwen3.5-2B smart_home ungrounded run2: n=48 P=0.25 R=0.67 F1=0.36 cite=0.25
+[18/45] Qwen/Qwen3.5-2B smart_home ungrounded run3: n=48 P=0.25 R=0.67 F1=0.36 cite=0.25
+[19/45] Qwen/Qwen3.5-2B family_location grounded run1: n=76 P=0.11 R=0.40 F1=0.17 cite=1.0
+[20/45] Qwen/Qwen3.5-2B family_location grounded run2: n=85 P=0.12 R=0.50 F1=0.19 cite=1.0
+[21/45] Qwen/Qwen3.5-2B family_location grounded run3: n=85 P=0.12 R=0.50 F1=0.19 cite=1.0
+[22/45] Qwen/Qwen3.5-2B family_location rag run1: n=26 P=0.15 R=0.20 F1=0.17 cite=0.08
+[23/45] Qwen/Qwen3.5-2B family_location rag run2: n=26 P=0.19 R=0.25 F1=0.22 cite=0.08
+[24/45] Qwen/Qwen3.5-2B family_location rag run3: n=26 P=0.19 R=0.25 F1=0.22 cite=0.08
+[25/45] Qwen/Qwen3.5-2B family_location ungrounded run1: n=55 P=0.24 R=0.65 F1=0.35 cite=0.47
+[26/45] Qwen/Qwen3.5-2B family_location ungrounded run2: n=55 P=0.24 R=0.65 F1=0.35 cite=0.47
+[27/45] Qwen/Qwen3.5-2B family_location ungrounded run3: n=55 P=0.24 R=0.65 F1=0.35 cite=0.47
+[28/45] Qwen/Qwen3.5-2B school_grades grounded run1: n=119 P=0.07 R=0.40 F1=0.12 cite=1.0
+[29/45] Qwen/Qwen3.5-2B school_grades grounded run2: n=106 P=0.08 R=0.40 F1=0.13 cite=1.0
+[30/45] Qwen/Qwen3.5-2B school_grades grounded run3: n=93 P=0.06 R=0.30 F1=0.11 cite=1.0
+[31/45] Qwen/Qwen3.5-2B school_grades rag run1: n=36 P=0.11 R=0.20 F1=0.14 cite=0.06
+[32/45] Qwen/Qwen3.5-2B school_grades rag run2: n=38 P=0.13 R=0.25 F1=0.17 cite=0.05
+[33/45] Qwen/Qwen3.5-2B school_grades rag run3: n=38 P=0.13 R=0.25 F1=0.17 cite=0.05
+[34/45] Qwen/Qwen3.5-2B school_grades ungrounded run1: n=75 P=0.11 R=0.40 F1=0.17 cite=0.39
+[35/45] Qwen/Qwen3.5-2B school_grades ungrounded run2: n=76 P=0.11 R=0.40 F1=0.17 cite=0.39
+[36/45] Qwen/Qwen3.5-2B school_grades ungrounded run3: n=76 P=0.11 R=0.40 F1=0.17 cite=0.39
+[37/45] Qwen/Qwen3.5-2B wearable_fitness grounded run1: n=80 P=0.09 R=0.35 F1=0.14 cite=1.0
+[38/45] Qwen/Qwen3.5-2B wearable_fitness grounded run2: n=57 P=0.12 R=0.35 F1=0.18 cite=1.0
+[39/45] Qwen/Qwen3.5-2B wearable_fitness grounded run3: n=57 P=0.12 R=0.35 F1=0.18 cite=1.0
+[40/45] Qwen/Qwen3.5-2B wearable_fitness rag run1: n=20 P=0.15 R=0.15 F1=0.15 cite=0.15
+[41/45] Qwen/Qwen3.5-2B wearable_fitness rag run2: n=21 P=0.10 R=0.10 F1=0.10 cite=0.14
+[42/45] Qwen/Qwen3.5-2B wearable_fitness rag run3: n=21 P=0.10 R=0.10 F1=0.10 cite=0.14
+[43/45] Qwen/Qwen3.5-2B wearable_fitness ungrounded run1: n=49 P=0.24 R=0.60 F1=0.35 cite=0.22
+[44/45] Qwen/Qwen3.5-2B wearable_fitness ungrounded run2: n=53 P=0.26 R=0.70 F1=0.38 cite=0.25
+[45/45] Qwen/Qwen3.5-2B wearable_fitness ungrounded run3: n=49 P=0.24 R=0.60 F1=0.35 cite=0.22
+
+Open-weight model ladder x grounding mechanism -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  concurrency {16} (part of the condition: greedy decoding on a batching server is not bitwise deterministic)
+  endpoint http://localhost:8000/v1; code unknown
+
+  model                  scenario           mode        runs        n_gen             P             R            F1      citation
+  Qwen/Qwen3.5-27B       smart_home         grounded       1       51 (--)    0.22 (--)    0.61 (--)    0.32 (--)    1.00 (--)
+  Qwen/Qwen3.5-2B        kidstube           grounded       3      133 (21)  0.18 (0.03)  0.58 (0.02)  0.27 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        kidstube           rag            3        44 (1)  0.16 (0.00)  0.17 (0.00)  0.16 (0.01)  0.27 (0.01)
+  Qwen/Qwen3.5-2B        kidstube           ungrounded     3        81 (2)  0.28 (0.01)  0.54 (0.03)  0.36 (0.01)  0.37 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         grounded       3        60 (2)  0.15 (0.01)  0.52 (0.07)  0.24 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        smart_home         rag            3        20 (1)  0.20 (0.01)  0.22 (0.00)  0.21 (0.01)  0.15 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         ungrounded     3        48 (0)  0.25 (0.00)  0.67 (0.00)  0.36 (0.00)  0.25 (0.00)
+  Qwen/Qwen3.5-2B        family_location    grounded       3        82 (5)  0.12 (0.01)  0.47 (0.06)  0.18 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        family_location    rag            3        26 (0)  0.18 (0.02)  0.23 (0.03)  0.20 (0.03)  0.08 (0.00)
+  Qwen/Qwen3.5-2B        family_location    ungrounded     3        55 (0)  0.24 (0.00)  0.65 (0.00)  0.35 (0.00)  0.47 (0.00)
+  Qwen/Qwen3.5-2B        school_grades      grounded       3      106 (13)  0.07 (0.01)  0.37 (0.06)  0.12 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        school_grades      rag            3        37 (1)  0.12 (0.01)  0.23 (0.03)  0.16 (0.02)  0.05 (0.01)
+  Qwen/Qwen3.5-2B        school_grades      ungrounded     3        76 (1)  0.11 (0.00)  0.40 (0.00)  0.17 (0.00)  0.39 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   grounded       3       65 (13)  0.11 (0.02)  0.35 (0.00)  0.17 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   rag            3        21 (1)  0.12 (0.03)  0.12 (0.03)  0.12 (0.03)  0.14 (0.01)
+  Qwen/Qwen3.5-2B        wearable_fitness   ungrounded     3        50 (2)  0.25 (0.01)  0.63 (0.06)  0.36 (0.02)  0.23 (0.02)
+
+  Per model, paired across scenarios (each scenario one block):
+    model                  contrast                 citation     recall         f1  scenarios
+    Qwen/Qwen3.5-2B        grounded - ungrounded     +0.657    -0.123    -0.125  n=5
+    Qwen/Qwen3.5-2B        grounded - rag            +0.861    +0.262    +0.024  n=5
+
+(written to /root/linddun/storage/generated/OPEN_MODEL_SWEEP.txt)
+=== 05:55:17 done Qwen/Qwen3.5-2B ===
+=== 05:55:17 serving Qwen/Qwen3.5-4B ===
+=== 05:59:31 sweeping Qwen/Qwen3.5-4B ===
+resuming: 46 cell(s) recorded overall, 45 to run for Qwen/Qwen3.5-4B
+[1/45] Qwen/Qwen3.5-4B kidstube grounded run1: n=60 P=0.27 R=0.39 F1=0.32 cite=1.0
+[2/45] Qwen/Qwen3.5-4B kidstube grounded run2: n=33 P=0.18 R=0.15 F1=0.16 cite=1.0
+[3/45] Qwen/Qwen3.5-4B kidstube grounded run3: n=85 P=0.25 R=0.51 F1=0.33 cite=1.0
+[4/45] Qwen/Qwen3.5-4B kidstube rag run1: n=59 P=0.27 R=0.39 F1=0.32 cite=0.85
+[5/45] Qwen/Qwen3.5-4B kidstube rag run2: n=57 P=0.30 R=0.41 F1=0.35 cite=0.74
+[6/45] Qwen/Qwen3.5-4B kidstube rag run3: n=57 P=0.32 R=0.44 F1=0.37 cite=0.75
+[7/45] Qwen/Qwen3.5-4B kidstube ungrounded run1: n=83 P=0.31 R=0.63 F1=0.42 cite=0.82
+[8/45] Qwen/Qwen3.5-4B kidstube ungrounded run2: n=82 P=0.32 R=0.63 F1=0.42 cite=0.8
+[9/45] Qwen/Qwen3.5-4B kidstube ungrounded run3: n=84 P=0.31 R=0.63 F1=0.42 cite=0.82
+[10/45] Qwen/Qwen3.5-4B smart_home grounded run1: n=30 P=0.30 R=0.50 F1=0.37 cite=1.0
+[11/45] Qwen/Qwen3.5-4B smart_home grounded run2: n=19 P=0.16 R=0.17 F1=0.16 cite=1.0
+[12/45] Qwen/Qwen3.5-4B smart_home grounded run3: n=31 P=0.23 R=0.39 F1=0.29 cite=1.0
+[13/45] Qwen/Qwen3.5-4B smart_home rag run1: n=30 P=0.20 R=0.33 F1=0.25 cite=0.63
+[14/45] Qwen/Qwen3.5-4B smart_home rag run2: n=27 P=0.19 R=0.28 F1=0.22 cite=0.67
+[15/45] Qwen/Qwen3.5-4B smart_home rag run3: n=25 P=0.20 R=0.28 F1=0.23 cite=0.68
+[16/45] Qwen/Qwen3.5-4B smart_home ungrounded run1: n=39 P=0.36 R=0.78 F1=0.49 cite=0.87
+[17/45] Qwen/Qwen3.5-4B smart_home ungrounded run2: n=38 P=0.37 R=0.78 F1=0.50 cite=0.89
+[18/45] Qwen/Qwen3.5-4B smart_home ungrounded run3: n=38 P=0.37 R=0.78 F1=0.50 cite=0.89
+[19/45] Qwen/Qwen3.5-4B family_location grounded run1: n=61 P=0.15 R=0.45 F1=0.22 cite=1.0
+[20/45] Qwen/Qwen3.5-4B family_location grounded run2: n=61 P=0.10 R=0.30 F1=0.15 cite=1.0
+[21/45] Qwen/Qwen3.5-4B family_location grounded run3: n=72 P=0.12 R=0.45 F1=0.20 cite=1.0
+[22/45] Qwen/Qwen3.5-4B family_location rag run1: n=49 P=0.16 R=0.40 F1=0.23 cite=0.82
+[23/45] Qwen/Qwen3.5-4B family_location rag run2: n=45 P=0.20 R=0.45 F1=0.28 cite=0.89
+[24/45] Qwen/Qwen3.5-4B family_location rag run3: n=48 P=0.21 R=0.50 F1=0.29 cite=0.9
+[25/45] Qwen/Qwen3.5-4B family_location ungrounded run1: n=62 P=0.24 R=0.75 F1=0.37 cite=0.76
+[26/45] Qwen/Qwen3.5-4B family_location ungrounded run2: n=63 P=0.25 R=0.80 F1=0.39 cite=0.78
+[27/45] Qwen/Qwen3.5-4B family_location ungrounded run3: n=62 P=0.24 R=0.75 F1=0.37 cite=0.76
+[28/45] Qwen/Qwen3.5-4B school_grades grounded run1: n=68 P=0.10 R=0.35 F1=0.16 cite=1.0
+[29/45] Qwen/Qwen3.5-4B school_grades grounded run2: n=22 P=0.14 R=0.15 F1=0.14 cite=1.0
+[30/45] Qwen/Qwen3.5-4B school_grades grounded run3: n=41 P=0.07 R=0.15 F1=0.10 cite=1.0
+[31/45] Qwen/Qwen3.5-4B school_grades rag run1: n=53 P=0.17 R=0.45 F1=0.25 cite=0.83
+[32/45] Qwen/Qwen3.5-4B school_grades rag run2: n=59 P=0.15 R=0.45 F1=0.23 cite=0.83
+[33/45] Qwen/Qwen3.5-4B school_grades rag run3: n=59 P=0.15 R=0.45 F1=0.23 cite=0.83
+[34/45] Qwen/Qwen3.5-4B school_grades ungrounded run1: n=71 P=0.18 R=0.65 F1=0.29 cite=0.8
+[35/45] Qwen/Qwen3.5-4B school_grades ungrounded run2: n=72 P=0.18 R=0.65 F1=0.28 cite=0.82
+[36/45] Qwen/Qwen3.5-4B school_grades ungrounded run3: n=71 P=0.18 R=0.65 F1=0.29 cite=0.8
+[37/45] Qwen/Qwen3.5-4B wearable_fitness grounded run1: n=18 P=0.11 R=0.10 F1=0.11 cite=1.0
+[38/45] Qwen/Qwen3.5-4B wearable_fitness grounded run2: n=33 P=0.06 R=0.10 F1=0.08 cite=1.0
+[39/45] Qwen/Qwen3.5-4B wearable_fitness grounded run3: n=59 P=0.17 R=0.50 F1=0.25 cite=1.0
+[40/45] Qwen/Qwen3.5-4B wearable_fitness rag run1: n=28 P=0.32 R=0.45 F1=0.38 cite=0.86
+[41/45] Qwen/Qwen3.5-4B wearable_fitness rag run2: n=30 P=0.27 R=0.40 F1=0.32 cite=0.87
+[42/45] Qwen/Qwen3.5-4B wearable_fitness rag run3: n=30 P=0.27 R=0.40 F1=0.32 cite=0.87
+[43/45] Qwen/Qwen3.5-4B wearable_fitness ungrounded run1: n=51 P=0.25 R=0.65 F1=0.37 cite=0.82
+[44/45] Qwen/Qwen3.5-4B wearable_fitness ungrounded run2: n=48 P=0.29 R=0.70 F1=0.41 cite=0.85
+[45/45] Qwen/Qwen3.5-4B wearable_fitness ungrounded run3: n=45 P=0.27 R=0.60 F1=0.37 cite=0.76
+
+Open-weight model ladder x grounding mechanism -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  concurrency {16} (part of the condition: greedy decoding on a batching server is not bitwise deterministic)
+  endpoint http://localhost:8000/v1; code unknown
+
+  model                  scenario           mode        runs        n_gen             P             R            F1      citation
+  Qwen/Qwen3.5-27B       smart_home         grounded       1       51 (--)    0.22 (--)    0.61 (--)    0.32 (--)    1.00 (--)
+  Qwen/Qwen3.5-2B        kidstube           grounded       3      133 (21)  0.18 (0.03)  0.58 (0.02)  0.27 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        kidstube           rag            3        44 (1)  0.16 (0.00)  0.17 (0.00)  0.16 (0.01)  0.27 (0.01)
+  Qwen/Qwen3.5-2B        kidstube           ungrounded     3        81 (2)  0.28 (0.01)  0.54 (0.03)  0.36 (0.01)  0.37 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         grounded       3        60 (2)  0.15 (0.01)  0.52 (0.07)  0.24 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        smart_home         rag            3        20 (1)  0.20 (0.01)  0.22 (0.00)  0.21 (0.01)  0.15 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         ungrounded     3        48 (0)  0.25 (0.00)  0.67 (0.00)  0.36 (0.00)  0.25 (0.00)
+  Qwen/Qwen3.5-2B        family_location    grounded       3        82 (5)  0.12 (0.01)  0.47 (0.06)  0.18 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        family_location    rag            3        26 (0)  0.18 (0.02)  0.23 (0.03)  0.20 (0.03)  0.08 (0.00)
+  Qwen/Qwen3.5-2B        family_location    ungrounded     3        55 (0)  0.24 (0.00)  0.65 (0.00)  0.35 (0.00)  0.47 (0.00)
+  Qwen/Qwen3.5-2B        school_grades      grounded       3      106 (13)  0.07 (0.01)  0.37 (0.06)  0.12 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        school_grades      rag            3        37 (1)  0.12 (0.01)  0.23 (0.03)  0.16 (0.02)  0.05 (0.01)
+  Qwen/Qwen3.5-2B        school_grades      ungrounded     3        76 (1)  0.11 (0.00)  0.40 (0.00)  0.17 (0.00)  0.39 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   grounded       3       65 (13)  0.11 (0.02)  0.35 (0.00)  0.17 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   rag            3        21 (1)  0.12 (0.03)  0.12 (0.03)  0.12 (0.03)  0.14 (0.01)
+  Qwen/Qwen3.5-2B        wearable_fitness   ungrounded     3        50 (2)  0.25 (0.01)  0.63 (0.06)  0.36 (0.02)  0.23 (0.02)
+  Qwen/Qwen3.5-4B        kidstube           grounded       3       59 (26)  0.23 (0.05)  0.35 (0.18)  0.27 (0.10)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           rag            3        58 (1)  0.30 (0.03)  0.41 (0.03)  0.35 (0.03)  0.78 (0.06)
+  Qwen/Qwen3.5-4B        kidstube           ungrounded     3        83 (1)  0.31 (0.01)  0.63 (0.00)  0.42 (0.00)  0.81 (0.01)
+  Qwen/Qwen3.5-4B        smart_home         grounded       3        27 (7)  0.23 (0.07)  0.35 (0.17)  0.27 (0.11)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        smart_home         rag            3        27 (3)  0.20 (0.01)  0.30 (0.03)  0.23 (0.02)  0.66 (0.03)
+  Qwen/Qwen3.5-4B        smart_home         ungrounded     3        38 (1)  0.37 (0.01)  0.78 (0.00)  0.50 (0.01)  0.88 (0.01)
+  Qwen/Qwen3.5-4B        family_location    grounded       3        65 (6)  0.12 (0.03)  0.40 (0.09)  0.19 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        family_location    rag            3        47 (2)  0.19 (0.03)  0.45 (0.05)  0.27 (0.03)  0.87 (0.04)
+  Qwen/Qwen3.5-4B        family_location    ungrounded     3        62 (1)  0.24 (0.01)  0.77 (0.03)  0.38 (0.01)  0.77 (0.01)
+  Qwen/Qwen3.5-4B        school_grades      grounded       3       44 (23)  0.10 (0.04)  0.22 (0.12)  0.13 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        school_grades      rag            3        57 (3)  0.16 (0.01)  0.45 (0.00)  0.24 (0.01)  0.83 (0.00)
+  Qwen/Qwen3.5-4B        school_grades      ungrounded     3        71 (1)  0.18 (0.00)  0.65 (0.00)  0.29 (0.01)  0.81 (0.01)
+  Qwen/Qwen3.5-4B        wearable_fitness   grounded       3       37 (21)  0.11 (0.06)  0.23 (0.23)  0.15 (0.09)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        wearable_fitness   rag            3        29 (1)  0.29 (0.03)  0.42 (0.03)  0.34 (0.03)  0.87 (0.01)
+  Qwen/Qwen3.5-4B        wearable_fitness   ungrounded     3        48 (3)  0.27 (0.02)  0.65 (0.05)  0.38 (0.02)  0.81 (0.05)
+
+  Per model, paired across scenarios (each scenario one block):
+    model                  contrast                 citation     recall         f1  scenarios
+    Qwen/Qwen3.5-2B        grounded - ungrounded     +0.657    -0.123    -0.125  n=5
+    Qwen/Qwen3.5-2B        grounded - rag            +0.861    +0.262    +0.024  n=5
+    Qwen/Qwen3.5-4B        grounded - ungrounded     +0.184    -0.385    -0.190  n=5
+    Qwen/Qwen3.5-4B        grounded - rag            +0.199    -0.095    -0.082  n=5
+
+(written to /root/linddun/storage/generated/OPEN_MODEL_SWEEP.txt)
+=== 06:12:49 done Qwen/Qwen3.5-4B ===
+=== 06:12:49 serving Qwen/Qwen3.5-9B ===
+=== 06:16:53 sweeping Qwen/Qwen3.5-9B ===
+resuming: 91 cell(s) recorded overall, 45 to run for Qwen/Qwen3.5-9B
+[1/45] Qwen/Qwen3.5-9B kidstube grounded run1: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[2/45] Qwen/Qwen3.5-9B kidstube grounded run2: n=81 P=0.12 R=0.24 F1=0.16 cite=0.89
+[3/45] Qwen/Qwen3.5-9B kidstube grounded run3: n=112 P=0.19 R=0.51 F1=0.27 cite=0.93
+[4/45] Qwen/Qwen3.5-9B kidstube rag run1: n=60 P=0.32 R=0.46 F1=0.38 cite=0.78
+[5/45] Qwen/Qwen3.5-9B kidstube rag run2: n=59 P=0.32 R=0.46 F1=0.38 cite=0.81
+[6/45] Qwen/Qwen3.5-9B kidstube rag run3: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+[7/45] Qwen/Qwen3.5-9B kidstube ungrounded run1: n=88 P=0.28 R=0.61 F1=0.39 cite=0.78
+[8/45] Qwen/Qwen3.5-9B kidstube ungrounded run2: n=88 P=0.28 R=0.61 F1=0.39 cite=0.77
+[9/45] Qwen/Qwen3.5-9B kidstube ungrounded run3: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+[10/45] Qwen/Qwen3.5-9B smart_home grounded run1: n=52 P=0.17 R=0.50 F1=0.26 cite=1.0
+[11/45] Qwen/Qwen3.5-9B smart_home grounded run2: n=37 P=0.14 R=0.28 F1=0.18 cite=1.0
+[12/45] Qwen/Qwen3.5-9B smart_home grounded run3: n=9 P=0.11 R=0.06 F1=0.07 cite=1.0
+[13/45] Qwen/Qwen3.5-9B smart_home rag run1: n=27 P=0.37 R=0.56 F1=0.44 cite=0.7
+[14/45] Qwen/Qwen3.5-9B smart_home rag run2: n=27 P=0.48 R=0.72 F1=0.58 cite=0.74
+[15/45] Qwen/Qwen3.5-9B smart_home rag run3: n=27 P=0.48 R=0.72 F1=0.58 cite=0.74
+[16/45] Qwen/Qwen3.5-9B smart_home ungrounded run1: n=41 P=0.32 R=0.72 F1=0.44 cite=0.76
+[17/45] Qwen/Qwen3.5-9B smart_home ungrounded run2: n=38 P=0.34 R=0.72 F1=0.46 cite=0.76
+[18/45] Qwen/Qwen3.5-9B smart_home ungrounded run3: n=41 P=0.32 R=0.72 F1=0.44 cite=0.76
+[19/45] Qwen/Qwen3.5-9B family_location grounded run1: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[20/45] Qwen/Qwen3.5-9B family_location grounded run2: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[21/45] Qwen/Qwen3.5-9B family_location grounded run3: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[22/45] Qwen/Qwen3.5-9B family_location rag run1: n=50 P=0.22 R=0.55 F1=0.31 cite=0.78
+[23/45] Qwen/Qwen3.5-9B family_location rag run2: n=45 P=0.27 R=0.60 F1=0.37 cite=0.78
+[24/45] Qwen/Qwen3.5-9B family_location rag run3: n=45 P=0.27 R=0.60 F1=0.37 cite=0.78
+[25/45] Qwen/Qwen3.5-9B family_location ungrounded run1: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+[26/45] Qwen/Qwen3.5-9B family_location ungrounded run2: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+[27/45] Qwen/Qwen3.5-9B family_location ungrounded run3: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'tree_node'
+[28/45] Qwen/Qwen3.5-9B school_grades grounded run1: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[29/45] Qwen/Qwen3.5-9B school_grades grounded run2: n=84 P=0.06 R=0.25 F1=0.10 cite=0.93
+[30/45] Qwen/Qwen3.5-9B school_grades grounded run3: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[31/45] Qwen/Qwen3.5-9B school_grades rag run1: FAILED TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+Traceback (most recent call last):
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 251, in main
+    m = one_run(scenario, mode, run, args.provider, model, concurrency,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/scripts/run_open_model_sweep.py", line 105, in one_run
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/generate.py", line 174, in generate_for_scenario
+    all_threats.append(GeneratedThreat.from_dict(t))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/linddun/generation/schema.py", line 49, in from_dict
+    return cls(**{k: v for k, v in d.items() if k in known})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: GeneratedThreat.__init__() missing 1 required positional argument: 'threat_type'
+[32/45] Qwen/Qwen3.5-9B school_grades rag run2: n=61 P=0.15 R=0.45 F1=0.22 cite=0.75
+[33/45] Qwen/Qwen3.5-9B school_grades rag run3: n=58 P=0.16 R=0.45 F1=0.23 cite=0.76
+[34/45] Qwen/Qwen3.5-9B school_grades ungrounded run1: n=77 P=0.18 R=0.70 F1=0.29 cite=0.79
+[35/45] Qwen/Qwen3.5-9B school_grades ungrounded run2: n=77 P=0.18 R=0.70 F1=0.29 cite=0.79
+[36/45] Qwen/Qwen3.5-9B school_grades ungrounded run3: n=77 P=0.18 R=0.70 F1=0.29 cite=0.79

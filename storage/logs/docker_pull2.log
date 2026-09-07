@@ -1,0 +1,98 @@
+latest: Pulling from vllm/vllm-openai
+ec78d3e2d460: Pulling fs layer
+70f87b6ed43e: Pulling fs layer
+c567a87f21d2: Pulling fs layer
+271c54c18a10: Pulling fs layer
+4139e3f5aa77: Pulling fs layer
+a8b9d0854147: Pulling fs layer
+e2c6bed4fdc3: Pulling fs layer
+3e10379f5556: Pulling fs layer
+d304482b6223: Pulling fs layer
+25647d2c0bae: Pulling fs layer
+2aa4390c80f0: Pulling fs layer
+a4e56eda59b2: Pulling fs layer
+f8ed8a100bf8: Pulling fs layer
+01e396ce3c8e: Pulling fs layer
+7e00c5c1cfdb: Pulling fs layer
+ccef6ccbf2ce: Pulling fs layer
+c697f234d1d9: Pulling fs layer
+cd634bc724c4: Pulling fs layer
+0179fee5d74b: Pulling fs layer
+cf57d2112d89: Pulling fs layer
+591954b29afb: Pulling fs layer
+0b3b5bd92824: Pulling fs layer
+526d5438c009: Pulling fs layer
+c9df31e9235d: Pulling fs layer
+67521fa22d50: Pulling fs layer
+271c54c18a10: Pulling fs layer
+1ae900eb19df: Pulling fs layer
+0f9949557abf: Pulling fs layer
+f77426183f53: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+a30bd33cff93: Pulling fs layer
+779897825169: Pulling fs layer
+70f87b6ed43e: Download complete
+4139e3f5aa77: Download complete
+271c54c18a10: Download complete
+3e10379f5556: Download complete
+ec78d3e2d460: Download complete
+c697f234d1d9: Download complete
+01e396ce3c8e: Download complete
+591954b29afb: Download complete
+0179fee5d74b: Download complete
+2aa4390c80f0: Download complete
+a4e56eda59b2: Download complete
+f8ed8a100bf8: Download complete
+1ae900eb19df: Download complete
+526d5438c009: Download complete
+c9df31e9235d: Download complete
+a30bd33cff93: Download complete
+f77426183f53: Download complete
+779897825169: Download complete
+4f4fb700ef54: Download complete
+c567a87f21d2: Download complete
+67521fa22d50: Download complete
+cf57d2112d89: Download complete
+a8b9d0854147: Download complete
+cf57d2112d89: Pull complete
+c567a87f21d2: Pull complete
+d304482b6223: Download complete
+0b3b5bd92824: Download complete
+0b3b5bd92824: Pull complete
+70f87b6ed43e: Pull complete
+ec78d3e2d460: Pull complete
+a4e56eda59b2: Pull complete
+526d5438c009: Pull complete
+7e00c5c1cfdb: Download complete
+25647d2c0bae: Download complete
+e2c6bed4fdc3: Download complete
+7e00c5c1cfdb: Pull complete
+0f9949557abf: Download complete
+cd634bc724c4: Download complete
+0f9949557abf: Pull complete
+4139e3f5aa77: Pull complete
+271c54c18a10: Pull complete
+591954b29afb: Pull complete
+779897825169: Pull complete
+a8b9d0854147: Pull complete
+01e396ce3c8e: Pull complete
+2aa4390c80f0: Pull complete
+ccef6ccbf2ce: Download complete
+ccef6ccbf2ce: Pull complete
+a30bd33cff93: Pull complete
+cd634bc724c4: Pull complete
+0179fee5d74b: Pull complete
+d304482b6223: Pull complete
+3e10379f5556: Pull complete
+c9df31e9235d: Pull complete
+4f4fb700ef54: Pull complete
+25647d2c0bae: Pull complete
+c697f234d1d9: Pull complete
+67521fa22d50: Pull complete
+f8ed8a100bf8: Pull complete
+1ae900eb19df: Pull complete
+f77426183f53: Pull complete
+e2c6bed4fdc3: Pull complete
+Digest: sha256:61fc8a896b0a4fbbbdc063bc4b0dbc25ce98e02b5050c24aeb7830ac02039b14
+Status: Downloaded newer image for vllm/vllm-openai:latest
+docker.io/vllm/vllm-openai:latest

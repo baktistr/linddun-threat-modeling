@@ -1,0 +1,32 @@
+Eval report: scenario=family_location generated=/root/linddun/storage/generated/open_models/qwen-qwen3-5-9b_family_location_grounded_run2.json
+  n_generated=34 n_gold=20 strict_node_match=False
+
+NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) against the generated threat's flow in dfd.json. 0 gold threats have dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               1    7    2   0.12   0.33   0.18
+I    Identifying           2    4    0   0.33   1.00   0.50
+Nr   Non-repudiation       0    0    2   0.00   0.00   0.00
+D    Detecting             0    0    2   0.00   0.00   0.00
+Dd   Data Disclosure       3    6    4   0.33   0.43   0.38
+U    Unawareness           0    6    2   0.00   0.00   0.00  *
+Nc   Non-compliance        1    4    1   0.20   0.50   0.29  *
+ALL                        7   27   13   0.21   0.35   0.26
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          1.00
+  type_applicable_rate     1.00
+  location_valid_rate      0.71
+  all_valid_rate           0.71
+  n_threats_checked        34
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          13   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.35
+  recall (reachable-adjusted):      0.35   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario family_location --generated /root/linddun/storage/generated/open_models/qwen-qwen3-5-9b_family_location_grounded_run2.json` to label a sample of the 27 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

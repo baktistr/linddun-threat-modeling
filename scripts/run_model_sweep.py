@@ -89,7 +89,8 @@ def resolve_gold(input_kind: str, dfd_path: Path, run_dir: Path) -> tuple[Path |
 
 ARMS = {"image": "vision_naive", "source": "llm", "dfd": "hand"}
 # The fusion inputs' arm is the ENRICHMENT arm (adapters/enrich.py), chosen per invocation:
-# enrich_llm is the proposal (closed fact-id vocabulary), enrich_facts the deterministic bar.
+# enrich_llm is the proposal (closed fact-id vocabulary), enrich_facts the deterministic bar, and
+# enrich_llm_naive the open-vocabulary ablation that reads raw source and needs --source-root.
 FUSION_INPUTS = ("image-src", "dfd-src")
 
 
@@ -98,7 +99,7 @@ def arm_for(input_kind: str, enrich_arm: str) -> str:
 
 
 def one_condition(model: str, input_kind: str, run: int, provider: str, dry: bool,
-                  enrich_arm: str = "enrich_llm") -> dict:
+                  enrich_arm: str = "enrich_llm", source_root=None) -> dict:
     arm = arm_for(input_kind, enrich_arm)
     cond = runs.condition(input_kind, arm, model)
     run_dir = runs.derived_dir(SCENARIO, cond, run)
@@ -132,10 +133,16 @@ def one_condition(model: str, input_kind: str, run: int, provider: str, dry: boo
         from adapters.enrich import enrich_dfd, format_enrichment_report
         _log(f"  [1b ] enrich ({arm}, "
              f"{'no model' if arm == 'enrich_facts' else model})")
-        facts = load_facts(SCENARIO)
+        # The naive arm reads raw source instead of the committed fact list, so it needs a
+        # checkout. Refuse early rather than silently enriching from nothing: an empty result
+        # here would be indistinguishable from a model that found no evidence.
+        if arm == "enrich_llm_naive" and source_root is None:
+            raise RuntimeError("--enrich-arm enrich_llm_naive reads raw source; pass --source-root")
+        facts = [] if arm == "enrich_llm_naive" else load_facts(SCENARIO)
         base = dfd
-        dfd = enrich_dfd(base, facts, arm=arm, provider=provider, model=model, verbose=False)
-        report = format_enrichment_report(base, dfd, facts)
+        dfd = enrich_dfd(base, facts, arm=arm, provider=provider, model=model, verbose=False,
+                         source_root=source_root)
+        report = format_enrichment_report(base, dfd, facts, source_root=source_root)
         (run_dir / "enrichment.txt").write_text(report + "\n")
         _log("        " + "\n        ".join(report.splitlines()[:3]))
         if "VIOLATED" in report:
@@ -180,8 +187,13 @@ def main():
     ap.add_argument("--inputs", nargs="+", default=["image", "source"], choices=list(runs.INPUTS))
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--provider", default="azure")
-    ap.add_argument("--enrich-arm", default="enrich_llm", choices=["enrich_llm", "enrich_facts"],
+    ap.add_argument("--enrich-arm", default="enrich_llm",
+                    choices=["enrich_llm", "enrich_facts", "enrich_llm_naive"],
                     help="Which adapters/enrich.py arm the image-src/dfd-src inputs use.")
+    ap.add_argument("--source-root", default=None,
+                    help="Checkout of the system's source repo. Required by --enrich-arm "
+                         "enrich_llm_naive, which reads raw source instead of the committed "
+                         "fact list; ignored by the other arms.")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
@@ -195,7 +207,8 @@ def main():
             for run in range(1, args.runs + 1):
                 try:
                     results.append(one_condition(model, input_kind, run, args.provider,
-                                                 args.dry_run, enrich_arm=args.enrich_arm))
+                                                 args.dry_run, enrich_arm=args.enrich_arm,
+                                                 source_root=args.source_root))
                 except Exception as e:
                     _log(f"  FAILED: {type(e).__name__}: {e}")
                     traceback.print_exc()

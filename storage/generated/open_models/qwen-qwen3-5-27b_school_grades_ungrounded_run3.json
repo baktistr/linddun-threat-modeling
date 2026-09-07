@@ -1,0 +1,62 @@
+[
+  {
+    "flow_id": "DF4",
+    "originator_id": "EE3",
+    "threat_type": "D",
+    "tree_node": "D.1.1",
+    "title": "Interception of Login Credentials",
+    "description": "Teacher's login credentials transmitted to the Grades Portal Web App could be intercepted if not encrypted, leading to unauthorized access.",
+    "assumptions": "Assumes no TLS/SSL encryption is used for the login request.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "P1",
+    "threat_type": "I",
+    "tree_node": "I.1.1",
+    "title": "Weak Authentication Mechanism",
+    "description": "Inadequate authentication controls in the Grades Portal Web App may allow unauthorized users to impersonate a teacher and access submission queues.",
+    "assumptions": "Assumes authentication relies on weak credentials or lacks multi-factor authentication.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "P1",
+    "threat_type": "D",
+    "tree_node": "D.2.1",
+    "title": "Excessive Data Access to Submissions",
+    "description": "The Grades Portal Web App may grant teachers access to submission queues beyond their assigned courses, exposing student data unnecessarily.",
+    "assumptions": "Assumes access controls do not strictly limit data visibility to the teacher's courses.",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "Depends on implementation of role-based access controls.",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "P1",
+    "threat_type": "U",
+    "tree_node": "U.1.1",
+    "title": "Lack of Transparency in Data Processing",
+    "description": "Teachers may be unaware that their access to submission queues is logged or monitored, violating transparency principles.",
+    "assumptions": "Assumes no clear notification or consent mechanism for logging teacher activities.",
+    "severity": "Low",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

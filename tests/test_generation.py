@@ -819,6 +819,144 @@ def test_gold_location_convention_is_read_from_the_catalog():
           "a catalog with no embedded flow ids is location-anchored")
 
 
+def test_malformed_threat_is_dropped_and_counted_not_fatal():
+    """A threat missing a field its own tool schema marks `required` must cost that threat, not
+    the whole run -- and must be counted, because it is a property of the model under test.
+
+    Forced tool calling was assumed to make this impossible, and it does hold for the hosted
+    deployments: across every Azure run in this repo it never fired once. A locally served open
+    model breaks it routinely -- Qwen3.5-9B omitted threat_type or tree_node in 6 of its first 21
+    cells -- and a single malformed item used to raise TypeError out of the whole scenario,
+    discarding every flow already paid for.
+
+    Silence would be the wrong fix. An entry with no threat_type is not an answer and must not
+    enter the threat set, but schema compliance is exactly the kind of thing this repo measures
+    rather than absorbs, so the count is surfaced through `stats` for the run record."""
+    print("\n[schema: malformed threats are dropped, counted, and never fatal]")
+    import generation.generate as gen_mod
+
+    class PartlyMalformedBackend:
+        name, model = "stub", "stub-1"
+        def generate_threats(self, prompt):
+            return {"threats": [
+                {"originator_id": "E1", "threat_type": "L", "tree_node": "L.1.1",
+                 "title": "well-formed", "description": "d"},
+                {"originator_id": "E1", "tree_node": "L.1.1",          # no threat_type
+                 "title": "missing threat_type", "description": "d"},
+                {"originator_id": "E1", "threat_type": "Dd",           # no tree_node
+                 "title": "missing tree_node", "description": "d"},
+            ]}
+
+    real = gen_mod.get_llm_backend
+    gen_mod.get_llm_backend = lambda *a, **k: PartlyMalformedBackend()
+    try:
+        stats = {}
+        threats = gen_mod.generate_for_scenario("kidstube", mode="grounded", progress=False,
+                                                stats=stats)
+    finally:
+        gen_mod.get_llm_backend = real
+
+    n_flows = len({t.flow_id for t in threats})
+    check(len(threats) == n_flows and n_flows > 0,
+          f"the well-formed threat from every flow survives ({len(threats)} kept)")
+    check(all(t.title == "well-formed" for t in threats),
+          "only the schema-conforming entry is kept")
+    check(stats["malformed_dropped"] == 2 * n_flows,
+          f"both malformed entries per flow are counted "
+          f"(got {stats['malformed_dropped']}, expected {2 * n_flows})")
+    check(len(stats["malformed"]) == stats["malformed_dropped"]
+          and all(":" in m for m in stats["malformed"]),
+          "each drop is recorded against the flow it came from, for the run record")
+
+    # The contract the old code broke: one bad item must never discard the flows already paid for.
+    class AllMalformedBackend:
+        name, model = "stub", "stub-1"
+        def generate_threats(self, prompt):
+            return {"threats": [{"title": "nothing else at all"}]}
+
+    gen_mod.get_llm_backend = lambda *a, **k: AllMalformedBackend()
+    try:
+        stats2 = {}
+        threats2 = gen_mod.generate_for_scenario("kidstube", mode="grounded", progress=False,
+                                                 stats=stats2)
+    except TypeError:
+        check(False, "an entirely malformed response returns empty rather than raising")
+        threats2, stats2 = None, {"malformed_dropped": -1}
+    finally:
+        gen_mod.get_llm_backend = real
+
+    if threats2 is not None:
+        check(threats2 == [] and stats2["malformed_dropped"] > 0,
+              f"an entirely malformed response yields no threats and a nonzero drop count "
+              f"(got {len(threats2)} threats, {stats2['malformed_dropped']} dropped)")
+
+    empty = {}
+    gen_mod.get_llm_backend = lambda *a, **k: type(
+        "Clean", (), {"name": "s", "model": "s",
+                      "generate_threats": lambda self, p: {"threats": []}})()
+    try:
+        gen_mod.generate_for_scenario("kidstube", mode="grounded", progress=False, stats=empty)
+    finally:
+        gen_mod.get_llm_backend = real
+    check(empty.get("malformed_dropped") == 0,
+          "a clean run records 0 explicitly, so 'no key' never has to mean 'none happened'")
+
+
+def test_concurrency_changes_issue_order_and_nothing_else():
+    """Raising GENERATION_CONCURRENCY must change only the order calls are ISSUED.
+
+    Flows are independent, so the serial loop was never a correctness requirement -- but the
+    artifact is a list whose order readers and the matcher both rely on, and a thread pool returns
+    completions in whatever order they finish. If that order leaked into the output, every
+    concurrent run would be silently incomparable to every serial one already committed, which is
+    worse than the slowness it was meant to fix.
+
+    The stub answers deterministically per flow but with jittered latency, so a parallel run WILL
+    complete out of order: if ordering were not enforced the outputs would differ and this test
+    would fail rather than pass by luck. Concurrency is set per call rather than through the
+    environment, matching how a sweep varies it."""
+    print("\n[concurrency: parallel issue order, serial output order]")
+    import random
+    import time
+    import generation.generate as gen_mod
+
+    class StubBackend:
+        name, model = "stub", "stub-1"
+        def __init__(self):
+            self.calls = []
+        def generate_threats(self, prompt):
+            flow_id = prompt.split("Flow ")[1].split(":")[0]
+            self.calls.append(flow_id)
+            time.sleep(random.uniform(0.001, 0.02))
+            return {"threats": [{"originator_id": "E1", "threat_type": "L",
+                                 "tree_node": "L.1.1", "title": f"t-{flow_id}",
+                                 "description": f"d-{flow_id}"}]}
+
+    real_get_backend = gen_mod.get_llm_backend
+    stubs = {}
+    try:
+        serialised = {}
+        for c in (1, 4, 16):
+            stub = StubBackend()
+            stubs[c] = stub
+            gen_mod.get_llm_backend = lambda *a, **k: stub
+            random.seed(0)
+            threats = gen_mod.generate_for_scenario("kidstube", mode="grounded", progress=False,
+                                                    concurrency=c)
+            serialised[c] = json.dumps([t.to_dict() for t in threats], sort_keys=True)
+    finally:
+        gen_mod.get_llm_backend = real_get_backend
+
+    check(serialised[1] == serialised[4] == serialised[16],
+          "output is byte-identical at concurrency 1, 4 and 16")
+    check(len(stubs[16].calls) == len(stubs[1].calls) > 0,
+          f"every flow is called exactly once regardless of concurrency "
+          f"({len(stubs[1].calls)} calls)")
+    flow_order = [t["flow_id"] for t in json.loads(serialised[16])]
+    check(flow_order == sorted(flow_order, key=lambda f: int(f.replace("DF", ""))),
+          "threats stay in DFD flow order, not completion order")
+
+
 def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
@@ -853,6 +991,8 @@ def main():
     test_sweep_artifacts_record_the_code_state()
     test_matcher_genomic_location_based()
     test_matcher_genomic_without_dfd_falls_back_to_coarse()
+    test_malformed_threat_is_dropped_and_counted_not_fatal()
+    test_concurrency_changes_issue_order_and_nothing_else()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")
     sys.exit(1 if FAIL else 0)
 

@@ -1,0 +1,30 @@
+=== 04:55:25 downloading Qwen/Qwen3.5-2B ===
+[90mHint: The `hf-cli` skill is not installed. Run `hf skills add -g --claude` to teach your AI agents how to use the `hf` CLI.[0m
+Fetching 13 files:   0%|          | 0/13 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 13 files:   8%|▊         | 1/13 [00:00<00:02,  5.64it/s]Fetching 13 files:  54%|█████▍    | 7/13 [00:00<00:00, 29.61it/s]Fetching 13 files:  85%|████████▍ | 11/13 [00:00<00:00, 25.87it/s]Fetching 13 files:  92%|█████████▏| 12/13 [00:19<00:00, 25.87it/s]Fetching 13 files: 100%|██████████| 13/13 [00:47<00:00,  5.81s/it]Fetching 13 files: 100%|██████████| 13/13 [00:47<00:00,  3.63s/it]
+[32m✓ Downloaded[0m
+  path: /mnt/data/hf/hub/models--Qwen--Qwen3.5-2B/snapshots/15852e8c16360a2fea060d615a32b45270f8a8fc
+=== 04:56:13 done Qwen/Qwen3.5-2B ===
+/dev/vdb        246G  4.3G  229G   2% /mnt/data
+=== 04:56:13 downloading Qwen/Qwen3.5-4B ===
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 14 files:   7%|▋         | 1/14 [00:00<00:02,  6.46it/s]Fetching 14 files:  50%|█████     | 7/14 [00:00<00:00, 25.88it/s]Fetching 14 files:  79%|███████▊  | 11/14 [00:00<00:00, 23.11it/s]Fetching 14 files:  86%|████████▌ | 12/14 [00:19<00:00, 23.11it/s]Fetching 14 files:  93%|█████████▎| 13/14 [01:10<00:08,  8.65s/it]Fetching 14 files: 100%|██████████| 14/14 [01:17<00:00,  8.41s/it]Fetching 14 files: 100%|██████████| 14/14 [01:17<00:00,  5.52s/it]
+[32m✓ Downloaded[0m
+  path: /mnt/data/hf/hub/models--Qwen--Qwen3.5-4B/snapshots/851bf6e806efd8d0a36b00ddf55e13ccb7b8cd0a
+=== 04:57:31 done Qwen/Qwen3.5-4B ===
+/dev/vdb        246G   13G  220G   6% /mnt/data
+=== 04:57:31 downloading Qwen/Qwen3.5-9B ===
+Fetching 16 files:   0%|          | 0/16 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 16 files:   6%|▋         | 1/16 [00:00<00:02,  7.04it/s]Fetching 16 files:  44%|████▍     | 7/16 [00:00<00:00, 24.57it/s]Fetching 16 files:  62%|██████▎   | 10/16 [00:00<00:00, 23.32it/s]Fetching 16 files:  75%|███████▌  | 12/16 [00:19<00:00, 23.32it/s]Fetching 16 files:  81%|████████▏ | 13/16 [02:05<00:44, 14.92s/it]Fetching 16 files:  88%|████████▊ | 14/16 [02:23<00:30, 15.46s/it]Fetching 16 files:  94%|█████████▍| 15/16 [02:28<00:13, 13.54s/it]Fetching 16 files: 100%|██████████| 16/16 [02:30<00:00,  9.44s/it]
+[32m✓ Downloaded[0m
+  path: /mnt/data/hf/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a
+=== 05:00:03 done Qwen/Qwen3.5-9B ===
+/dev/vdb        246G   31G  202G  14% /mnt/data
+=== 05:00:03 downloading Qwen/Qwen3.5-27B ===
+Fetching 24 files:   0%|          | 0/24 [00:00<?, ?it/s]Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Fetching 24 files:   4%|▍         | 1/24 [00:00<00:03,  6.48it/s]Fetching 24 files:  17%|█▋        | 4/24 [00:00<00:01, 17.50it/s]Fetching 24 files:  25%|██▌       | 6/24 [00:00<00:01, 16.39it/s]Fetching 24 files:  29%|██▉       | 7/24 [00:19<00:01, 16.39it/s]Fetching 24 files:  33%|███▎      | 8/24 [04:49<14:46, 55.42s/it]Fetching 24 files:  38%|███▊      | 9/24 [04:57<11:20, 45.39s/it]Fetching 24 files:  42%|████▏     | 10/24 [05:10<10:35, 45.39s/it]Fetching 24 files:  46%|████▌     | 11/24 [05:10<06:35, 30.46s/it]Fetching 24 files:  50%|█████     | 12/24 [05:10<04:47, 24.00s/it]Fetching 24 files:  54%|█████▍    | 13/24 [05:10<03:22, 18.43s/it]Fetching 24 files:  58%|█████▊    | 14/24 [05:15<02:30, 15.03s/it]Fetching 24 files:  62%|██████▎   | 15/24 [05:15<01:40, 11.14s/it]Fetching 24 files:  67%|██████▋   | 16/24 [05:15<01:05,  8.16s/it]Fetching 24 files:  71%|███████   | 17/24 [05:16<00:42,  6.08s/it]Fetching 24 files:  75%|███████▌  | 18/24 [05:17<00:27,  4.51s/it]Fetching 24 files:  79%|███████▉  | 19/24 [05:24<00:26,  5.32s/it]Fetching 24 files:  83%|████████▎ | 20/24 [05:29<00:20,  5.24s/it]Fetching 24 files:  88%|████████▊ | 21/24 [05:30<00:12,  4.04s/it]Fetching 24 files:  92%|█████████▏| 22/24 [06:26<00:38, 19.46s/it]Fetching 24 files:  96%|█████████▌| 23/24 [06:35<00:16, 16.19s/it]Fetching 24 files: 100%|██████████| 24/24 [06:42<00:00, 13.46s/it]Fetching 24 files: 100%|██████████| 24/24 [06:42<00:00, 16.77s/it]
+[32m✓ Downloaded[0m
+  path: /mnt/data/hf/hub/models--Qwen--Qwen3.5-27B/snapshots/fc05daec18b0a78c049392ed2e771dde82bdf654
+=== 05:06:46 done Qwen/Qwen3.5-27B ===
+/dev/vdb        246G   83G  150G  36% /mnt/data
+ALL DOWNLOADS COMPLETE

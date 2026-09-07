@@ -153,3 +153,20 @@ def code_state() -> str:
         return out.stdout.strip() or "unknown"
     except Exception:
         return "unknown"
+
+
+# How many flow-level model calls to keep in flight at once (generation/generate.py).
+#
+# 1 = the historical behaviour: one flow at a time, in order. Every Azure-era artifact was
+# produced this way, and the default stays 1 so re-running any committed condition is unchanged.
+#
+# Flows are independent -- each is its own prompt, its own forced tool call, and nothing about one
+# flow's answer feeds another -- so the serial loop was never a correctness requirement, only the
+# simplest thing to write. Against a hosted endpoint that hardly mattered; against a locally served
+# model it dominates, because a self-hosted server bills wall-clock, not tokens, and sits idle
+# between sequential calls. A 567-call sweep at ~4s/call is 38 minutes on a 2B and most of a
+# working day on a 27B.
+#
+# Output is assembled in flow order regardless of this setting, so the saved artifact is identical
+# to what the serial path produces; only the order the calls are ISSUED changes.
+GENERATION_CONCURRENCY = int(os.environ.get("GENERATION_CONCURRENCY", "1"))

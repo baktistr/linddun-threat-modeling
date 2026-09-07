@@ -1,0 +1,11 @@
+Enrichment verification -- arm=enrich_llm_naive model=gpt-5.4
+  flows enriched        15/17
+  mean description len  38 -> 219 chars
+  rejected enrichments  0
+
+  source coverage       ALL files
+  citation validity     1.00 (30/30 resolve)
+    unknown file        0
+    line out of range   0
+
+  contract: HOLDS
