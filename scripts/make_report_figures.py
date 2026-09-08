@@ -577,8 +577,7 @@ def figure6() -> Path:
     ax.legend(handles, ["S — source element", "fl — the data flow", "D — destination element"],
               frameon=False, fontsize=7.5, ncols=3, loc="lower left",
               bbox_to_anchor=(0.0, -0.30), handlelength=1.3)
-    ax.set_title("Where a threat is located, once all three positions are available",
-                 fontsize=9.4, color=INK, loc="left", pad=10)
+    ax.set_title("Where a threat is located", fontsize=9.8, color=INK, loc="left", pad=10)
     fig.tight_layout()
     p = OUT / "fig6_position_distribution.png"
     fig.savefig(p, dpi=220, bbox_inches="tight")
