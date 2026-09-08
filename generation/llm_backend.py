@@ -28,7 +28,13 @@ import config
 from generation.schema import THREAT_TOOL_SCHEMA
 
 TOOL_NAME = THREAT_TOOL_SCHEMA["name"]
-DEFAULT_MAX_TOKENS = 2000
+# Raised from 2000 when `position` landed. Two things grew the per-flow payload at once: an extra
+# required field on every threat, and a prompt that elicits more of them (gpt-5.4 went from 137 to
+# 192 threats on KidsTube grounded). The result was six truncated grounded cells -- and truncation
+# surfaces only as a JSONDecodeError, which reads as a model failure rather than a budget one, so
+# the ceiling has to lead the payload rather than track it. A cell that stops naturally is
+# unaffected: this is a cap, not a target.
+DEFAULT_MAX_TOKENS = 4000
 
 # Gateway 5xx retry budget -- see AzureFoundryBackend._create_with_retry for the measurement.
 GATEWAY_RETRIES = 4

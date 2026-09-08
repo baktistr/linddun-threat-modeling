@@ -1,0 +1,32 @@
+Scenario x grounding-mode ablation, repeated -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  code f322ad2-dirty
+
+  NOTE: temperature=0 is accepted but NOT deterministic on this deployment, so a zero sd
+  would be a finding, not an expectation. Recall is quantised at 1/|gold| (0.05 on the
+  20-threat scenarios): differences below that are unmeasurable however many runs are made.
+
+  scenario           mode        runs        n_gen             P             R            F1      citation
+  kidstube           grounded       3       129 (2)  0.26 (0.01)  0.80 (0.00)  0.39 (0.01)  1.00 (0.00)
+  kidstube           rag            3        87 (1)  0.28 (0.01)  0.59 (0.03)  0.38 (0.02)  0.98 (0.01)
+  kidstube           ungrounded     3       109 (3)  0.26 (0.01)  0.69 (0.02)  0.38 (0.01)  0.83 (0.03)
+  smart_home         grounded       3        56 (4)  0.27 (0.02)  0.83 (0.06)  0.40 (0.03)  1.00 (0.00)
+  smart_home         rag            3        43 (2)  0.25 (0.02)  0.61 (0.06)  0.36 (0.03)  0.94 (0.01)
+  smart_home         ungrounded     3        52 (1)  0.27 (0.02)  0.78 (0.06)  0.40 (0.03)  0.82 (0.04)
+  family_location    grounded       3       114 (4)  0.18 (0.01)  1.00 (0.00)  0.30 (0.01)  1.00 (0.00)
+  family_location    rag            3        69 (3)  0.22 (0.02)  0.77 (0.06)  0.34 (0.02)  0.95 (0.01)
+  family_location    ungrounded     3        86 (2)  0.19 (0.02)  0.83 (0.06)  0.32 (0.03)  0.83 (0.03)
+  school_grades      grounded       3       116 (2)  0.16 (0.01)  0.95 (0.00)  0.28 (0.00)  1.00 (0.00)
+  school_grades      rag            3        79 (2)  0.17 (0.01)  0.68 (0.03)  0.28 (0.02)  0.92 (0.05)
+  school_grades      ungrounded     3        98 (3)  0.15 (0.02)  0.72 (0.06)  0.24 (0.02)  0.84 (0.05)
+  wearable_fitness   grounded       3       100 (2)  0.20 (0.00)  1.00 (0.00)  0.33 (0.01)  1.00 (0.00)
+  wearable_fitness   rag            3        50 (3)  0.31 (0.03)  0.78 (0.03)  0.45 (0.03)  0.87 (0.02)
+  wearable_fitness   ungrounded     3        65 (1)  0.24 (0.01)  0.77 (0.03)  0.36 (0.02)  0.83 (0.06)
+
+  Paired across scenarios (each scenario one block), mean of per-scenario means:
+    citation  grounded   - ungrounded  mean +0.171  sd 0.006  n=5  favours grounded in 5/5
+    recall    grounded   - ungrounded  mean +0.160  sd 0.077  n=5  favours grounded in 5/5
+    citation  grounded   - rag         mean +0.069  sd 0.038  n=5  favours grounded in 5/5
+    recall    grounded   - rag         mean +0.229  sd 0.023  n=5  favours grounded in 5/5
+    citation  rag        - ungrounded  mean +0.103  sd 0.039  n=5  favours rag in 5/5
+    recall    rag        - ungrounded  mean -0.069  sd 0.068  n=5  favours rag in 1/5

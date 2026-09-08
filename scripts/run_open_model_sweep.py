@@ -49,6 +49,7 @@ from __future__ import annotations
 import argparse
 import json
 import statistics
+from collections import Counter
 import sys
 import traceback
 from pathlib import Path
@@ -113,8 +114,14 @@ def one_run(scenario: str, mode: str, run: int, provider: str, model: str | None
     stem.with_name(stem.name + "_eval.txt").write_text(report + "\n")
 
     metrics = parse_report(report)
+    # Where the model actually put each threat. Kept in the row as well as the artifact so the
+    # ladder can be read on this axis without re-opening 180 threat sets, and so it matches the
+    # shape run_ablation_repeats.py records for the hosted models.
+    positions = Counter(t.position or "unset" for t in threats)
     metrics.update(scenario=scenario, mode=mode, run=run, model=llm.model,
                    n_generated=len(threats),
+                   n_position_S=positions.get("S", 0), n_position_fl=positions.get("fl", 0),
+                   n_position_D=positions.get("D", 0), n_position_unset=positions.get("unset", 0),
                    n_malformed_dropped=gen_stats.get("malformed_dropped", 0),
                    served_model=actually_serving,
                    provider=provider, base_url=config.OPENAI_BASE_URL,
@@ -258,6 +265,7 @@ def main():
                 bad = m.get("n_malformed_dropped") or 0
                 _log(f"{tag}: n={m['n_generated']} P={m['precision']:.2f} "
                      f"R={m['recall']:.2f} F1={m['f1']:.2f} cite={m['citation']}"
+                     f" S/fl/D={m['n_position_S']}/{m['n_position_fl']}/{m['n_position_D']}"
                      + (f" malformed={bad}" if bad else ""))
                 rows.append(m)
             except Exception as e:

@@ -32,6 +32,7 @@ import argparse
 import json
 import re
 import statistics
+from collections import Counter
 import sys
 import traceback
 from pathlib import Path
@@ -64,24 +65,41 @@ def parse_report(text: str) -> dict:
             "citation": float(c.group(1)) if c else None}
 
 
-def one_run(scenario: str, mode: str, run: int, provider: str) -> dict:
+def one_run(scenario: str, mode: str, run: int, provider: str, model: str | None = None) -> dict:
     from generation.generate import generate_for_scenario, save_generated
     from generation.llm_backend import get_llm_backend
     from eval.run_eval import run_eval
 
+    import runs as runs_mod
+
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    stem = OUT_DIR / f"{scenario}_{mode}_run{run}"
-    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False)
+    # The model is in the filename now. Without it three deployments write the same path and the
+    # last one silently wins -- the exact failure runs.py was created to prevent one tier up.
+    stem = OUT_DIR / f"{runs_mod.slug(model or config.AZURE_AI_MODEL)}_{scenario}_{mode}_run{run}"
+    gen_stats: dict = {}
+    threats = generate_for_scenario(scenario, mode=mode, provider=provider, progress=False,
+                                    model=model, stats=gen_stats)
     gen_path = save_generated(scenario, mode, threats, out=stem.with_suffix(".json"))
     report = run_eval(scenario, str(gen_path))
     stem.with_name(stem.name + "_eval.txt").write_text(report + "\n")
 
+    llm = get_llm_backend(provider, model)
     metrics = parse_report(report)
+    # The LINDDUN Pro position each threat was placed at. New with the `position` field, and the
+    # first time this project can say where models actually locate threats rather than where the
+    # schema forced them: the two-position schema silently coerced every flow threat onto an
+    # endpoint, so an old run's location citations cannot be compared with these.
+    positions = Counter(t.position or "unset" for t in threats)
     # Whether the DEPLOYMENT honoured the pinned temperature, not merely whether we asked. A run
     # that fell back is not greedy decoding and must not be reported as such.
     metrics.update(scenario=scenario, mode=mode, run=run, n_generated=len(threats),
+                   model=llm.model,
+                   n_position_S=positions.get("S", 0), n_position_fl=positions.get("fl", 0),
+                   n_position_D=positions.get("D", 0), n_position_unset=positions.get("unset", 0),
+                   n_malformed_dropped=gen_stats.get("malformed_dropped", 0),
+                   concurrency=config.GENERATION_CONCURRENCY,
                    temperature=config.GENERATION_TEMPERATURE,
-                   temperature_applied=get_llm_backend(provider).temperature_applied,
+                   temperature_applied=llm.temperature_applied,
                    code=config.code_state())
     return metrics
 
@@ -168,6 +186,11 @@ def main():
     ap.add_argument("--modes", nargs="+", default=MODES)
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--provider", default="azure")
+    ap.add_argument("--model", default=None,
+                    help="Deployment name; default = config.AZURE_AI_MODEL. Recorded on every "
+                         "row and included in the artifact path.")
+    ap.add_argument("--force", action="store_true",
+                    help="Re-run cells already recorded in STATE.")
     ap.add_argument("--report-only", action="store_true",
                     help="Re-aggregate committed runs offline; makes no LLM calls.")
     args = ap.parse_args()
@@ -175,23 +198,36 @@ def main():
     if args.report_only:
         rows = json.loads(STATE.read_text())
     else:
-        rows = []
-        total = len(args.scenarios) * len(args.modes) * args.runs
-        for scenario in args.scenarios:
-            for mode in args.modes:
-                for run in range(1, args.runs + 1):
-                    tag = f"[{len(rows) + 1}/{total}] {scenario} {mode} run{run}"
-                    try:
-                        m = one_run(scenario, mode, run, args.provider)
-                        _log(f"{tag}: n={m['n_generated']} P={m['precision']:.2f} "
-                             f"R={m['recall']:.2f} F1={m['f1']:.2f} cite={m['citation']}")
-                        rows.append(m)
-                    except Exception as e:
-                        _log(f"{tag}: FAILED {type(e).__name__}: {e}")
-                        traceback.print_exc()
-                        rows.append({"scenario": scenario, "mode": mode, "run": run,
-                                     "status": "failed", "error": f"{type(e).__name__}: {e}"})
-        STATE.write_text(json.dumps(rows, indent=2) + "\n")
+        # Resumable, and keyed on the MODEL as well as the cell. Without the model in the key a
+        # second deployment's run is skipped as already-done; without resumability at all a crash
+        # 1500 calls into a three-model sweep discards every completed cell.
+        model_id = args.model or config.AZURE_AI_MODEL
+        rows = [] if args.force or not STATE.exists() else json.loads(STATE.read_text())
+        done = {(r.get("model"), r["scenario"], r["mode"], r["run"]) for r in rows
+                if r.get("status", "ok") == "ok"}
+        todo = [(sc, mo, rn) for sc in args.scenarios for mo in args.modes
+                for rn in range(1, args.runs + 1)
+                if (model_id, sc, mo, rn) not in done]
+        if done:
+            _log(f"resuming: {len(done)} cell(s) recorded, {len(todo)} to run for {model_id}")
+        total = len(todo)
+        for i, (scenario, mode, run) in enumerate(todo, 1):
+            tag = f"[{i}/{total}] {model_id} {scenario} {mode} run{run}"
+            try:
+                m = one_run(scenario, mode, run, args.provider, args.model)
+                pos = (f" S/fl/D={m['n_position_S']}/{m['n_position_fl']}/{m['n_position_D']}"
+                       if m.get("n_position_fl") is not None else "")
+                _log(f"{tag}: n={m['n_generated']} P={m['precision']:.2f} "
+                     f"R={m['recall']:.2f} F1={m['f1']:.2f} cite={m['citation']}{pos}")
+                rows.append(m)
+            except Exception as e:
+                _log(f"{tag}: FAILED {type(e).__name__}: {e}")
+                traceback.print_exc()
+                rows.append({"model": model_id, "scenario": scenario, "mode": mode, "run": run,
+                             "status": "failed", "error": f"{type(e).__name__}: {e}"})
+            # Written every cell, not once at the end: a 1701-call sweep must not lose completed
+            # work to a failure in a later cell.
+            STATE.write_text(json.dumps(rows, indent=2) + "\n")
 
     report = format_report(aggregate(rows), rows)
     REPORT.write_text(report + "\n")

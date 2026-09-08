@@ -1,0 +1,34 @@
+Eval report: scenario=school_grades generated=/home/baktistr/documents/CMU/linddun-threat-modeling/storage/generated/repeats/gpt-5-4_school_grades_ungrounded_run1.json
+  n_generated=116 n_gold=20 strict_node_match=False
+
+NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) against the generated threat's flow in dfd.json. 0 gold threats have dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               3   23    0   0.12   1.00   0.21
+I    Identifying           3   18    0   0.14   1.00   0.25
+Nr   Non-repudiation       2    5    0   0.29   1.00   0.44
+D    Detecting             2   31    0   0.06   1.00   0.11
+Dd   Data Disclosure       1    0    4   1.00   0.20   0.33
+U    Unawareness           1   11    1   0.08   0.50   0.14  *
+Nc   Non-compliance        3   13    0   0.19   1.00   0.32  *
+ALL                       15  101    5   0.13   0.75   0.22
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          0.72
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  position_applicable_rate 1.00
+  all_valid_rate           0.72
+  n_position_cited         116
+  n_threats_checked        116
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed           5   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.75
+  recall (reachable-adjusted):      0.75   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario school_grades --generated /home/baktistr/documents/CMU/linddun-threat-modeling/storage/generated/repeats/gpt-5-4_school_grades_ungrounded_run1.json` to label a sample of the 101 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.
