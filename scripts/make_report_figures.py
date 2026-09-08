@@ -89,16 +89,23 @@ def figure1() -> Path:
         ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.5,rounding_size=1.6",
                                     fc=fc, ec=ec, lw=lw))
         n_sub = sub.count("\n") + 1 if sub else 0
-        # Offsets scale with how many lines the subtitle has; a fixed 3.2 put a four-line body
-        # straight through the bold label.
-        up = 0.0 if not sub else (2.0 if n_sub <= 2 else 1.4 * n_sub)
-        down = 3.2 if n_sub <= 2 else 1.4 * n_sub + 1.6
-        t = ax.text(x + w / 2, y + h / 2 + up, label, ha="center", va="center",
+        # Short subtitles hang just under a centred title. From four lines up that stops working
+        # -- centring the pair pushes the last line onto the bottom border -- so tall blocks are
+        # anchored from the TOP of the box instead: title near the top edge, body centred in what
+        # is left. Positioning by line count rather than a tuned constant is what keeps a reworded
+        # label from silently colliding again.
+        if n_sub >= 4:
+            ty, sy = y + h - 4.6, y + (h - 8.5) / 2 + 1.2
+        elif n_sub == 3:
+            ty, sy = y + h / 2 + 4.2, y + h / 2 - 4.8
+        else:
+            ty, sy = y + h / 2 + (2.0 if sub else 0), y + h / 2 - 3.2
+        t = ax.text(x + w / 2, ty, label, ha="center", va="center",
                     fontsize=fs, color=INK, fontweight="bold" if bold else "normal")
         fitted.append((t, w))
         if sub:
-            t = ax.text(x + w / 2, y + h / 2 - down + (0 if n_sub <= 2 else 1.0), sub,
-                        ha="center", va="center", fontsize=subfs, color=INK2)
+            t = ax.text(x + w / 2, sy, sub, ha="center", va="center",
+                        multialignment="center", fontsize=subfs, color=INK2)
             fitted.append((t, w))
 
     def arrow(x1, y1, x2, y2, color=INK3, lw=1.1, ls="-"):
@@ -160,8 +167,8 @@ def figure1() -> Path:
     # --- Station 4: verification ----------------------------------------------------------
     stage(120, "Stage C — verification", "no model in the loop")
     box(120, 27, 32, 24, "verify",
-        "re-checks every citation\nagainst the KB, no LLM:\nnode exists · type applies\n"
-        "position allowed · id matches",
+        "re-checks every citation\nagainst the KB\n\n"
+        "node exists  ·  type applies\nposition allowed  ·  id matches",
         fc="#eafaf3", ec=AQUA, lw=1.4, bold=True, subfs=6.0)
     for y in (50.5, 36.5, 22.5):
         arrow(113, y, 120, 39)
