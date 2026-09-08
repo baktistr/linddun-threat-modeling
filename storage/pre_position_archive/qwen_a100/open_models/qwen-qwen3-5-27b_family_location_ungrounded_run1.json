@@ -1,0 +1,32 @@
+[
+  {
+    "flow_id": "DF9",
+    "originator_id": "DS1",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Unauthorized Access to Stored Location History",
+    "description": "Location history data in DS1 may be accessed by unauthorized parties if access controls are insufficient, leading to disclosure of sensitive location information.",
+    "assumptions": "Assumes DS1 lacks robust access control mechanisms or encryption at rest.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "Node Dd.1.1 is approximate; exact LINDDUN Pro node for storage access controls may vary.",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF9",
+    "originator_id": "P1",
+    "threat_type": "D",
+    "tree_node": "D.1.1",
+    "title": "Lack of Audit Logging for Location Data Retrieval",
+    "description": "P1 does not log retrieval of location history, making it difficult to detect unauthorized access or misuse of the data.",
+    "assumptions": "Assumes P1 does not implement audit trails for data access events.",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "Node D.1.1 is approximate; exact LINDDUN Pro node for audit logging may differ.",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

@@ -1,0 +1,30 @@
+Eval report: scenario=kidstube generated=/root/linddun/storage/generated/open_models/qwen-qwen3-5-2b_kidstube_grounded_run2.json
+  n_generated=122 n_gold=41 strict_node_match=False
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               5    4    1   0.56   0.83   0.67
+I    Identifying           3   14    2   0.18   0.60   0.27
+Nr   Non-repudiation       0    0    2   0.00   0.00   0.00
+D    Detecting             2    8    0   0.20   1.00   0.33
+Dd   Data Disclosure      11   47    4   0.19   0.73   0.30
+U    Unawareness           1   11    3   0.08   0.25   0.12  *
+Nc   Non-compliance        2   14    5   0.12   0.29   0.17  *
+ALL                       24   98   17   0.20   0.59   0.29
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          1.00
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           1.00
+  n_threats_checked        122
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          17   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.59
+  recall (reachable-adjusted):      0.59   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario kidstube --generated /root/linddun/storage/generated/open_models/qwen-qwen3-5-2b_kidstube_grounded_run2.json` to label a sample of the 98 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

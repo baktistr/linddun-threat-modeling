@@ -1,0 +1,62 @@
+[
+  {
+    "flow_id": "DF12",
+    "originator_id": "P2",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Unauthorized Access to Video Stream",
+    "description": "Video data transmitted from P2 to EE2 could be intercepted by unauthorized parties if encryption or secure channels are not properly implemented.",
+    "assumptions": "Assumes standard security measures may have gaps in transit protection.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF12",
+    "originator_id": "P2",
+    "threat_type": "I",
+    "tree_node": "I.1.1",
+    "title": "Direct Identification via Video Content",
+    "description": "Approved video may inadvertently contain identifiable information (e.g., child's face, voice) enabling direct identification of EE2.",
+    "assumptions": "Assumes approval process may not fully filter all PII.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF12",
+    "originator_id": "EE2",
+    "threat_type": "U",
+    "tree_node": "U.1.1",
+    "title": "Lack of Awareness of Data Processing",
+    "description": "Child user (EE2) may not be informed about how their data is processed or that video streaming occurs.",
+    "assumptions": "Assumes consent mechanisms may not adequately inform minors.",
+    "severity": "Med",
+    "likelihood": "High",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF12",
+    "originator_id": "P2",
+    "threat_type": "Nc",
+    "tree_node": "Nc.1.1",
+    "title": "Non-Compliance with Child Privacy Regulations",
+    "description": "Video streaming to minors may violate regulations like COPPA if parental consent or data minimization is not enforced.",
+    "assumptions": "Assumes regulatory requirements for child data are not fully addressed.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

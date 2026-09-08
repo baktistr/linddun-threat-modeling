@@ -1,0 +1,62 @@
+[
+  {
+    "flow_id": "DF4",
+    "originator_id": "P1",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Data Interception During Transmission",
+    "description": "Video clips transmitted from Home Hub to cloud storage may be intercepted if not encrypted, leading to unauthorized access.",
+    "assumptions": "Transmission lacks end-to-end encryption",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "DS2",
+    "threat_type": "I",
+    "tree_node": "I.1.1",
+    "title": "Exposure of Personally Identifiable Information",
+    "description": "Stored video clips may contain PII (e.g., faces, license plates) that could be linked to individuals if the cloud storage is compromised.",
+    "assumptions": "Video content includes identifiable individuals or objects",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "P1",
+    "threat_type": "U",
+    "tree_node": "U.1.1",
+    "title": "Lack of User Awareness About Data Processing",
+    "description": "Users may not be informed that their camera clips are being uploaded to cloud storage, violating transparency principles.",
+    "assumptions": "No explicit user consent or notification mechanism",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "DS2",
+    "threat_type": "Nc",
+    "tree_node": "Nc.1.1",
+    "title": "Non-Compliance with Data Protection Regulations",
+    "description": "Cloud storage provider may not adhere to legal requirements (e.g., GDPR) for handling video data.",
+    "assumptions": "Provider lacks compliance certifications",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

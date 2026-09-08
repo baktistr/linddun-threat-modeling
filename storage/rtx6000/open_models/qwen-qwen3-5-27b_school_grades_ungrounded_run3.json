@@ -1,0 +1,47 @@
+[
+  {
+    "flow_id": "DF3",
+    "originator_id": "DS1",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Unauthorized Access to Stored Assignment Data",
+    "description": "Sensitive data (student ID, course, submission time, assignment file) stored in DS1 could be accessed by unauthorized parties if access controls are insufficient.",
+    "assumptions": "Data at rest is not encrypted or access controls are weak.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF3",
+    "originator_id": "DS1",
+    "threat_type": "I",
+    "tree_node": "I.1.1",
+    "title": "Direct Identification via Student ID",
+    "description": "Student ID stored in DS1 allows direct identification of individuals, enabling potential profiling or targeted attacks.",
+    "assumptions": "Student ID is a unique identifier without pseudonymization.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF3",
+    "originator_id": "DS1",
+    "threat_type": "L",
+    "tree_node": "L.2.1",
+    "title": "Linkability of Student Submissions",
+    "description": "Combining student ID, course, and submission time in DS1 enables linking multiple submissions to the same student across contexts.",
+    "assumptions": "Data is stored in a way that allows correlation across records.",
+    "severity": "Med",
+    "likelihood": "High",
+    "uncertainty_note": "Node L.2.1 assumes same-context linking; if cross-context, L.1.1 may apply.",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

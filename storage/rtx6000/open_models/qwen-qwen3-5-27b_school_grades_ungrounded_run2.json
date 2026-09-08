@@ -1,0 +1,32 @@
+[
+  {
+    "flow_id": "DF5",
+    "originator_id": "P1",
+    "threat_type": "D",
+    "tree_node": "D.1.1",
+    "title": "Insecure data transmission to teacher",
+    "description": "Student submission data (names, work content, timestamps) transmitted from portal to teacher's device without encryption, risking interception by unauthorized parties.",
+    "assumptions": "Assumes transmission occurs over unencrypted channels (e.g., HTTP).",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF5",
+    "originator_id": "EE3",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Unauthorized data disclosure by teacher",
+    "description": "Teacher may intentionally or accidentally share student submission data with unauthorized individuals (e.g., other staff, students, or external parties).",
+    "assumptions": "Assumes teacher has access to data beyond their role requirements or lacks proper data handling training.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

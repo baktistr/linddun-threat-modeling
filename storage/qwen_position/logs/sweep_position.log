@@ -1,0 +1,414 @@
+=== 02:45:26 serving Qwen/Qwen3.5-2B ===
+=== 02:48:27 sweeping Qwen/Qwen3.5-2B ===
+[1/45] Qwen/Qwen3.5-2B kidstube grounded run1: n=110 P=0.19 R=0.51 F1=0.28 cite=0.98 S/fl/D=97/6/7
+[2/45] Qwen/Qwen3.5-2B kidstube grounded run2: n=88 P=0.26 R=0.56 F1=0.36 cite=1.0 S/fl/D=79/4/5
+[3/45] Qwen/Qwen3.5-2B kidstube grounded run3: n=124 P=0.19 R=0.59 F1=0.29 cite=0.97 S/fl/D=110/7/7
+[4/45] Qwen/Qwen3.5-2B kidstube rag run1: n=46 P=0.09 R=0.10 F1=0.09 cite=0.35 S/fl/D=17/13/16
+[5/45] Qwen/Qwen3.5-2B kidstube rag run2: n=48 P=0.12 R=0.15 F1=0.13 cite=0.42 S/fl/D=17/15/16
+[6/45] Qwen/Qwen3.5-2B kidstube rag run3: n=49 P=0.10 R=0.12 F1=0.11 cite=0.35 S/fl/D=17/15/17
+[7/45] Qwen/Qwen3.5-2B kidstube ungrounded run1: n=43 P=0.16 R=0.17 F1=0.17 cite=0.19 S/fl/D=22/3/18
+[8/45] Qwen/Qwen3.5-2B kidstube ungrounded run2: n=48 P=0.19 R=0.22 F1=0.20 cite=0.17 S/fl/D=24/7/17
+[9/45] Qwen/Qwen3.5-2B kidstube ungrounded run3: n=48 P=0.19 R=0.22 F1=0.20 cite=0.17 S/fl/D=24/7/17
+[10/45] Qwen/Qwen3.5-2B smart_home grounded run1: n=30 P=0.27 R=0.44 F1=0.33 cite=0.97 S/fl/D=25/2/3
+[11/45] Qwen/Qwen3.5-2B smart_home grounded run2: n=54 P=0.20 R=0.61 F1=0.31 cite=0.96 S/fl/D=47/3/4
+[12/45] Qwen/Qwen3.5-2B smart_home grounded run3: n=36 P=0.25 R=0.50 F1=0.33 cite=1.0 S/fl/D=29/3/4
+[13/45] Qwen/Qwen3.5-2B smart_home rag run1: n=21 P=0.19 R=0.22 F1=0.21 cite=0.52 S/fl/D=9/6/6
+[14/45] Qwen/Qwen3.5-2B smart_home rag run2: n=19 P=0.21 R=0.22 F1=0.22 cite=0.58 S/fl/D=9/5/5
+[15/45] Qwen/Qwen3.5-2B smart_home rag run3: n=21 P=0.19 R=0.22 F1=0.21 cite=0.52 S/fl/D=9/6/6
+[16/45] Qwen/Qwen3.5-2B smart_home ungrounded run1: n=21 P=0.24 R=0.28 F1=0.26 cite=0.19 S/fl/D=9/4/8
+[17/45] Qwen/Qwen3.5-2B smart_home ungrounded run2: n=22 P=0.23 R=0.28 F1=0.25 cite=0.27 S/fl/D=9/5/8
+[18/45] Qwen/Qwen3.5-2B smart_home ungrounded run3: n=22 P=0.23 R=0.28 F1=0.25 cite=0.27 S/fl/D=9/5/8
+[19/45] Qwen/Qwen3.5-2B family_location grounded run1: n=43 P=0.23 R=0.50 F1=0.32 cite=1.0 S/fl/D=29/6/8
+[20/45] Qwen/Qwen3.5-2B family_location grounded run2: n=62 P=0.15 R=0.45 F1=0.22 cite=1.0 S/fl/D=50/5/7
+[21/45] Qwen/Qwen3.5-2B family_location grounded run3: n=38 P=0.29 R=0.55 F1=0.38 cite=1.0 S/fl/D=26/4/8
+[22/45] Qwen/Qwen3.5-2B family_location rag run1: n=36 P=0.17 R=0.30 F1=0.21 cite=0.44 S/fl/D=13/10/13
+[23/45] Qwen/Qwen3.5-2B family_location rag run2: n=36 P=0.19 R=0.35 F1=0.25 cite=0.44 S/fl/D=13/11/12
+[24/45] Qwen/Qwen3.5-2B family_location rag run3: n=37 P=0.16 R=0.30 F1=0.21 cite=0.43 S/fl/D=13/11/13
+[25/45] Qwen/Qwen3.5-2B family_location ungrounded run1: n=35 P=0.14 R=0.25 F1=0.18 cite=0.14 S/fl/D=16/6/13
+[26/45] Qwen/Qwen3.5-2B family_location ungrounded run2: n=35 P=0.17 R=0.30 F1=0.22 cite=0.14 S/fl/D=20/3/12
+[27/45] Qwen/Qwen3.5-2B family_location ungrounded run3: n=32 P=0.19 R=0.30 F1=0.23 cite=0.19 S/fl/D=17/2/13
+[28/45] Qwen/Qwen3.5-2B school_grades grounded run1: n=104 P=0.13 R=0.70 F1=0.23 cite=0.97 S/fl/D=98/4/2
+[29/45] Qwen/Qwen3.5-2B school_grades grounded run2: n=104 P=0.13 R=0.70 F1=0.23 cite=0.97 S/fl/D=100/1/3
+[30/45] Qwen/Qwen3.5-2B school_grades grounded run3: n=88 P=0.17 R=0.75 F1=0.28 cite=0.98 S/fl/D=84/2/2
+[31/45] Qwen/Qwen3.5-2B school_grades rag run1: n=43 P=0.14 R=0.30 F1=0.19 cite=0.4 S/fl/D=23/7/13
+[32/45] Qwen/Qwen3.5-2B school_grades rag run2: n=46 P=0.15 R=0.35 F1=0.21 cite=0.43 S/fl/D=26/7/13
+[33/45] Qwen/Qwen3.5-2B school_grades rag run3: n=43 P=0.14 R=0.30 F1=0.19 cite=0.4 S/fl/D=23/6/14
+[34/45] Qwen/Qwen3.5-2B school_grades ungrounded run1: n=46 P=0.15 R=0.35 F1=0.21 cite=0.17 S/fl/D=28/1/17
+[35/45] Qwen/Qwen3.5-2B school_grades ungrounded run2: n=46 P=0.13 R=0.30 F1=0.18 cite=0.13 S/fl/D=28/3/15
+[36/45] Qwen/Qwen3.5-2B school_grades ungrounded run3: n=49 P=0.10 R=0.25 F1=0.14 cite=0.1 S/fl/D=30/2/17
+[37/45] Qwen/Qwen3.5-2B wearable_fitness grounded run1: n=49 P=0.14 R=0.35 F1=0.20 cite=1.0 S/fl/D=41/3/5
+[38/45] Qwen/Qwen3.5-2B wearable_fitness grounded run2: n=29 P=0.17 R=0.25 F1=0.20 cite=1.0 S/fl/D=21/3/5
+[39/45] Qwen/Qwen3.5-2B wearable_fitness grounded run3: n=29 P=0.17 R=0.25 F1=0.20 cite=1.0 S/fl/D=21/3/5
+[40/45] Qwen/Qwen3.5-2B wearable_fitness rag run1: n=29 P=0.17 R=0.25 F1=0.20 cite=0.31 S/fl/D=10/9/10
+[41/45] Qwen/Qwen3.5-2B wearable_fitness rag run2: n=29 P=0.17 R=0.25 F1=0.20 cite=0.31 S/fl/D=10/9/10
+[42/45] Qwen/Qwen3.5-2B wearable_fitness rag run3: n=29 P=0.21 R=0.30 F1=0.24 cite=0.41 S/fl/D=10/9/10
+[43/45] Qwen/Qwen3.5-2B wearable_fitness ungrounded run1: n=28 P=0.18 R=0.25 F1=0.21 cite=0.14 S/fl/D=11/7/10
+[44/45] Qwen/Qwen3.5-2B wearable_fitness ungrounded run2: n=28 P=0.18 R=0.25 F1=0.21 cite=0.14 S/fl/D=11/7/10
+[45/45] Qwen/Qwen3.5-2B wearable_fitness ungrounded run3: n=28 P=0.18 R=0.25 F1=0.21 cite=0.14 S/fl/D=11/7/10
+
+Open-weight model ladder x grounding mechanism -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  concurrency {16} (part of the condition: greedy decoding on a batching server is not bitwise deterministic)
+  endpoint http://localhost:8000/v1; code 13fd97c-dirty
+
+  model                  scenario           mode        runs        n_gen             P             R            F1      citation
+  Qwen/Qwen3.5-2B        kidstube           grounded       3      107 (18)  0.21 (0.04)  0.55 (0.04)  0.31 (0.04)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        kidstube           rag            3        48 (2)  0.10 (0.02)  0.12 (0.03)  0.11 (0.02)  0.37 (0.04)
+  Qwen/Qwen3.5-2B        kidstube           ungrounded     3        46 (3)  0.18 (0.02)  0.20 (0.03)  0.19 (0.02)  0.18 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         grounded       3       40 (12)  0.24 (0.04)  0.52 (0.09)  0.32 (0.01)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        smart_home         rag            3        20 (1)  0.20 (0.01)  0.22 (0.00)  0.21 (0.01)  0.54 (0.03)
+  Qwen/Qwen3.5-2B        smart_home         ungrounded     3        22 (1)  0.23 (0.01)  0.28 (0.00)  0.25 (0.01)  0.24 (0.05)
+  Qwen/Qwen3.5-2B        family_location    grounded       3       48 (13)  0.22 (0.07)  0.50 (0.05)  0.31 (0.08)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        family_location    rag            3        36 (1)  0.17 (0.02)  0.32 (0.03)  0.22 (0.02)  0.44 (0.01)
+  Qwen/Qwen3.5-2B        family_location    ungrounded     3        34 (2)  0.17 (0.03)  0.28 (0.03)  0.21 (0.03)  0.16 (0.03)
+  Qwen/Qwen3.5-2B        school_grades      grounded       3        99 (9)  0.14 (0.02)  0.72 (0.03)  0.25 (0.03)  0.97 (0.01)
+  Qwen/Qwen3.5-2B        school_grades      rag            3        44 (2)  0.14 (0.01)  0.32 (0.03)  0.20 (0.01)  0.41 (0.02)
+  Qwen/Qwen3.5-2B        school_grades      ungrounded     3        47 (2)  0.13 (0.03)  0.30 (0.05)  0.18 (0.04)  0.13 (0.04)
+  Qwen/Qwen3.5-2B        wearable_fitness   grounded       3       36 (12)  0.16 (0.02)  0.28 (0.06)  0.20 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   rag            3        29 (0)  0.18 (0.02)  0.27 (0.03)  0.21 (0.02)  0.34 (0.06)
+  Qwen/Qwen3.5-2B        wearable_fitness   ungrounded     3        28 (0)  0.18 (0.00)  0.25 (0.00)  0.21 (0.00)  0.14 (0.00)
+
+  Per model, paired across scenarios (each scenario one block):
+    model                  contrast                 citation     recall         f1  scenarios
+    Qwen/Qwen3.5-2B        grounded - ungrounded     +0.817    +0.251    +0.069  n=5
+    Qwen/Qwen3.5-2B        grounded - rag            +0.566    +0.265    +0.086  n=5
+
+(written to /root/linddun/storage/generated/OPEN_MODEL_SWEEP.txt)
+=== 02:54:19 done Qwen/Qwen3.5-2B ===
+=== 02:54:19 serving Qwen/Qwen3.5-4B ===
+=== 02:57:41 sweeping Qwen/Qwen3.5-4B ===
+resuming: 45 cell(s) recorded overall, 45 to run for Qwen/Qwen3.5-4B
+[1/45] Qwen/Qwen3.5-4B kidstube grounded run1: n=174 P=0.19 R=0.80 F1=0.31 cite=1.0 S/fl/D=95/29/50
+[2/45] Qwen/Qwen3.5-4B kidstube grounded run2: n=142 P=0.23 R=0.80 F1=0.36 cite=1.0 S/fl/D=82/23/37
+[3/45] Qwen/Qwen3.5-4B kidstube grounded run3: n=147 P=0.25 R=0.90 F1=0.39 cite=1.0 S/fl/D=86/20/41
+[4/45] Qwen/Qwen3.5-4B kidstube rag run1: n=73 P=0.27 R=0.49 F1=0.35 cite=0.86 S/fl/D=25/20/28
+[5/45] Qwen/Qwen3.5-4B kidstube rag run2: n=79 P=0.27 R=0.51 F1=0.35 cite=0.84 S/fl/D=23/20/36
+[6/45] Qwen/Qwen3.5-4B kidstube rag run3: n=80 P=0.31 R=0.61 F1=0.41 cite=0.88 S/fl/D=23/22/35
+[7/45] Qwen/Qwen3.5-4B kidstube ungrounded run1: n=101 P=0.25 R=0.61 F1=0.35 cite=0.67 S/fl/D=34/16/51
+[8/45] Qwen/Qwen3.5-4B kidstube ungrounded run2: n=98 P=0.24 R=0.59 F1=0.35 cite=0.74 S/fl/D=35/18/45
+[9/45] Qwen/Qwen3.5-4B kidstube ungrounded run3: n=98 P=0.24 R=0.59 F1=0.35 cite=0.74 S/fl/D=35/18/45
+[10/45] Qwen/Qwen3.5-4B smart_home grounded run1: n=46 P=0.24 R=0.61 F1=0.34 cite=1.0 S/fl/D=21/7/18
+[11/45] Qwen/Qwen3.5-4B smart_home grounded run2: n=35 P=0.29 R=0.56 F1=0.38 cite=1.0 S/fl/D=17/6/12
+[12/45] Qwen/Qwen3.5-4B smart_home grounded run3: n=35 P=0.29 R=0.56 F1=0.38 cite=1.0 S/fl/D=17/6/12
+[13/45] Qwen/Qwen3.5-4B smart_home rag run1: n=43 P=0.14 R=0.33 F1=0.20 cite=0.7 S/fl/D=14/11/18
+[14/45] Qwen/Qwen3.5-4B smart_home rag run2: n=42 P=0.17 R=0.39 F1=0.23 cite=0.71 S/fl/D=15/10/17
+[15/45] Qwen/Qwen3.5-4B smart_home rag run3: n=42 P=0.17 R=0.39 F1=0.23 cite=0.71 S/fl/D=15/10/17
+[16/45] Qwen/Qwen3.5-4B smart_home ungrounded run1: n=49 P=0.22 R=0.61 F1=0.33 cite=0.86 S/fl/D=19/9/21
+[17/45] Qwen/Qwen3.5-4B smart_home ungrounded run2: n=48 P=0.25 R=0.67 F1=0.36 cite=0.73 S/fl/D=18/9/21
+[18/45] Qwen/Qwen3.5-4B smart_home ungrounded run3: n=48 P=0.25 R=0.67 F1=0.36 cite=0.73 S/fl/D=18/9/21
+[19/45] Qwen/Qwen3.5-4B family_location grounded run1: n=127 P=0.13 R=0.80 F1=0.22 cite=1.0 S/fl/D=59/19/49
+[20/45] Qwen/Qwen3.5-4B family_location grounded run2: n=97 P=0.11 R=0.55 F1=0.19 cite=1.0 S/fl/D=46/18/33
+[21/45] Qwen/Qwen3.5-4B family_location grounded run3: n=96 P=0.15 R=0.70 F1=0.24 cite=1.0 S/fl/D=46/20/30
+[22/45] Qwen/Qwen3.5-4B family_location rag run1: n=50 P=0.22 R=0.55 F1=0.31 cite=0.86 S/fl/D=18/15/17
+[23/45] Qwen/Qwen3.5-4B family_location rag run2: n=46 P=0.17 R=0.40 F1=0.24 cite=0.74 S/fl/D=16/14/16
+[24/45] Qwen/Qwen3.5-4B family_location rag run3: n=46 P=0.17 R=0.40 F1=0.24 cite=0.74 S/fl/D=16/14/16
+[25/45] Qwen/Qwen3.5-4B family_location ungrounded run1: n=72 P=0.18 R=0.65 F1=0.28 cite=0.79 S/fl/D=27/14/31
+[26/45] Qwen/Qwen3.5-4B family_location ungrounded run2: n=68 P=0.15 R=0.50 F1=0.23 cite=0.74 S/fl/D=23/14/31
+[27/45] Qwen/Qwen3.5-4B family_location ungrounded run3: n=67 P=0.15 R=0.50 F1=0.23 cite=0.73 S/fl/D=23/14/30
+[28/45] Qwen/Qwen3.5-4B school_grades grounded run1: n=98 P=0.10 R=0.50 F1=0.17 cite=1.0 S/fl/D=37/12/49
+[29/45] Qwen/Qwen3.5-4B school_grades grounded run2: n=67 P=0.16 R=0.55 F1=0.25 cite=1.0 S/fl/D=23/10/34
+[30/45] Qwen/Qwen3.5-4B school_grades grounded run3: n=58 P=0.17 R=0.50 F1=0.26 cite=1.0 S/fl/D=20/9/29
+[31/45] Qwen/Qwen3.5-4B school_grades rag run1: n=70 P=0.10 R=0.35 F1=0.16 cite=0.83 S/fl/D=26/17/27
+[32/45] Qwen/Qwen3.5-4B school_grades rag run2: n=67 P=0.13 R=0.45 F1=0.21 cite=0.76 S/fl/D=24/17/26
+[33/45] Qwen/Qwen3.5-4B school_grades rag run3: n=74 P=0.14 R=0.50 F1=0.21 cite=0.77 S/fl/D=30/18/26
+[34/45] Qwen/Qwen3.5-4B school_grades ungrounded run1: n=74 P=0.15 R=0.55 F1=0.23 cite=0.74 S/fl/D=27/17/30
+[35/45] Qwen/Qwen3.5-4B school_grades ungrounded run2: n=75 P=0.15 R=0.55 F1=0.23 cite=0.73 S/fl/D=26/18/31
+[36/45] Qwen/Qwen3.5-4B school_grades ungrounded run3: n=75 P=0.15 R=0.55 F1=0.23 cite=0.73 S/fl/D=26/18/31
+[37/45] Qwen/Qwen3.5-4B wearable_fitness grounded run1: n=80 P=0.23 R=0.90 F1=0.36 cite=1.0 S/fl/D=38/13/29
+[38/45] Qwen/Qwen3.5-4B wearable_fitness grounded run2: n=39 P=0.33 R=0.65 F1=0.44 cite=1.0 S/fl/D=18/5/16
+[39/45] Qwen/Qwen3.5-4B wearable_fitness grounded run3: n=54 P=0.26 R=0.70 F1=0.38 cite=1.0 S/fl/D=20/9/25
+[40/45] Qwen/Qwen3.5-4B wearable_fitness rag run1: n=41 P=0.24 R=0.50 F1=0.33 cite=0.83 S/fl/D=12/15/14
+[41/45] Qwen/Qwen3.5-4B wearable_fitness rag run2: n=40 P=0.25 R=0.50 F1=0.33 cite=0.85 S/fl/D=12/14/14
+[42/45] Qwen/Qwen3.5-4B wearable_fitness rag run3: n=37 P=0.27 R=0.50 F1=0.35 cite=0.86 S/fl/D=11/14/12
+[43/45] Qwen/Qwen3.5-4B wearable_fitness ungrounded run1: n=47 P=0.21 R=0.50 F1=0.30 cite=0.83 S/fl/D=18/10/19
+[44/45] Qwen/Qwen3.5-4B wearable_fitness ungrounded run2: n=50 P=0.20 R=0.50 F1=0.29 cite=0.78 S/fl/D=19/10/21
+[45/45] Qwen/Qwen3.5-4B wearable_fitness ungrounded run3: n=42 P=0.21 R=0.45 F1=0.29 cite=0.79 S/fl/D=17/9/16
+
+Open-weight model ladder x grounding mechanism -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  concurrency {16} (part of the condition: greedy decoding on a batching server is not bitwise deterministic)
+  endpoint http://localhost:8000/v1; code 13fd97c-dirty
+
+  model                  scenario           mode        runs        n_gen             P             R            F1      citation
+  Qwen/Qwen3.5-2B        kidstube           grounded       3      107 (18)  0.21 (0.04)  0.55 (0.04)  0.31 (0.04)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        kidstube           rag            3        48 (2)  0.10 (0.02)  0.12 (0.03)  0.11 (0.02)  0.37 (0.04)
+  Qwen/Qwen3.5-2B        kidstube           ungrounded     3        46 (3)  0.18 (0.02)  0.20 (0.03)  0.19 (0.02)  0.18 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         grounded       3       40 (12)  0.24 (0.04)  0.52 (0.09)  0.32 (0.01)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        smart_home         rag            3        20 (1)  0.20 (0.01)  0.22 (0.00)  0.21 (0.01)  0.54 (0.03)
+  Qwen/Qwen3.5-2B        smart_home         ungrounded     3        22 (1)  0.23 (0.01)  0.28 (0.00)  0.25 (0.01)  0.24 (0.05)
+  Qwen/Qwen3.5-2B        family_location    grounded       3       48 (13)  0.22 (0.07)  0.50 (0.05)  0.31 (0.08)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        family_location    rag            3        36 (1)  0.17 (0.02)  0.32 (0.03)  0.22 (0.02)  0.44 (0.01)
+  Qwen/Qwen3.5-2B        family_location    ungrounded     3        34 (2)  0.17 (0.03)  0.28 (0.03)  0.21 (0.03)  0.16 (0.03)
+  Qwen/Qwen3.5-2B        school_grades      grounded       3        99 (9)  0.14 (0.02)  0.72 (0.03)  0.25 (0.03)  0.97 (0.01)
+  Qwen/Qwen3.5-2B        school_grades      rag            3        44 (2)  0.14 (0.01)  0.32 (0.03)  0.20 (0.01)  0.41 (0.02)
+  Qwen/Qwen3.5-2B        school_grades      ungrounded     3        47 (2)  0.13 (0.03)  0.30 (0.05)  0.18 (0.04)  0.13 (0.04)
+  Qwen/Qwen3.5-2B        wearable_fitness   grounded       3       36 (12)  0.16 (0.02)  0.28 (0.06)  0.20 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   rag            3        29 (0)  0.18 (0.02)  0.27 (0.03)  0.21 (0.02)  0.34 (0.06)
+  Qwen/Qwen3.5-2B        wearable_fitness   ungrounded     3        28 (0)  0.18 (0.00)  0.25 (0.00)  0.21 (0.00)  0.14 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           grounded       3      154 (17)  0.22 (0.03)  0.83 (0.06)  0.35 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           rag            3        77 (4)  0.28 (0.02)  0.54 (0.06)  0.37 (0.03)  0.86 (0.02)
+  Qwen/Qwen3.5-4B        kidstube           ungrounded     3        99 (2)  0.24 (0.01)  0.60 (0.01)  0.35 (0.00)  0.72 (0.04)
+  Qwen/Qwen3.5-4B        smart_home         grounded       3        39 (6)  0.27 (0.03)  0.58 (0.03)  0.37 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        smart_home         rag            3        42 (1)  0.16 (0.02)  0.37 (0.03)  0.22 (0.02)  0.71 (0.01)
+  Qwen/Qwen3.5-4B        smart_home         ungrounded     3        48 (1)  0.24 (0.02)  0.65 (0.03)  0.35 (0.02)  0.77 (0.08)
+  Qwen/Qwen3.5-4B        family_location    grounded       3      107 (18)  0.13 (0.02)  0.68 (0.13)  0.22 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        family_location    rag            3        47 (2)  0.19 (0.03)  0.45 (0.09)  0.26 (0.04)  0.78 (0.07)
+  Qwen/Qwen3.5-4B        family_location    ungrounded     3        69 (3)  0.16 (0.02)  0.55 (0.09)  0.25 (0.03)  0.75 (0.03)
+  Qwen/Qwen3.5-4B        school_grades      grounded       3       74 (21)  0.14 (0.04)  0.52 (0.03)  0.23 (0.05)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        school_grades      rag            3        70 (4)  0.12 (0.02)  0.43 (0.08)  0.19 (0.03)  0.79 (0.04)
+  Qwen/Qwen3.5-4B        school_grades      ungrounded     3        75 (1)  0.15 (0.00)  0.55 (0.00)  0.23 (0.00)  0.73 (0.01)
+  Qwen/Qwen3.5-4B        wearable_fitness   grounded       3       58 (21)  0.27 (0.05)  0.75 (0.13)  0.39 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        wearable_fitness   rag            3        39 (2)  0.25 (0.02)  0.50 (0.00)  0.34 (0.01)  0.85 (0.02)
+  Qwen/Qwen3.5-4B        wearable_fitness   ungrounded     3        46 (4)  0.21 (0.01)  0.48 (0.03)  0.29 (0.01)  0.80 (0.03)
+
+  Per model, paired across scenarios (each scenario one block):
+    model                  contrast                 citation     recall         f1  scenarios
+    Qwen/Qwen3.5-2B        grounded - ungrounded     +0.817    +0.251    +0.069  n=5
+    Qwen/Qwen3.5-2B        grounded - rag            +0.566    +0.265    +0.086  n=5
+    Qwen/Qwen3.5-4B        grounded - ungrounded     +0.245    +0.106    +0.017  n=5
+    Qwen/Qwen3.5-4B        grounded - rag            +0.204    +0.214    +0.035  n=5
+
+(written to /root/linddun/storage/generated/OPEN_MODEL_SWEEP.txt)
+=== 03:20:52 done Qwen/Qwen3.5-4B ===
+=== 03:20:52 serving Qwen/Qwen3.5-9B ===
+=== 03:24:23 sweeping Qwen/Qwen3.5-9B ===
+resuming: 90 cell(s) recorded overall, 45 to run for Qwen/Qwen3.5-9B
+[1/45] Qwen/Qwen3.5-9B kidstube grounded run1: n=155 P=0.19 R=0.71 F1=0.30 cite=1.0 S/fl/D=44/38/73
+[2/45] Qwen/Qwen3.5-9B kidstube grounded run2: n=165 P=0.19 R=0.76 F1=0.30 cite=1.0 S/fl/D=50/43/72
+[3/45] Qwen/Qwen3.5-9B kidstube grounded run3: n=167 P=0.19 R=0.76 F1=0.30 cite=1.0 S/fl/D=45/47/75
+[4/45] Qwen/Qwen3.5-9B kidstube rag run1: n=72 P=0.32 R=0.56 F1=0.41 cite=0.86 S/fl/D=17/29/26
+[5/45] Qwen/Qwen3.5-9B kidstube rag run2: n=66 P=0.30 R=0.49 F1=0.37 cite=0.83 S/fl/D=12/25/29
+[6/45] Qwen/Qwen3.5-9B kidstube rag run3: n=66 P=0.35 R=0.56 F1=0.43 cite=0.83 S/fl/D=14/26/26
+[7/45] Qwen/Qwen3.5-9B kidstube ungrounded run1: n=69 P=0.28 R=0.46 F1=0.35 cite=0.78 S/fl/D=18/20/31
+[8/45] Qwen/Qwen3.5-9B kidstube ungrounded run2: n=69 P=0.28 R=0.46 F1=0.35 cite=0.8 S/fl/D=16/21/32
+[9/45] Qwen/Qwen3.5-9B kidstube ungrounded run3: n=69 P=0.28 R=0.46 F1=0.35 cite=0.8 S/fl/D=16/21/32
+[10/45] Qwen/Qwen3.5-9B smart_home grounded run1: n=64 P=0.23 R=0.83 F1=0.37 cite=1.0 S/fl/D=19/21/24
+[11/45] Qwen/Qwen3.5-9B smart_home grounded run2: n=60 P=0.18 R=0.61 F1=0.28 cite=1.0 S/fl/D=12/23/25
+[12/45] Qwen/Qwen3.5-9B smart_home grounded run3: n=49 P=0.24 R=0.67 F1=0.36 cite=1.0 S/fl/D=15/17/17
+[13/45] Qwen/Qwen3.5-9B smart_home rag run1: n=30 P=0.27 R=0.44 F1=0.33 cite=0.77 S/fl/D=8/12/10
+[14/45] Qwen/Qwen3.5-9B smart_home rag run2: n=32 P=0.25 R=0.44 F1=0.32 cite=0.75 S/fl/D=7/14/11
+[15/45] Qwen/Qwen3.5-9B smart_home rag run3: n=32 P=0.25 R=0.44 F1=0.32 cite=0.75 S/fl/D=7/14/11
+[16/45] Qwen/Qwen3.5-9B smart_home ungrounded run1: n=41 P=0.22 R=0.50 F1=0.31 cite=0.73 S/fl/D=8/14/19
+[17/45] Qwen/Qwen3.5-9B smart_home ungrounded run2: n=41 P=0.22 R=0.50 F1=0.31 cite=0.73 S/fl/D=8/14/19
+[18/45] Qwen/Qwen3.5-9B smart_home ungrounded run3: n=41 P=0.22 R=0.50 F1=0.31 cite=0.73 S/fl/D=8/14/19
+[19/45] Qwen/Qwen3.5-9B family_location grounded run1: n=139 P=0.09 R=0.65 F1=0.16 cite=1.0 S/fl/D=39/46/54
+[20/45] Qwen/Qwen3.5-9B family_location grounded run2: n=147 P=0.11 R=0.80 F1=0.19 cite=1.0 S/fl/D=36/64/47 malformed=1
+[21/45] Qwen/Qwen3.5-9B family_location grounded run3: n=149 P=0.11 R=0.80 F1=0.19 cite=1.0 S/fl/D=28/69/52
+[22/45] Qwen/Qwen3.5-9B family_location rag run1: n=53 P=0.19 R=0.50 F1=0.27 cite=0.79 S/fl/D=10/19/24
+[23/45] Qwen/Qwen3.5-9B family_location rag run2: n=52 P=0.23 R=0.60 F1=0.33 cite=0.81 S/fl/D=9/22/21 malformed=2
+[24/45] Qwen/Qwen3.5-9B family_location rag run3: n=47 P=0.21 R=0.50 F1=0.30 cite=0.79 S/fl/D=14/14/19
+[25/45] Qwen/Qwen3.5-9B family_location ungrounded run1: n=56 P=0.18 R=0.50 F1=0.26 cite=0.73 S/fl/D=12/18/26
+[26/45] Qwen/Qwen3.5-9B family_location ungrounded run2: n=60 P=0.23 R=0.70 F1=0.35 cite=0.72 S/fl/D=9/18/33
+[27/45] Qwen/Qwen3.5-9B family_location ungrounded run3: n=60 P=0.23 R=0.70 F1=0.35 cite=0.72 S/fl/D=9/18/33
+[28/45] Qwen/Qwen3.5-9B school_grades grounded run1: n=139 P=0.07 R=0.50 F1=0.13 cite=1.0 S/fl/D=27/39/73
+[29/45] Qwen/Qwen3.5-9B school_grades grounded run2: n=112 P=0.06 R=0.35 F1=0.11 cite=1.0 S/fl/D=12/42/58
+[30/45] Qwen/Qwen3.5-9B school_grades grounded run3: n=111 P=0.08 R=0.45 F1=0.14 cite=1.0 S/fl/D=18/33/60
+[31/45] Qwen/Qwen3.5-9B school_grades rag run1: n=57 P=0.19 R=0.55 F1=0.29 cite=0.79 S/fl/D=17/20/20
+[32/45] Qwen/Qwen3.5-9B school_grades rag run2: n=52 P=0.19 R=0.50 F1=0.28 cite=0.77 S/fl/D=18/17/17
+[33/45] Qwen/Qwen3.5-9B school_grades rag run3: n=60 P=0.20 R=0.60 F1=0.30 cite=0.77 S/fl/D=13/23/24
+[34/45] Qwen/Qwen3.5-9B school_grades ungrounded run1: n=48 P=0.19 R=0.45 F1=0.26 cite=0.62 S/fl/D=13/15/20
+[35/45] Qwen/Qwen3.5-9B school_grades ungrounded run2: n=61 P=0.11 R=0.35 F1=0.17 cite=0.72 S/fl/D=18/17/26
+[36/45] Qwen/Qwen3.5-9B school_grades ungrounded run3: n=61 P=0.11 R=0.35 F1=0.17 cite=0.72 S/fl/D=18/17/26
+[37/45] Qwen/Qwen3.5-9B wearable_fitness grounded run1: n=75 P=0.16 R=0.60 F1=0.25 cite=1.0 S/fl/D=16/34/25
+[38/45] Qwen/Qwen3.5-9B wearable_fitness grounded run2: n=83 P=0.16 R=0.65 F1=0.25 cite=1.0 S/fl/D=17/33/33
+[39/45] Qwen/Qwen3.5-9B wearable_fitness grounded run3: n=86 P=0.14 R=0.60 F1=0.23 cite=1.0 S/fl/D=15/42/29
+[40/45] Qwen/Qwen3.5-9B wearable_fitness rag run1: n=30 P=0.23 R=0.35 F1=0.28 cite=0.93 S/fl/D=3/15/12
+[41/45] Qwen/Qwen3.5-9B wearable_fitness rag run2: n=33 P=0.33 R=0.55 F1=0.42 cite=0.94 S/fl/D=4/17/12
+[42/45] Qwen/Qwen3.5-9B wearable_fitness rag run3: n=31 P=0.23 R=0.35 F1=0.27 cite=0.9 S/fl/D=4/16/11
+[43/45] Qwen/Qwen3.5-9B wearable_fitness ungrounded run1: n=47 P=0.21 R=0.50 F1=0.30 cite=0.74 S/fl/D=11/14/22
+[44/45] Qwen/Qwen3.5-9B wearable_fitness ungrounded run2: n=49 P=0.22 R=0.55 F1=0.32 cite=0.71 S/fl/D=14/12/23
+[45/45] Qwen/Qwen3.5-9B wearable_fitness ungrounded run3: n=48 P=0.21 R=0.50 F1=0.29 cite=0.73 S/fl/D=11/15/22
+
+Open-weight model ladder x grounding mechanism -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  concurrency {16} (part of the condition: greedy decoding on a batching server is not bitwise deterministic)
+  endpoint http://localhost:8000/v1; code 13fd97c-dirty
+
+  model                  scenario           mode        runs        n_gen             P             R            F1      citation
+  Qwen/Qwen3.5-2B        kidstube           grounded       3      107 (18)  0.21 (0.04)  0.55 (0.04)  0.31 (0.04)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        kidstube           rag            3        48 (2)  0.10 (0.02)  0.12 (0.03)  0.11 (0.02)  0.37 (0.04)
+  Qwen/Qwen3.5-2B        kidstube           ungrounded     3        46 (3)  0.18 (0.02)  0.20 (0.03)  0.19 (0.02)  0.18 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         grounded       3       40 (12)  0.24 (0.04)  0.52 (0.09)  0.32 (0.01)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        smart_home         rag            3        20 (1)  0.20 (0.01)  0.22 (0.00)  0.21 (0.01)  0.54 (0.03)
+  Qwen/Qwen3.5-2B        smart_home         ungrounded     3        22 (1)  0.23 (0.01)  0.28 (0.00)  0.25 (0.01)  0.24 (0.05)
+  Qwen/Qwen3.5-2B        family_location    grounded       3       48 (13)  0.22 (0.07)  0.50 (0.05)  0.31 (0.08)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        family_location    rag            3        36 (1)  0.17 (0.02)  0.32 (0.03)  0.22 (0.02)  0.44 (0.01)
+  Qwen/Qwen3.5-2B        family_location    ungrounded     3        34 (2)  0.17 (0.03)  0.28 (0.03)  0.21 (0.03)  0.16 (0.03)
+  Qwen/Qwen3.5-2B        school_grades      grounded       3        99 (9)  0.14 (0.02)  0.72 (0.03)  0.25 (0.03)  0.97 (0.01)
+  Qwen/Qwen3.5-2B        school_grades      rag            3        44 (2)  0.14 (0.01)  0.32 (0.03)  0.20 (0.01)  0.41 (0.02)
+  Qwen/Qwen3.5-2B        school_grades      ungrounded     3        47 (2)  0.13 (0.03)  0.30 (0.05)  0.18 (0.04)  0.13 (0.04)
+  Qwen/Qwen3.5-2B        wearable_fitness   grounded       3       36 (12)  0.16 (0.02)  0.28 (0.06)  0.20 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   rag            3        29 (0)  0.18 (0.02)  0.27 (0.03)  0.21 (0.02)  0.34 (0.06)
+  Qwen/Qwen3.5-2B        wearable_fitness   ungrounded     3        28 (0)  0.18 (0.00)  0.25 (0.00)  0.21 (0.00)  0.14 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           grounded       3      154 (17)  0.22 (0.03)  0.83 (0.06)  0.35 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           rag            3        77 (4)  0.28 (0.02)  0.54 (0.06)  0.37 (0.03)  0.86 (0.02)
+  Qwen/Qwen3.5-4B        kidstube           ungrounded     3        99 (2)  0.24 (0.01)  0.60 (0.01)  0.35 (0.00)  0.72 (0.04)
+  Qwen/Qwen3.5-4B        smart_home         grounded       3        39 (6)  0.27 (0.03)  0.58 (0.03)  0.37 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        smart_home         rag            3        42 (1)  0.16 (0.02)  0.37 (0.03)  0.22 (0.02)  0.71 (0.01)
+  Qwen/Qwen3.5-4B        smart_home         ungrounded     3        48 (1)  0.24 (0.02)  0.65 (0.03)  0.35 (0.02)  0.77 (0.08)
+  Qwen/Qwen3.5-4B        family_location    grounded       3      107 (18)  0.13 (0.02)  0.68 (0.13)  0.22 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        family_location    rag            3        47 (2)  0.19 (0.03)  0.45 (0.09)  0.26 (0.04)  0.78 (0.07)
+  Qwen/Qwen3.5-4B        family_location    ungrounded     3        69 (3)  0.16 (0.02)  0.55 (0.09)  0.25 (0.03)  0.75 (0.03)
+  Qwen/Qwen3.5-4B        school_grades      grounded       3       74 (21)  0.14 (0.04)  0.52 (0.03)  0.23 (0.05)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        school_grades      rag            3        70 (4)  0.12 (0.02)  0.43 (0.08)  0.19 (0.03)  0.79 (0.04)
+  Qwen/Qwen3.5-4B        school_grades      ungrounded     3        75 (1)  0.15 (0.00)  0.55 (0.00)  0.23 (0.00)  0.73 (0.01)
+  Qwen/Qwen3.5-4B        wearable_fitness   grounded       3       58 (21)  0.27 (0.05)  0.75 (0.13)  0.39 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        wearable_fitness   rag            3        39 (2)  0.25 (0.02)  0.50 (0.00)  0.34 (0.01)  0.85 (0.02)
+  Qwen/Qwen3.5-4B        wearable_fitness   ungrounded     3        46 (4)  0.21 (0.01)  0.48 (0.03)  0.29 (0.01)  0.80 (0.03)
+  Qwen/Qwen3.5-9B        kidstube           grounded       3       162 (6)  0.19 (0.00)  0.74 (0.03)  0.30 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        kidstube           rag            3        68 (3)  0.32 (0.03)  0.54 (0.04)  0.40 (0.03)  0.84 (0.02)
+  Qwen/Qwen3.5-9B        kidstube           ungrounded     3        69 (0)  0.28 (0.00)  0.46 (0.00)  0.35 (0.00)  0.79 (0.01)
+  Qwen/Qwen3.5-9B        smart_home         grounded       3        58 (8)  0.22 (0.03)  0.70 (0.11)  0.34 (0.05)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        smart_home         rag            3        31 (1)  0.26 (0.01)  0.44 (0.00)  0.32 (0.01)  0.76 (0.01)
+  Qwen/Qwen3.5-9B        smart_home         ungrounded     3        41 (0)  0.22 (0.00)  0.50 (0.00)  0.31 (0.00)  0.73 (0.00)
+  Qwen/Qwen3.5-9B        family_location    grounded       3       145 (5)  0.10 (0.01)  0.75 (0.09)  0.18 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        family_location    rag            3        51 (3)  0.21 (0.02)  0.53 (0.06)  0.30 (0.03)  0.80 (0.01)
+  Qwen/Qwen3.5-9B        family_location    ungrounded     3        59 (2)  0.21 (0.03)  0.63 (0.12)  0.32 (0.05)  0.72 (0.01)
+  Qwen/Qwen3.5-9B        school_grades      grounded       3      121 (16)  0.07 (0.01)  0.43 (0.08)  0.13 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        school_grades      rag            3        56 (4)  0.19 (0.01)  0.55 (0.05)  0.29 (0.01)  0.78 (0.01)
+  Qwen/Qwen3.5-9B        school_grades      ungrounded     3        57 (8)  0.14 (0.05)  0.38 (0.06)  0.20 (0.05)  0.69 (0.06)
+  Qwen/Qwen3.5-9B        wearable_fitness   grounded       3        81 (6)  0.15 (0.01)  0.62 (0.03)  0.24 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        wearable_fitness   rag            3        31 (2)  0.26 (0.06)  0.42 (0.12)  0.32 (0.08)  0.92 (0.02)
+  Qwen/Qwen3.5-9B        wearable_fitness   ungrounded     3        48 (1)  0.21 (0.01)  0.52 (0.03)  0.30 (0.02)  0.73 (0.02)
+
+  Per model, paired across scenarios (each scenario one block):
+    model                  contrast                 citation     recall         f1  scenarios
+    Qwen/Qwen3.5-2B        grounded - ungrounded     +0.817    +0.251    +0.069  n=5
+    Qwen/Qwen3.5-2B        grounded - rag            +0.566    +0.265    +0.086  n=5
+    Qwen/Qwen3.5-4B        grounded - ungrounded     +0.245    +0.106    +0.017  n=5
+    Qwen/Qwen3.5-4B        grounded - rag            +0.204    +0.214    +0.035  n=5
+    Qwen/Qwen3.5-9B        grounded - ungrounded     +0.268    +0.151    -0.059  n=5
+    Qwen/Qwen3.5-9B        grounded - rag            +0.181    +0.154    -0.091  n=5
+
+(written to /root/linddun/storage/generated/OPEN_MODEL_SWEEP.txt)
+=== 03:59:30 done Qwen/Qwen3.5-9B ===
+=== 03:59:30 serving Qwen/Qwen3.5-27B ===
+=== 04:03:21 sweeping Qwen/Qwen3.5-27B ===
+resuming: 135 cell(s) recorded overall, 45 to run for Qwen/Qwen3.5-27B
+[1/45] Qwen/Qwen3.5-27B kidstube grounded run1: n=161 P=0.22 R=0.85 F1=0.35 cite=1.0 S/fl/D=22/16/123
+[2/45] Qwen/Qwen3.5-27B kidstube grounded run2: n=161 P=0.22 R=0.88 F1=0.36 cite=1.0 S/fl/D=30/12/119
+[3/45] Qwen/Qwen3.5-27B kidstube grounded run3: n=164 P=0.22 R=0.88 F1=0.35 cite=1.0 S/fl/D=22/11/131
+[4/45] Qwen/Qwen3.5-27B kidstube rag run1: n=69 P=0.35 R=0.59 F1=0.44 cite=0.86 S/fl/D=14/14/41
+[5/45] Qwen/Qwen3.5-27B kidstube rag run2: n=72 P=0.35 R=0.61 F1=0.44 cite=0.82 S/fl/D=24/16/32
+[6/45] Qwen/Qwen3.5-27B kidstube rag run3: n=73 P=0.33 R=0.59 F1=0.42 cite=0.78 S/fl/D=22/16/35
+[7/45] Qwen/Qwen3.5-27B kidstube ungrounded run1: n=42 P=0.17 R=0.17 F1=0.17 cite=0.57 S/fl/D=11/11/20
+[8/45] Qwen/Qwen3.5-27B kidstube ungrounded run2: n=46 P=0.28 R=0.32 F1=0.30 cite=0.7 S/fl/D=11/11/24
+[9/45] Qwen/Qwen3.5-27B kidstube ungrounded run3: n=47 P=0.34 R=0.39 F1=0.36 cite=0.68 S/fl/D=12/14/21
+[10/45] Qwen/Qwen3.5-27B smart_home grounded run1: n=71 P=0.23 R=0.89 F1=0.36 cite=1.0 S/fl/D=18/7/46
+[11/45] Qwen/Qwen3.5-27B smart_home grounded run2: n=78 P=0.21 R=0.89 F1=0.33 cite=1.0 S/fl/D=25/7/46
+[12/45] Qwen/Qwen3.5-27B smart_home grounded run3: n=70 P=0.24 R=0.94 F1=0.39 cite=1.0 S/fl/D=20/4/46
+[13/45] Qwen/Qwen3.5-27B smart_home rag run1: n=48 P=0.23 R=0.61 F1=0.33 cite=0.71 S/fl/D=14/12/22
+[14/45] Qwen/Qwen3.5-27B smart_home rag run2: n=36 P=0.22 R=0.44 F1=0.30 cite=0.78 S/fl/D=10/8/18
+[15/45] Qwen/Qwen3.5-27B smart_home rag run3: n=36 P=0.22 R=0.44 F1=0.30 cite=0.78 S/fl/D=10/8/18
+[16/45] Qwen/Qwen3.5-27B smart_home ungrounded run1: n=26 P=0.31 R=0.44 F1=0.36 cite=0.88 S/fl/D=8/5/13
+[17/45] Qwen/Qwen3.5-27B smart_home ungrounded run2: n=26 P=0.31 R=0.44 F1=0.36 cite=0.88 S/fl/D=8/5/13
+[18/45] Qwen/Qwen3.5-27B smart_home ungrounded run3: n=26 P=0.31 R=0.44 F1=0.36 cite=0.88 S/fl/D=8/5/13
+[19/45] Qwen/Qwen3.5-27B family_location grounded run1: n=131 P=0.15 R=0.95 F1=0.25 cite=1.0 S/fl/D=39/10/82
+[20/45] Qwen/Qwen3.5-27B family_location grounded run2: n=125 P=0.14 R=0.90 F1=0.25 cite=1.0 S/fl/D=34/13/78
+[21/45] Qwen/Qwen3.5-27B family_location grounded run3: n=125 P=0.14 R=0.90 F1=0.25 cite=1.0 S/fl/D=34/13/78
+[22/45] Qwen/Qwen3.5-27B family_location rag run1: n=45 P=0.20 R=0.45 F1=0.28 cite=0.71 S/fl/D=13/9/23
+[23/45] Qwen/Qwen3.5-27B family_location rag run2: n=55 P=0.25 R=0.70 F1=0.37 cite=0.73 S/fl/D=14/13/28
+[24/45] Qwen/Qwen3.5-27B family_location rag run3: n=52 P=0.27 R=0.70 F1=0.39 cite=0.73 S/fl/D=14/13/25
+[25/45] Qwen/Qwen3.5-27B family_location ungrounded run1: n=34 P=0.29 R=0.50 F1=0.37 cite=0.74 S/fl/D=8/9/17
+[26/45] Qwen/Qwen3.5-27B family_location ungrounded run2: n=42 P=0.26 R=0.55 F1=0.35 cite=0.62 S/fl/D=12/10/20
+[27/45] Qwen/Qwen3.5-27B family_location ungrounded run3: n=42 P=0.26 R=0.55 F1=0.35 cite=0.62 S/fl/D=12/10/20
+[28/45] Qwen/Qwen3.5-27B school_grades grounded run1: n=137 P=0.14 R=0.95 F1=0.24 cite=1.0 S/fl/D=24/11/102
+[29/45] Qwen/Qwen3.5-27B school_grades grounded run2: n=128 P=0.15 R=0.95 F1=0.26 cite=1.0 S/fl/D=17/9/102
+[30/45] Qwen/Qwen3.5-27B school_grades grounded run3: n=131 P=0.15 R=0.95 F1=0.25 cite=1.0 S/fl/D=20/7/104
+[31/45] Qwen/Qwen3.5-27B school_grades rag run1: n=77 P=0.16 R=0.60 F1=0.25 cite=0.68 S/fl/D=24/21/32
+[32/45] Qwen/Qwen3.5-27B school_grades rag run2: n=67 P=0.13 R=0.45 F1=0.21 cite=0.66 S/fl/D=13/21/33 malformed=1
+[33/45] Qwen/Qwen3.5-27B school_grades rag run3: n=67 P=0.13 R=0.45 F1=0.21 cite=0.66 S/fl/D=13/21/33 malformed=1
+[34/45] Qwen/Qwen3.5-27B school_grades ungrounded run1: n=55 P=0.13 R=0.35 F1=0.19 cite=0.65 S/fl/D=9/18/28
+[35/45] Qwen/Qwen3.5-27B school_grades ungrounded run2: n=35 P=0.23 R=0.40 F1=0.29 cite=0.69 S/fl/D=5/9/21
+[36/45] Qwen/Qwen3.5-27B school_grades ungrounded run3: n=37 P=0.24 R=0.45 F1=0.32 cite=0.7 S/fl/D=7/9/21
+[37/45] Qwen/Qwen3.5-27B wearable_fitness grounded run1: n=103 P=0.17 R=0.85 F1=0.28 cite=1.0 S/fl/D=24/7/72
+[38/45] Qwen/Qwen3.5-27B wearable_fitness grounded run2: n=100 P=0.18 R=0.90 F1=0.30 cite=1.0 S/fl/D=25/7/68
+[39/45] Qwen/Qwen3.5-27B wearable_fitness grounded run3: n=103 P=0.17 R=0.90 F1=0.29 cite=1.0 S/fl/D=28/2/73
+[40/45] Qwen/Qwen3.5-27B wearable_fitness rag run1: n=39 P=0.36 R=0.70 F1=0.47 cite=0.87 S/fl/D=7/4/28
+[41/45] Qwen/Qwen3.5-27B wearable_fitness rag run2: n=41 P=0.37 R=0.75 F1=0.49 cite=0.88 S/fl/D=9/7/25
+[42/45] Qwen/Qwen3.5-27B wearable_fitness rag run3: n=41 P=0.37 R=0.75 F1=0.49 cite=0.88 S/fl/D=9/7/25
+[43/45] Qwen/Qwen3.5-27B wearable_fitness ungrounded run1: n=28 P=0.25 R=0.35 F1=0.29 cite=0.75 S/fl/D=6/7/15
+[44/45] Qwen/Qwen3.5-27B wearable_fitness ungrounded run2: n=25 P=0.32 R=0.40 F1=0.36 cite=0.72 S/fl/D=5/5/15
+[45/45] Qwen/Qwen3.5-27B wearable_fitness ungrounded run3: n=23 P=0.26 R=0.30 F1=0.28 cite=0.7 S/fl/D=5/5/13
+
+Open-weight model ladder x grounding mechanism -- mean (sd) over runs
+  temperature {0.0}; deployment honoured it: {True}
+  concurrency {16} (part of the condition: greedy decoding on a batching server is not bitwise deterministic)
+  endpoint http://localhost:8000/v1; code 13fd97c-dirty
+
+  model                  scenario           mode        runs        n_gen             P             R            F1      citation
+  Qwen/Qwen3.5-2B        kidstube           grounded       3      107 (18)  0.21 (0.04)  0.55 (0.04)  0.31 (0.04)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        kidstube           rag            3        48 (2)  0.10 (0.02)  0.12 (0.03)  0.11 (0.02)  0.37 (0.04)
+  Qwen/Qwen3.5-2B        kidstube           ungrounded     3        46 (3)  0.18 (0.02)  0.20 (0.03)  0.19 (0.02)  0.18 (0.01)
+  Qwen/Qwen3.5-2B        smart_home         grounded       3       40 (12)  0.24 (0.04)  0.52 (0.09)  0.32 (0.01)  0.98 (0.02)
+  Qwen/Qwen3.5-2B        smart_home         rag            3        20 (1)  0.20 (0.01)  0.22 (0.00)  0.21 (0.01)  0.54 (0.03)
+  Qwen/Qwen3.5-2B        smart_home         ungrounded     3        22 (1)  0.23 (0.01)  0.28 (0.00)  0.25 (0.01)  0.24 (0.05)
+  Qwen/Qwen3.5-2B        family_location    grounded       3       48 (13)  0.22 (0.07)  0.50 (0.05)  0.31 (0.08)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        family_location    rag            3        36 (1)  0.17 (0.02)  0.32 (0.03)  0.22 (0.02)  0.44 (0.01)
+  Qwen/Qwen3.5-2B        family_location    ungrounded     3        34 (2)  0.17 (0.03)  0.28 (0.03)  0.21 (0.03)  0.16 (0.03)
+  Qwen/Qwen3.5-2B        school_grades      grounded       3        99 (9)  0.14 (0.02)  0.72 (0.03)  0.25 (0.03)  0.97 (0.01)
+  Qwen/Qwen3.5-2B        school_grades      rag            3        44 (2)  0.14 (0.01)  0.32 (0.03)  0.20 (0.01)  0.41 (0.02)
+  Qwen/Qwen3.5-2B        school_grades      ungrounded     3        47 (2)  0.13 (0.03)  0.30 (0.05)  0.18 (0.04)  0.13 (0.04)
+  Qwen/Qwen3.5-2B        wearable_fitness   grounded       3       36 (12)  0.16 (0.02)  0.28 (0.06)  0.20 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-2B        wearable_fitness   rag            3        29 (0)  0.18 (0.02)  0.27 (0.03)  0.21 (0.02)  0.34 (0.06)
+  Qwen/Qwen3.5-2B        wearable_fitness   ungrounded     3        28 (0)  0.18 (0.00)  0.25 (0.00)  0.21 (0.00)  0.14 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           grounded       3      154 (17)  0.22 (0.03)  0.83 (0.06)  0.35 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        kidstube           rag            3        77 (4)  0.28 (0.02)  0.54 (0.06)  0.37 (0.03)  0.86 (0.02)
+  Qwen/Qwen3.5-4B        kidstube           ungrounded     3        99 (2)  0.24 (0.01)  0.60 (0.01)  0.35 (0.00)  0.72 (0.04)
+  Qwen/Qwen3.5-4B        smart_home         grounded       3        39 (6)  0.27 (0.03)  0.58 (0.03)  0.37 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        smart_home         rag            3        42 (1)  0.16 (0.02)  0.37 (0.03)  0.22 (0.02)  0.71 (0.01)
+  Qwen/Qwen3.5-4B        smart_home         ungrounded     3        48 (1)  0.24 (0.02)  0.65 (0.03)  0.35 (0.02)  0.77 (0.08)
+  Qwen/Qwen3.5-4B        family_location    grounded       3      107 (18)  0.13 (0.02)  0.68 (0.13)  0.22 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        family_location    rag            3        47 (2)  0.19 (0.03)  0.45 (0.09)  0.26 (0.04)  0.78 (0.07)
+  Qwen/Qwen3.5-4B        family_location    ungrounded     3        69 (3)  0.16 (0.02)  0.55 (0.09)  0.25 (0.03)  0.75 (0.03)
+  Qwen/Qwen3.5-4B        school_grades      grounded       3       74 (21)  0.14 (0.04)  0.52 (0.03)  0.23 (0.05)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        school_grades      rag            3        70 (4)  0.12 (0.02)  0.43 (0.08)  0.19 (0.03)  0.79 (0.04)
+  Qwen/Qwen3.5-4B        school_grades      ungrounded     3        75 (1)  0.15 (0.00)  0.55 (0.00)  0.23 (0.00)  0.73 (0.01)
+  Qwen/Qwen3.5-4B        wearable_fitness   grounded       3       58 (21)  0.27 (0.05)  0.75 (0.13)  0.39 (0.04)  1.00 (0.00)
+  Qwen/Qwen3.5-4B        wearable_fitness   rag            3        39 (2)  0.25 (0.02)  0.50 (0.00)  0.34 (0.01)  0.85 (0.02)
+  Qwen/Qwen3.5-4B        wearable_fitness   ungrounded     3        46 (4)  0.21 (0.01)  0.48 (0.03)  0.29 (0.01)  0.80 (0.03)
+  Qwen/Qwen3.5-9B        kidstube           grounded       3       162 (6)  0.19 (0.00)  0.74 (0.03)  0.30 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        kidstube           rag            3        68 (3)  0.32 (0.03)  0.54 (0.04)  0.40 (0.03)  0.84 (0.02)
+  Qwen/Qwen3.5-9B        kidstube           ungrounded     3        69 (0)  0.28 (0.00)  0.46 (0.00)  0.35 (0.00)  0.79 (0.01)
+  Qwen/Qwen3.5-9B        smart_home         grounded       3        58 (8)  0.22 (0.03)  0.70 (0.11)  0.34 (0.05)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        smart_home         rag            3        31 (1)  0.26 (0.01)  0.44 (0.00)  0.32 (0.01)  0.76 (0.01)
+  Qwen/Qwen3.5-9B        smart_home         ungrounded     3        41 (0)  0.22 (0.00)  0.50 (0.00)  0.31 (0.00)  0.73 (0.00)
+  Qwen/Qwen3.5-9B        family_location    grounded       3       145 (5)  0.10 (0.01)  0.75 (0.09)  0.18 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        family_location    rag            3        51 (3)  0.21 (0.02)  0.53 (0.06)  0.30 (0.03)  0.80 (0.01)
+  Qwen/Qwen3.5-9B        family_location    ungrounded     3        59 (2)  0.21 (0.03)  0.63 (0.12)  0.32 (0.05)  0.72 (0.01)
+  Qwen/Qwen3.5-9B        school_grades      grounded       3      121 (16)  0.07 (0.01)  0.43 (0.08)  0.13 (0.02)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        school_grades      rag            3        56 (4)  0.19 (0.01)  0.55 (0.05)  0.29 (0.01)  0.78 (0.01)
+  Qwen/Qwen3.5-9B        school_grades      ungrounded     3        57 (8)  0.14 (0.05)  0.38 (0.06)  0.20 (0.05)  0.69 (0.06)
+  Qwen/Qwen3.5-9B        wearable_fitness   grounded       3        81 (6)  0.15 (0.01)  0.62 (0.03)  0.24 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-9B        wearable_fitness   rag            3        31 (2)  0.26 (0.06)  0.42 (0.12)  0.32 (0.08)  0.92 (0.02)
+  Qwen/Qwen3.5-9B        wearable_fitness   ungrounded     3        48 (1)  0.21 (0.01)  0.52 (0.03)  0.30 (0.02)  0.73 (0.02)
+  Qwen/Qwen3.5-27B       kidstube           grounded       3       162 (2)  0.22 (0.00)  0.87 (0.02)  0.35 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-27B       kidstube           rag            3        71 (2)  0.34 (0.01)  0.60 (0.01)  0.43 (0.01)  0.82 (0.04)
+  Qwen/Qwen3.5-27B       kidstube           ungrounded     3        45 (3)  0.26 (0.09)  0.29 (0.11)  0.28 (0.10)  0.65 (0.07)
+  Qwen/Qwen3.5-27B       smart_home         grounded       3        73 (4)  0.23 (0.02)  0.91 (0.03)  0.36 (0.03)  1.00 (0.00)
+  Qwen/Qwen3.5-27B       smart_home         rag            3        40 (7)  0.22 (0.01)  0.50 (0.10)  0.31 (0.02)  0.76 (0.04)
+  Qwen/Qwen3.5-27B       smart_home         ungrounded     3        26 (0)  0.31 (0.00)  0.44 (0.00)  0.36 (0.00)  0.88 (0.00)
+  Qwen/Qwen3.5-27B       family_location    grounded       3       127 (3)  0.14 (0.01)  0.92 (0.03)  0.25 (0.00)  1.00 (0.00)
+  Qwen/Qwen3.5-27B       family_location    rag            3        51 (5)  0.24 (0.04)  0.62 (0.14)  0.35 (0.06)  0.72 (0.01)
+  Qwen/Qwen3.5-27B       family_location    ungrounded     3        39 (5)  0.27 (0.02)  0.53 (0.03)  0.36 (0.01)  0.66 (0.07)
+  Qwen/Qwen3.5-27B       school_grades      grounded       3       132 (5)  0.15 (0.01)  0.95 (0.00)  0.25 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-27B       school_grades      rag            3        70 (6)  0.14 (0.02)  0.50 (0.09)  0.22 (0.02)  0.67 (0.01)
+  Qwen/Qwen3.5-27B       school_grades      ungrounded     3       42 (11)  0.20 (0.06)  0.40 (0.05)  0.27 (0.07)  0.68 (0.03)
+  Qwen/Qwen3.5-27B       wearable_fitness   grounded       3       102 (2)  0.17 (0.01)  0.88 (0.03)  0.29 (0.01)  1.00 (0.00)
+  Qwen/Qwen3.5-27B       wearable_fitness   rag            3        40 (1)  0.37 (0.01)  0.73 (0.03)  0.48 (0.01)  0.88 (0.01)
+  Qwen/Qwen3.5-27B       wearable_fitness   ungrounded     3        25 (3)  0.28 (0.04)  0.35 (0.05)  0.31 (0.04)  0.72 (0.03)
+
+  Per model, paired across scenarios (each scenario one block):
+    model                  contrast                 citation     recall         f1  scenarios
+    Qwen/Qwen3.5-2B        grounded - ungrounded     +0.817    +0.251    +0.069  n=5
+    Qwen/Qwen3.5-2B        grounded - rag            +0.566    +0.265    +0.086  n=5
+    Qwen/Qwen3.5-4B        grounded - ungrounded     +0.245    +0.106    +0.017  n=5
+    Qwen/Qwen3.5-4B        grounded - rag            +0.204    +0.214    +0.035  n=5
+    Qwen/Qwen3.5-9B        grounded - ungrounded     +0.268    +0.151    -0.059  n=5
+    Qwen/Qwen3.5-9B        grounded - rag            +0.181    +0.154    -0.091  n=5
+    Qwen/Qwen3.5-27B       grounded - ungrounded     +0.281    +0.502    -0.013  n=5
+    Qwen/Qwen3.5-27B       grounded - rag            +0.231    +0.317    -0.059  n=5
+
+(written to /root/linddun/storage/generated/OPEN_MODEL_SWEEP.txt)
+=== 06:01:30 done Qwen/Qwen3.5-27B ===
+=== SWEEP COMPLETE ===

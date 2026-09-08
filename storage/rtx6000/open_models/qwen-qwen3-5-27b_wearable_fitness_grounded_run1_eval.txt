@@ -1,0 +1,32 @@
+Eval report: scenario=wearable_fitness generated=/root/linddun/storage/generated/open_models/qwen-qwen3-5-27b_wearable_fitness_grounded_run1.json
+  n_generated=42 n_gold=20 strict_node_match=False
+
+NOTE: matching uses gold's dfd_source_id/dfd_destination_id (Appendix F Figure 11) against the generated threat's flow in dfd.json. 0 gold threats have dfd_location_confidence=unresolved and can never be matched (see WEEK3_REPORT.md).
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               1    5    3   0.17   0.25   0.20
+I    Identifying           1    5    1   0.17   0.50   0.25
+Nr   Non-repudiation       0    1    2   0.00   0.00   0.00
+D    Detecting             0    0    2   0.00   0.00   0.00
+Dd   Data Disclosure       1    9    4   0.10   0.20   0.13
+U    Unawareness           1    9    1   0.10   0.50   0.17  *
+Nc   Non-compliance        1    8    2   0.11   0.33   0.17  *
+ALL                        5   37   15   0.12   0.25   0.16
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          1.00
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  all_valid_rate           1.00
+  n_threats_checked        42
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          15   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.25
+  recall (reachable-adjusted):      0.25   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario wearable_fitness --generated /root/linddun/storage/generated/open_models/qwen-qwen3-5-27b_wearable_fitness_grounded_run1.json` to label a sample of the 37 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.

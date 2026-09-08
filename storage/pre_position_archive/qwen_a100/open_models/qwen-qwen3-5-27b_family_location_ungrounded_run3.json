@@ -1,0 +1,62 @@
+[
+  {
+    "flow_id": "DF4",
+    "originator_id": "DS2",
+    "threat_type": "D",
+    "tree_node": "D.1.1",
+    "title": "Unauthorized Access to Zone Definitions",
+    "description": "Sensitive zone data (e.g., home, school locations) stored in DS2 could be accessed by unauthorized parties if access controls are insufficient.",
+    "assumptions": "DS2 lacks robust authentication/encryption for stored data.",
+    "severity": "High",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "P2",
+    "threat_type": "Dd",
+    "tree_node": "Dd.1.1",
+    "title": "Zone Data Misuse Beyond Geofencing",
+    "description": "Geofencing Engine (P2) may use zone definitions for purposes beyond location-based alerts (e.g., profiling, third-party sharing).",
+    "assumptions": "P2 has no strict data usage policies or audit mechanisms.",
+    "severity": "Med",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "DS2",
+    "threat_type": "I",
+    "tree_node": "I.1.1",
+    "title": "Zone Data Linked to Individuals",
+    "description": "Zone definitions (e.g., 'home') can be linked to specific family members, enabling identification of individuals' locations.",
+    "assumptions": "Zone data is associated with user accounts containing personal identifiers.",
+    "severity": "Med",
+    "likelihood": "High",
+    "uncertainty_note": "Assumes zone data is tied to identifiable user accounts; may vary if zones are anonymized.",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  },
+  {
+    "flow_id": "DF4",
+    "originator_id": "P2",
+    "threat_type": "U",
+    "tree_node": "U.1.1",
+    "title": "Lack of Transparency in Data Access",
+    "description": "Users may not be informed that their zone data is accessed by the Geofencing Engine for processing.",
+    "assumptions": "No clear privacy notices or consent mechanisms for data flow DS2->P2.",
+    "severity": "Low",
+    "likelihood": "Med",
+    "uncertainty_note": "",
+    "grounded": false,
+    "mode": "ungrounded",
+    "panoptic_action": ""
+  }
+]

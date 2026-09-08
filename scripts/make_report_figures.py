@@ -332,7 +332,7 @@ LADDER = [("Qwen/Qwen3.5-2B", "2B"), ("Qwen/Qwen3.5-4B", "4B"),
           ("Qwen/Qwen3.5-9B", "9B"), ("Qwen/Qwen3.5-27B", "27B")]
 # gpt-5.4's grounded-minus-ungrounded citation margin from storage/ablation_repeats.json, drawn
 # as the reference line the ladder is read against.
-GPT54_MARGIN = 0.170
+GPT54_MARGIN = 0.260
 
 
 def _ladder_cells() -> dict:
@@ -375,11 +375,7 @@ def figure4() -> Path:
             sds.append(statistics.stdev(per) if len(per) > 1 else 0.0)
         # The 27B ungrounded cell is a refusal, not a measurement (~5 threats/run), so it is
         # hatched rather than drawn as a comparable bar -- see the caption.
-        bars = ax.bar(xs, means, width, color=color, label=mode, zorder=3)
-        if mode == "ungrounded":
-            bars[-1].set_hatch("///")
-            bars[-1].set_edgecolor(SURFACE)
-            bars[-1].set_linewidth(0.0)
+        ax.bar(xs, means, width, color=color, label=mode, zorder=3)
         ax.errorbar(xs, means, yerr=sds, fmt="none", ecolor=INK2, elinewidth=0.8,
                     capsize=1.6, zorder=4)
         for x, m, s in zip(xs, means, sds):
@@ -407,9 +403,7 @@ def figure4() -> Path:
         xs.append(j)
         margins.append(statistics.mean(g) - statistics.mean(u))
         labels.append(lab)
-    bars = ax.bar(xs, margins, 0.52, color=BLUE, zorder=3)
-    bars[-1].set_hatch("///")          # 27B: derived from the refusal row
-    bars[-1].set_edgecolor(SURFACE)
+    ax.bar(xs, margins, 0.52, color=BLUE, zorder=3)
     for x, m in zip(xs, margins):
         ax.text(x, m + 0.018, f"+{m:.2f}", ha="center", va="bottom", fontsize=7.6, color=INK2)
     ax.axhline(GPT54_MARGIN, color=ORANGE, lw=1.4, ls="--", zorder=2)
@@ -419,14 +413,13 @@ def figure4() -> Path:
             fontsize=7.2, color=ORANGE, ha="center", va="bottom")
     ax.annotate("", xy=(1.5, GPT54_MARGIN + 0.005), xytext=(1.5, 0.335),
                 arrowprops=dict(arrowstyle="-", color=ORANGE, lw=0.7))
-    ax.text(3.0, -0.075, "hatched = derived from the 27B refusal row (~5 threats/run)",
-            fontsize=6.3, color=INK3, ha="center", va="top")
+
     ax.set_xticks(range(len(LADDER)))
     ax.set_xticklabels([lab for _m, lab in LADDER], fontsize=8)
-    ax.set_ylim(0, 0.78)
+    ax.set_ylim(0, 0.95)
     ax.set_yticks([0, 0.2, 0.4, 0.6])
     ax.set_ylabel("grounded − ungrounded citation validity")
-    ax.set_title("(b) The grounding advantage quadruples\nas the model shrinks",
+    ax.set_title("(b) The grounding advantage triples\nas the model shrinks",
                  fontsize=8.6, color=INK, loc="left", pad=8)
 
     fig.tight_layout()
@@ -447,8 +440,11 @@ def figure5() -> Path:
     citation result from reading as a claim about coverage.
     """
     cells = _ladder_cells()
-    panels = [("recall", "(a) Recall vs. gold standard", 0.86),
-              ("f1", "(b) F1", 0.56)]
+    # y-limits sized to the data plus its error bar and value label. The 27B's grounded recall
+    # of 0.905 was clipped by a 0.86 limit carried over from the pre-position run, where grounded
+    # recall never exceeded 0.55.
+    panels = [("recall", "(a) Recall vs. gold standard", 1.12),
+              ("f1", "(b) F1", 0.58)]
     fig, axes = plt.subplots(1, 2, figsize=(9.6, 3.5))
     width = 0.26
     for ax, (metric, title, top) in zip(axes, panels):
@@ -462,10 +458,7 @@ def figure5() -> Path:
                 xs.append(j + (i - 1) * (width + 0.02))
                 means.append(statistics.mean(per))
                 sds.append(statistics.stdev(per) if len(per) > 1 else 0.0)
-            bars = ax.bar(xs, means, width, color=color, label=mode, zorder=3)
-            if mode == "ungrounded":
-                bars[-1].set_hatch("///")
-                bars[-1].set_edgecolor(SURFACE)
+            ax.bar(xs, means, width, color=color, label=mode, zorder=3)
             ax.errorbar(xs, means, yerr=sds, fmt="none", ecolor=INK2, elinewidth=0.8,
                         capsize=1.6, zorder=4)
             for x, m, s in zip(xs, means, sds):
@@ -478,10 +471,7 @@ def figure5() -> Path:
     axes[0].set_ylabel("mean of 5 scenarios (bars = sd)")
     axes[0].legend(frameon=False, fontsize=7.5, loc="lower left", ncols=3,
                    bbox_to_anchor=(0.0, -0.30), handlelength=1.1)
-    axes[1].text(3.0, -0.115, "hatched = 27B refusal row (~5 threats/run), not a usable sample",
-                 fontsize=6.3, color=INK3, ha="center", va="top")
-    fig.suptitle("Grounding buys these models correctness, not coverage: ungrounded leads recall "
-                 "and F1 at 2B\u201309B; at 27B, where it refuses, rag leads",
+    fig.suptitle("Grounded recall rises with model size and leads at every rung; F1 still separates nothing",
                  fontsize=9, color=INK, x=0.005, ha="left", y=1.04)
     fig.tight_layout()
     p = OUT / "fig5_ladder_recall_f1.png"
