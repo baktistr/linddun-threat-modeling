@@ -1138,6 +1138,47 @@ def test_pillar_edge_maps_to_every_parallel_flow():
           "every flow survives the grouping -- none is overwritten by a later one")
 
 
+def test_pillar_abstention_is_not_a_wrong_citation():
+    """PILLAR's grid has a cell per S/fl/D position, and a declined cell is an abstention.
+
+    We reported 0.82 "citation validity" for PILLAR against our own 1.00. That was wrong: the
+    0.18 shortfall is entirely cells PILLAR declined, and a declined id cell always has a
+    declined PROSE cell beside it -- it never wrote a threat it could not cite. The number was
+    measuring coverage while being quoted as validity, against a tool that abstains where ours
+    cannot. Validity on asserted cells is 1.00 in both exports."""
+    print("\n[pillar: a declined cell is an abstention, not an invalid citation]")
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "score_pillar", config.ROOT / "scripts" / "score_pillar.py")
+    sp = importlib.util.module_from_spec(spec); spec.loader.exec_module(sp)
+    valid = sp.load_kb_nodes(); ci = {v.lower(): v for v in valid}
+    ID_KEYS = ("source_id", "data_flow_id", "destination_id")
+    PROSE = {"source_id": "source", "data_flow_id": "data_flow", "destination_id": "destination"}
+    ABSTAIN = {"", "not applicable", "threat not possible", "n/a"}
+
+    for name in ("linddun_pro_full_analysis.json", "linddun_pro_full_analysis_run2.json"):
+        path = config.KB_DIR / "PILLAR" / name
+        if not path.exists():
+            continue
+        entries = json.loads(path.read_text())
+        asserted = fabricated = orphan_prose = 0
+        for e in entries:
+            for k in ID_KEYS:
+                kind = sp.classify_node(e.get(k), valid, ci)
+                if kind == "not_an_id":
+                    if (e.get(PROSE[k]) or "").strip().lower() not in ABSTAIN:
+                        orphan_prose += 1
+                    continue
+                asserted += 1
+                if kind == "unresolvable":
+                    fabricated += 1
+        check(orphan_prose == 0,
+              f"{name}: no cell writes a threat description without an id ({orphan_prose} found)")
+        check(fabricated == 0,
+              f"{name}: every asserted id resolves -- validity on asserted is 1.00, "
+              f"not the coverage figure ({fabricated} fabricated of {asserted})")
+
+
 def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
@@ -1180,6 +1221,7 @@ def main():
     test_concurrency_changes_issue_order_and_nothing_else()
     test_pillar_endpoint_resolution_prefers_the_element_id()
     test_pillar_edge_maps_to_every_parallel_flow()
+    test_pillar_abstention_is_not_a_wrong_citation()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")
     sys.exit(1 if FAIL else 0)
 

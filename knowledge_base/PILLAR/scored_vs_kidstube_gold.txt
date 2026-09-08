@@ -1,6 +1,6 @@
 PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type + same flow)
   export : knowledge_base/PILLAR/linddun_pro_full_analysis.json
-  model  : gpt-4o-mini   [run 1, 2026-07-28. PILLAR's own 14-edge DFD, element names free-form so endpoints resolve by name; all 12 element names match the analyst-authored DFD, what differs is which edges were drawn over them (14 vs 16, 10 shared). Re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5) that replaced the 51-node curated subset -- resolvable rose 0.66 -> 0.82. Re-scored 2026-09-08 after the parallel-flow fix (DF7/DF10 both P3->DS2): TP 22 -> 23.]
+  model  : gpt-4o-mini   [run 1, 2026-07-28. PILLAR's own 14-edge DFD, element names free-form so endpoints resolve by name; all 12 element names match the analyst-authored DFD, what differs is which edges were drawn over them (14 vs 16, 10 shared). Re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5): resolvable 0.66 -> 0.82. Re-scored 2026-09-08 twice more: the parallel-flow fix (DF7/DF10 both P3->DS2) moved TP 22 -> 23, and coverage was split from validity after the run-2 export showed the 0.18 shortfall is abstention, not error.]
   unit   : 105 (edge x category) findings carrying 315 node citations.
            Our unit is one threat per (flow, node) -- counts are NOT directly comparable.
 
@@ -25,14 +25,21 @@ PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type +
     unresolvable                  0  (0.00)
     -> resolvable in our KB     259  (0.82)
 
+  COVERAGE vs VALIDITY (the line above is COVERAGE -- read this before quoting it):
+    cells PILLAR asserted a node in    259 of 315  (0.82)   <- coverage
+    of those, valid in our KB          259 of 259  (1.0000)   <- VALIDITY
+    of those, valid without case-folding  214     (0.8263)   <- under our own exact rule
+    The remainder of the coverage line is abstention, never a wrong answer: every
+    declined id cell has a declined PROSE cell beside it, so PILLAR never wrote a threat
+    it could not cite. Quote the coverage number as coverage.
+
   BY LINDDUN PRO POSITION (the export cites one node per position, so this is the one
   place a per-position rate can be read off a third-party tool at all):
-    S (source)       resolvable  97/105  (0.92)   abstained (no id)   8   fabricated   0
-    fl (data flow)   resolvable  75/105  (0.71)   abstained (no id)  30   fabricated   0
-    D (destination)  resolvable  87/105  (0.83)   abstained (no id)  18   fabricated   0
-    An abstention is PILLAR declining to place the threat at that position ('Not
-    applicable', 'Threat not possible', or empty), not a wrong answer. The flow position
-    is where it declines most -- the same position our own schema could not express
-    until the S/fl/D fix.
+    S (source)       asserted  97/105 (0.92)   valid  97/97 (1.00)   fabricated 0
+    fl (data flow)   asserted  75/105 (0.71)   valid  75/75 (1.00)   fabricated 0
+    D (destination)  asserted  87/105 (0.83)   valid  87/87 (1.00)   fabricated 0
+    Validity is flat across positions; COVERAGE is not. The flow position is the one
+    PILLAR declines most often -- the same position our own schema could not express
+    until the S/fl/D fix. Two tools, two architectures, same hard position.
 
   Our KB holds 65 nodes, max depth 5. A model cannot cite a node it was never given, so 'below our KB's depth' is a limit on OUR coverage, not on PILLAR.

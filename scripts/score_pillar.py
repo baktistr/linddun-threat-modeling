@@ -16,13 +16,18 @@ THREE CONFOUNDS this script measures rather than papers over:
   1. PILLAR analyses ITS OWN DFD. Edges are matched to ours by endpoint NAME; anything with no
      counterpart is reported separately and can never match, whatever its quality. Our flows
      PILLAR never saw are reported too -- they inflate our recall relative to its.
-  2. Node ids use a different case convention (PILLAR "DD.1.1", ours "Dd.1.1"). Case-folded
+  2. ABSTENTION IS NOT ERROR. A declined cell reads "Not applicable" / "Threat not possible" in
+     both the id and the prose column -- PILLAR never writes a threat it cannot cite. So the
+     report gives COVERAGE (cells asserted) and VALIDITY (asserted cells that resolve)
+     separately. Dividing valid citations by all 3n cells measures coverage while looking like
+     validity, and quoting that opposite our own citation validity compares unlike quantities.
+  3. Node ids use a different case convention (PILLAR "DD.1.1", ours "Dd.1.1"). Case-folded
      matches are counted as valid and reported as a separate line, because a casing convention is
      not a fabrication.
-  3. PARALLEL FLOWS. kidstube draws DF7 and DF10 both P3->DS2. An edge-level export cannot say
+  4. PARALLEL FLOWS. kidstube draws DF7 and DF10 both P3->DS2. An edge-level export cannot say
      which it meant, so an edge maps to the SET of flows over that pair and a gold threat on
      either counts. Keying on one id silently dropped whichever flow came second.
-  4. Our threat_trees.json is a CURATED SUBSET (51 nodes, max depth 4). PILLAR cites deeper.
+  5. Our threat_trees.json is a CURATED SUBSET (51 nodes, max depth 4). PILLAR cites deeper.
      A node absent from our KB whose PARENT is present is a gap in our coverage, not a PILLAR
      error, and is counted separately. Reporting those as hallucinations would flatter us.
 
@@ -149,6 +154,15 @@ def main():
 
     by_position = [Counter(classify_node(f["nodes"][i], valid, ci) for f in findings)
                    for i in range(3)]
+    # COVERAGE AND VALIDITY ARE TWO DIFFERENT THINGS, and conflating them flatters us.
+    # PILLAR's UI is a grid: one row per (edge x category), one cell per S/fl/D position, and a
+    # cell it declines reads "Not applicable" / "Threat not possible" in BOTH the id column and
+    # the prose column. That is an analyst's abstention, not a wrong citation. Dividing valid
+    # citations by all 3n cells therefore measures how often PILLAR chose to speak, and reporting
+    # that number opposite our own citation validity compares two unlike quantities.
+    asserted = total_nodes - kinds["not_an_id"]
+    validity_on_asserted = resolvable / asserted if asserted else 0.0
+    exact_on_asserted = kinds["exact"] / asserted if asserted else 0.0
 
     seen_flows = {fid for f in findings for fid in f["flow_ids"]}
     never_seen = sorted({f["id"] for f in dfd["flows"]} - seen_flows,
@@ -188,18 +202,30 @@ def main():
         f"    unresolvable               {kinds['unresolvable']:>4}  ({kinds['unresolvable']/total_nodes:.2f})",
         f"    -> resolvable in our KB    {resolvable:>4}  ({resolvable/total_nodes:.2f})",
         "",
+        "  COVERAGE vs VALIDITY (the line above is COVERAGE -- read this before quoting it):",
+        f"    cells PILLAR asserted a node in   {asserted:>4} of {total_nodes}  "
+        f"({asserted/total_nodes:.2f})   <- coverage",
+        f"    of those, valid in our KB         {resolvable:>4} of {asserted}  "
+        f"({validity_on_asserted:.4f})   <- VALIDITY",
+        f"    of those, valid without case-folding {kinds['exact']:>4}     "
+        f"({exact_on_asserted:.4f})   <- under our own exact rule",
+        "    The remainder of the coverage line is abstention, never a wrong answer: every",
+        "    declined id cell has a declined PROSE cell beside it, so PILLAR never wrote a threat",
+        "    it could not cite. Quote the coverage number as coverage.",
+        "",
         "  BY LINDDUN PRO POSITION (the export cites one node per position, so this is the one",
         "  place a per-position rate can be read off a third-party tool at all):",
     ]
     for label, k in zip(POSITIONS, by_position):
         r = k["exact"] + k["case_only"]
-        L.append(f"    {label:16s} resolvable {r:>3}/{n}  ({r / n:.2f})"
-                 f"   abstained (no id) {k['not_an_id']:>3}   fabricated {k['unresolvable']:>3}")
+        a = n - k["not_an_id"]
+        L.append(f"    {label:16s} asserted {a:>3}/{n} ({a / n:.2f})"
+                 f"   valid {r:>3}/{a} ({r / a if a else 0:.2f})"
+                 f"   fabricated {k['unresolvable']}")
     L += [
-        "    An abstention is PILLAR declining to place the threat at that position ('Not",
-        "    applicable', 'Threat not possible', or empty), not a wrong answer. The flow position",
-        "    is where it declines most -- the same position our own schema could not express",
-        "    until the S/fl/D fix.",
+        "    Validity is flat across positions; COVERAGE is not. The flow position is the one",
+        "    PILLAR declines most often -- the same position our own schema could not express",
+        "    until the S/fl/D fix. Two tools, two architectures, same hard position.",
         "",
         f"  Our KB holds {len(valid)} nodes, max depth "
         f"{max(nid.count('.') for nid in valid) + 1}. A model cannot cite a node it was never "
