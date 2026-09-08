@@ -121,10 +121,10 @@ def figure1() -> Path:
 
     # --- Station 1: inputs ---------------------------------------------------------------
     stage(2, "Stage A — inputs", "adapter required for the lower two only")
-    for y, name, sub in ((45, "Analyst-authored DFD", "supplied as-is; no adapter"),
-                         (31, "Source code", "extract → resolve → synthesize"),
-                         (17, "DFD image", "vision_naive, bbox citations")):
-        box(2, y, 32, 11, name, sub, subfs=6.2)
+    for y, name, sub in ((45, "Analyst authored DFD (JSON)", "supplied as-is; no adapter"),
+                         (31, "Source code", ""),
+                         (17, "DFD image", "")):
+        box(2, y, 32, 11, name, sub, fs=7.4, subfs=6.2)
 
     # --- Station 2: canonical DFD --------------------------------------------------------
     box(41, 27, 29, 24, "Canonical DFD", "elements · flows\nprovenance",
@@ -132,16 +132,15 @@ def figure1() -> Path:
     for y in (50.5, 36.5, 22.5):
         arrow(34, y, 41, 39)
 
-    box(41, 10, 29, 11, "code-fact enrichment", "code facts; structure read-only",
-        fs=7.0, subfs=6.2, lw=0.9)
+    box(41, 10, 29, 11, "Source code enrichment", "", fs=7.4, lw=0.9)
     arrow(55.5, 21, 55.5, 27, ls=(0, (2, 2)))
 
     # --- Station 3: per-flow elicitation --------------------------------------------------
     stage(77, "Stage B — elicitation")
     box(77, 45, 36, 11, "grounded  (proposed)", "exact mapping-table lookup",
         ec=BLUE, lw=1.4)
-    box(77, 31, 36, 11, "rag  (ablation)", "top-k retrieval, same corpus", ec=ORANGE)
-    box(77, 17, 36, 11, "ungrounded  (ablation)", "no methodology context", ec=AQUA)
+    box(77, 31, 36, 11, "rag", "top-k retrieval (BM25 / TF-IDF)", ec=ORANGE, subfs=6.2)
+    box(77, 17, 36, 11, "ungrounded", "pure LLM, no knowledge base", ec=AQUA, subfs=6.2)
     for y in (50.5, 36.5, 22.5):
         arrow(70, 39, 77, y)
     ax.text(95, 4.0, "one forced tool call per flow · temperature 0", fontsize=6.4,
