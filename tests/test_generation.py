@@ -6,6 +6,7 @@ hand-crafted fixture, matching tests/test_kb.py's plain-assert convention.
 Run: PYTHONPATH=. python3 tests/test_generation.py
 """
 from __future__ import annotations
+import os
 import json
 import sys
 
@@ -1179,6 +1180,41 @@ def test_pillar_abstention_is_not_a_wrong_citation():
               f"not the coverage figure ({fabricated} fabricated of {asserted})")
 
 
+def test_dotenv_placeholder_lines_do_not_become_empty_env_vars():
+    """`.env` documents optional settings with bare `KEY=` lines. Exporting those as "" broke
+    OpenAI entirely.
+
+    config.OPENAI_BASE_URL already spells `or None`, so our own code was fine -- but the OpenAI
+    SDK reads OPENAI_BASE_URL from the environment itself and checks presence, not truthiness.
+    An exported "" therefore became a literal base URL and every call died with "Request URL is
+    missing an 'http://' or 'https://' protocol", which reads as a network fault rather than a
+    config one. A blank value in .env means the setting is off, not set to empty."""
+    print("\n[.env: a bare KEY= line means absent, not empty]")
+    import tempfile
+    from pathlib import Path as _Path
+    with tempfile.TemporaryDirectory() as d:
+        env = _Path(d) / ".env"
+        env.write_text("# comment\nSET_ME=value\nBLANK_ONE=\nPADDED=  spaced  \n"
+                       "BLANK_PADDED=   \n")
+        saved = {k: os.environ.get(k) for k in
+                 ("SET_ME", "BLANK_ONE", "PADDED", "BLANK_PADDED")}
+        for k in saved:
+            os.environ.pop(k, None)
+        try:
+            config._load_dotenv(env)
+            check(os.environ.get("SET_ME") == "value", "a real value is exported")
+            check("BLANK_ONE" not in os.environ,
+                  "a bare KEY= line exports nothing, so an SDK reading it sees absence")
+            check("BLANK_PADDED" not in os.environ,
+                  "a whitespace-only value is absent too, not a string of spaces")
+            check(os.environ.get("PADDED") == "spaced", "values are still stripped")
+        finally:
+            for k, v in saved.items():
+                os.environ.pop(k, None)
+                if v is not None:
+                    os.environ[k] = v
+
+
 def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
@@ -1222,6 +1258,7 @@ def main():
     test_pillar_endpoint_resolution_prefers_the_element_id()
     test_pillar_edge_maps_to_every_parallel_flow()
     test_pillar_abstention_is_not_a_wrong_citation()
+    test_dotenv_placeholder_lines_do_not_become_empty_env_vars()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")
     sys.exit(1 if FAIL else 0)
 

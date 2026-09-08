@@ -35,7 +35,15 @@ ROOT = Path(__file__).resolve().parent
 
 def _load_dotenv(path: Path) -> None:
     """Minimal .env loader: KEY=value lines, '#' comments, blank lines skipped. Real shell/CI
-    env vars always win -- this only fills in what isn't already set."""
+    env vars always win -- this only fills in what isn't already set.
+
+    An empty value is treated as ABSENT, not as the empty string. `.env` carries placeholder
+    lines like `OPENAI_BASE_URL=` to document a setting that is off by default, and exporting
+    those as "" is not harmless: vendor SDKs read some of these variables themselves and check
+    for presence rather than truthiness, so OPENAI_BASE_URL="" reached the OpenAI client as a
+    literal base URL and every call failed with "Request URL is missing an 'http://' or
+    'https://' protocol". Our own readers already spell `or None` for this; the SDKs cannot.
+    """
     if not path.exists():
         return
     for line in path.read_text().splitlines():
@@ -44,8 +52,9 @@ def _load_dotenv(path: Path) -> None:
             continue
         key, _, value = line.partition("=")
         key = key.strip()
-        if key and key not in os.environ:
-            os.environ[key] = value.strip()
+        value = value.strip()
+        if key and value and key not in os.environ:
+            os.environ[key] = value
 
 
 _load_dotenv(ROOT / ".env")
