@@ -262,5 +262,53 @@ def build() -> Path:
     return out
 
 
+
+
+
+# --------------------------------------------------------- Key takeaways & future work (1 slide)
+def build_takeaways() -> Path:
+    """One slide, two columns. Separate PDF because it sits later in the deck than the Results
+    run, after the app-deployment slides, so it is imported on its own."""
+    out = OUT / "slides_takeaways.pdf"
+    with PdfPages(out) as pdf:
+        fig, ax = _slide(pdf, "Key Takeaways & Future Work")
+
+        ax.text(0.055, 0.79, "What we found", fontsize=15, color=CMU_RED,
+                fontweight="bold", va="top")
+        _bullets(ax, [
+            ("Verified traceability is achievable, and the closed vocabulary is what achieves "
+             "it: 1.00 citation validity, sd 0.00, across 3,646 threats and three model "
+             "families.", True),
+            ("Grounding is necessary but not sufficient. Qwen3.5-2B fabricated 16 threat-tree "
+             "nodes with the exhaustive menu in its prompt — verification is a real layer.",
+             False),
+            ("A verifier can only check what its schema can express. Ours had two of LINDDUN "
+             "Pro's three positions; frontier models silently coerced the third and still "
+             "scored 1.00.", False),
+            ("Evaluate across model scales — not for generality, but to find your own bugs. "
+             "Only a smaller model's different failure mode exposed the defect.", False),
+        ], x=0.055, y=0.72, width=0.40, fs=12)
+
+        ax.text(0.545, 0.79, "Where it goes next", fontsize=15, color=CMU_RED,
+                fontweight="bold", va="top")
+        _bullets(ax, [
+            ("Human adjudication of false positives — every precision figure here is an "
+             "uncorrected lower bound, because a threat absent from a curated catalog is "
+             "counted as wrong.", False),
+            ("Re-adjudicate the gold with all three positions available: position can currently "
+             "be checked for applicability, not for correctness.", False),
+            ("Semantic retrieval — both retrievers tested are lexical, so vocabulary mismatch "
+             "between scenario prose and LINDDUN's formal wording is still untested.", False),
+            ("Local deployment. A small model on one GPU cites as accurately as a frontier one, "
+             "and a DFD names every field of personal data a system holds.", True),
+        ], x=0.545, y=0.72, width=0.40, fs=12)
+
+        # A rule between the columns, so the two lists read as two lists.
+        ax.plot([0.515, 0.515], [0.105, 0.80], color="#e2e2e2", lw=1.0)
+        pdf.savefig(fig); plt.close(fig)
+    return out
+
+
 if __name__ == "__main__":
     print("wrote", build().relative_to(config.ROOT))
+    print("wrote", build_takeaways().relative_to(config.ROOT))
