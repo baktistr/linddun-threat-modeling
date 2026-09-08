@@ -644,16 +644,23 @@ def figure7() -> Path:
 
     import numpy as np
     data = np.array([v for _l, v, _n in rows])
+    # Colour encodes DEVIATION FROM THE GOLD, not raw share. A sequential ramp on share reads as
+    # "darker is better", which is wrong here in both directions: Dd at 34% is over-production,
+    # Nr at 0% is a failure. Deviation is a polarity, so it takes a diverging map with a neutral
+    # midpoint -- at which a model matches the human analysts. The printed numbers stay absolute,
+    # so the cell still says what the share IS.
+    gold = data[-1]
+    dev = data - gold
 
     fig, ax = plt.subplots(figsize=(8.8, 4.4))
-    vmax = 35.0
-    im = ax.imshow(data, cmap="Blues", vmin=0, vmax=vmax, aspect="auto")
+    lim = 14.0
+    im = ax.imshow(dev, cmap="RdBu", vmin=-lim, vmax=lim, aspect="auto")
 
     for i in range(data.shape[0]):
         for j in range(data.shape[1]):
-            val = data[i, j]
-            # Ink chosen per cell against its own fill, not once for the grid.
-            colour = "#ffffff" if val > vmax * 0.55 else INK
+            val, d = data[i, j], dev[i, j]
+            # Ink chosen per cell against its own fill, at both ends of the diverging ramp.
+            colour = "#ffffff" if abs(d) > lim * 0.62 else INK
             ax.text(j, i, "0" if val == 0 else f"{val:.0f}", ha="center", va="center",
                     fontsize=8.2, color=colour,
                     fontweight="bold" if val == 0 else "normal")
@@ -675,8 +682,11 @@ def figure7() -> Path:
     ax.tick_params(length=0)
     ax.set_xlim(-0.5, len(THREAT_TYPES) + 0.9)
 
-    cb = fig.colorbar(im, ax=ax, fraction=0.028, pad=0.10)
-    cb.set_label("% of that model's grounded threats", fontsize=7.5, color=INK2)
+    cb = fig.colorbar(im, ax=ax, fraction=0.028, pad=0.10,
+                      ticks=[-lim, -lim / 2, 0, lim / 2, lim])
+    cb.ax.set_yticklabels([f"−{lim:.0f}", f"−{lim/2:.0f}", "matches\ngold", f"+{lim/2:.0f}",
+                           f"+{lim:.0f}"])
+    cb.set_label("percentage points vs. the human gold", fontsize=7.5, color=INK2)
     cb.ax.tick_params(labelsize=7, length=0)
     cb.outline.set_visible(False)
 
@@ -686,8 +696,8 @@ def figure7() -> Path:
     # obvious reading is that the cells should add up to n, and they do not -- n is the count the
     # percentages are computed over.
     ax.text(0.0, -0.26,
-            "each cell is a % of that model's own grounded threats, so a row sums to 100%   ·   "
-            "n = threats counted",
+            "number = % of that model's own grounded threats (row sums to 100)   ·   "
+            "colour = deviation from the human gold   ·   n = threats counted",
             transform=ax.transAxes, fontsize=7.0, color=INK3, va="top")
     fig.tight_layout()
     p = OUT / "fig7_threat_type_distribution.png"
