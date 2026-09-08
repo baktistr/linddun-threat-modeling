@@ -680,10 +680,15 @@ def figure7() -> Path:
     cb.ax.tick_params(labelsize=7, length=0)
     cb.outline.set_visible(False)
 
-    ax.set_title("Which LINDDUN categories each model actually elicits\n"
-                 "Non-repudiation and Detecting are systematically under-produced; "
-                 "gpt-4o-mini emits none at all",
-                 fontsize=9.2, color=INK, loc="left", pad=10)
+    ax.set_title("Which LINDDUN categories each model actually elicits",
+                 fontsize=9.8, color=INK, loc="left", pad=10)
+    # Cells are row-normalised, which a reader cannot tell from the grid alone: without this the
+    # obvious reading is that the cells should add up to n, and they do not -- n is the count the
+    # percentages are computed over.
+    ax.text(0.0, -0.26,
+            "each cell is a % of that model's own grounded threats, so a row sums to 100%   ·   "
+            "n = threats counted",
+            transform=ax.transAxes, fontsize=7.0, color=INK3, va="top")
     fig.tight_layout()
     p = OUT / "fig7_threat_type_distribution.png"
     fig.savefig(p, dpi=220, bbox_inches="tight")
