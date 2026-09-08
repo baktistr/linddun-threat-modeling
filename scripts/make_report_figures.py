@@ -75,7 +75,7 @@ def figure1() -> Path:
     """
     fig, ax = plt.subplots(figsize=(9.5, 3.8))
     ax.set_xlim(0, 190)
-    ax.set_ylim(4, 80)
+    ax.set_ylim(-1, 80)
     ax.set_aspect("equal")
     ax.axis("off")
 
@@ -88,12 +88,17 @@ def figure1() -> Path:
             subfs=6.6):
         ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.5,rounding_size=1.6",
                                     fc=fc, ec=ec, lw=lw))
-        t = ax.text(x + w / 2, y + h / 2 + (2.0 if sub else 0), label, ha="center", va="center",
+        n_sub = sub.count("\n") + 1 if sub else 0
+        # Offsets scale with how many lines the subtitle has; a fixed 3.2 put a four-line body
+        # straight through the bold label.
+        up = 0.0 if not sub else (2.0 if n_sub <= 2 else 1.4 * n_sub)
+        down = 3.2 if n_sub <= 2 else 1.4 * n_sub + 1.6
+        t = ax.text(x + w / 2, y + h / 2 + up, label, ha="center", va="center",
                     fontsize=fs, color=INK, fontweight="bold" if bold else "normal")
         fitted.append((t, w))
         if sub:
-            t = ax.text(x + w / 2, y + h / 2 - 3.2, sub, ha="center", va="center",
-                        fontsize=subfs, color=INK2)
+            t = ax.text(x + w / 2, y + h / 2 - down + (0 if n_sub <= 2 else 1.0), sub,
+                        ha="center", va="center", fontsize=subfs, color=INK2)
             fitted.append((t, w))
 
     def arrow(x1, y1, x2, y2, color=INK3, lw=1.1, ls="-"):
@@ -111,8 +116,8 @@ def figure1() -> Path:
     # reads it before generation and the verifier re-derives against it afterwards. The rag
     # arm searches the same corpus, which its own label states, so it takes no separate arrow.
     box(77, 60, 75, 11, "Knowledge base  (curated)",
-        "official LINDDUN threat trees (65 nodes, v241203)  ·  mapping table (Table 4.1)",
-        fc="#f4f1fb", ec=INK3, lw=1.2, bold=True, fs=7.6, subfs=6.2)
+        "threat trees (65 nodes, v241203)  ·  mapping table (Table 4.1: applicable types AND positions)",
+        fc="#f4f1fb", ec=INK3, lw=1.2, bold=True, fs=7.6, subfs=5.9)
 
     # --- Station 1: inputs ---------------------------------------------------------------
     stage(2, "Stage A — inputs", "adapter required for the lower two only")
@@ -139,13 +144,15 @@ def figure1() -> Path:
     box(77, 17, 36, 11, "ungrounded  (ablation)", "no methodology context", ec=AQUA)
     for y in (50.5, 36.5, 22.5):
         arrow(70, 39, 77, y)
-    ax.text(95, 12.0, "one forced tool call per flow", fontsize=6.4, color=INK2, ha="center")
-    ax.text(95, 7.8, "temperature 0", fontsize=6.4, color=INK2, ha="center")
+    ax.text(95, 4.0, "one forced tool call per flow · temperature 0", fontsize=6.4,
+            color=INK2, ha="center")
+    ax.text(95, 0.6, "each threat cites: tree node · position (S / fl / D) · the id naming it",
+            fontsize=6.4, color=INK2, ha="center")
 
     # --- Station 4: verification ----------------------------------------------------------
     stage(120, "Stage C — verification", "no model in the loop")
-    box(120, 27, 32, 24, "verify", "every citation\nre-derived vs. KB:\nnode · type · location",
-        fc="#eafaf3", ec=AQUA, lw=1.4, bold=True, subfs=6.4)
+    box(120, 27, 32, 24, "verify", "every citation re-derived\nvs. KB, no model:\nnode · type\nposition · location",
+        fc="#eafaf3", ec=AQUA, lw=1.4, bold=True, subfs=6.2)
     for y in (50.5, 36.5, 22.5):
         arrow(113, y, 120, 39)
 
@@ -183,10 +190,18 @@ def _shrink_to_fit(fig, ax, items, margin=0.86, floor=4.8) -> None:
 
 
 # ------------------------------------------------------------------ Figure 2: grounding ablation
-def _ablation_cells() -> dict:
+ABLATION_FIGURE_MODEL = "gpt-5.4"
+
+
+def _ablation_cells(model: str = ABLATION_FIGURE_MODEL) -> dict:
+    """Cells for one model. The state file holds three deployments since v3, and Table 2 reports
+    gpt-5.4, so the figure that sits beside it must filter to the same one rather than averaging
+    three models into a single bar."""
     rows = json.loads((config.ROOT / "storage" / "ablation_repeats.json").read_text())
     cells: dict = {}
     for r in rows:
+        if r.get("status", "ok") != "ok" or r.get("model", model) != model:
+            continue
         cells.setdefault((r["scenario"], r["mode"]), []).append(r)
     return cells
 
@@ -229,35 +244,57 @@ def figure2() -> Path:
 
 
 # --------------------------------------------------------- Figure 3: model vs. input modality
+def _condition_recall(condition: str) -> float | None:
+    """Recall from a model-sweep run's own eval report.
+
+    Reads storage/generated/kidstube/<condition>/run1/grounded_eval.txt rather than a summary
+    file, so the figure and Table 5 cannot disagree: both derive from the artifact the run wrote.
+    (v2's version read storage/regen_last.json, which the v3 regeneration does not update.)
+    """
+    import re
+    f = (config.ROOT / "storage" / "generated" / "kidstube" / condition / "run1"
+         / "grounded_eval.txt")
+    if not f.exists():
+        return None
+    m = re.search(r"^ALL\s+\d+\s+\d+\s+\d+\s+[\d.]+\s+([\d.]+)", f.read_text(), re.M)
+    return float(m.group(1)) if m else None
+
+
 def figure3() -> Path:
-    regen = json.loads((config.ROOT / "storage" / "regen_last.json").read_text())
     models = ["gpt-5-4", "gpt-4o-mini", "grok-4-3"]
     label = {"gpt-5-4": "gpt-5.4", "gpt-4o-mini": "gpt-4o-mini", "grok-4-3": "grok-4.3"}
-    inputs = [("dfd_hand", "hand-authored DFD", BLUE), ("image_vision-naive", "image-derived DFD", ORANGE)]
+    inputs = [("dfd_hand", "hand-authored DFD", BLUE),
+              ("image_vision-naive", "image-derived DFD", ORANGE)]
 
-    fig, ax = plt.subplots(figsize=(5.6, 3.4))
+    fig, ax = plt.subplots(figsize=(5.8, 3.4))
     _style(ax)
     width = 0.32
     for i, (key, name, color) in enumerate(inputs):
-        xs = [j + (i - 0.5) * (width + 0.03) for j in range(len(models))]
-        ys = [float(regen[f"{key}_{m}"]["r"]) for m in models]
+        xs, ys = [], []
+        for j, m in enumerate(models):
+            r = _condition_recall(f"{key}_{m}")
+            if r is None:
+                continue
+            xs.append(j + (i - 0.5) * (width + 0.03))
+            ys.append(r)
         ax.bar(xs, ys, width, color=color, label=name, zorder=3)
         for x, y in zip(xs, ys):
             ax.text(x, y + 0.015, f"{y:.2f}", ha="center", va="bottom", fontsize=7, color=INK2)
 
-    hi = float(regen["dfd_hand_gpt-5-4"]["r"])
-    lo = float(regen["dfd_hand_grok-4-3"]["r"])
-    ax.annotate("", xy=(2.62, lo), xytext=(2.62, hi),
-                arrowprops=dict(arrowstyle="<->", color=INK3, lw=0.9))
-    ax.text(2.70, (hi + lo) / 2, f"model\nspread\n{hi - lo:.2f}", fontsize=7, color=INK2,
-            va="center")
+    hi = _condition_recall("dfd_hand_gpt-5-4")
+    lo = _condition_recall("dfd_hand_grok-4-3")
+    if hi is not None and lo is not None:
+        ax.annotate("", xy=(2.62, lo), xytext=(2.62, hi),
+                    arrowprops=dict(arrowstyle="<->", color=INK3, lw=0.9))
+        ax.text(2.70, (hi + lo) / 2, f"model\nspread\n{hi - lo:.2f}", fontsize=7, color=INK2,
+                va="center")
     ax.set_xticks(range(len(models)))
     ax.set_xticklabels([label[m] for m in models], fontsize=8)
     ax.set_xlim(-0.55, 3.15)
-    ax.set_ylim(0, 0.95)
-    ax.set_yticks([0, 0.25, 0.5, 0.75])
+    ax.set_ylim(0, 1.05)
+    ax.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_ylabel("recall vs. KidsTube gold (41 threats)")
-    ax.set_title("Changing the model moves recall by 0.22;\nchanging the input modality moves it by ≤ 0.03",
+    ax.set_title("Changing the model moves recall by 0.32;\nchanging the input modality moves it by \u2264 0.10",
                  fontsize=8.6, color=INK, loc="left", pad=8)
     ax.legend(frameon=False, fontsize=7.5, loc="upper right", handlelength=1.1,
               bbox_to_anchor=(1.02, 1.02))
@@ -266,7 +303,6 @@ def figure3() -> Path:
     fig.savefig(p, dpi=220, bbox_inches="tight")
     plt.close(fig)
     return p
-
 
 
 # --------------------------------------------------- Figure 4: the open-weight model ladder
