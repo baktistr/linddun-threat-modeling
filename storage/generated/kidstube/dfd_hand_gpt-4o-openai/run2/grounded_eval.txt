@@ -1,0 +1,32 @@
+Eval report: scenario=kidstube generated=storage/generated/kidstube/dfd_hand_gpt-4o-openai/run2/grounded.json
+  n_generated=63 n_gold=41 strict_node_match=False
+
+Type Name                 TP   FP   FN      P      R     F1
+L    Linking               3    5    3   0.38   0.50   0.43
+I    Identifying           4   10    1   0.29   0.80   0.42
+Nr   Non-repudiation       0    0    2   0.00   0.00   0.00
+D    Detecting             0    0    2   0.00   0.00   0.00
+Dd   Data Disclosure      10    6    5   0.62   0.67   0.65
+U    Unawareness           2    4    2   0.33   0.50   0.40  *
+Nc   Non-compliance        5   14    2   0.26   0.71   0.38  *
+ALL                       24   39   17   0.38   0.59   0.46
+(* Non-compliance and Unawareness -- flagged as hardest to automate)
+
+Citation correctness (independently verified against the knowledge base, not self-reported):
+  node_valid_rate          1.00
+  type_applicable_rate     1.00
+  location_valid_rate      1.00
+  position_applicable_rate 1.00
+  all_valid_rate           1.00
+  n_position_cited         63
+  n_threats_checked        63
+
+Reachability breakdown (gold threats not matched):
+  reachable_but_missed          17   (real recall failures -- flow valid, no LLM match)
+  structurally_unreachable        0   (flow's element-type pair not in mapping_table.json)
+  unresolved_location             0   (no single flow to anchor to -- can never be matched)
+  recall (raw, vs all gold):        0.59
+  recall (reachable-adjusted):      0.59   (tp / (tp + reachable_but_missed))
+
+Human-corrected precision (gold standards are curated catalogs, not exhaustive -- automated precision above is a conservative lower bound):
+  not available -- run `python cli.py adjudicate --scenario kidstube --generated storage/generated/kidstube/dfd_hand_gpt-4o-openai/run2/grounded.json` to label a sample of the 39 unmatched (FP) threats above as spurious / valid-but-uncatalogued / borderline.
