@@ -19,6 +19,8 @@ report.
 from __future__ import annotations
 
 import json
+import collections
+import glob
 import statistics
 from pathlib import Path
 
@@ -584,6 +586,112 @@ def figure6() -> Path:
     return p
 
 
+
+
+
+# ----------------------------------------- Figure 7: which threat types each model produces
+# Seven categories against eight models is 56 cells, which is a heatmap and not a stacked bar:
+# at that count most segments are too thin to label and the eye cannot compare across rows.
+# Magnitude on a categorical x categorical grid takes a SEQUENTIAL ramp -- one hue, light to dark
+# -- for the same reason Figure 6 does: the categorical palette is spoken for by the three
+# grounding modes, and share-of-output is a magnitude rather than an identity.
+THREAT_TYPES = ["L", "I", "Nr", "D", "Dd", "U", "Nc"]
+# Short glosses, not the full category names: at seven columns the full names collide, and the
+# deck and report both spell them out elsewhere. The code is the label; the gloss is a reminder.
+TYPE_NAMES = {"L": "Linking", "I": "Identify", "Nr": "Non-repud.", "D": "Detecting",
+              "Dd": "Disclosure", "U": "Unaware", "Nc": "Non-compl."}
+
+
+def _type_share(pattern: str):
+    """(share per threat type, n). Counted from the saved threat sets rather than the run rows,
+    because threat_type is a property of each threat and never summarised into the row."""
+    import runs as runs_mod  # noqa: F401  (kept for symmetry with callers below)
+    from generation.generate import load_generated
+    c = collections.Counter()
+    for p in glob.glob(pattern):
+        for t in load_generated(p):
+            c[t.threat_type] += 1
+    n = sum(c.values()) or 1
+    return [100 * c[t] / n for t in THREAT_TYPES], sum(c.values())
+
+
+def _gold_type_share():
+    c = collections.Counter()
+    for sc in SCENARIOS:
+        f = config.KB_DIR / "scenarios" / sc / "gold_standard_threats.json"
+        doc = json.loads(f.read_text())
+        for t in (doc["threats"] if isinstance(doc, dict) else doc):
+            c[t["threat_type"]] += 1
+    n = sum(c.values()) or 1
+    return [100 * c[t] / n for t in THREAT_TYPES], sum(c.values())
+
+
+def figure7() -> Path:
+    """What each model actually elicits, by LINDDUN category, in grounded mode."""
+    import runs as runs_mod
+    rows = []
+    for m, lab in [("gpt-5.4", "gpt-5.4"), ("gpt-4o-mini", "gpt-4o-mini"),
+                   ("grok-4.3", "grok-4.3")]:
+        v, n = _type_share(str(config.ROOT / "storage" / "generated" / "repeats"
+                               / f"{runs_mod.slug(m)}_*_grounded_run*.json"))
+        rows.append((lab, v, n))
+    for m, lab in [("Qwen/Qwen3.5-2B", "Qwen3.5-2B"), ("Qwen/Qwen3.5-4B", "Qwen3.5-4B"),
+                   ("Qwen/Qwen3.5-9B", "Qwen3.5-9B"), ("Qwen/Qwen3.5-27B", "Qwen3.5-27B")]:
+        v, n = _type_share(str(config.ROOT / "storage" / "generated" / "open_models"
+                               / f"{runs_mod.slug(m)}_*_grounded_run*.json"))
+        rows.append((lab, v, n))
+    gv, gn = _gold_type_share()
+    rows.append(("human gold", gv, gn))
+
+    import numpy as np
+    data = np.array([v for _l, v, _n in rows])
+
+    fig, ax = plt.subplots(figsize=(8.8, 4.4))
+    vmax = 35.0
+    im = ax.imshow(data, cmap="Blues", vmin=0, vmax=vmax, aspect="auto")
+
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            val = data[i, j]
+            # Ink chosen per cell against its own fill, not once for the grid.
+            colour = "#ffffff" if val > vmax * 0.55 else INK
+            ax.text(j, i, "0" if val == 0 else f"{val:.0f}", ha="center", va="center",
+                    fontsize=8.2, color=colour,
+                    fontweight="bold" if val == 0 else "normal")
+
+    ax.set_xticks(range(len(THREAT_TYPES)))
+    ax.set_xticklabels([f"{t}\n{TYPE_NAMES[t]}" for t in THREAT_TYPES], fontsize=7.8)
+    ax.set_yticks(range(len(rows)))
+    ax.set_yticklabels([lab for lab, _v, _n in rows], fontsize=8.5)
+    for i, (_l, _v, n) in enumerate(rows):
+        ax.text(len(THREAT_TYPES) - 0.35, i, f"n={n:,}", ha="left", va="center",
+                fontsize=6.6, color=INK3)
+    # The gold is evidence, not another condition.
+    # Spans the grid only: xlim is wider than the data to make room for the n= column, so a
+    # bare axhline would run out past the last cell.
+    x_frac = (len(THREAT_TYPES) - 0.5 + 0.5) / (len(THREAT_TYPES) + 0.9 + 0.5)
+    ax.axhline(len(rows) - 1.5, xmax=x_frac, color=INK3, lw=1.1)
+    for s in ax.spines.values():
+        s.set_visible(False)
+    ax.tick_params(length=0)
+    ax.set_xlim(-0.5, len(THREAT_TYPES) + 0.9)
+
+    cb = fig.colorbar(im, ax=ax, fraction=0.028, pad=0.10)
+    cb.set_label("% of that model's grounded threats", fontsize=7.5, color=INK2)
+    cb.ax.tick_params(labelsize=7, length=0)
+    cb.outline.set_visible(False)
+
+    ax.set_title("Which LINDDUN categories each model actually elicits\n"
+                 "Non-repudiation and Detecting are systematically under-produced; "
+                 "gpt-4o-mini emits none at all",
+                 fontsize=9.2, color=INK, loc="left", pad=10)
+    fig.tight_layout()
+    p = OUT / "fig7_threat_type_distribution.png"
+    fig.savefig(p, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+    return p
+
+
 if __name__ == "__main__":
-    for fn in (figure1, figure2, figure3, figure4, figure5, figure6):
+    for fn in (figure1, figure2, figure3, figure4, figure5, figure6, figure7):
         print("wrote", fn().relative_to(config.ROOT))
