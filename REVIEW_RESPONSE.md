@@ -66,5 +66,5 @@ the empirical confirmation of exactly the concern the reviewer raises.
 | Model spread (recall, same input) | up to 0.22 (0.56–0.78) | same, §1 |
 | Run-to-run variance | ~0.05 recall; 107–115 flows over 5 derivations | §7 + `RESULTS_2026-08-07.md` |
 | Grounded precision range | 0.19–0.40 | regen + sweep tables |
-| PILLAR node ids resolving | 0.82 (0.18 prose/empty), unverified | `knowledge_base/PILLAR/scored_vs_kidstube_gold.txt` (re-scored vs official trees) |
+| PILLAR node ids resolving | 0.82 and 0.84 over two runs (rest prose/empty), unverified; 0 fabricated in either | `knowledge_base/PILLAR/scored_vs_kidstube_gold.txt`, `..._run2.txt` (both vs official trees) |
 | PANOPTIC genomic F1 | 0.08–0.19 (exact sub-activity matching) | `RESULTS_2026-07-21.md` §4 |

@@ -1,21 +1,21 @@
 PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type + same flow)
   export : knowledge_base/PILLAR/linddun_pro_full_analysis.json
-  model  : gpt-4o-mini (per user; export carries no metadata -- same model our side ran, so
-           model capability is controlled in this comparison)   [PILLAR's own 14-edge DFD; re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5) that replaced the 51-node curated subset -- resolvable rose 0.66 -> 0.82, depth-gap and unresolvable both to zero]
+  model  : gpt-4o-mini   [run 1, 2026-07-28. PILLAR's own 14-edge DFD, element names free-form so endpoints resolve by name; all 12 element names match the analyst-authored DFD, what differs is which edges were drawn over them (14 vs 16, 10 shared). Re-scored 2026-08-07 against the official v241203 trees (65 nodes, depth 5) that replaced the 51-node curated subset -- resolvable rose 0.66 -> 0.82. Re-scored 2026-09-08 after the parallel-flow fix (DF7/DF10 both P3->DS2): TP 22 -> 23.]
   unit   : 105 (edge x category) findings carrying 315 node citations.
            Our unit is one threat per (flow, node) -- counts are NOT directly comparable.
 
-  TP 22   FP 83   FN 19
-  precision 0.21   recall 0.54   F1 0.30
+  TP 23   FP 82   FN 18
+  precision 0.22   recall 0.56   F1 0.32
 
-  EDGE-SET MISMATCH (the dominant confound -- SAME elements, all 12 names identical to the
-  analyst-authored DFD; what differs is which edges were drawn over them: 14 vs 16, 10 shared):
+  EDGE-SET MISMATCH (the dominant confound -- PILLAR analyses the DFD drawn in its own
+  editor, so which edges exist is a modelling choice made before either tool ran):
+    endpoint labels resolved {'by name': 210} (id = the label carries our element id, so the name after it may drift)
     findings on edges our DFD does not have : 28 of 105 (can never match, whatever their quality)
       Child Profile Management -> Authentication Service  x7
       Parent User -> File System (backend/uploads/)  x7
       Child User -> Child Profile Management  x7
       Video Management Service -> AI Recommendation Engine  x7
-    our flows PILLAR never analysed        : ['DF4', 'DF5', 'DF7', 'DF11', 'DF12', 'DF13', 'DF17']
+    our flows PILLAR never analysed        : ['DF4', 'DF5', 'DF11', 'DF12', 'DF13', 'DF17']
 
   NODE CITATION VALIDITY (independently re-derived against threat_trees.json):
     exact match in our KB       214  (0.68)
@@ -24,5 +24,15 @@ PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type +
     not an id at all             56  (0.18)   -- empty, or prose in an id field
     unresolvable                  0  (0.00)
     -> resolvable in our KB     259  (0.82)
+
+  BY LINDDUN PRO POSITION (the export cites one node per position, so this is the one
+  place a per-position rate can be read off a third-party tool at all):
+    S (source)       resolvable  97/105  (0.92)   abstained (no id)   8   fabricated   0
+    fl (data flow)   resolvable  75/105  (0.71)   abstained (no id)  30   fabricated   0
+    D (destination)  resolvable  87/105  (0.83)   abstained (no id)  18   fabricated   0
+    An abstention is PILLAR declining to place the threat at that position ('Not
+    applicable', 'Threat not possible', or empty), not a wrong answer. The flow position
+    is where it declines most -- the same position our own schema could not express
+    until the S/fl/D fix.
 
   Our KB holds 65 nodes, max depth 5. A model cannot cite a node it was never given, so 'below our KB's depth' is a limit on OUR coverage, not on PILLAR.

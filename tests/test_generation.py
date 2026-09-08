@@ -1093,6 +1093,51 @@ def test_concurrency_changes_issue_order_and_nothing_else():
           "threats stay in DFD flow order, not completion order")
 
 
+def test_pillar_endpoint_resolution_prefers_the_element_id():
+    """PILLAR run 2 redrew the DFD with our element ids in the labels; run 1 did not.
+
+    The two exports name the same twelve elements differently -- run 1 free-form
+    ("Authentication Service"), run 2 id-prefixed ("P1 Authentication Services", where the name
+    after the id drifts to a plural). Name-only matching maps every run-2 edge to nothing and the
+    comparison silently reports a recall of zero for a DFD the analyst had deliberately aligned.
+    The id, when present, is the authoritative handle."""
+    print("\n[pillar: endpoint labels resolve by element id first, name second]")
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "score_pillar", config.ROOT / "scripts" / "score_pillar.py")
+    sp = importlib.util.module_from_spec(spec); spec.loader.exec_module(sp)
+
+    ids = {"EE1", "P1", "DS1"}
+    by_name = {"Parent User": "EE1", "Authentication Service": "P1"}
+
+    check(sp.resolve_endpoint("P1 Authentication Services", ids, by_name) == "P1",
+          "the id wins even though 'Services' != our 'Service'")
+    check(sp.resolve_endpoint("Authentication Service", ids, by_name) == "P1",
+          "a free-form label still resolves by exact name (run 1 must not regress)")
+    check(sp.resolve_endpoint("Some Unmodelled Thing", ids, by_name) is None,
+          "a label giving neither id nor known name stays unmapped, never guessed")
+    check(sp.resolve_endpoint("DS1 MongoDB - users", ids, by_name) == "DS1",
+          "id-prefixed data stores resolve despite a completely different name")
+
+
+def test_pillar_edge_maps_to_every_parallel_flow():
+    """kidstube draws DF7 and DF10 both P3->DS2, and an edge-level export cannot say which.
+
+    Keying the endpoint map on a single flow id let the second flow overwrite the first, so gold
+    threats on whichever lost were unreachable and PILLAR's recall was understated. The pair maps
+    to a SET; a gold threat on either member counts."""
+    print("\n[pillar: an endpoint pair maps to every flow drawn over it]")
+    dfd = json.loads((config.KB_DIR / "scenarios/kidstube/dfd.json").read_text())
+    pairs = {}
+    for f in dfd["flows"]:
+        pairs.setdefault((f["source"], f["destination"]), set()).add(f["id"])
+    dupes = {k: v for k, v in pairs.items() if len(v) > 1}
+    check(dupes == {("P3", "DS2"): {"DF7", "DF10"}},
+          f"kidstube's one parallel pair is P3->DS2 = DF7+DF10 (found {dupes})")
+    check(sum(len(v) for v in pairs.values()) == len(dfd["flows"]),
+          "every flow survives the grouping -- none is overwritten by a later one")
+
+
 def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
@@ -1133,6 +1178,8 @@ def main():
     test_prompt_stops_teaching_fl_as_an_originator_id()
     test_malformed_threat_is_dropped_and_counted_not_fatal()
     test_concurrency_changes_issue_order_and_nothing_else()
+    test_pillar_endpoint_resolution_prefers_the_element_id()
+    test_pillar_edge_maps_to_every_parallel_flow()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")
     sys.exit(1 if FAIL else 0)
 

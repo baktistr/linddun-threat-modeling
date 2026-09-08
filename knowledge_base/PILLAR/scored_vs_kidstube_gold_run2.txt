@@ -1,0 +1,38 @@
+PILLAR scored against kidstube's gold, using eval/match.py's rule (threat_type + same flow)
+  export : knowledge_base/PILLAR/linddun_pro_full_analysis_run2.json
+  model  : gpt-4o-mini   [run 2, 2026-09-08. DFD REDRAWN in PILLAR's editor with our element ids in the labels (EE1/P1/DS1...), so endpoints resolve by id and the name drift after the id is harmless. 12 edges vs run 1's 14; all 12 are interactions LINDDUN Table 4.1 covers, where run 1 carried an ExternalEntity->DataStore edge the table does not.]
+  unit   : 84 (edge x category) findings carrying 252 node citations.
+           Our unit is one threat per (flow, node) -- counts are NOT directly comparable.
+
+  TP 19   FP 65   FN 22
+  precision 0.23   recall 0.46   F1 0.30
+
+  EDGE-SET MISMATCH (the dominant confound -- PILLAR analyses the DFD drawn in its own
+  editor, so which edges exist is a modelling choice made before either tool ran):
+    endpoint labels resolved {'by id': 168} (id = the label carries our element id, so the name after it may drift)
+    findings on edges our DFD does not have : 28 of 84 (can never match, whatever their quality)
+      P1 Authentication Services -> P3 Child Profile Management  x7
+      P1 Authentication Services -> P2 Video Management Services  x7
+      P3 Child Profile Management -> DS4 filesystem (/uploads)  x7
+      P3 Child Profile Management -> P4 AI Recommendation Engine  x7
+    our flows PILLAR never analysed        : ['DF4', 'DF5', 'DF6', 'DF11', 'DF13', 'DF15', 'DF16', 'DF17']
+
+  NODE CITATION VALIDITY (independently re-derived against threat_trees.json):
+    exact match in our KB       176  (0.70)
+    match after case-folding     36  (0.14)   -- convention (DD.1.1 vs Dd.1.1), not a fabrication
+    below our KB's depth          0  (0.00)   -- parent exists; OUR subset stops shallower
+    not an id at all             40  (0.16)   -- empty, or prose in an id field
+    unresolvable                  0  (0.00)
+    -> resolvable in our KB     212  (0.84)
+
+  BY LINDDUN PRO POSITION (the export cites one node per position, so this is the one
+  place a per-position rate can be read off a third-party tool at all):
+    S (source)       resolvable  81/84  (0.96)   abstained (no id)   3   fabricated   0
+    fl (data flow)   resolvable  59/84  (0.70)   abstained (no id)  25   fabricated   0
+    D (destination)  resolvable  72/84  (0.86)   abstained (no id)  12   fabricated   0
+    An abstention is PILLAR declining to place the threat at that position ('Not
+    applicable', 'Threat not possible', or empty), not a wrong answer. The flow position
+    is where it declines most -- the same position our own schema could not express
+    until the S/fl/D fix.
+
+  Our KB holds 65 nodes, max depth 5. A model cannot cite a node it was never given, so 'below our KB's depth' is a limit on OUR coverage, not on PILLAR.
