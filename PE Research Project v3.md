@@ -301,31 +301,37 @@ The lesson generalises: the model copied the depth of our example into trees tha
 
 ## **3\. Consistency across underlying models**
 
-Table 5 and Figure 3 hold the system constant while varying the model and the input. All conditions use the grounded mode against KidsTube's 41-threat gold standard, with n=1.
+Table 5 and Figure 3 hold the system constant while varying the model and the input. All conditions use the grounded mode against KidsTube's 41-threat gold standard, with n=1. Regenerated for v3 under the three-position schema.
 
-*Table 5\. Three models by three input modalities, grounded mode, KidsTube*.
+*Table 5\. Three models by three input modalities, grounded mode, KidsTube. The S/fl/D column gives the position distribution, which v2 could not measure.*
 
-| Input | Model | Elements | Flows | n\_gen | P | R | F1 | Citation |
-| :---- | ----- | ----: | ----: | ----: | ----: | ----: | ----: | ----: |
-| Analyst DFD (json) | gpt-5.4 | 12 | 17 | 137 | 0.23 | 0.78 | 0.36 | 1.00 |
-| Analyst DFD (json) | gpt-4o-mini | 12 | 17 | 81 | 0.35 | 0.68 | 0.46 | 0.99 |
-| Analyst DFD (json) | grok-4.3 | 12 | 17 | 58 | 0.40 | 0.56 | 0.46 | 1.00 |
-| DFD (image) | gpt-5.4 | 12 | 17 | 135 | 0.23 | 0.76 | 0.35 | 1.00 |
-| DFD (image) | gpt-4o-mini | 11 | 17 | 77 | 0.35 | 0.66 | 0.46 | 1.00 |
-| DFD (image) | grok-4.3 | 12 | 17 | 61 | 0.39 | 0.59 | 0.47 | 1.00 |
-| Source code † | gpt-5.4 | 14 | 36 | 257 | 0.04 | 0.27 | 0.07 | 1.00 |
-| Source code † | gpt-4o-mini | 9 | 13 | 57 | 0.21 | 0.29 | 0.24 | 1.00 |
-| Source code † | grok-4.3 | 13 | 18 | 67 | 0.09 | 0.15 | 0.11 | 1.00 |
+| Input | Model | Elements | Flows | n\_gen | P | R | F1 | Citation | S/fl/D |
+| :---- | ----- | ----: | ----: | ----: | ----: | ----: | ----: | ----: | ----: |
+| Analyst DFD (json) | gpt-5.4 | 12 | 17 | 195 | 0.18 | 0.88 | 0.31 | 1.00 | 66/35/94 |
+| Analyst DFD (json) | gpt-4o-mini | 12 | 17 | 68 | 0.37 | 0.61 | 0.46 | 1.00 | 25/0/43 |
+| Analyst DFD (json) | grok-4.3 | 12 | 17 | 68 | 0.34 | 0.56 | 0.42 | 1.00 | 19/13/36 |
+| DFD (image) | gpt-5.4 | 12 | 17 | 166 | 0.20 | 0.80 | 0.32 | 1.00 | 58/26/82 |
+| DFD (image) | gpt-4o-mini | 9 | 17 | 63 | 0.38 | 0.59 | 0.46 | 1.00 | 24/0/39 |
+| DFD (image) | grok-4.3 | 12 | 17 | 53 | 0.36 | 0.46 | 0.40 | 1.00 | 16/10/27 |
+| Source code † | gpt-5.4 | 13 | 106 | 934 | 0.03 | 0.71 | 0.06 | 1.00 | 267/206/461 |
+| Source code † | gpt-4o-mini | — | — | — | — | — | — | — | *failed, see below* |
+| Source code † | grok-4.3 | 12 | 20 | 69 | 0.13 | 0.22 | 0.16 | 1.00 | 19/17/33 |
 
-† The three source-code rows are not comparable with the other six, nor with one another..
+† The source-code rows are not comparable with the other six, nor with one another: each derives its own DFD, so the denominator differs by row. The gpt-5.4 row derived 106 flows against the hand DFD's 17, which is why its 934 threats yield P 0.03.
+
+**Verified citation validity is 1.00 in all eight completed conditions**, under the stricter v3 rule. The v2 conclusion is unchanged and now rests on regenerated data: changing the model moves recall by 0.32 (gpt-5.4's 0.88 against grok-4.3's 0.56 on the identical DFD), while changing the input modality moves it by at most 0.10 for a given model. Threat volume remains a fixed disposition rather than a response to the input — gpt-5.4 produced 195 and 166 threats from two inputs, grok-4.3 68 and 53 — and high volume continues to buy recall at the cost of precision.
+
+The position column adds something v2 could not see. **gpt-4o-mini emits zero flow-position threats from either DFD input** (0 of 68 and 0 of 63), while gpt-5.4 places 18% and 16% there and grok-4.3 19% and 19%. This is the same collapse reported in § 1a: given the grounded menu, gpt-4o-mini attaches every threat to an element, and it is the only model of the three that does so completely.
+
+**One condition failed and is reported as failed.** The gpt-4o-mini source-code arm could not produce a DFD: at temperature 0 the model enters a decoding loop in the element-citation array, emitting the single fact id `F0d5ee177` repeatedly until the token budget is exhausted. Raising the budget from 8,000 to 16,000 tokens produced 16,000 tokens of the same repetition, so this is a decoding failure rather than a budget one — greedy decoding offers no escape from a self-reinforcing cycle, which is why it appears here and not in the pre-temperature-pin runs of v2. The v2 row for this condition (57 threats, P 0.21, R 0.29) was produced before the sampler was pinned and is not carried forward.
 
 ![][image3]  
 Figure 3\. Holding the DFD constant isolates threat elicitation from DFD derivation. The spread between models is approximately seven times the cost of reading the diagram from an image.
 
 Two summary we can infer from these experiments are : 
 
-- **Changing the model** moves recall by 0.22.  
-- **Changing the input** moves it by 0.03 or less  (inside normal run-to-run noise)
+- **Changing the model** moves recall by 0.32 (v2: 0.22).  
+- **Changing the input** moves it by 0.10 or less, still well inside the model-choice effect.
 
 So model choice matters roughly four to seven times more than whether you hand over a clean DFD or a picture of one. We also note how many threats a model produces is a fixed habit, not a response to the input. gpt-5.4 gave 137 and 135 threats from two different inputs; grok-4.3 gave 58 and 61\. High volume buys recall and costs precision. Low volume does the reverse.
 
@@ -417,7 +423,9 @@ The resulting claim is architectural rather than a performance ranking: PILLAR e
 
 ## **7\. Transfer to a second framework**
 
-To see whether any of this is specific to LINDDUN, we pointed the same pipeline at a different taxonomy, MITRE PANOPTIC, on the NIST genomic scenario, swapping the mapping-table lookup for a PANOPTIC crosswalk. F1 is 0.08–0.19.
+To see whether any of this is specific to LINDDUN, we pointed the same pipeline at a different taxonomy, MITRE PANOPTIC, on the NIST genomic scenario, swapping the mapping-table lookup for a PANOPTIC crosswalk. Regenerated for v3 under the three-position schema, F1 is 0.07–0.17 (grounded 0.17, rag 0.17, ungrounded 0.07), with the grounded arm reaching R 0.24 against the ungrounded arm's 0.13.
+
+The position field transferred as well, which was not guaranteed: PANOPTIC has no Process-mediation gate and no equivalent of Table 4.1, so nothing in that taxonomy constrains where a threat sits. Models nonetheless used all three positions (grounded S 36 / fl 16 / D 126; ungrounded S 39 / fl 73 / D 138), and the same grounded-versus-ungrounded pattern seen in § 1a reappears: the ungrounded arm places 29% of threats at the data flow against the grounded arm's 9%. That the effect survives a change of taxonomy suggests it is a property of supplying an exhaustive element-oriented menu rather than of LINDDUN's particular one.
 
 That number is low by design, not by failure: it requires an exact sub-activity id match against roughly a hundred candidates. A coarser category-level version is the obvious next step.
 

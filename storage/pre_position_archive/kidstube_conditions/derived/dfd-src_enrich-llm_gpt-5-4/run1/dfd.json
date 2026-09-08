@@ -1,0 +1,348 @@
+{
+  "_meta": {
+    "scenario": "KidsTube",
+    "source": "Transcribed from knowledge_base/scenarios/kidstube/system_description.md",
+    "purpose": "Minimal structured DFD (elements + named flows) so per-flow threat generation can anchor to concrete element ids, matching the gold standard's originator_id/interaction fields. Not the general canonical-DFD pivot schema.",
+    "adapter_mode": "hand",
+    "backend": "none",
+    "model": "none",
+    "note": "control condition: the hand DFD verbatim, no adapter. The model named in the condition key generated the THREATS, not this DFD.",
+    "enrichment": {
+      "arm": "enrich_llm",
+      "backend": "azure",
+      "model": "gpt-5.4",
+      "n_flows_enriched": 14,
+      "n_flows": 17,
+      "rejected": []
+    },
+    "condition": "dfd-src_enrich-llm_gpt-5-4",
+    "run": 1,
+    "code": "f322ad2-dirty"
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "Parent User"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "Child User"
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "Third-Party Advertisers"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "Authentication Service"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "Video Management Service"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Child Profile Management"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "AI Recommendation Engine"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "MongoDB users collection"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "MongoDB childprofiles collection"
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "MongoDB videos collection"
+    },
+    {
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "File System (backend/uploads/)"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "Browser localStorage"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "parent registration (email, password, name, govt ID, six-digit code) [code: multipart registration payload includes uploaded file field `profileImage`; backend also queries and then writes a `users` record during this registration path.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F8d4ae4f3",
+          "Fdaf9bef6",
+          "F3ba0724e",
+          "F3aab626f"
+        ],
+        "note": "multipart registration payload includes uploaded file field `profileImage`; backend also queries and then writes a `users` record during this registration path."
+      }
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "store parent account [code: a new `User` document is written into MongoDB `users` collection during registration, after a prior `findOne` lookup on the same collection.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F3aab626f",
+          "Fc8cd7ac9",
+          "F3ba0724e",
+          "Faa937398"
+        ],
+        "note": "a new `User` document is written into MongoDB `users` collection during registration, after a prior `findOne` lookup on the same collection."
+      }
+    },
+    {
+      "id": "DF3",
+      "source": "P1",
+      "destination": "EE1",
+      "description": "JWT + user data to parent"
+    },
+    {
+      "id": "DF4",
+      "source": "EE2",
+      "destination": "P1",
+      "description": "child login (parent email, password) [code: child-login request is handled at `/api/auth/login/child` and causes reads from both `users` and `childprofiles`, so the response is derived from a parent account lookup plus associated child-profile records.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Ffb3a6366",
+          "Fc4a2aad0",
+          "Fe4949aad",
+          "Fa48273c1"
+        ],
+        "note": "child-login request is handled at `/api/auth/login/child` and causes reads from both `users` and `childprofiles`, so the response is derived from a parent account lookup plus associated child-profile records."
+      }
+    },
+    {
+      "id": "DF5",
+      "source": "P1",
+      "destination": "EE2",
+      "description": "JWT (userType child) + child profiles [code: child-login response is backed by data read from `users` and `childprofiles`; role handling distinguishes child login path from parent-only checks used elsewhere.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F5633d31c",
+          "Fe4949aad",
+          "Fa48273c1"
+        ],
+        "note": "child-login response is backed by data read from `users` and `childprofiles`; role handling distinguishes child login path from parent-only checks used elsewhere."
+      }
+    },
+    {
+      "id": "DF6",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "child profile creation (name, DOB, gender, govt ID) [code: child-profile create/update requests are multipart and can include uploaded file field `idImage`; requests also carry path parameter `:id` on update operations.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F80b239a4",
+          "F2a689d58",
+          "F223c594b",
+          "F84f561a1"
+        ],
+        "note": "child-profile create/update requests are multipart and can include uploaded file field `idImage`; requests also carry path parameter `:id` on update operations."
+      }
+    },
+    {
+      "id": "DF7",
+      "source": "P3",
+      "destination": "DS2",
+      "description": "store/update child profile [code: child profile records are persisted as `ChildProfile` documents in MongoDB `childprofiles` collection, both on create and update after reading an existing profile for `findOne`-based edits.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Fca086277",
+          "F21e7f313",
+          "F92025df8",
+          "F95ba95fb",
+          "Fde6dd13b"
+        ],
+        "note": "child profile records are persisted as `ChildProfile` documents in MongoDB `childprofiles` collection, both on create and update after reading an existing profile for `findOne`-based edits."
+      }
+    },
+    {
+      "id": "DF8",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "video search, request, like, comment [code: child-facing video interactions include POST `/subprofiles/request-video`, POST `/subprofiles/search-history`, POST `/subprofiles/watch-history`, and video POSTs to `/:id/like` and `/:id/comments`; these operations reference video identifiers via route params (`:id`) and read target `Video` records by `findById`/`findOne`.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F5a99290c",
+          "F4fb6e62f",
+          "Ff45b51b8",
+          "F132b1b1a",
+          "Fecf97666",
+          "Fb92d7f70",
+          "F9122e3a8",
+          "F4d7c9153",
+          "F028be292",
+          "Fbd4c9fbb"
+        ],
+        "note": "child-facing video interactions include POST `/subprofiles/request-video`, POST `/subprofiles/search-history`, POST `/subprofiles/watch-history`, and video POSTs to `/:id/like` and `/:id/comments`; these operations reference video identifiers via route params (`:id`) and read target `Video` records by `findById`/`findOne`."
+      }
+    },
+    {
+      "id": "DF9",
+      "source": "P2",
+      "destination": "DS3",
+      "description": "store/retrieve video metadata and files (DS3+DS4 combined in source description) [code: video handling writes uploaded file field `video` to backend uploads storage and writes/reads `Video` documents in MongoDB `videos` collection via save/find/findOne/findById/count/aggregate/populate operations.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F15c5b0f0",
+          "F01760fba",
+          "F9336e362",
+          "F68f85ebc",
+          "Ff1c8533c",
+          "F9122e3a8",
+          "F4d7c9153",
+          "F944a7ff8",
+          "F2ab27d74",
+          "F0d9fb39b"
+        ],
+        "note": "video handling writes uploaded file field `video` to backend uploads storage and writes/reads `Video` documents in MongoDB `videos` collection via save/find/findOne/findById/count/aggregate/populate operations."
+      }
+    },
+    {
+      "id": "DF10",
+      "source": "P3",
+      "destination": "DS2",
+      "description": "store child search and watch history [code: child profile history storage is implemented as writes back to `ChildProfile` documents after reading the target profile; the affected history-related endpoints are `/subprofiles/search-history`, `/subprofiles/watch-history`, and parent-side clear operations on `/:id/search-history` and `/:id/watch-history`.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F55e6dc79",
+          "Faad34d83",
+          "Ff995dbe0",
+          "F329d07f6",
+          "F5e4e9878",
+          "Fd65c09fb",
+          "F509e44f7",
+          "F3005bc0f"
+        ],
+        "note": "child profile history storage is implemented as writes back to `ChildProfile` documents after reading the target profile; the affected history-related endpoints are `/subprofiles/search-history`, `/subprofiles/watch-history`, and parent-side clear operations on `/:id/search-history` and `/:id/watch-history`."
+      }
+    },
+    {
+      "id": "DF11",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "video upload, approval/rejection [code: parent video actions include multipart upload with file field `video`, plus approval endpoint carrying both child-profile id and video id path parameters (`/:id/approve-video/:videoId`) and deletion of approved-video entries (`/:id/approved-video/:videoId`).]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F9dd647e9",
+          "F15c5b0f0",
+          "F1ae427eb",
+          "Ff92c5144"
+        ],
+        "note": "parent video actions include multipart upload with file field `video`, plus approval endpoint carrying both child-profile id and video id path parameters (`/:id/approve-video/:videoId`) and deletion of approved-video entries (`/:id/approved-video/:videoId`)."
+      }
+    },
+    {
+      "id": "DF12",
+      "source": "P2",
+      "destination": "EE2",
+      "description": "stream approved video to child [code: video delivery to children uses GET `/videos/stream/:filename`; approved-video retrieval for child users separately reads `childprofiles` on `/subprofiles/approved-videos`, tying streaming to child-approved content selection.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F53c8c68e",
+          "F6c712160",
+          "Fedc019a1"
+        ],
+        "note": "video delivery to children uses GET `/videos/stream/:filename`; approved-video retrieval for child users separately reads `childprofiles` on `/subprofiles/approved-videos`, tying streaming to child-approved content selection."
+      }
+    },
+    {
+      "id": "DF13",
+      "source": "DS2",
+      "destination": "P4",
+      "description": "child browsing data to AI engine (planned)"
+    },
+    {
+      "id": "DF14",
+      "source": "P4",
+      "destination": "EE3",
+      "description": "browsing data to advertisers (planned)"
+    },
+    {
+      "id": "DF15",
+      "source": "P1",
+      "destination": "DS4",
+      "description": "store government ID images [code: government-ID image uploads use multer disk storage under backend image-upload paths; registration specifically accepts uploaded field `profileImage`, and child-profile create/update accept uploaded field `idImage`.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Fdaf9bef6",
+          "F2a689d58",
+          "F84f561a1",
+          "F29833cdd",
+          "F58d4e79a",
+          "F604cae92"
+        ],
+        "note": "government-ID image uploads use multer disk storage under backend image-upload paths; registration specifically accepts uploaded field `profileImage`, and child-profile create/update accept uploaded field `idImage`."
+      }
+    },
+    {
+      "id": "DF16",
+      "source": "P1",
+      "destination": "DS5",
+      "description": "JWT stored in localStorage [code: browser localStorage stores keys `token` and `user`; token reads also occur when configuring API requests, evidencing JWT persistence and reuse in the browser.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F809bd225",
+          "F30746500",
+          "Ff2a154ff",
+          "F6e4bbb32",
+          "F56d87323",
+          "Ff846b350"
+        ],
+        "note": "browser localStorage stores keys `token` and `user`; token reads also occur when configuring API requests, evidencing JWT persistence and reuse in the browser."
+      }
+    },
+    {
+      "id": "DF17",
+      "source": "P3",
+      "destination": "EE1",
+      "description": "child history retrieved for parent review [code: parent review of child history is served from GET `/api/subprofiles/{id}/history`, which reads a single `ChildProfile` document after a parent-role check.]",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Fc3a94f3a",
+          "F8cf23371",
+          "Fbfa2a9ef",
+          "F36d3ccac",
+          "Fea939c7d"
+        ],
+        "note": "parent review of child history is served from GET `/api/subprofiles/{id}/history`, which reads a single `ChildProfile` document after a parent-role check."
+      }
+    }
+  ]
+}

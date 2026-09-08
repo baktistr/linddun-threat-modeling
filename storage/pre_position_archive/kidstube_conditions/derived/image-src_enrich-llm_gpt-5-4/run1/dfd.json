@@ -1,0 +1,821 @@
+{
+  "_meta": {
+    "scenario": "kidstube (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "gpt-5.4",
+    "image_size": [
+      2081,
+      1724
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "enrichment": {
+      "arm": "enrich_llm",
+      "backend": "azure",
+      "model": "gpt-5.4",
+      "n_flows_enriched": 15,
+      "n_flows": 17,
+      "rejected": []
+    },
+    "condition": "image-src_enrich-llm_gpt-5-4",
+    "run": 1,
+    "code": "f322ad2-dirty"
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "Parent User",
+      "provenance": [
+        {
+          "bbox": [
+            42,
+            157,
+            77,
+            31
+          ],
+          "label_text": "Parent User"
+        }
+      ],
+      "rationale": "Rectangle labeled 'Parent User' indicates an external actor outside the system boundary.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "Child User",
+      "provenance": [
+        {
+          "bbox": [
+            44,
+            492,
+            82,
+            30
+          ],
+          "label_text": "Child User"
+        }
+      ],
+      "rationale": "Rectangle labeled 'Child User' indicates another external actor.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "Third-Party Advertisers",
+      "provenance": [
+        {
+          "bbox": [
+            775,
+            452,
+            143,
+            30
+          ],
+          "label_text": "Third-Party Advertisers"
+        }
+      ],
+      "rationale": "Rectangle labeled 'Third-Party Advertisers' denotes an outside party interacting with the system.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "Authentication Service",
+      "provenance": [
+        {
+          "bbox": [
+            176,
+            219,
+            174,
+            40
+          ],
+          "label_text": "Authentication Service"
+        }
+      ],
+      "rationale": "Ellipse labeled 'Authentication Service' is a process in standard DFD notation.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "Child Profile Management",
+      "provenance": [
+        {
+          "bbox": [
+            170,
+            371,
+            188,
+            37
+          ],
+          "label_text": "Child Profile Management"
+        }
+      ],
+      "rationale": "Ellipse labeled 'Child Profile Management' indicates a processing component.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Video Management Service",
+      "provenance": [
+        {
+          "bbox": [
+            170,
+            571,
+            187,
+            37
+          ],
+          "label_text": "Video Management Service"
+        }
+      ],
+      "rationale": "Ellipse labeled 'Video Management Service' indicates a process handling video-related operations.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "AI Recommendation Engine",
+      "provenance": [
+        {
+          "bbox": [
+            569,
+            449,
+            188,
+            37
+          ],
+          "label_text": "AI Recommendation Engine"
+        }
+      ],
+      "rationale": "Ellipse labeled 'AI Recommendation Engine' is a process node.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "MongoDB users collection",
+      "provenance": [
+        {
+          "bbox": [
+            188,
+            77,
+            150,
+            27
+          ],
+          "label_text": "MongoDB users collection"
+        }
+      ],
+      "rationale": "Open-topped bar shape labeled 'MongoDB users collection' denotes a data store.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "File System (backend/uploads/)",
+      "provenance": [
+        {
+          "bbox": [
+            339,
+            176,
+            182,
+            28
+          ],
+          "label_text": "File System (backend/uploads/)"
+        }
+      ],
+      "rationale": "Open-topped bar shape labeled 'File System (backend/uploads/)' denotes persistent storage.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "Browser localStorage",
+      "provenance": [
+        {
+          "bbox": [
+            367,
+            299,
+            127,
+            28
+          ],
+          "label_text": "Browser localStorage"
+        }
+      ],
+      "rationale": "Open-topped bar shape labeled 'Browser localStorage' denotes client-side storage.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "MongoDB childprofiles collection",
+      "provenance": [
+        {
+          "bbox": [
+            334,
+            451,
+            193,
+            29
+          ],
+          "label_text": "MongoDB childprofiles collection"
+        }
+      ],
+      "rationale": "Open-topped bar shape labeled 'MongoDB childprofiles collection' denotes a data store.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "MongoDB videos collection",
+      "provenance": [
+        {
+          "bbox": [
+            353,
+            645,
+            155,
+            26
+          ],
+          "label_text": "MongoDB videos collection"
+        }
+      ],
+      "rationale": "Open-topped bar shape labeled 'MongoDB videos collection' denotes a data store.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "register [code: Registration request reaches POST /api/auth/register as multipart form data with an uploaded file field named profileImage.]",
+      "provenance": [
+        {
+          "bbox": [
+            91,
+            174,
+            76,
+            19
+          ],
+          "label_text": "DF1: register"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Fb88d5db7",
+          "F8d4ae4f3",
+          "Fdaf9bef6"
+        ],
+        "note": "Registration request reaches POST /api/auth/register as multipart form data with an uploaded file field named profileImage."
+      }
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "store account [code: New account record is written to the users collection during the register flow.]",
+      "provenance": [
+        {
+          "bbox": [
+            215,
+            157,
+            89,
+            18
+          ],
+          "label_text": "DF2: store account"
+        },
+        {
+          "bbox": [
+            188,
+            77,
+            151,
+            26
+          ],
+          "label_text": "MongoDB users collection"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F8d4ae4f3",
+          "F3aab626f",
+          "Fc8cd7ac9"
+        ],
+        "note": "New account record is written to the users collection during the register flow."
+      }
+    },
+    {
+      "id": "DF3",
+      "source": "P1",
+      "destination": "EE1",
+      "description": "JWT + data [code: Login/auth session data returned to the browser is subsequently persisted under localStorage keys token and user.]",
+      "provenance": [
+        {
+          "bbox": [
+            179,
+            202,
+            78,
+            18
+          ],
+          "label_text": "DF3: JWT + data"
+        },
+        {
+          "bbox": [
+            41,
+            158,
+            77,
+            28
+          ],
+          "label_text": "Parent User"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F809bd225",
+          "F74596479",
+          "F30746500",
+          "F59b51844",
+          "Ff2a154ff",
+          "F1608ffcf",
+          "F6e4bbb32",
+          "F0f321140"
+        ],
+        "note": "Login/auth session data returned to the browser is subsequently persisted under localStorage keys token and user."
+      }
+    },
+    {
+      "id": "DF4",
+      "source": "P1",
+      "destination": "P2",
+      "description": "child login [code: Child login is a POST to /api/auth/login/child that triggers reads from both the users collection and the childprofiles collection.]",
+      "provenance": [
+        {
+          "bbox": [
+            121,
+            376,
+            64,
+            18
+          ],
+          "label_text": "DF4: child login"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Fc4a2aad0",
+          "F5633d31c",
+          "Fe4949aad",
+          "Fa48273c1"
+        ],
+        "note": "Child login is a POST to /api/auth/login/child that triggers reads from both the users collection and the childprofiles collection."
+      }
+    },
+    {
+      "id": "DF5",
+      "source": "P2",
+      "destination": "EE2",
+      "description": "JWT + profiles [code: Child login response data persisted in the browser includes a token plus a serialized user object in localStorage keys token and user.]",
+      "provenance": [
+        {
+          "bbox": [
+            90,
+            418,
+            80,
+            18
+          ],
+          "label_text": "DF5: JWT + profiles"
+        },
+        {
+          "bbox": [
+            44,
+            491,
+            72,
+            30
+          ],
+          "label_text": "Child User"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Ff2a154ff",
+          "F1608ffcf"
+        ],
+        "note": "Child login response data persisted in the browser includes a token plus a serialized user object in localStorage keys token and user."
+      }
+    },
+    {
+      "id": "DF6",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "create child profile [code: Create-child-profile request is sent to POST /api/subprofiles as multipart form data with uploaded file field idImage.]",
+      "provenance": [
+        {
+          "bbox": [
+            84,
+            208,
+            102,
+            17
+          ],
+          "label_text": "DF6: create child profile"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Ff0949e6d",
+          "F80b239a4",
+          "F2a689d58"
+        ],
+        "note": "Create-child-profile request is sent to POST /api/subprofiles as multipart form data with uploaded file field idImage."
+      }
+    },
+    {
+      "id": "DF7",
+      "source": "P2",
+      "destination": "DS4",
+      "description": "store profile [code: A child profile record is saved to the childprofiles collection during child-profile creation.]",
+      "provenance": [
+        {
+          "bbox": [
+            301,
+            406,
+            69,
+            18
+          ],
+          "label_text": "DF7: store profile"
+        },
+        {
+          "bbox": [
+            334,
+            450,
+            194,
+            30
+          ],
+          "label_text": "MongoDB childprofiles collection"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F80b239a4",
+          "Fca086277",
+          "F21e7f313"
+        ],
+        "note": "A child profile record is saved to the childprofiles collection during child-profile creation."
+      }
+    },
+    {
+      "id": "DF8",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "search / watch / like [code: Child-driven child-profile updates include request-video, search-history, and watch-history POSTs under /api/subprofiles; these cause reads of video records and/or child profile records.]",
+      "provenance": [
+        {
+          "bbox": [
+            88,
+            522,
+            105,
+            18
+          ],
+          "label_text": "DF8: search / watch / like"
+        },
+        {
+          "bbox": [
+            170,
+            569,
+            188,
+            41
+          ],
+          "label_text": "Video Management Service"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F4fb6e62f",
+          "F7a93d535",
+          "F9122e3a8",
+          "F0e9317c7",
+          "F26eb09d0",
+          "Fff57675c",
+          "F859b9e06",
+          "F4d7c9153"
+        ],
+        "note": "Child-driven child-profile updates include request-video, search-history, and watch-history POSTs under /api/subprofiles; these cause reads of video records and/or child profile records."
+      }
+    },
+    {
+      "id": "DF9",
+      "source": "P3",
+      "destination": "DS5",
+      "description": "video metadata + files [code: Video data written by the service includes uploaded multipart file field video to backend/uploads plus a saved record in the videos collection; later updates also save video documents.]",
+      "provenance": [
+        {
+          "bbox": [
+            296,
+            620,
+            118,
+            17
+          ],
+          "label_text": "DF9: video metadata + files"
+        },
+        {
+          "bbox": [
+            354,
+            644,
+            156,
+            27
+          ],
+          "label_text": "MongoDB videos collection"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F9dd647e9",
+          "F15c5b0f0",
+          "F01760fba",
+          "F9336e362",
+          "Fdbc1f000",
+          "F6502f67e",
+          "Fa0adff3d"
+        ],
+        "note": "Video data written by the service includes uploaded multipart file field video to backend/uploads plus a saved record in the videos collection; later updates also save video documents."
+      }
+    },
+    {
+      "id": "DF10",
+      "source": "P2",
+      "destination": "DS4",
+      "description": "watch history [code: Watch-history updates are stored by saving the child's profile document in the childprofiles collection after the /api/subprofiles/watch-history request.]",
+      "provenance": [
+        {
+          "bbox": [
+            296,
+            450,
+            71,
+            17
+          ],
+          "label_text": "DF10: watch history"
+        },
+        {
+          "bbox": [
+            334,
+            450,
+            194,
+            30
+          ],
+          "label_text": "MongoDB childprofiles collection"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F859b9e06",
+          "F329d07f6",
+          "F479a697b"
+        ],
+        "note": "Watch-history updates are stored by saving the child's profile document in the childprofiles collection after the /api/subprofiles/watch-history request."
+      }
+    },
+    {
+      "id": "DF11",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "upload video [code: Video upload request is POST /api/videos/upload with multipart file field video.]",
+      "provenance": [
+        {
+          "bbox": [
+            174,
+            525,
+            77,
+            17
+          ],
+          "label_text": "DF11: upload video"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "Fbc99b862",
+          "F9dd647e9",
+          "F15c5b0f0"
+        ],
+        "note": "Video upload request is POST /api/videos/upload with multipart file field video."
+      }
+    },
+    {
+      "id": "DF12",
+      "source": "P3",
+      "destination": "EE2",
+      "description": "stream video [code: Video streaming is served from GET /api/videos/stream/:filename, with uploaded media exposed from the /uploads static mount backed by backend/uploads.]",
+      "provenance": [
+        {
+          "bbox": [
+            128,
+            541,
+            74,
+            18
+          ],
+          "label_text": "DF12: stream video"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F53c8c68e",
+          "Fb7226fa8",
+          "F0db67b76"
+        ],
+        "note": "Video streaming is served from GET /api/videos/stream/:filename, with uploaded media exposed from the /uploads static mount backed by backend/uploads."
+      }
+    },
+    {
+      "id": "DF13",
+      "source": "DS4",
+      "destination": "P4",
+      "description": "browsing data",
+      "provenance": [
+        {
+          "bbox": [
+            507,
+            446,
+            79,
+            18
+          ],
+          "label_text": "DF13: browsing data"
+        },
+        {
+          "bbox": [
+            571,
+            452,
+            186,
+            35
+          ],
+          "label_text": "AI Recommendation Engine"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF14",
+      "source": "P4",
+      "destination": "EE3",
+      "description": "browsing data (planned)",
+      "provenance": [
+        {
+          "bbox": [
+            698,
+            436,
+            140,
+            18
+          ],
+          "label_text": "DF14: browsing data (planned)"
+        },
+        {
+          "bbox": [
+            776,
+            452,
+            143,
+            30
+          ],
+          "label_text": "Third-Party Advertisers"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF15",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "govt ID image [code: Registration uploads an image file under form field profileImage, and the image-upload middleware writes it into backend/uploads/images.]",
+      "provenance": [
+        {
+          "bbox": [
+            302,
+            199,
+            92,
+            18
+          ],
+          "label_text": "DF15: govt ID image"
+        },
+        {
+          "bbox": [
+            338,
+            176,
+            183,
+            28
+          ],
+          "label_text": "File System (backend/uploads/)"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F8d4ae4f3",
+          "Fdaf9bef6",
+          "F29833cdd",
+          "F58d4e79a"
+        ],
+        "note": "Registration uploads an image file under form field profileImage, and the image-upload middleware writes it into backend/uploads/images."
+      }
+    },
+    {
+      "id": "DF16",
+      "source": "P1",
+      "destination": "DS3",
+      "description": "JWT in localStorage [code: Authentication state persisted in browser storage uses localStorage keys token and user; the API client later reads token from localStorage.]",
+      "provenance": [
+        {
+          "bbox": [
+            291,
+            281,
+            100,
+            18
+          ],
+          "label_text": "DF16: JWT in localStorage"
+        },
+        {
+          "bbox": [
+            367,
+            299,
+            127,
+            29
+          ],
+          "label_text": "Browser localStorage"
+        }
+      ],
+      "confidence": "high",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F809bd225",
+          "F74596479",
+          "Ff846b350",
+          "F56d87323"
+        ],
+        "note": "Authentication state persisted in browser storage uses localStorage keys token and user; the API client later reads token from localStorage."
+      }
+    },
+    {
+      "id": "DF17",
+      "source": "P2",
+      "destination": "EE1",
+      "description": "history to parent [code: Parent-facing child history retrieval is GET /api/subprofiles/{childId}/history and reads a child profile document from the childprofiles collection.]",
+      "provenance": [
+        {
+          "bbox": [
+            92,
+            230,
+            103,
+            17
+          ],
+          "label_text": "DF17: history to parent"
+        },
+        {
+          "bbox": [
+            41,
+            158,
+            77,
+            28
+          ],
+          "label_text": "Parent User"
+        },
+        {
+          "bbox": [
+            171,
+            370,
+            187,
+            39
+          ],
+          "label_text": "Child Profile Management"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "The DF17 label sits near overlapping arrows between Parent User, Authentication Service, and Child Profile Management. The arrowhead appears at Parent User, indicating flow from Child Profile Management to Parent User.",
+      "enrichment": {
+        "arm": "enrich_llm",
+        "fact_ids": [
+          "F8cf23371",
+          "Fcaf6808f",
+          "Fbfa2a9ef",
+          "F36d3ccac"
+        ],
+        "note": "Parent-facing child history retrieval is GET /api/subprofiles/{childId}/history and reads a child profile document from the childprofiles collection."
+      }
+    }
+  ]
+}

@@ -1,0 +1,543 @@
+{
+  "_meta": {
+    "scenario": "kidstube (derived from image, vision_naive)",
+    "adapter_mode": "vision_naive",
+    "backend": "azure",
+    "model": "grok-4.3",
+    "image_size": [
+      2081,
+      1724
+    ],
+    "rejected_elements": [],
+    "rejected_flows": [],
+    "condition": "image_vision-naive_grok-4-3",
+    "run": 1
+  },
+  "elements": [
+    {
+      "id": "EE1",
+      "type": "ExternalEntity",
+      "name": "Parent User",
+      "provenance": [
+        {
+          "bbox": [
+            80,
+            180,
+            180,
+            70
+          ],
+          "label_text": "Parent User"
+        }
+      ],
+      "rationale": "Rectangle shape labeled 'Parent User' is an external actor outside the system boundary.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE2",
+      "type": "ExternalEntity",
+      "name": "Child User",
+      "provenance": [
+        {
+          "bbox": [
+            70,
+            560,
+            170,
+            70
+          ],
+          "label_text": "Child User"
+        }
+      ],
+      "rationale": "Rectangle shape labeled 'Child User' represents an external actor.",
+      "confidence": "high"
+    },
+    {
+      "id": "EE3",
+      "type": "ExternalEntity",
+      "name": "Third-Party Advertisers",
+      "provenance": [
+        {
+          "bbox": [
+            1720,
+            430,
+            280,
+            60
+          ],
+          "label_text": "Third-Party Advertisers"
+        }
+      ],
+      "rationale": "Rectangle on the right side labeled 'Third-Party Advertisers' is drawn as external entity.",
+      "confidence": "high"
+    },
+    {
+      "id": "P1",
+      "type": "Process",
+      "name": "Authentication Service",
+      "provenance": [
+        {
+          "bbox": [
+            520,
+            290,
+            320,
+            90
+          ],
+          "label_text": "Authentication Service"
+        }
+      ],
+      "rationale": "Ellipse shape labeled 'Authentication Service' indicates a process that handles authentication data flows.",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "type": "Process",
+      "name": "Child Profile Management",
+      "provenance": [
+        {
+          "bbox": [
+            400,
+            440,
+            340,
+            85
+          ],
+          "label_text": "Child Profile Management"
+        }
+      ],
+      "rationale": "Ellipse labeled 'Child Profile Management' is a process component.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Video Management Service",
+      "provenance": [
+        {
+          "bbox": [
+            340,
+            690,
+            360,
+            85
+          ],
+          "label_text": "Video Management Service"
+        }
+      ],
+      "rationale": "Ellipse shape labeled 'Video Management Service' transforms video data.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "type": "Process",
+      "name": "AI Recommendation Engine",
+      "provenance": [
+        {
+          "bbox": [
+            1280,
+            430,
+            310,
+            85
+          ],
+          "label_text": "AI Recommendation Engine"
+        }
+      ],
+      "rationale": "Ellipse on the right labeled 'AI Recommendation Engine' is a process.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "MongoDB users collection",
+      "provenance": [
+        {
+          "bbox": [
+            620,
+            110,
+            420,
+            55
+          ],
+          "label_text": "MongoDB users collection"
+        }
+      ],
+      "rationale": "Open-topped bar (yellow) labeled 'MongoDB users collection' is a data store.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "File System (backend/uploads/)",
+      "provenance": [
+        {
+          "bbox": [
+            1050,
+            190,
+            430,
+            55
+          ],
+          "label_text": "File System (backend/uploads/)"
+        }
+      ],
+      "rationale": "Open bar labeled 'File System (backend/uploads/)' stores uploaded files like gov ID images.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "Browser localStorage",
+      "provenance": [
+        {
+          "bbox": [
+            1050,
+            370,
+            300,
+            50
+          ],
+          "label_text": "Browser localStorage"
+        }
+      ],
+      "rationale": "Open-topped bar labeled 'Browser localStorage' holds JWT data.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "MongoDB childprofiles collection",
+      "provenance": [
+        {
+          "bbox": [
+            650,
+            500,
+            420,
+            55
+          ],
+          "label_text": "MongoDB childprofiles collection"
+        }
+      ],
+      "rationale": "Yellow open bar labeled 'MongoDB childprofiles collection' is a persistent data store.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "MongoDB videos collection",
+      "provenance": [
+        {
+          "bbox": [
+            550,
+            850,
+            420,
+            55
+          ],
+          "label_text": "MongoDB videos collection"
+        }
+      ],
+      "rationale": "Open bar labeled 'MongoDB videos collection' stores video metadata and files.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "register",
+      "provenance": [
+        {
+          "bbox": [
+            180,
+            310,
+            90,
+            18
+          ],
+          "label_text": "DF1: register"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "store account",
+      "provenance": [
+        {
+          "bbox": [
+            520,
+            280,
+            100,
+            18
+          ],
+          "label_text": "DF2: store account"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF3",
+      "source": "P1",
+      "destination": "EE1",
+      "description": "JWT + data",
+      "provenance": [
+        {
+          "bbox": [
+            400,
+            340,
+            85,
+            18
+          ],
+          "label_text": "DF3: JWT + data"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF4",
+      "source": "EE2",
+      "destination": "P2",
+      "description": "child login",
+      "provenance": [
+        {
+          "bbox": [
+            320,
+            520,
+            95,
+            18
+          ],
+          "label_text": "DF4: child login"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF5",
+      "source": "P2",
+      "destination": "EE2",
+      "description": "JWT + profiles",
+      "provenance": [
+        {
+          "bbox": [
+            280,
+            480,
+            105,
+            18
+          ],
+          "label_text": "DF5: JWT + profiles"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF6",
+      "source": "EE1",
+      "destination": "P2",
+      "description": "create child profile",
+      "provenance": [
+        {
+          "bbox": [
+            200,
+            380,
+            130,
+            18
+          ],
+          "label_text": "DF6: create child profile"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF7",
+      "source": "P2",
+      "destination": "DS4",
+      "description": "store profile",
+      "provenance": [
+        {
+          "bbox": [
+            650,
+            580,
+            85,
+            18
+          ],
+          "label_text": "DF7: store profile"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF8",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "search / watch / like",
+      "provenance": [
+        {
+          "bbox": [
+            180,
+            680,
+            140,
+            18
+          ],
+          "label_text": "DF8: search / watch / like"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF9",
+      "source": "P3",
+      "destination": "DS5",
+      "description": "video metadata + files",
+      "provenance": [
+        {
+          "bbox": [
+            550,
+            780,
+            145,
+            18
+          ],
+          "label_text": "DF9: video metadata + files"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF10",
+      "source": "P2",
+      "destination": "DS4",
+      "description": "watch history",
+      "provenance": [
+        {
+          "bbox": [
+            620,
+            560,
+            95,
+            18
+          ],
+          "label_text": "DF10: watch history"
+        }
+      ],
+      "confidence": "medium",
+      "uncertainty_note": "Arrow direction inferred from context; label position near DS4"
+    },
+    {
+      "id": "DF11",
+      "source": "EE2",
+      "destination": "P3",
+      "description": "upload video",
+      "provenance": [
+        {
+          "bbox": [
+            350,
+            720,
+            90,
+            18
+          ],
+          "label_text": "DF11: upload video"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF12",
+      "source": "P3",
+      "destination": "EE2",
+      "description": "stream video",
+      "provenance": [
+        {
+          "bbox": [
+            300,
+            740,
+            85,
+            18
+          ],
+          "label_text": "DF12: stream video"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF13",
+      "source": "DS4",
+      "destination": "P4",
+      "description": "browsing data",
+      "provenance": [
+        {
+          "bbox": [
+            780,
+            600,
+            100,
+            18
+          ],
+          "label_text": "DF13: browsing data"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF14",
+      "source": "EE3",
+      "destination": "P4",
+      "description": "browsing data (planned)",
+      "provenance": [
+        {
+          "bbox": [
+            1380,
+            620,
+            155,
+            18
+          ],
+          "label_text": "DF14: browsing data (planned)"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF15",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "govt ID image",
+      "provenance": [
+        {
+          "bbox": [
+            850,
+            380,
+            105,
+            18
+          ],
+          "label_text": "DF15: govt ID image"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF16",
+      "source": "P1",
+      "destination": "DS3",
+      "description": "JWT in localStorage",
+      "provenance": [
+        {
+          "bbox": [
+            720,
+            480,
+            130,
+            18
+          ],
+          "label_text": "DF16: JWT in localStorage"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF17",
+      "source": "P2",
+      "destination": "EE1",
+      "description": "history to parent",
+      "provenance": [
+        {
+          "bbox": [
+            250,
+            420,
+            110,
+            18
+          ],
+          "label_text": "DF17: history to parent"
+        }
+      ],
+      "confidence": "high"
+    }
+  ]
+}

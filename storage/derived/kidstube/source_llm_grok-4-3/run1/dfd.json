@@ -7,7 +7,8 @@
     "rejected_elements": [],
     "rejected_flows": [],
     "condition": "source_llm_grok-4-3",
-    "run": 1
+    "run": 1,
+    "code": "df2b627-dirty"
   },
   "elements": [
     {
@@ -19,10 +20,40 @@
           "fact_id": "F8d4ae4f3"
         },
         {
-          "fact_id": "F12ab920d"
+          "fact_id": "F4e2da425"
         },
         {
-          "fact_id": "F3985d3f3"
+          "fact_id": "F73ab8b26"
+        },
+        {
+          "fact_id": "F782f20cd"
+        },
+        {
+          "fact_id": "F15f81f5f"
+        },
+        {
+          "fact_id": "F55c7c0e4"
+        },
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "Feb691a72"
+        },
+        {
+          "fact_id": "Fe6685224"
+        },
+        {
+          "fact_id": "F8bbb01db"
+        },
+        {
+          "fact_id": "Fdf5f8d2e"
+        },
+        {
+          "fact_id": "F9fe72a0c"
+        },
+        {
+          "fact_id": "F6c712160"
         },
         {
           "fact_id": "F4e2da425"
@@ -31,16 +62,37 @@
           "fact_id": "F80b239a4"
         },
         {
+          "fact_id": "Fa864dadc"
+        },
+        {
+          "fact_id": "F223c594b"
+        },
+        {
+          "fact_id": "F8a66d361"
+        },
+        {
           "fact_id": "F1fff5e05"
         },
         {
-          "fact_id": "F73ab8b26"
+          "fact_id": "F1ae427eb"
         },
         {
-          "fact_id": "F782f20cd"
+          "fact_id": "Ff92c5144"
+        },
+        {
+          "fact_id": "Fcaf6808f"
+        },
+        {
+          "fact_id": "F93c35c38"
+        },
+        {
+          "fact_id": "Fd800457b"
+        },
+        {
+          "fact_id": "Ff92c5144"
         }
       ],
-      "rationale": "Multiple role_check facts and parent-specific routes (register, login/parent, children management, video upload) identify parents as distinct external actors interacting with the system.",
+      "rationale": "Multiple role_check facts explicitly guard routes for 'parent' role, and http_route_binding facts show parent-initiated API calls for profile, children, videos, and admin functions.",
       "confidence": "high"
     },
     {
@@ -55,16 +107,70 @@
           "fact_id": "F6c712160"
         },
         {
-          "fact_id": "F52c67793"
+          "fact_id": "F7a93d535"
+        },
+        {
+          "fact_id": "F26eb09d0"
+        },
+        {
+          "fact_id": "F859b9e06"
         },
         {
           "fact_id": "F54f07a00"
         },
         {
+          "fact_id": "Ffee5aa9f"
+        },
+        {
+          "fact_id": "Fc676d219"
+        },
+        {
+          "fact_id": "F00e74be4"
+        },
+        {
+          "fact_id": "Ffc0ca684"
+        },
+        {
+          "fact_id": "F874d2d54"
+        },
+        {
+          "fact_id": "F0d37c164"
+        },
+        {
           "fact_id": "F55697b13"
+        },
+        {
+          "fact_id": "Fd1d6b396"
+        },
+        {
+          "fact_id": "F052f7254"
+        },
+        {
+          "fact_id": "F71b9bbd0"
+        },
+        {
+          "fact_id": "Fbfe393a9"
+        },
+        {
+          "fact_id": "F68234671"
+        },
+        {
+          "fact_id": "Fba5c753d"
+        },
+        {
+          "fact_id": "F3953fdcc"
+        },
+        {
+          "fact_id": "F77edb179"
+        },
+        {
+          "fact_id": "F99d46634"
+        },
+        {
+          "fact_id": "F1cff5d57"
         }
       ],
-      "rationale": "role_check facts for 'child' role and dedicated child login route plus child-specific pages and history operations identify children as separate external actors.",
+      "rationale": "role_check facts and frontend role checks for 'child' or 'userType' comparisons identify child actors accessing approved videos, history, and player features.",
       "confidence": "high"
     },
     {
@@ -82,7 +188,7 @@
           "fact_id": "F55c7c0e4"
         }
       ],
-      "rationale": "role_check facts restricting routes to 'admin' for user listing, role changes and deletions identify admins as a distinct external actor.",
+      "rationale": "requireRole(['admin']) and role_check facts on user listing, role updates, and deletion routes define the admin actor.",
       "confidence": "high"
     },
     {
@@ -110,18 +216,168 @@
         },
         {
           "fact_id": "F659de177"
+        },
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "Faa937398"
+        },
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "Fc8cd7ac9"
+        },
+        {
+          "fact_id": "F50c3a963"
+        },
+        {
+          "fact_id": "F70fa6875"
+        },
+        {
+          "fact_id": "Fe4949aad"
+        },
+        {
+          "fact_id": "F7cb94511"
+        },
+        {
+          "fact_id": "Fa48273c1"
+        },
+        {
+          "fact_id": "Ffd84aa61"
+        },
+        {
+          "fact_id": "Fa17ce57e"
+        },
+        {
+          "fact_id": "F81943046"
+        },
+        {
+          "fact_id": "F23ebd0dd"
+        },
+        {
+          "fact_id": "F0b4b8b24"
+        },
+        {
+          "fact_id": "Fe1f159d6"
+        },
+        {
+          "fact_id": "Fb2b14479"
+        },
+        {
+          "fact_id": "Fe1551b3d"
+        },
+        {
+          "fact_id": "F77d15ed4"
         }
       ],
-      "rationale": "express_mount for /api/auth and all related express_route facts for registration, logins, me, and password change group into a single authentication process handling identity flows.",
+      "rationale": "express_mount for /api/auth plus numerous express_route and db_access facts in auth.js show registration, login (parent/child), me, and password change flows that transform auth data.",
       "confidence": "high"
     },
     {
       "id": "P2",
       "type": "Process",
-      "name": "Child Profile Service",
+      "name": "User Management Service",
+      "provenance": [
+        {
+          "fact_id": "F1156238e"
+        },
+        {
+          "fact_id": "Fa300d72b"
+        },
+        {
+          "fact_id": "Feec4e823"
+        },
+        {
+          "fact_id": "F73ab8b26"
+        },
+        {
+          "fact_id": "F782f20cd"
+        },
+        {
+          "fact_id": "F15f81f5f"
+        },
+        {
+          "fact_id": "F55c7c0e4"
+        },
+        {
+          "fact_id": "F684d2d95"
+        },
+        {
+          "fact_id": "F9514adfd"
+        },
+        {
+          "fact_id": "Fdcec0762"
+        },
+        {
+          "fact_id": "F5eeb50ce"
+        },
+        {
+          "fact_id": "Fa2e79063"
+        },
+        {
+          "fact_id": "F812f5556"
+        },
+        {
+          "fact_id": "F9ef464bf"
+        },
+        {
+          "fact_id": "F944a7ff8"
+        },
+        {
+          "fact_id": "F6373b725"
+        },
+        {
+          "fact_id": "F8398e878"
+        },
+        {
+          "fact_id": "F9f739755"
+        },
+        {
+          "fact_id": "F2ab27d74"
+        },
+        {
+          "fact_id": "F6d5aa970"
+        },
+        {
+          "fact_id": "Ff1f25d80"
+        },
+        {
+          "fact_id": "Ff0cc554a"
+        },
+        {
+          "fact_id": "F901268f4"
+        },
+        {
+          "fact_id": "F02cbde7d"
+        },
+        {
+          "fact_id": "Fabaeb7f4"
+        },
+        {
+          "fact_id": "Fcec26ce6"
+        },
+        {
+          "fact_id": "F60e45027"
+        },
+        {
+          "fact_id": "F0ffa3a9f"
+        }
+      ],
+      "rationale": "express_mount for /api/users and grouped express_route/db_access facts for profile, stats, admin user listing/role changes.",
+      "confidence": "high"
+    },
+    {
+      "id": "P3",
+      "type": "Process",
+      "name": "Children Subprofile Service",
       "provenance": [
         {
           "fact_id": "Fddc78aea"
+        },
+        {
+          "fact_id": "F6c712160"
         },
         {
           "fact_id": "F4e2da425"
@@ -146,13 +402,211 @@
         },
         {
           "fact_id": "F7a93d535"
+        },
+        {
+          "fact_id": "F26eb09d0"
+        },
+        {
+          "fact_id": "F859b9e06"
+        },
+        {
+          "fact_id": "Fcaf6808f"
+        },
+        {
+          "fact_id": "F93c35c38"
+        },
+        {
+          "fact_id": "Fd800457b"
+        },
+        {
+          "fact_id": "Ff92c5144"
+        },
+        {
+          "fact_id": "Fedc019a1"
+        },
+        {
+          "fact_id": "Fbe5a431e"
+        },
+        {
+          "fact_id": "F2338b1d5"
+        },
+        {
+          "fact_id": "F68236567"
+        },
+        {
+          "fact_id": "Fca086277"
+        },
+        {
+          "fact_id": "F21e7f313"
+        },
+        {
+          "fact_id": "Fba800375"
+        },
+        {
+          "fact_id": "Fc3e93c0a"
+        },
+        {
+          "fact_id": "Fde6dd13b"
+        },
+        {
+          "fact_id": "F7bf8ea90"
+        },
+        {
+          "fact_id": "F92025df8"
+        },
+        {
+          "fact_id": "F95ba95fb"
+        },
+        {
+          "fact_id": "F00a375ed"
+        },
+        {
+          "fact_id": "F25eb63bc"
+        },
+        {
+          "fact_id": "F231053cd"
+        },
+        {
+          "fact_id": "F5afb6e3a"
+        },
+        {
+          "fact_id": "F76b8d1f2"
+        },
+        {
+          "fact_id": "Fbc3c61fa"
+        },
+        {
+          "fact_id": "Ff17f3335"
+        },
+        {
+          "fact_id": "F01be7be0"
+        },
+        {
+          "fact_id": "F38df087a"
+        },
+        {
+          "fact_id": "F949b58c7"
+        },
+        {
+          "fact_id": "F610821a2"
+        },
+        {
+          "fact_id": "F94faccd5"
+        },
+        {
+          "fact_id": "F17a9966e"
+        },
+        {
+          "fact_id": "F6dd8655b"
+        },
+        {
+          "fact_id": "Fd4188fff"
+        },
+        {
+          "fact_id": "Ffbb01972"
+        },
+        {
+          "fact_id": "F9122e3a8"
+        },
+        {
+          "fact_id": "F1c1a4321"
+        },
+        {
+          "fact_id": "Fdef4d6bf"
+        },
+        {
+          "fact_id": "Fd47a1430"
+        },
+        {
+          "fact_id": "F55e6dc79"
+        },
+        {
+          "fact_id": "F969c2e8e"
+        },
+        {
+          "fact_id": "Faad34d83"
+        },
+        {
+          "fact_id": "F483e16cc"
+        },
+        {
+          "fact_id": "Ff995dbe0"
+        },
+        {
+          "fact_id": "F0a951cbf"
+        },
+        {
+          "fact_id": "F4d7c9153"
+        },
+        {
+          "fact_id": "F9453a5a4"
+        },
+        {
+          "fact_id": "F329d07f6"
+        },
+        {
+          "fact_id": "F479a697b"
+        },
+        {
+          "fact_id": "Fea939c7d"
+        },
+        {
+          "fact_id": "Fbfa2a9ef"
+        },
+        {
+          "fact_id": "F36d3ccac"
+        },
+        {
+          "fact_id": "F0d301186"
+        },
+        {
+          "fact_id": "Ff1d2f430"
+        },
+        {
+          "fact_id": "F5e4e9878"
+        },
+        {
+          "fact_id": "Fd65c09fb"
+        },
+        {
+          "fact_id": "F6634afe7"
+        },
+        {
+          "fact_id": "F23f46a68"
+        },
+        {
+          "fact_id": "F509e44f7"
+        },
+        {
+          "fact_id": "F63378159"
+        },
+        {
+          "fact_id": "F3005bc0f"
+        },
+        {
+          "fact_id": "Fd2f8ab2a"
+        },
+        {
+          "fact_id": "Fa99c1e82"
+        },
+        {
+          "fact_id": "F6eb2092f"
+        },
+        {
+          "fact_id": "Fb12f8d0d"
+        },
+        {
+          "fact_id": "Faea626b0"
+        },
+        {
+          "fact_id": "Fedc95f9c"
         }
       ],
-      "rationale": "express_mount for /api/subprofiles plus the cluster of child profile CRUD, history, approval and request-video routes form one coherent child-profile management process.",
+      "rationale": "express_mount for /api/subprofiles plus extensive express_route and db_access facts covering child profiles, video requests/approvals, and history operations.",
       "confidence": "high"
     },
     {
-      "id": "P3",
+      "id": "P4",
       "type": "Process",
       "name": "Video Service",
       "provenance": [
@@ -176,367 +630,22 @@
         },
         {
           "fact_id": "F8bbb01db"
-        }
-      ],
-      "rationale": "express_mount for /api/videos and grouped express_route facts for upload, listing, streaming, editing and comments constitute a single video-management process.",
-      "confidence": "high"
-    },
-    {
-      "id": "P4",
-      "type": "Process",
-      "name": "User Management Service",
-      "provenance": [
-        {
-          "fact_id": "F1156238e"
         },
         {
-          "fact_id": "Fa300d72b"
+          "fact_id": "Fdf5f8d2e"
         },
         {
-          "fact_id": "Feec4e823"
+          "fact_id": "F9fe72a0c"
         },
         {
-          "fact_id": "F73ab8b26"
-        },
-        {
-          "fact_id": "F782f20cd"
-        },
-        {
-          "fact_id": "F15f81f5f"
-        },
-        {
-          "fact_id": "F55c7c0e4"
-        }
-      ],
-      "rationale": "express_mount for /api/users together with profile, stats, role and admin user routes form one user-administration process.",
-      "confidence": "high"
-    },
-    {
-      "id": "P5",
-      "type": "Process",
-      "name": "Frontend Web Application",
-      "provenance": [
-        {
-          "fact_id": "F38872b6b"
-        },
-        {
-          "fact_id": "F5806716b"
-        },
-        {
-          "fact_id": "F35733d13"
-        },
-        {
-          "fact_id": "F0992cfcb"
-        },
-        {
-          "fact_id": "F46369b22"
-        },
-        {
-          "fact_id": "Fb51de366"
-        }
-      ],
-      "rationale": "http_client_call facts, http_client_config, and numerous frontend role_check facts across pages and navigation show the React frontend as a distinct client-side process mediating user interactions.",
-      "confidence": "high"
-    },
-    {
-      "id": "DS1",
-      "type": "DataStore",
-      "name": "User Database",
-      "provenance": [
-        {
-          "fact_id": "F8d130874"
-        },
-        {
-          "fact_id": "Fdc3ecef1"
-        }
-      ],
-      "rationale": "mongo_collection and mongoose_model facts for model 'User' in collection 'users' identify the persistent store for parent/admin accounts.",
-      "confidence": "high"
-    },
-    {
-      "id": "DS2",
-      "type": "DataStore",
-      "name": "ChildProfile Database",
-      "provenance": [
-        {
-          "fact_id": "Fc12aadaf"
-        },
-        {
-          "fact_id": "F1b828376"
-        }
-      ],
-      "rationale": "mongo_collection and mongoose_model facts for 'ChildProfile' in 'childprofiles' identify the persistent store for child sub-profiles.",
-      "confidence": "high"
-    },
-    {
-      "id": "DS3",
-      "type": "DataStore",
-      "name": "Video Database",
-      "provenance": [
-        {
-          "fact_id": "Fecdb6c1e"
-        },
-        {
-          "fact_id": "F9d4e4d1d"
-        }
-      ],
-      "rationale": "mongo_collection and mongoose_model facts for 'Video' in 'videos' identify the persistent store for uploaded videos and metadata.",
-      "confidence": "high"
-    },
-    {
-      "id": "DS4",
-      "type": "DataStore",
-      "name": "File Upload Storage",
-      "provenance": [
-        {
-          "fact_id": "F58d4e79a"
-        },
-        {
-          "fact_id": "F29833cdd"
+          "fact_id": "Ff7dbec3f"
         },
         {
           "fact_id": "F01760fba"
         },
         {
-          "fact_id": "F0db67b76"
-        }
-      ],
-      "rationale": "fs_location and fs_write facts using multer.diskStorage plus express.static mount point to backend/uploads identify the on-disk file store for images and videos.",
-      "confidence": "high"
-    },
-    {
-      "id": "DS5",
-      "type": "DataStore",
-      "name": "Browser Local Storage",
-      "provenance": [
-        {
-          "fact_id": "F56d87323"
+          "fact_id": "F43d4aa4c"
         },
-        {
-          "fact_id": "Ff846b350"
-        },
-        {
-          "fact_id": "F0024b850"
-        },
-        {
-          "fact_id": "Fde60591c"
-        }
-      ],
-      "rationale": "Multiple web_storage_access facts for localStorage keys 'token' and 'user' show client-side persistent storage of session data.",
-      "confidence": "high"
-    }
-  ],
-  "flows": [
-    {
-      "id": "DF1",
-      "source": "EE1",
-      "destination": "P5",
-      "description": "parent user inputs and actions (registration, login, profile updates, video management)",
-      "provenance": [
-        {
-          "fact_id": "F5806716b"
-        },
-        {
-          "fact_id": "F1eeb9789"
-        },
-        {
-          "fact_id": "F964773ee"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF2",
-      "source": "P5",
-      "destination": "P1",
-      "description": "parent registration (email, password, profileImage, userType)",
-      "provenance": [
-        {
-          "fact_id": "F5806716b"
-        },
-        {
-          "fact_id": "Fb88d5db7"
-        },
-        {
-          "fact_id": "F8d4ae4f3"
-        },
-        {
-          "fact_id": "Fdaf9bef6"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF3",
-      "source": "P1",
-      "destination": "DS1",
-      "description": "read user by email or id for auth checks",
-      "provenance": [
-        {
-          "fact_id": "F3ba0724e"
-        },
-        {
-          "fact_id": "Faa937398"
-        },
-        {
-          "fact_id": "F50c3a963"
-        },
-        {
-          "fact_id": "F70fa6875"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF4",
-      "source": "P1",
-      "destination": "DS1",
-      "description": "write new parent user record (including hashed password, profile image path)",
-      "provenance": [
-        {
-          "fact_id": "F3aab626f"
-        },
-        {
-          "fact_id": "Fc8cd7ac9"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF5",
-      "source": "P5",
-      "destination": "P1",
-      "description": "parent/child login credentials (email, password, userType)",
-      "provenance": [
-        {
-          "fact_id": "F1eeb9789"
-        },
-        {
-          "fact_id": "Fa0547687"
-        },
-        {
-          "fact_id": "Ffb3a6366"
-        },
-        {
-          "fact_id": "Fc4a2aad0"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF6",
-      "source": "P1",
-      "destination": "DS1",
-      "description": "read user for login authentication and role checks",
-      "provenance": [
-        {
-          "fact_id": "F50c3a963"
-        },
-        {
-          "fact_id": "F70fa6875"
-        },
-        {
-          "fact_id": "Fe4949aad"
-        },
-        {
-          "fact_id": "F7cb94511"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF7",
-      "source": "P5",
-      "destination": "P2",
-      "description": "child profile CRUD operations, video requests/approvals, history updates",
-      "provenance": [
-        {
-          "fact_id": "F35733d13"
-        },
-        {
-          "fact_id": "F3da35091"
-        },
-        {
-          "fact_id": "F86ab3db3"
-        },
-        {
-          "fact_id": "F90e6c40f"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF8",
-      "source": "P2",
-      "destination": "DS2",
-      "description": "read/write ChildProfile records (find, save, findOne, updates for profiles, history, approved videos)",
-      "provenance": [
-        {
-          "fact_id": "Fedc019a1"
-        },
-        {
-          "fact_id": "Fbe5a431e"
-        },
-        {
-          "fact_id": "F2338b1d5"
-        },
-        {
-          "fact_id": "F68236567"
-        },
-        {
-          "fact_id": "Fca086277"
-        },
-        {
-          "fact_id": "F21e7f313"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF9",
-      "source": "P2",
-      "destination": "DS3",
-      "description": "read Video records for approval/request matching",
-      "provenance": [
-        {
-          "fact_id": "Ff17f3335"
-        },
-        {
-          "fact_id": "F01be7be0"
-        },
-        {
-          "fact_id": "F9122e3a8"
-        },
-        {
-          "fact_id": "F1c1a4321"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF10",
-      "source": "P5",
-      "destination": "P3",
-      "description": "video upload, list, like, comment, stream requests",
-      "provenance": [
-        {
-          "fact_id": "F0992cfcb"
-        },
-        {
-          "fact_id": "Fdffead6b"
-        },
-        {
-          "fact_id": "Fc3f3f87c"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF11",
-      "source": "P3",
-      "destination": "DS3",
-      "description": "read/write Video metadata (find, save, update likes/comments, countDocuments)",
-      "provenance": [
         {
           "fact_id": "F9336e362"
         },
@@ -551,99 +660,141 @@
         },
         {
           "fact_id": "Ff13d5411"
+        },
+        {
+          "fact_id": "F7b329afc"
+        },
+        {
+          "fact_id": "F5ce408b1"
+        },
+        {
+          "fact_id": "Fbc599b01"
+        },
+        {
+          "fact_id": "Ffc83f1e3"
+        },
+        {
+          "fact_id": "Fb15d1947"
+        },
+        {
+          "fact_id": "Ff1c8533c"
+        },
+        {
+          "fact_id": "Fffda2cf2"
+        },
+        {
+          "fact_id": "F0645b3b7"
+        },
+        {
+          "fact_id": "Fca334324"
+        },
+        {
+          "fact_id": "Ff3e2a486"
+        },
+        {
+          "fact_id": "F876927d0"
+        },
+        {
+          "fact_id": "F6502f67e"
+        },
+        {
+          "fact_id": "Fa0adff3d"
+        },
+        {
+          "fact_id": "F31350f94"
+        },
+        {
+          "fact_id": "F5f9885d1"
+        },
+        {
+          "fact_id": "Fa6a75f10"
+        },
+        {
+          "fact_id": "F969decc2"
+        },
+        {
+          "fact_id": "F028be292"
+        },
+        {
+          "fact_id": "F010394cb"
+        },
+        {
+          "fact_id": "Fd4ff4f85"
+        },
+        {
+          "fact_id": "F0c8769fa"
+        },
+        {
+          "fact_id": "Fbd4c9fbb"
+        },
+        {
+          "fact_id": "Fd7b7155c"
+        },
+        {
+          "fact_id": "F904703c3"
+        },
+        {
+          "fact_id": "F638e5a89"
+        },
+        {
+          "fact_id": "F0d9fb39b"
+        },
+        {
+          "fact_id": "F2d459678"
         }
       ],
+      "rationale": "express_mount for /api/videos and grouped express_route/db_access/fs_write facts for upload, listing, streaming, likes, comments, and parent-only mutations.",
       "confidence": "high"
     },
     {
-      "id": "DF12",
-      "source": "P3",
-      "destination": "DS4",
-      "description": "write uploaded video/image files to storage",
+      "id": "DS1",
+      "type": "DataStore",
+      "name": "User Database",
       "provenance": [
         {
-          "fact_id": "F01760fba"
+          "fact_id": "F8d130874"
         },
         {
-          "fact_id": "F43d4aa4c"
-        },
-        {
-          "fact_id": "Ff7dbec3f"
+          "fact_id": "Fdc3ecef1"
         }
       ],
+      "rationale": "mongo_collection fact for 'users' collection with User model and mongoose_model definition.",
       "confidence": "high"
     },
     {
-      "id": "DF13",
-      "source": "P5",
-      "destination": "P4",
-      "description": "profile updates, stats queries, admin role/user management",
+      "id": "DS2",
+      "type": "DataStore",
+      "name": "ChildProfile Database",
       "provenance": [
         {
-          "fact_id": "F964773ee"
+          "fact_id": "Fc12aadaf"
         },
         {
-          "fact_id": "Ff11eaffd"
-        },
-        {
-          "fact_id": "Fd717ea82"
-        },
-        {
-          "fact_id": "Fe316f366"
+          "fact_id": "F1b828376"
         }
       ],
+      "rationale": "mongo_collection fact for 'childprofiles' collection with ChildProfile model.",
       "confidence": "high"
     },
     {
-      "id": "DF14",
-      "source": "P4",
-      "destination": "DS1",
-      "description": "read/write User records for profile, stats, role changes",
+      "id": "DS3",
+      "type": "DataStore",
+      "name": "Video Database",
       "provenance": [
         {
-          "fact_id": "Fa300d72b"
+          "fact_id": "Fecdb6c1e"
         },
         {
-          "fact_id": "F684d2d95"
-        },
-        {
-          "fact_id": "Feec4e823"
-        },
-        {
-          "fact_id": "Fdcec0762"
+          "fact_id": "F9d4e4d1d"
         }
       ],
+      "rationale": "mongo_collection fact for 'videos' collection with Video model.",
       "confidence": "high"
     },
     {
-      "id": "DF15",
-      "source": "P5",
-      "destination": "DS5",
-      "description": "read/write auth token and user data in localStorage",
-      "provenance": [
-        {
-          "fact_id": "F56d87323"
-        },
-        {
-          "fact_id": "Fce398d91"
-        },
-        {
-          "fact_id": "Ff846b350"
-        },
-        {
-          "fact_id": "F0024b850"
-        },
-        {
-          "fact_id": "Fde60591c"
-        }
-      ],
-      "confidence": "high"
-    },
-    {
-      "id": "DF16",
-      "source": "P1",
-      "destination": "DS4",
-      "description": "write profile images via multer storage",
+      "id": "DS4",
+      "type": "DataStore",
+      "name": "File Upload Storage",
       "provenance": [
         {
           "fact_id": "F58d4e79a"
@@ -653,33 +804,411 @@
         },
         {
           "fact_id": "F604cae92"
+        },
+        {
+          "fact_id": "Ff7dbec3f"
+        },
+        {
+          "fact_id": "F01760fba"
+        },
+        {
+          "fact_id": "F43d4aa4c"
+        },
+        {
+          "fact_id": "Fb7226fa8"
+        },
+        {
+          "fact_id": "F0db67b76"
+        }
+      ],
+      "rationale": "fs_location and fs_write facts using multer.diskStorage and express.static for backend/uploads and images.",
+      "confidence": "high"
+    },
+    {
+      "id": "DS5",
+      "type": "DataStore",
+      "name": "Browser Local Storage",
+      "provenance": [
+        {
+          "fact_id": "F56d87323"
+        },
+        {
+          "fact_id": "Fce398d91"
+        },
+        {
+          "fact_id": "F62fda2e3"
+        },
+        {
+          "fact_id": "Ff846b350"
+        },
+        {
+          "fact_id": "F0024b850"
+        },
+        {
+          "fact_id": "Fde60591c"
+        },
+        {
+          "fact_id": "F809bd225"
+        },
+        {
+          "fact_id": "F74596479"
+        },
+        {
+          "fact_id": "F30746500"
+        },
+        {
+          "fact_id": "F59b51844"
+        },
+        {
+          "fact_id": "F6e4bbb32"
+        },
+        {
+          "fact_id": "F0f321140"
+        },
+        {
+          "fact_id": "F0af9f099"
+        },
+        {
+          "fact_id": "F91f5d83a"
+        },
+        {
+          "fact_id": "F85874863"
+        },
+        {
+          "fact_id": "F2e650993"
+        },
+        {
+          "fact_id": "F508b2196"
+        },
+        {
+          "fact_id": "F2e4e2c07"
+        }
+      ],
+      "rationale": "web_storage_access facts for localStorage token, user, and cookieBannerDismissed get/set/remove operations.",
+      "confidence": "high"
+    }
+  ],
+  "flows": [
+    {
+      "id": "DF1",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "parent registration (email, password, profileImage, userType)",
+      "provenance": [
+        {
+          "fact_id": "F5806716b"
+        },
+        {
+          "fact_id": "F8d4ae4f3"
+        },
+        {
+          "fact_id": "Fdaf9bef6"
+        },
+        {
+          "fact_id": "F3aab626f"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF2",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "write new parent user (email, hashed password, profileImage path, userType=parent)",
+      "provenance": [
+        {
+          "fact_id": "F3aab626f"
+        },
+        {
+          "fact_id": "Fc8cd7ac9"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF3",
+      "source": "P1",
+      "destination": "DS1",
+      "description": "read user credentials for parent login (email, password check)",
+      "provenance": [
+        {
+          "fact_id": "F3ba0724e"
+        },
+        {
+          "fact_id": "Faa937398"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF4",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "parent login credentials (email, password)",
+      "provenance": [
+        {
+          "fact_id": "F1eeb9789"
+        },
+        {
+          "fact_id": "Fb9d96a8d"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF5",
+      "source": "EE2",
+      "destination": "P1",
+      "description": "child login (parent email, child profile selection)",
+      "provenance": [
+        {
+          "fact_id": "Ffb3a6366"
+        },
+        {
+          "fact_id": "F5633d31c"
+        },
+        {
+          "fact_id": "Fa48273c1"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF6",
+      "source": "P1",
+      "destination": "DS2",
+      "description": "read childprofiles for child login",
+      "provenance": [
+        {
+          "fact_id": "Fa48273c1"
+        },
+        {
+          "fact_id": "Ffd84aa61"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF7",
+      "source": "EE1",
+      "destination": "P1",
+      "description": "parent login via /login/parent (email, password)",
+      "provenance": [
+        {
+          "fact_id": "Fc21b5049"
+        },
+        {
+          "fact_id": "Fdf659a5f"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF8",
+      "source": "P3",
+      "destination": "DS2",
+      "description": "read childprofiles for parent (find all or by id)",
+      "provenance": [
+        {
+          "fact_id": "F2338b1d5"
+        },
+        {
+          "fact_id": "F68236567"
+        },
+        {
+          "fact_id": "Fba800375"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF9",
+      "source": "EE1",
+      "destination": "P3",
+      "description": "create child subprofile (name, age, idImage)",
+      "provenance": [
+        {
+          "fact_id": "F3da35091"
+        },
+        {
+          "fact_id": "F80b239a4"
+        },
+        {
+          "fact_id": "F2a689d58"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF10",
+      "source": "P3",
+      "destination": "DS2",
+      "description": "write new childprofile (name, age, idImage path, approvedVideos)",
+      "provenance": [
+        {
+          "fact_id": "Fca086277"
+        },
+        {
+          "fact_id": "F21e7f313"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF11",
+      "source": "P3",
+      "destination": "DS4",
+      "description": "write idImage file upload to backend/uploads/images",
+      "provenance": [
+        {
+          "fact_id": "F58d4e79a"
+        },
+        {
+          "fact_id": "F29833cdd"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF12",
+      "source": "EE1",
+      "destination": "P4",
+      "description": "upload video (video file, title, description)",
+      "provenance": [
+        {
+          "fact_id": "F0992cfcb"
+        },
+        {
+          "fact_id": "F9dd647e9"
+        },
+        {
+          "fact_id": "F15c5b0f0"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF13",
+      "source": "P4",
+      "destination": "DS3",
+      "description": "write new video metadata (title, filename, uploader)",
+      "provenance": [
+        {
+          "fact_id": "F9336e362"
+        },
+        {
+          "fact_id": "Fdbc1f000"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF14",
+      "source": "P4",
+      "destination": "DS4",
+      "description": "write video file to backend/uploads",
+      "provenance": [
+        {
+          "fact_id": "Ff7dbec3f"
+        },
+        {
+          "fact_id": "F01760fba"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF15",
+      "source": "P4",
+      "destination": "DS3",
+      "description": "read videos (list, my-videos, by id, search)",
+      "provenance": [
+        {
+          "fact_id": "F68f85ebc"
+        },
+        {
+          "fact_id": "F5ce408b1"
+        },
+        {
+          "fact_id": "Ff1c8533c"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF16",
+      "source": "P2",
+      "destination": "DS1",
+      "description": "read/update user profile or role (findById, findByIdAndUpdate)",
+      "provenance": [
+        {
+          "fact_id": "F684d2d95"
+        },
+        {
+          "fact_id": "Fdcec0762"
+        },
+        {
+          "fact_id": "Fabaeb7f4"
         }
       ],
       "confidence": "high"
     },
     {
       "id": "DF17",
-      "source": "EE2",
-      "destination": "P5",
-      "description": "child user actions (login, watch videos, request videos, history)",
+      "source": "EE3",
+      "destination": "P2",
+      "description": "admin update user role or delete user",
       "provenance": [
         {
-          "fact_id": "Ffb3a6366"
+          "fact_id": "F15f81f5f"
+        },
+        {
+          "fact_id": "F55c7c0e4"
         }
       ],
       "confidence": "high"
     },
     {
       "id": "DF18",
-      "source": "EE3",
-      "destination": "P5",
-      "description": "admin user management actions (list users, change roles, delete)",
+      "source": "P1",
+      "destination": "DS5",
+      "description": "return auth token and user object for browser storage",
       "provenance": [
         {
-          "fact_id": "F782f20cd"
+          "fact_id": "F0b4b8b24"
         },
         {
-          "fact_id": "F534ea9ba"
+          "fact_id": "F809bd225"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF19",
+      "source": "EE1",
+      "destination": "DS5",
+      "description": "store token and user in localStorage after login",
+      "provenance": [
+        {
+          "fact_id": "Fde60591c"
+        },
+        {
+          "fact_id": "F809bd225"
+        }
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "DF20",
+      "source": "DS5",
+      "destination": "EE1",
+      "description": "read token and user from localStorage for authenticated requests",
+      "provenance": [
+        {
+          "fact_id": "Ff846b350"
+        },
+        {
+          "fact_id": "F0024b850"
         }
       ],
       "confidence": "high"

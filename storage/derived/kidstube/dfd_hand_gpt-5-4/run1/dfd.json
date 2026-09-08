@@ -8,7 +8,8 @@
     "model": "none",
     "note": "control condition: the hand DFD verbatim, no adapter. The model named in the condition key generated the THREATS, not this DFD.",
     "condition": "dfd_hand_gpt-5-4",
-    "run": 1
+    "run": 1,
+    "code": "df2b627-dirty"
   },
   "elements": [
     {

@@ -1,11 +1,8 @@
 [
   {
-    "condition": "dfd-src_enrich-llm-naive_gpt-5-4",
+    "condition": "source_llm_gpt-4o-mini",
     "run": 1,
-    "status": "ok",
-    "n_threats": 160,
-    "n_elements": 12,
-    "n_flows": 17,
-    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
+    "status": "failed",
+    "error": "RuntimeError: tool response for 'emit_dfd_elements' was truncated at max_completion_tokens=16000 (finish_reason=length); the payload did not fit. Raise the budget for this call."
   }
 ]

@@ -20,27 +20,22 @@
       1,
       2,
       3,
-      6,
-      7,
-      8,
+      5,
       9,
-      10,
       13,
       14,
       16,
       17,
       19,
-      20,
       21,
       22,
       23,
       24,
       25,
       26,
-      28,
+      29,
       30,
       31,
-      33,
       38,
       39,
       40,
@@ -53,17 +48,15 @@
     "unanchored_hand_flows_adapter_miss": [
       "DF1",
       "DF3",
-      "DF4",
       "DF5",
       "DF6",
-      "DF7",
       "DF8",
       "DF11",
       "DF12",
-      "DF16",
+      "DF15",
       "DF17"
     ],
-    "unanchored_reason": "28 threats sit on hand flows the derived DFD has no counterpart for, and are emitted without a [DFn] tag so they classify as unresolved_location rather than being scored against a derived flow that means something else. TWO DISTINCT CAUSES, not to be conflated: ceiling ['DF13', 'DF14'] -- endpoints P4/EE3 are marked '(planned)' in system_description.md and exist in no code, so no source-code adapter can ever produce them; adapter misses ['DF1', 'DF3', 'DF4', 'DF5', 'DF6', 'DF7', 'DF8', 'DF11', 'DF12', 'DF16', 'DF17'] -- flows the code DOES implement that this adapter arm failed to derive. The second group is a real limitation and must be reported as one, not hidden inside unresolved_location.",
+    "unanchored_reason": "23 threats sit on hand flows the derived DFD has no counterpart for, and are emitted without a [DFn] tag so they classify as unresolved_location rather than being scored against a derived flow that means something else. TWO DISTINCT CAUSES, not to be conflated: ceiling ['DF13', 'DF14'] -- endpoints P4/EE3 are marked '(planned)' in system_description.md and exist in no code, so no source-code adapter can ever produce them; adapter misses ['DF1', 'DF3', 'DF5', 'DF6', 'DF8', 'DF11', 'DF12', 'DF15', 'DF17'] -- flows the code DOES implement that this adapter arm failed to derive. The second group is a real limitation and must be reported as one, not hidden inside unresolved_location.",
     "interaction_prefix_note": "The `interaction` endpoint prefix is regenerated from the derived dfd.json. The hand gold's prefix for DF12 reads 'P3-EE2' while both kidstube/dfd.json and system_description.md say P2->EE2; this file follows the DFD. eval/match.py reads only the bracketed flow id, so no score depends on the prefix either way."
   },
   "threats": [
@@ -78,7 +71,9 @@
       "assumptions": "Email addresses are not hashed or pseudonymized anywhere in the system.",
       "severity": "Med",
       "likelihood": "High",
-      "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "position": "S",
+      "position_source": "derived_from_originator_id",
+      "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses. originator_id 'EE1' has no derived counterpart; left as-authored."
     },
     {
       "id": 2,
@@ -91,6 +86,8 @@
       "assumptions": "Government ID image stored in plaintext on disk. No evidence of encryption at rest.",
       "severity": "High",
       "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
@@ -104,11 +101,13 @@
       "assumptions": "Engineering documentation does not mention TLS/HTTPS configuration for the Node.js server.",
       "severity": "High",
       "likelihood": "Med",
+      "position": "fl",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses. originator_id 'DF1' has no derived counterpart; left as-authored."
     },
     {
       "id": 4,
-      "interaction": "P1-DS1 [DF3]",
+      "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
       "tree_node": "Dd.3.4",
       "threat_type": "Dd",
@@ -118,11 +117,13 @@
       "severity": "Med",
       "likelihood": "High",
       "original_hw2_node": "Dd.3.1",
-      "mapping_note": "Corrected from Dd.3.1: retention maps to Dd.3.4 (duration/retention), not Dd.3.1 (treatment/analysis/enrichment)."
+      "mapping_note": "Corrected from Dd.3.1: retention maps to Dd.3.4 (duration/retention), not Dd.3.1 (treatment/analysis/enrichment).",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 5,
-      "interaction": "P1-DS4 [DF16]",
+      "interaction": "P1-DS4 (no derived counterpart)",
       "originator_id": "DS4",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -132,11 +133,14 @@
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "Dd.4.1",
-      "mapping_note": "Corrected from Dd.4.1: insecure storage / broad access maps to Dd.4.2 (availability/accessibility), not Dd.4.1 (involved parties)."
+      "mapping_note": "Corrected from Dd.4.1: insecure storage / broad access maps to Dd.4.2 (availability/accessibility), not Dd.4.1 (involved parties).",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
+      "derived_anchor_note": "hand flow DF15 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 6,
-      "interaction": "P1-DS5 (no derived counterpart)",
+      "interaction": "P1-DS5 [DF18]",
       "originator_id": "DS5",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -145,26 +149,28 @@
       "assumptions": "Confirmed: JWT token stored in localStorage and valid for 7 days.",
       "severity": "High",
       "likelihood": "Med",
-      "derived_anchor_note": "hand flow DF16 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 7,
-      "interaction": "EE2-P1 (no derived counterpart)",
+      "interaction": "EE2-P1 [DF5]",
       "originator_id": "EE2",
-      "tree_node": "L.1.2",
+      "tree_node": "L.1.1",
       "threat_type": "L",
       "title": "All child actions linked to parent account via shared credentials",
       "description": "Children log in with the parent's email and password; every child action carries the parent's account ObjectId, inherently linking child behavior to the parent's real identity. Children have no independent credentials.",
       "assumptions": "Confirmed by engineering documentation child login flow.",
       "severity": "Med",
       "likelihood": "High",
-      "mapping_note": "L.1.2 is an instance of L.1 (linking via unique identifier) applied to the parent account ObjectId; instance sub-ID, resolves to official L.1.1.",
-      "derived_anchor_note": "hand flow DF4 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "mapping_note": "Instance of official L.1.1 (unique identifier) applied to the parent account ObjectId. Was authored as a project-local sub-ID 'L.1.2'; retired 2026-07-28 because generation/verify.py rejects any node absent from threat_trees.json, so the gold was being held to a looser rule than the output it scores. The instance is distinguished by this note, not by the id -- see also threat 15, the other L.1.1 instance.",
+      "position": "S",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 8,
-      "interaction": "EE2-P1 (no derived counterpart)",
-      "originator_id": "DF4",
+      "interaction": "EE2-P1 [DF5]",
+      "originator_id": "DF5",
       "tree_node": "I.1.2",
       "threat_type": "I",
       "title": "Child identity revealed through parent credential reuse and weak six-digit code",
@@ -172,12 +178,13 @@
       "assumptions": "Test account codes are 123456. No complexity enforcement beyond exactly 6 digits.",
       "severity": "Med",
       "likelihood": "Med",
-      "derived_anchor_note": "hand flow DF4 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses. originator_id 'DF4' has no derived counterpart; left as-authored."
+      "position": "fl",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 9,
       "interaction": "EE1-P3 (no derived counterpart)",
-      "originator_id": "P2",
+      "originator_id": "P3",
       "tree_node": "Dd.1.2",
       "threat_type": "Dd",
       "title": "Excessive child PII collected at profile creation",
@@ -186,11 +193,13 @@
       "severity": "High",
       "likelihood": "High",
       "mapping_note": "Borderline: mixes data-type sensitivity (Dd.1.1, govt ID) and granularity (Dd.1.2, exact DOB). Kept under Dd.1.2 (granularity) as primary.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF6 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 10,
-      "interaction": "P3-DS2 (no derived counterpart)",
+      "interaction": "P3-DS2 [DF8]",
       "originator_id": "DS2",
       "tree_node": "L.2.2.1",
       "threat_type": "L",
@@ -201,11 +210,12 @@
       "likelihood": "High",
       "original_hw2_node": "L.2.1",
       "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: split from a single two-flow threat (originally tagged [DF7/DF10]) into duplicate per-flow entries (this one and #11) so the per-flow generation pipeline can match it -- the profiling risk genuinely arises from combining data written via both flows, so both entries deliberately carry identical content rather than an approximated single-flow version.",
-      "derived_anchor_note": "hand flow DF7 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 11,
-      "interaction": "P2-DS2 [DF8]",
+      "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
       "tree_node": "L.2.2.1",
       "threat_type": "L",
@@ -215,11 +225,13 @@
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "L.2.1",
-      "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: duplicate of #10, split from the original two-flow threat -- see #10's note."
+      "mapping_note": "Corrected from L.2.1: profiling an individual maps to L.2.2.1 (profiling), not L.2.1 (linking through combination). v4: duplicate of #10, split from the original two-flow threat -- see #10's note.",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 12,
-      "interaction": "P2-DS2 [DF8]",
+      "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
       "tree_node": "Dd.2.1",
       "threat_type": "Dd",
@@ -228,12 +240,14 @@
       "assumptions": "Documentation explicitly states logs are not deleted. 50/100 caps are FIFO buffers.",
       "severity": "High",
       "likelihood": "High",
-      "mapping_note": "Kept Dd.2.1 (amount) as primary; the retention aspect also relates to Dd.3.4 (duration/retention)."
+      "mapping_note": "Kept Dd.2.1 (amount) as primary; the retention aspect also relates to Dd.3.4 (duration/retention).",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 13,
       "interaction": "EE2-P2 (no derived counterpart)",
-      "originator_id": "P3",
+      "originator_id": "P4",
       "tree_node": "Nr.1.1",
       "threat_type": "Nr",
       "title": "Non-repudiation of child actions via persistent attributed logging",
@@ -241,12 +255,14 @@
       "assumptions": "Confirmed by ChildProfile and Video schemas.",
       "severity": "Med",
       "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF8 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 14,
       "interaction": "EE2-P2 (no derived counterpart)",
-      "originator_id": "P3",
+      "originator_id": "P4",
       "tree_node": "U.1.1",
       "threat_type": "U",
       "title": "Children unaware of data collection and parental surveillance",
@@ -255,20 +271,24 @@
       "severity": "High",
       "likelihood": "High",
       "mapping_note": "v3: added AB 2273 (AADC) cross-reference from Bilal HW2 #8 (age-appropriate transparency for child users).",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF8 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 15,
-      "interaction": "P3-DS3 [DF11]",
+      "interaction": "P4-DS3 [DF13]",
       "originator_id": "DS3",
-      "tree_node": "L.1.3",
+      "tree_node": "L.1.1",
       "threat_type": "L",
       "title": "Video interactions permanently linkable to identified users via ObjectId",
       "description": "Likes and comments store user ObjectId as foreign keys to DS1/DS2, permanently linking all content interactions to identified individuals and enabling long-term profiling.",
       "assumptions": "Confirmed by Video schema: likes[].user and comments[].user are ObjectId refs.",
       "severity": "Med",
       "likelihood": "High",
-      "mapping_note": "L.1.3 is an instance of L.1 (linking via unique identifier) applied to ObjectId foreign keys; instance sub-ID, resolves to official L.1.1."
+      "mapping_note": "Instance of official L.1.1 (unique identifier) applied to ObjectId foreign keys in the Video schema. Was authored as a project-local sub-ID 'L.1.3'; retired 2026-07-28 for the same reason as threat 7. Distinguished from threat 7 (parent account ObjectId) by this note and by its flow anchor, not by the node id.",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 16,
@@ -283,6 +303,8 @@
       "likelihood": "Med",
       "original_hw2_node": "Dd.4.3",
       "mapping_note": "Corrected from non-official Dd.4.3: sharing with additional/third parties maps to Dd.4.1 (involved parties); the dynamic third-party aspect is Dd.4.1.2.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF13 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses. originator_id 'P4' has no derived counterpart; left as-authored."
     },
     {
@@ -297,11 +319,13 @@
       "severity": "High",
       "likelihood": "Med",
       "mapping_note": "v3: added CCPA/CPRA \u00a71798.135 \"Do Not Sell or Share\" cross-reference from Bilal HW2 #20.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF14 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses. originator_id 'EE3' has no derived counterpart; left as-authored."
     },
     {
       "id": 18,
-      "interaction": "P1-DS1 [DF3]",
+      "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -311,12 +335,14 @@
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "Dd.4.4",
-      "mapping_note": "Corrected from non-official Dd.4.4: unauthenticated broad access maps to Dd.4.2 (availability/accessibility)."
+      "mapping_note": "Corrected from non-official Dd.4.4: unauthenticated broad access maps to Dd.4.2 (availability/accessibility).",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 19,
       "interaction": "EE1-P3 (no derived counterpart)",
-      "originator_id": "P2",
+      "originator_id": "P3",
       "tree_node": "Nc.1.2",
       "threat_type": "Nc",
       "title": "Systematic violation of data minimization principle across the platform",
@@ -325,11 +351,13 @@
       "severity": "High",
       "likelihood": "High",
       "mapping_note": "v4: split from a single two-flow threat (originally tagged [DF6->DF7]) into duplicate per-flow entries (this one and #20) so the per-flow generation pipeline can match it -- the violation is platform-wide, spanning collection (DF6) and storage (DF7), so both entries deliberately carry identical content rather than an approximated single-flow version.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF6 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 20,
-      "interaction": "P3-DS2 (no derived counterpart)",
+      "interaction": "P3-DS2 [DF8]",
       "originator_id": "DS2",
       "tree_node": "Nc.1.2",
       "threat_type": "Nc",
@@ -339,12 +367,13 @@
       "severity": "High",
       "likelihood": "High",
       "mapping_note": "v4: duplicate of #19, split from the original two-flow threat -- see #19's note.",
-      "derived_anchor_note": "hand flow DF7 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 21,
       "interaction": "EE1-P3 (no derived counterpart)",
-      "originator_id": "P2",
+      "originator_id": "P3",
       "tree_node": "U.2.1",
       "threat_type": "U",
       "title": "Limited intervenability: deletion claims contradict actual data persistence",
@@ -352,19 +381,24 @@
       "assumptions": "Assumed file system cleanup (DS4) and cross-collection cleanup (DS3) not triggered by API deletion.",
       "severity": "Med",
       "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF6 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 22,
       "interaction": "EE2-P2 (no derived counterpart)",
       "originator_id": "DF8",
-      "tree_node": "D.1.1",
+      "tree_node": "D.1",
       "threat_type": "D",
+      "node_remap_note": "Cited D.1.1 until 2026-07-28. That node was invented by this project's Week 1 RECONSTRUCTION of the LINDDUN trees and does not exist in the official trees (v241203, bundled at references/linddun-trees/). Retargeted to the official D.1 (Observed communications); threat content unchanged.",
       "title": "Child search queries and actions observable on the network",
       "description": "Child interactions are sent as HTTP API calls with JWT in the Authorization header. Without enforced HTTPS, exact search terms are visible to network observers; even with HTTPS, traffic patterns reveal behavior.",
       "assumptions": "No mention of HTTPS enforcement, HSTS headers, or TLS configuration in documentation.",
       "severity": "Med",
       "likelihood": "Med",
+      "position": "fl",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF8 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses. originator_id 'DF8' has no derived counterpart; left as-authored."
     },
     {
@@ -379,6 +413,8 @@
       "severity": "Med",
       "likelihood": "Med",
       "mapping_note": "v4: split from a single two-flow threat (originally tagged [DF3/DF5]) into per-flow entries (this one and #24) -- the JWT vulnerability is identical and independently present on each flow, so this is a clean split, not an approximation.",
+      "position": "S",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF3 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
@@ -393,12 +429,14 @@
       "severity": "Med",
       "likelihood": "Med",
       "mapping_note": "v4: independent counterpart of #23, split from the original two-flow threat -- see #23's note.",
+      "position": "S",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF5 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 25,
       "interaction": "DS2-P3-EE1 (no derived counterpart)",
-      "originator_id": "P2",
+      "originator_id": "P3",
       "tree_node": "U.1.2",
       "threat_type": "U",
       "title": "Covert parental surveillance of children without age-appropriate transparency",
@@ -406,6 +444,8 @@
       "assumptions": "Directly confirmed by engineering documentation.",
       "severity": "High",
       "likelihood": "High",
+      "position": "S",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF17 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
@@ -420,11 +460,13 @@
       "severity": "Med",
       "likelihood": "High",
       "mapping_note": "Borderline: weak parental-identity verification \u2014 Identifying (I.2.2, weak verification) primary, but also relates to Nc.1.3 (inadequate consent mechanism).",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 27,
-      "interaction": "P3-DS3 [DF11]",
+      "interaction": "P4-DS3 [DF13]",
       "originator_id": "DS3",
       "tree_node": "Nr.1.2",
       "threat_type": "Nr",
@@ -432,11 +474,13 @@
       "description": "Comments are stored with the child's ObjectId, text, and timestamp. No DELETE endpoint exists, creating permanent attributable speech records for minors that persist even if harmful.",
       "assumptions": "Video API shows POST /api/videos/:id/comments but no DELETE endpoint for comments.",
       "severity": "Med",
-      "likelihood": "Med"
+      "likelihood": "Med",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 28,
-      "interaction": "P3-DS2 (no derived counterpart)",
+      "interaction": "P3-DS2 [DF8]",
       "originator_id": "DS2",
       "tree_node": "L.2.1.1",
       "threat_type": "L",
@@ -447,11 +491,12 @@
       "likelihood": "High",
       "original_hw2_node": "L.2.2",
       "mapping_note": "Corrected from L.2.2: linking via shared FK + naming prefix is quasi-identifier combination (L.2.1.1), not L.2.2 (profiling/inference).",
-      "derived_anchor_note": "hand flow DF7 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 29,
-      "interaction": "P1-DS4 [DF16]",
+      "interaction": "P1-DS4 (no derived counterpart)",
       "originator_id": "DS4",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -461,12 +506,15 @@
       "severity": "High",
       "likelihood": "Med",
       "original_hw2_node": "Dd.1.3",
-      "mapping_note": "Corrected from Dd.1.3: co-location/exposure risk maps to Dd.4.2 (availability/accessibility), not Dd.1.3 (data-type encoding)."
+      "mapping_note": "Corrected from Dd.1.3: co-location/exposure risk maps to Dd.4.2 (availability/accessibility), not Dd.1.3 (data-type encoding).",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
+      "derived_anchor_note": "hand flow DF15 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 30,
       "interaction": "EE1-P2 (no derived counterpart)",
-      "originator_id": "P3",
+      "originator_id": "P4",
       "tree_node": "Dd.3.2",
       "threat_type": "Dd",
       "title": "No automated content moderation before video exposure to children",
@@ -475,24 +523,29 @@
       "severity": "Med",
       "likelihood": "Med",
       "mapping_note": "Borderline / non-canonical: a content-moderation gap is a weak fit for Data Disclosure (it is not primarily a personal-data disclosure threat). Kept under Dd.3.2 (propagation) as least-bad; candidate for removal or re-scoping in advisor review.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF11 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 31,
       "interaction": "EE1-P1 (no derived counterpart)",
       "originator_id": "P1",
-      "tree_node": "Nc.1.3",
+      "tree_node": "Nc.1.2",
       "threat_type": "Nc",
+      "node_remap_note": "Cited Nc.1.3 until 2026-07-28. That node was invented by this project's Week 1 RECONSTRUCTION of the LINDDUN trees and does not exist in the official trees (v241203, bundled at references/linddun-trees/). Retargeted to the official Nc.1.2 (Generic regulatory noncompliance); threat content unchanged.",
       "title": "Inadequate COPPA verifiable parental consent mechanism",
       "description": "Parent uploads government ID and chooses a six-digit code, but P1 never verifies the ID belongs to the registrant. None of the FTC-approved \u00a7312.5 consent methods are implemented.",
       "assumptions": "No third-party identity verification or FTC-approved consent method documented.",
       "severity": "High",
       "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 32,
-      "interaction": "P1-DS1 [DF3]",
+      "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -502,11 +555,13 @@
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "Dd.4.5",
-      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: split from a single three-flow threat (originally tagged [DF2/DF7/DF9], originator DS1/DS2/DS3) into duplicate per-store entries (this one, #33, #34) -- the unencrypted-connection issue is identical and independently present on each store, so this is a clean split, not an approximation."
+      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: split from a single three-flow threat (originally tagged [DF2/DF7/DF9], originator DS1/DS2/DS3) into duplicate per-store entries (this one, #33, #34) -- the unencrypted-connection issue is identical and independently present on each store, so this is a clean split, not an approximation.",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 33,
-      "interaction": "P3-DS2 (no derived counterpart)",
+      "interaction": "P3-DS2 [DF8]",
       "originator_id": "DS2",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -517,11 +572,12 @@
       "likelihood": "High",
       "original_hw2_node": "Dd.4.5",
       "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#34, split from the original three-flow threat -- see #32's note.",
-      "derived_anchor_note": "hand flow DF7 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 34,
-      "interaction": "P3-DS3 [DF11]",
+      "interaction": "P4-DS3 [DF13]",
       "originator_id": "DS3",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -531,23 +587,28 @@
       "severity": "High",
       "likelihood": "High",
       "original_hw2_node": "Dd.4.5",
-      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#33, split from the original three-flow threat -- see #32's note."
+      "mapping_note": "Corrected from non-official Dd.4.5: insecure exposure maps to Dd.4.2 (availability/accessibility). v4: independent counterpart of #32/#33, split from the original three-flow threat -- see #32's note.",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 35,
-      "interaction": "P2-DS2 [DF8]",
+      "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
-      "tree_node": "U.1.3",
+      "tree_node": "U.1.1",
       "threat_type": "U",
+      "node_remap_note": "Cited U.1.3 until 2026-07-28. That node was invented by this project's Week 1 RECONSTRUCTION of the LINDDUN trees and does not exist in the official trees (v241203, bundled at references/linddun-trees/). Retargeted to the official U.1.1 (Unawareness as data subject); threat content unchanged.",
       "title": "Per-second watch duration tracking creates undisclosed detailed behavioral profiles",
       "description": "VideoPlayer.js reports exact seconds watched via setInterval; DS2 stores watchDuration per second with a completion flag. This granularity is undisclosed, unnecessary, and builds detailed temporal profiles of children.",
       "assumptions": "Confirmed by VideoPlayer.js using setInterval and trackWatchHistory(videoId, totalWatchTime, true).",
       "severity": "Med",
-      "likelihood": "High"
+      "likelihood": "High",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 36,
-      "interaction": "P1-DS1 [DF3]",
+      "interaction": "P1-DS1 [DF2]",
       "originator_id": "DS1",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
@@ -558,11 +619,13 @@
       "likelihood": "Med",
       "source": "bilal_hw2",
       "original_hw2_node": "Dd.2",
-      "mapping_note": "Added from Bilal HW2 #3 (Insecure Credential Storage). Re-mapped from Bilal's informal Dd.2 to official Dd.4.2 (availability/accessibility \u2014 broken protection of stored credentials)."
+      "mapping_note": "Added from Bilal HW2 #3 (Insecure Credential Storage). Re-mapped from Bilal's informal Dd.2 to official Dd.4.2 (availability/accessibility \u2014 broken protection of stored credentials).",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 37,
-      "interaction": "P2-DS2 [DF8]",
+      "interaction": "P3-DS2 [DF10]",
       "originator_id": "DS2",
       "tree_node": "D.2",
       "threat_type": "D",
@@ -573,12 +636,14 @@
       "likelihood": "Med",
       "source": "bilal_hw2",
       "original_hw2_node": "D.1",
-      "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) \u2014 the threat is inference from patterns, not direct observation. Distinct from threats 10\u201311 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction."
+      "mapping_note": "Added from Bilal HW2 #10 (Inference of Sensitive Child Characteristics). Re-mapped from Bilal's D.1 (observable communication) to D.2 (inferring private info from observable data) \u2014 the threat is inference from patterns, not direct observation. Distinct from threats 10\u201311 (L.2.2.1 profiling): this is sensitive-attribute inference, not behavioral profile construction.",
+      "position": "D",
+      "position_source": "derived_from_originator_id"
     },
     {
       "id": 38,
       "interaction": "EE1-P3 (no derived counterpart)",
-      "originator_id": "P2",
+      "originator_id": "P3",
       "tree_node": "Dd.4.2",
       "threat_type": "Dd",
       "title": "Unauthorized cross-account access via missing object-level authorization (BOLA)",
@@ -589,6 +654,8 @@
       "source": "bilal_hw2",
       "original_hw2_node": "Dd.1",
       "mapping_note": "Added from Bilal HW2 #11 (BOLA). Re-mapped from Bilal's Dd.1 (data-type sensitivity) to Dd.4.2 (availability/accessibility \u2014 too easy for an unauthorized data subject to access another's data). Distinct from threat 18 (database-level no-auth): this is application-layer authorization missing on otherwise authenticated requests.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF6 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
@@ -605,12 +672,14 @@
       "source": "bilal_hw2",
       "original_hw2_node": "U.1.2",
       "mapping_note": "Added from Bilal HW2 #13 (No Privacy Notice at Point of Registration). Re-mapped from Bilal's U.1.2 (which is already used in threat 25 for covert parental surveillance) to Nc.1.1 since the primary frame here is a regulatory notice violation. Sibling to threat 14 (child-facing notice gap) but for the parent-facing path.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
       "id": 40,
       "interaction": "P3-EE2 (no derived counterpart)",
-      "originator_id": "P2",
+      "originator_id": "P3",
       "tree_node": "Nc.1.2",
       "threat_type": "Nc",
       "title": "AB 2273 (AADC) violation: no privacy-by-default configuration for minor users",
@@ -621,6 +690,9 @@
       "source": "bilal_hw2",
       "original_hw2_node": "Nc.3",
       "mapping_note": "Added from Bilal HW2 #19 (AADC: No Privacy-by-Default for Minor Users). Re-mapped from Bilal's informal Nc.3 to Nc.1.2 (data-minimization-adjacent regulatory non-compliance) \u2014 Nc.1.2 is already used in threats 19\u201320 (COPPA/GDPR/CCPA minimization) and the AB 2273 default-settings violation is the same regulatory family. Mapping_note documents the shared sub-node.",
+      "position": "",
+      "position_source": "unresolved",
+      "position_note": "originator_id 'P3' matches neither endpoint (P2/EE2) nor the flow id 'DF12'",
       "derived_anchor_note": "hand flow DF12 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     },
     {
@@ -637,6 +709,8 @@
       "source": "bilal_hw2",
       "original_hw2_node": "Nc.2.1",
       "mapping_note": "Added from Bilal HW2 #20 (CCPA: No Privacy Policy or Do Not Sell Opt-Out). Re-mapped from Bilal's informal Nc.2.1 to official Nc.1.1. Shares Nc.1.1 with threat 17 \u2014 both are COPPA/CCPA disclosure-regime violations; this threat is the platform-wide publication-and-DSAR gap, threat 17 is the specific advertiser-sharing contradiction.",
+      "position": "D",
+      "position_source": "derived_from_originator_id",
       "derived_anchor_note": "hand flow DF1 has no counterpart in the derived DFD. Deliberately unanchored -> unresolved_location. See this file's _meta.unanchored_reason for which flows are the structural ceiling and which are adapter misses."
     }
   ]

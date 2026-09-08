@@ -1,0 +1,45 @@
+{
+  "scenario": "kidstube",
+  "condition": "source_llm_gpt-4o-mini",
+  "input": "source",
+  "arm": "llm",
+  "model": "gpt-4o-mini",
+  "runs": {
+    "1": {
+      "model": "gpt-4o-mini",
+      "backend": "azure",
+      "n_elements": 9,
+      "n_flows": 13
+    }
+  },
+  "by_mode": {
+    "grounded": {
+      "precision": {
+        "n": 1,
+        "mean": 0.21,
+        "sd": null
+      },
+      "recall": {
+        "n": 1,
+        "mean": 0.29,
+        "sd": null
+      },
+      "f1": {
+        "n": 1,
+        "mean": 0.24,
+        "sd": null
+      },
+      "citation_all_valid": {
+        "n": 1,
+        "mean": 1.0,
+        "sd": null
+      },
+      "n_generated": {
+        "n": 1,
+        "mean": 57.0,
+        "sd": null
+      },
+      "unscorable_runs": 0
+    }
+  }
+}

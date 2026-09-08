@@ -11,7 +11,8 @@
     "rejected_elements": [],
     "rejected_flows": [],
     "condition": "image_vision-naive_grok-4-3",
-    "run": 1
+    "run": 1,
+    "code": "df2b627-dirty"
   },
   "elements": [
     {
@@ -22,14 +23,14 @@
         {
           "bbox": [
             80,
-            180,
+            280,
             180,
             70
           ],
           "label_text": "Parent User"
         }
       ],
-      "rationale": "Rectangle shape labeled 'Parent User' is an external actor outside the system boundary.",
+      "rationale": "Rectangle shape on left side labeled exactly 'Parent User'.",
       "confidence": "high"
     },
     {
@@ -39,15 +40,15 @@
       "provenance": [
         {
           "bbox": [
-            70,
-            560,
+            80,
+            680,
             170,
             70
           ],
           "label_text": "Child User"
         }
       ],
-      "rationale": "Rectangle shape labeled 'Child User' represents an external actor.",
+      "rationale": "Rectangle shape on lower left labeled exactly 'Child User'.",
       "confidence": "high"
     },
     {
@@ -57,15 +58,15 @@
       "provenance": [
         {
           "bbox": [
-            1720,
-            430,
+            1550,
+            680,
             280,
             60
           ],
           "label_text": "Third-Party Advertisers"
         }
       ],
-      "rationale": "Rectangle on the right side labeled 'Third-Party Advertisers' is drawn as external entity.",
+      "rationale": "Rectangle shape on right side labeled exactly 'Third-Party Advertisers'.",
       "confidence": "high"
     },
     {
@@ -75,15 +76,15 @@
       "provenance": [
         {
           "bbox": [
-            520,
-            290,
+            550,
+            380,
             320,
             90
           ],
           "label_text": "Authentication Service"
         }
       ],
-      "rationale": "Ellipse shape labeled 'Authentication Service' indicates a process that handles authentication data flows.",
+      "rationale": "Ellipse shape in upper-middle labeled exactly 'Authentication Service'.",
       "confidence": "high"
     },
     {
@@ -93,15 +94,15 @@
       "provenance": [
         {
           "bbox": [
-            400,
-            440,
-            340,
-            85
+            450,
+            550,
+            360,
+            90
           ],
           "label_text": "Child Profile Management"
         }
       ],
-      "rationale": "Ellipse labeled 'Child Profile Management' is a process component.",
+      "rationale": "Ellipse shape in middle labeled exactly 'Child Profile Management'.",
       "confidence": "high"
     },
     {
@@ -111,15 +112,15 @@
       "provenance": [
         {
           "bbox": [
-            340,
-            690,
+            400,
+            850,
             360,
-            85
+            90
           ],
           "label_text": "Video Management Service"
         }
       ],
-      "rationale": "Ellipse shape labeled 'Video Management Service' transforms video data.",
+      "rationale": "Ellipse shape in lower-middle labeled exactly 'Video Management Service'.",
       "confidence": "high"
     },
     {
@@ -129,15 +130,15 @@
       "provenance": [
         {
           "bbox": [
-            1280,
-            430,
-            310,
-            85
+            1200,
+            700,
+            320,
+            90
           ],
           "label_text": "AI Recommendation Engine"
         }
       ],
-      "rationale": "Ellipse on the right labeled 'AI Recommendation Engine' is a process.",
+      "rationale": "Ellipse shape on right-middle labeled exactly 'AI Recommendation Engine'.",
       "confidence": "high"
     },
     {
@@ -147,15 +148,15 @@
       "provenance": [
         {
           "bbox": [
-            620,
-            110,
-            420,
-            55
+            650,
+            120,
+            380,
+            50
           ],
           "label_text": "MongoDB users collection"
         }
       ],
-      "rationale": "Open-topped bar (yellow) labeled 'MongoDB users collection' is a data store.",
+      "rationale": "Open-topped bar (data store) at top center labeled exactly 'MongoDB users collection'.",
       "confidence": "high"
     },
     {
@@ -166,14 +167,14 @@
         {
           "bbox": [
             1050,
-            190,
-            430,
-            55
+            220,
+            420,
+            50
           ],
           "label_text": "File System (backend/uploads/)"
         }
       ],
-      "rationale": "Open bar labeled 'File System (backend/uploads/)' stores uploaded files like gov ID images.",
+      "rationale": "Open-topped bar in upper right labeled exactly 'File System (backend/uploads/)'.",
       "confidence": "high"
     },
     {
@@ -183,15 +184,15 @@
       "provenance": [
         {
           "bbox": [
-            1050,
-            370,
-            300,
+            880,
+            480,
+            280,
             50
           ],
           "label_text": "Browser localStorage"
         }
       ],
-      "rationale": "Open-topped bar labeled 'Browser localStorage' holds JWT data.",
+      "rationale": "Open-topped bar to the right of Authentication Service labeled exactly 'Browser localStorage'.",
       "confidence": "high"
     },
     {
@@ -202,14 +203,14 @@
         {
           "bbox": [
             650,
-            500,
-            420,
-            55
+            650,
+            400,
+            50
           ],
           "label_text": "MongoDB childprofiles collection"
         }
       ],
-      "rationale": "Yellow open bar labeled 'MongoDB childprofiles collection' is a persistent data store.",
+      "rationale": "Open-topped bar in middle labeled exactly 'MongoDB childprofiles collection'.",
       "confidence": "high"
     },
     {
@@ -219,15 +220,15 @@
       "provenance": [
         {
           "bbox": [
-            550,
-            850,
-            420,
-            55
+            650,
+            1050,
+            380,
+            50
           ],
           "label_text": "MongoDB videos collection"
         }
       ],
-      "rationale": "Open bar labeled 'MongoDB videos collection' stores video metadata and files.",
+      "rationale": "Open-topped bar at bottom center labeled exactly 'MongoDB videos collection'.",
       "confidence": "high"
     }
   ],
@@ -240,15 +241,14 @@
       "provenance": [
         {
           "bbox": [
-            180,
-            310,
-            90,
-            18
+            120,
+            380,
+            120,
+            25
           ],
           "label_text": "DF1: register"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF2",
@@ -258,33 +258,31 @@
       "provenance": [
         {
           "bbox": [
-            520,
+            450,
             280,
-            100,
-            18
+            140,
+            25
           ],
           "label_text": "DF2: store account"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF3",
       "source": "P1",
-      "destination": "EE1",
+      "destination": "P2",
       "description": "JWT + data",
       "provenance": [
         {
           "bbox": [
-            400,
-            340,
-            85,
-            18
+            380,
+            420,
+            110,
+            22
           ],
           "label_text": "DF3: JWT + data"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF4",
@@ -294,15 +292,14 @@
       "provenance": [
         {
           "bbox": [
-            320,
-            520,
-            95,
-            18
+            280,
+            580,
+            110,
+            22
           ],
           "label_text": "DF4: child login"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF5",
@@ -312,15 +309,14 @@
       "provenance": [
         {
           "bbox": [
-            280,
-            480,
-            105,
-            18
+            200,
+            550,
+            130,
+            22
           ],
           "label_text": "DF5: JWT + profiles"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF6",
@@ -330,15 +326,14 @@
       "provenance": [
         {
           "bbox": [
-            200,
-            380,
-            130,
-            18
+            150,
+            450,
+            160,
+            22
           ],
           "label_text": "DF6: create child profile"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF7",
@@ -348,15 +343,14 @@
       "provenance": [
         {
           "bbox": [
-            650,
-            580,
-            85,
-            18
+            520,
+            620,
+            110,
+            22
           ],
           "label_text": "DF7: store profile"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF8",
@@ -367,14 +361,13 @@
         {
           "bbox": [
             180,
-            680,
-            140,
-            18
+            780,
+            170,
+            22
           ],
           "label_text": "DF8: search / watch / like"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF9",
@@ -384,34 +377,31 @@
       "provenance": [
         {
           "bbox": [
-            550,
-            780,
-            145,
-            18
+            480,
+            920,
+            180,
+            22
           ],
           "label_text": "DF9: video metadata + files"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF10",
-      "source": "P2",
+      "source": "P3",
       "destination": "DS4",
       "description": "watch history",
       "provenance": [
         {
           "bbox": [
-            620,
-            560,
-            95,
-            18
+            420,
+            680,
+            120,
+            22
           ],
           "label_text": "DF10: watch history"
         }
-      ],
-      "confidence": "medium",
-      "uncertainty_note": "Arrow direction inferred from context; label position near DS4"
+      ]
     },
     {
       "id": "DF11",
@@ -422,14 +412,13 @@
         {
           "bbox": [
             350,
-            720,
-            90,
-            18
+            850,
+            120,
+            22
           ],
           "label_text": "DF11: upload video"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF12",
@@ -439,15 +428,14 @@
       "provenance": [
         {
           "bbox": [
-            300,
-            740,
-            85,
-            18
+            280,
+            820,
+            120,
+            22
           ],
           "label_text": "DF12: stream video"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF13",
@@ -457,15 +445,14 @@
       "provenance": [
         {
           "bbox": [
-            780,
-            600,
-            100,
-            18
+            720,
+            680,
+            130,
+            22
           ],
           "label_text": "DF13: browsing data"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF14",
@@ -475,33 +462,31 @@
       "provenance": [
         {
           "bbox": [
-            1380,
-            620,
-            155,
-            18
+            1050,
+            680,
+            200,
+            22
           ],
           "label_text": "DF14: browsing data (planned)"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF15",
-      "source": "P1",
+      "source": "EE1",
       "destination": "DS2",
       "description": "govt ID image",
       "provenance": [
         {
           "bbox": [
-            850,
+            720,
             380,
-            105,
-            18
+            130,
+            22
           ],
           "label_text": "DF15: govt ID image"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF16",
@@ -511,15 +496,14 @@
       "provenance": [
         {
           "bbox": [
-            720,
-            480,
-            130,
-            18
+            580,
+            520,
+            170,
+            22
           ],
           "label_text": "DF16: JWT in localStorage"
         }
-      ],
-      "confidence": "high"
+      ]
     },
     {
       "id": "DF17",
@@ -529,15 +513,14 @@
       "provenance": [
         {
           "bbox": [
-            250,
-            420,
-            110,
-            18
+            200,
+            480,
+            140,
+            22
           ],
           "label_text": "DF17: history to parent"
         }
-      ],
-      "confidence": "high"
+      ]
     }
   ]
 }

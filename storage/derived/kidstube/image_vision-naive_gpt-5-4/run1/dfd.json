@@ -11,7 +11,8 @@
     "rejected_elements": [],
     "rejected_flows": [],
     "condition": "image_vision-naive_gpt-5-4",
-    "run": 1
+    "run": 1,
+    "code": "df2b627-dirty"
   },
   "elements": [
     {
@@ -21,15 +22,15 @@
       "provenance": [
         {
           "bbox": [
-            42,
+            41,
             158,
-            76,
+            78,
             29
           ],
           "label_text": "Parent User"
         }
       ],
-      "rationale": "Rectangle labeled 'Parent User' indicates an external actor.",
+      "rationale": "Rectangle labeled 'Parent User' indicates an external actor outside the system boundary.",
       "confidence": "high"
     },
     {
@@ -39,9 +40,9 @@
       "provenance": [
         {
           "bbox": [
-            43,
+            44,
             492,
-            82,
+            84,
             30
           ],
           "label_text": "Child User"
@@ -58,14 +59,14 @@
         {
           "bbox": [
             775,
-            453,
+            454,
             144,
-            29
+            28
           ],
           "label_text": "Third-Party Advertisers"
         }
       ],
-      "rationale": "Rectangle labeled 'Third-Party Advertisers' indicates an external actor.",
+      "rationale": "Rectangle labeled 'Third-Party Advertisers' indicates an outside party.",
       "confidence": "high"
     },
     {
@@ -76,9 +77,9 @@
         {
           "bbox": [
             176,
-            219,
+            220,
             174,
-            38
+            36
           ],
           "label_text": "Authentication Service"
         }
@@ -95,8 +96,8 @@
           "bbox": [
             170,
             371,
-            188,
-            37
+            187,
+            38
           ],
           "label_text": "Child Profile Management"
         }
@@ -112,9 +113,9 @@
         {
           "bbox": [
             170,
-            571,
+            570,
             187,
-            37
+            38
           ],
           "label_text": "Video Management Service"
         }
@@ -129,10 +130,10 @@
       "provenance": [
         {
           "bbox": [
-            569,
+            570,
             447,
-            187,
-            38
+            186,
+            39
           ],
           "label_text": "AI Recommendation Engine"
         }
@@ -147,15 +148,15 @@
       "provenance": [
         {
           "bbox": [
-            188,
-            78,
-            150,
-            25
+            189,
+            77,
+            149,
+            27
           ],
           "label_text": "MongoDB users collection"
         }
       ],
-      "rationale": "Open-topped bar labeled 'MongoDB users collection' denotes a data store.",
+      "rationale": "Open-topped bar shape labeled 'MongoDB users collection' denotes a data store.",
       "confidence": "high"
     },
     {
@@ -173,7 +174,7 @@
           "label_text": "File System (backend/uploads/)"
         }
       ],
-      "rationale": "Open-topped bar labeled 'File System (backend/uploads/)' denotes a data store.",
+      "rationale": "Open-topped bar shape labeled 'File System (backend/uploads/)' denotes a data store.",
       "confidence": "high"
     },
     {
@@ -191,7 +192,7 @@
           "label_text": "Browser localStorage"
         }
       ],
-      "rationale": "Open-topped bar labeled 'Browser localStorage' denotes a data store.",
+      "rationale": "Open-topped bar shape labeled 'Browser localStorage' denotes a data store.",
       "confidence": "high"
     },
     {
@@ -202,14 +203,14 @@
         {
           "bbox": [
             334,
-            454,
+            453,
             193,
-            26
+            27
           ],
           "label_text": "MongoDB childprofiles collection"
         }
       ],
-      "rationale": "Open-topped bar labeled 'MongoDB childprofiles collection' denotes a data store.",
+      "rationale": "Open-topped bar shape labeled 'MongoDB childprofiles collection' denotes a data store.",
       "confidence": "high"
     },
     {
@@ -220,14 +221,14 @@
         {
           "bbox": [
             353,
-            643,
-            156,
+            644,
+            154,
             27
           ],
           "label_text": "MongoDB videos collection"
         }
       ],
-      "rationale": "Open-topped bar labeled 'MongoDB videos collection' denotes a data store.",
+      "rationale": "Open-topped bar shape labeled 'MongoDB videos collection' denotes a data store.",
       "confidence": "high"
     }
   ],
@@ -240,28 +241,28 @@
       "provenance": [
         {
           "bbox": [
-            96,
-            178,
-            68,
-            14
-          ],
-          "label_text": "DF1: register"
-        },
-        {
-          "bbox": [
             42,
-            158,
+            157,
             77,
-            29
+            31
           ],
           "label_text": "Parent User"
         },
         {
           "bbox": [
-            176,
+            112,
+            179,
+            53,
+            12
+          ],
+          "label_text": "DF1: register"
+        },
+        {
+          "bbox": [
+            169,
             220,
-            178,
-            40
+            161,
+            38
           ],
           "label_text": "Authentication Service"
         }
@@ -276,27 +277,27 @@
       "provenance": [
         {
           "bbox": [
-            214,
-            160,
-            89,
-            13
-          ],
-          "label_text": "DF2: store account"
-        },
-        {
-          "bbox": [
-            175,
+            169,
             220,
-            176,
+            161,
             38
           ],
           "label_text": "Authentication Service"
         },
         {
           "bbox": [
-            188,
+            217,
+            160,
+            74,
+            11
+          ],
+          "label_text": "DF2: store account"
+        },
+        {
+          "bbox": [
+            189,
             77,
-            151,
+            119,
             27
           ],
           "label_text": "MongoDB users collection"
@@ -306,72 +307,72 @@
     },
     {
       "id": "DF3",
-      "source": "EE1",
-      "destination": "P1",
+      "source": "P1",
+      "destination": "EE1",
       "description": "JWT + data",
       "provenance": [
         {
           "bbox": [
-            180,
-            204,
+            169,
+            220,
+            161,
+            38
+          ],
+          "label_text": "Authentication Service"
+        },
+        {
+          "bbox": [
+            179,
+            207,
             67,
-            14
+            11
           ],
           "label_text": "DF3: JWT + data"
         },
         {
           "bbox": [
             42,
-            158,
+            157,
             77,
-            29
+            31
           ],
           "label_text": "Parent User"
-        },
-        {
-          "bbox": [
-            176,
-            220,
-            178,
-            40
-          ],
-          "label_text": "Authentication Service"
         }
       ],
       "confidence": "high"
     },
     {
       "id": "DF4",
-      "source": "P2",
-      "destination": "P1",
+      "source": "P1",
+      "destination": "P2",
       "description": "child login",
       "provenance": [
         {
           "bbox": [
-            90,
-            377,
-            68,
-            14
+            169,
+            220,
+            161,
+            38
+          ],
+          "label_text": "Authentication Service"
+        },
+        {
+          "bbox": [
+            91,
+            376,
+            67,
+            11
           ],
           "label_text": "DF4: child login"
         },
         {
           "bbox": [
-            170,
-            371,
-            188,
+            169,
+            370,
+            184,
             39
           ],
           "label_text": "Child Profile Management"
-        },
-        {
-          "bbox": [
-            176,
-            220,
-            178,
-            40
-          ],
-          "label_text": "Authentication Service"
         }
       ],
       "confidence": "high"
@@ -384,28 +385,28 @@
       "provenance": [
         {
           "bbox": [
-            88,
-            418,
-            79,
-            14
-          ],
-          "label_text": "DF5: JWT + profiles"
-        },
-        {
-          "bbox": [
-            170,
-            371,
-            188,
+            169,
+            370,
+            184,
             39
           ],
           "label_text": "Child Profile Management"
         },
         {
           "bbox": [
-            42,
+            88,
+            417,
+            74,
+            11
+          ],
+          "label_text": "DF5: JWT + profiles"
+        },
+        {
+          "bbox": [
+            41,
             492,
-            77,
-            30
+            74,
+            31
           ],
           "label_text": "Child User"
         }
@@ -420,27 +421,27 @@
       "provenance": [
         {
           "bbox": [
-            84,
-            212,
-            110,
-            14
-          ],
-          "label_text": "DF6: create child profile"
-        },
-        {
-          "bbox": [
             42,
-            158,
+            157,
             77,
-            29
+            31
           ],
           "label_text": "Parent User"
         },
         {
           "bbox": [
-            170,
-            371,
-            188,
+            84,
+            211,
+            95,
+            11
+          ],
+          "label_text": "DF6: create child profile"
+        },
+        {
+          "bbox": [
+            169,
+            370,
+            184,
             39
           ],
           "label_text": "Child Profile Management"
@@ -456,28 +457,28 @@
       "provenance": [
         {
           "bbox": [
-            302,
-            409,
-            66,
-            14
-          ],
-          "label_text": "DF7: store profile"
-        },
-        {
-          "bbox": [
-            170,
-            371,
-            188,
+            169,
+            370,
+            184,
             39
           ],
           "label_text": "Child Profile Management"
         },
         {
           "bbox": [
-            333,
-            456,
-            194,
-            24
+            302,
+            406,
+            67,
+            11
+          ],
+          "label_text": "DF7: store profile"
+        },
+        {
+          "bbox": [
+            334,
+            452,
+            193,
+            28
           ],
           "label_text": "MongoDB childprofiles collection"
         }
@@ -492,27 +493,27 @@
       "provenance": [
         {
           "bbox": [
-            68,
-            526,
-            114,
-            14
-          ],
-          "label_text": "DF8: search / watch / like"
-        },
-        {
-          "bbox": [
-            42,
+            41,
             492,
-            77,
-            30
+            74,
+            31
           ],
           "label_text": "Child User"
         },
         {
           "bbox": [
-            170,
-            570,
-            188,
+            68,
+            524,
+            95,
+            11
+          ],
+          "label_text": "DF8: search / watch / like"
+        },
+        {
+          "bbox": [
+            160,
+            569,
+            197,
             39
           ],
           "label_text": "Video Management Service"
@@ -528,28 +529,28 @@
       "provenance": [
         {
           "bbox": [
-            302,
-            622,
-            114,
-            14
-          ],
-          "label_text": "DF9: video metadata + files"
-        },
-        {
-          "bbox": [
-            170,
-            570,
-            188,
+            160,
+            569,
+            197,
             39
           ],
           "label_text": "Video Management Service"
         },
         {
           "bbox": [
+            283,
+            620,
+            104,
+            11
+          ],
+          "label_text": "DF9: video metadata + files"
+        },
+        {
+          "bbox": [
             354,
-            645,
+            644,
             151,
-            27
+            28
           ],
           "label_text": "MongoDB videos collection"
         }
@@ -564,28 +565,28 @@
       "provenance": [
         {
           "bbox": [
-            295,
-            447,
-            70,
-            14
-          ],
-          "label_text": "DF10: watch history"
-        },
-        {
-          "bbox": [
-            170,
-            371,
-            188,
+            169,
+            370,
+            184,
             39
           ],
           "label_text": "Child Profile Management"
         },
         {
           "bbox": [
-            333,
-            456,
-            194,
-            24
+            296,
+            442,
+            67,
+            11
+          ],
+          "label_text": "DF10: watch history"
+        },
+        {
+          "bbox": [
+            334,
+            452,
+            193,
+            28
           ],
           "label_text": "MongoDB childprofiles collection"
         }
@@ -600,27 +601,27 @@
       "provenance": [
         {
           "bbox": [
-            175,
-            548,
-            73,
-            14
-          ],
-          "label_text": "DF11: upload video"
-        },
-        {
-          "bbox": [
             42,
-            158,
+            157,
             77,
-            29
+            31
           ],
           "label_text": "Parent User"
         },
         {
           "bbox": [
-            170,
-            570,
-            188,
+            205,
+            535,
+            84,
+            11
+          ],
+          "label_text": "DF11: upload video"
+        },
+        {
+          "bbox": [
+            160,
+            569,
+            197,
             39
           ],
           "label_text": "Video Management Service"
@@ -636,28 +637,28 @@
       "provenance": [
         {
           "bbox": [
-            129,
-            566,
-            76,
-            14
-          ],
-          "label_text": "DF12: stream video"
-        },
-        {
-          "bbox": [
-            170,
-            570,
-            188,
+            160,
+            569,
+            197,
             39
           ],
           "label_text": "Video Management Service"
         },
         {
           "bbox": [
-            42,
+            129,
+            547,
+            74,
+            11
+          ],
+          "label_text": "DF12: stream video"
+        },
+        {
+          "bbox": [
+            41,
             492,
-            77,
-            30
+            74,
+            31
           ],
           "label_text": "Child User"
         }
@@ -672,28 +673,28 @@
       "provenance": [
         {
           "bbox": [
-            508,
-            445,
-            74,
-            14
-          ],
-          "label_text": "DF13: browsing data"
-        },
-        {
-          "bbox": [
-            333,
-            456,
-            194,
-            24
+            334,
+            452,
+            193,
+            28
           ],
           "label_text": "MongoDB childprofiles collection"
         },
         {
           "bbox": [
-            570,
-            445,
-            188,
-            40
+            507,
+            447,
+            77,
+            11
+          ],
+          "label_text": "DF13: browsing data"
+        },
+        {
+          "bbox": [
+            598,
+            451,
+            159,
+            35
           ],
           "label_text": "AI Recommendation Engine"
         }
@@ -708,28 +709,28 @@
       "provenance": [
         {
           "bbox": [
-            698,
-            430,
-            131,
-            14
-          ],
-          "label_text": "DF14: browsing data (planned)"
-        },
-        {
-          "bbox": [
-            570,
-            445,
-            188,
-            40
+            598,
+            451,
+            159,
+            35
           ],
           "label_text": "AI Recommendation Engine"
         },
         {
           "bbox": [
+            729,
+            442,
+            124,
+            11
+          ],
+          "label_text": "DF14: browsing data (planned)"
+        },
+        {
+          "bbox": [
             775,
-            452,
-            144,
-            30
+            451,
+            145,
+            31
           ],
           "label_text": "Third-Party Advertisers"
         }
@@ -744,21 +745,21 @@
       "provenance": [
         {
           "bbox": [
-            303,
-            199,
-            83,
-            14
+            169,
+            220,
+            161,
+            38
           ],
-          "label_text": "DF15: govt ID image"
+          "label_text": "Authentication Service"
         },
         {
           "bbox": [
-            176,
-            220,
-            178,
-            40
+            304,
+            201,
+            79,
+            11
           ],
-          "label_text": "Authentication Service"
+          "label_text": "DF15: govt ID image"
         },
         {
           "bbox": [
@@ -780,27 +781,27 @@
       "provenance": [
         {
           "bbox": [
-            292,
-            283,
-            99,
-            14
-          ],
-          "label_text": "DF16: JWT in localStorage"
-        },
-        {
-          "bbox": [
-            176,
+            169,
             220,
-            178,
-            40
+            161,
+            38
           ],
           "label_text": "Authentication Service"
         },
         {
           "bbox": [
-            366,
+            291,
+            282,
+            96,
+            11
+          ],
+          "label_text": "DF16: JWT in localStorage"
+        },
+        {
+          "bbox": [
+            367,
             299,
-            128,
+            127,
             28
           ],
           "label_text": "Browser localStorage"
@@ -816,34 +817,34 @@
       "provenance": [
         {
           "bbox": [
-            95,
-            245,
-            93,
-            14
-          ],
-          "label_text": "DF17: history to parent"
-        },
-        {
-          "bbox": [
-            170,
-            371,
-            188,
+            169,
+            370,
+            184,
             39
           ],
           "label_text": "Child Profile Management"
         },
         {
           "bbox": [
+            89,
+            228,
+            86,
+            11
+          ],
+          "label_text": "DF17: history to parent"
+        },
+        {
+          "bbox": [
             42,
-            158,
+            157,
             77,
-            29
+            31
           ],
           "label_text": "Parent User"
         }
       ],
       "confidence": "medium",
-      "uncertainty_note": "The label is near the upper-left crossing arrows. The arrowhead appears to terminate at Parent User, indicating Child Profile Management to Parent User, but the nearby crossing with DF6 makes the exact path slightly crowded."
+      "uncertainty_note": "The DF17 label sits near the upper-left crossing of multiple arrows. The arrow appears to run from Child Profile Management back toward Parent User, but the area is crowded by DF6/DF3 lines."
     }
   ]
 }

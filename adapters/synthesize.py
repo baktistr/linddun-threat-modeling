@@ -38,6 +38,11 @@ MODE_LLM_NAIVE = "llm_naive"
 # A whole-DFD payload is far larger than one flow's threats. Azure truncates mid-JSON with no
 # error when the budget is short -- the tool call just fails to parse, which reads as a model
 # failure rather than a budget one. See generation/llm_backend.DEFAULT_MAX_TOKENS.
+# NOT a budget to raise when it trips. gpt-4o-mini truncates the KidsTube element list at
+# temperature 0 by entering a decoding loop -- it emits one fact id ("F0d5ee177") repeatedly for
+# the whole budget, so 16000 buys 16000 tokens of repetition and fails identically. Greedy
+# decoding has no way out of a self-reinforcing cycle, which is why this appears now and not in
+# the pre-temperature-pin runs. The condition is reported as failed rather than papered over.
 SYNTHESIS_MAX_TOKENS = 8000
 
 # The naive arm needs more headroom than the closed one: reading raw source with an OPEN citation

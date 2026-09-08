@@ -1,0 +1,11 @@
+[
+  {
+    "condition": "dfd-src_enrich-llm-naive_gpt-5-4",
+    "run": 1,
+    "status": "ok",
+    "n_threats": 160,
+    "n_elements": 12,
+    "n_flows": 17,
+    "gold_note": "hand gold verbatim (flow ids reproduced exactly; denominator 41/41)"
+  }
+]
