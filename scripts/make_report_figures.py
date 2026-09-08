@@ -119,6 +119,15 @@ def figure1() -> Path:
         "LINDDUN Pro threat trees  &  mapping table",
         fc="#f4f1fb", ec=INK3, lw=1.2, bold=True, fs=7.6, subfs=6.6)
 
+    # --- Stage dividers -------------------------------------------------------------------
+    # Bounded top and bottom rather than run full height. Above 58 sits the knowledge-base box,
+    # which deliberately spans Stage B and Stage C -- the exact lookup reads it before generation
+    # and the verifier re-derives against it afterwards -- so a divider crossing it would assert a
+    # separation the architecture does not have. Below 8 sit the two captions, which describe the
+    # whole of Stage B and are not owned by either side of a line.
+    for xd in (73.5, 116.5):
+        ax.plot([xd, xd], [8, 58], ls=(0, (4, 4)), lw=0.9, color=INK3, zorder=1)
+
     # --- Station 1: inputs ---------------------------------------------------------------
     stage(2, "Stage A — inputs", "adapter required for the lower two only")
     for y, name, sub in ((45, "Analyst authored DFD (JSON)", ""),
