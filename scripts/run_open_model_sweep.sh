@@ -18,6 +18,13 @@ IMAGE="${IMAGE:-vllm/vllm-openai:latest}"
 RUNS="${RUNS:-3}"
 CONCURRENCY="${CONCURRENCY:-16}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-16384}"
+# Pinned, not left to vLLM's default. Qwen3.5's Gated DeltaNet layers need one Mamba cache
+# block per sequence, and on a 96GB card the 27B leaves room for 609 against a default
+# max_num_seqs of 1024 -- CUDA graph capture then refuses to start and the model never serves.
+# It also removes an unrecorded variable: CUDA graph capture sizes are part of the batching
+# behaviour that makes greedy decoding non-deterministic here, so the value belongs in the
+# run record rather than in whatever the default happened to be on that GPU.
+MAX_NUM_SEQS="${MAX_NUM_SEQS:-256}"
 GPU_UTIL="${GPU_UTIL:-0.90}"
 MODELS=("${@:-Qwen/Qwen3.5-2B}")
 
@@ -27,6 +34,7 @@ serve() {                                    # $1 = model id
     -v "$HF_DIR:/root/.cache/huggingface" \
     "$IMAGE" --model "$1" \
     --max-model-len "$MAX_MODEL_LEN" --gpu-memory-utilization "$GPU_UTIL" \
+    --max-num-seqs "$MAX_NUM_SEQS" \
     --reasoning-parser qwen3 --enable-auto-tool-choice --tool-call-parser qwen3_coder \
     >/dev/null || return 1
   # Wait for readiness rather than sleeping a guessed interval: a 27B takes ~4.5 min to load and
