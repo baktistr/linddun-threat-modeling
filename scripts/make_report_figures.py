@@ -480,6 +480,111 @@ def figure5() -> Path:
     return p
 
 
+
+
+
+# ------------------------------------------- Figure 6: where models put the threat
+# Position is ORDINAL -- source, then the flow, then the destination, in the order data travels --
+# so it takes a sequential ramp rather than the categorical palette. That is also what keeps it
+# legible next to Figures 2, 4 and 5, where blue/orange/aqua are bound to grounded/rag/ungrounded;
+# reusing those hues for S/fl/D would repaint a mapping the reader has already learned.
+POS_RAMP = {"S": "#cfe1f5", "fl": "#5b9bd5", "D": "#1f4e79"}
+POS_INK = {"S": INK, "fl": "#ffffff", "D": "#ffffff"}
+
+
+def _position_counts(rows, model, mode="grounded") -> dict:
+    t = {"S": 0, "fl": 0, "D": 0}
+    for r in rows:
+        if r.get("model") == model and r["mode"] == mode and r.get("status", "ok") == "ok":
+            for p in t:
+                t[p] += r.get(f"n_position_{p}", 0) or 0
+    return t
+
+
+def _gold_position_counts() -> dict:
+    import glob
+    t = {"S": 0, "fl": 0, "D": 0}
+    for sc in SCENARIOS:
+        f = config.KB_DIR / "scenarios" / sc / "gold_standard_threats.json"
+        if not f.exists():
+            continue
+        doc = json.loads(f.read_text())
+        for th in (doc["threats"] if isinstance(doc, dict) else doc):
+            if th.get("position") in t:
+                t[th["position"]] += 1
+    return t
+
+
+def figure6() -> Path:
+    """Where each model locates a threat, once all three LINDDUN Pro positions are available.
+
+    This axis did not exist before v3: the two-position schema forced every flow-located threat
+    onto an endpoint, so the distribution below was unmeasurable and the coercion invisible. With
+    grounded citation validity saturated at 1.00 from 4B upward, it is also the axis on which
+    these models still visibly differ.
+    """
+    ab = json.loads((config.ROOT / "storage" / "ablation_repeats.json").read_text())
+    qw = json.loads((config.ROOT / "storage" / "open_model_sweep.json").read_text())
+
+    rows = [("gpt-5.4", _position_counts(ab, "gpt-5.4")),
+            ("gpt-4o-mini", _position_counts(ab, "gpt-4o-mini")),
+            ("grok-4.3", _position_counts(ab, "grok-4.3")),
+            ("Qwen3.5-2B", _position_counts(qw, "Qwen/Qwen3.5-2B")),
+            ("Qwen3.5-4B", _position_counts(qw, "Qwen/Qwen3.5-4B")),
+            ("Qwen3.5-9B", _position_counts(qw, "Qwen/Qwen3.5-9B")),
+            ("Qwen3.5-27B", _position_counts(qw, "Qwen/Qwen3.5-27B")),
+            ("human gold", _gold_position_counts())]
+    rows = [(lab, c) for lab, c in rows if sum(c.values())]
+
+    fig, ax = plt.subplots(figsize=(8.6, 4.0))
+    _style(ax)
+    ax.xaxis.grid(False)
+    ax.yaxis.grid(False)
+
+    ys = list(range(len(rows)))[::-1]          # first row at the top
+    height = 0.62
+    for y, (lab, counts) in zip(ys, rows):
+        total = sum(counts.values())
+        left = 0.0
+        for pos in ("S", "fl", "D"):
+            frac = 100 * counts[pos] / total
+            # A hairline of surface colour between segments, so adjacent fills read as separate
+            # marks rather than one band -- the stacked-bar spacer rule.
+            ax.barh(y, frac, height, left=left, color=POS_RAMP[pos],
+                    edgecolor=SURFACE, linewidth=1.2, zorder=3)
+            if frac >= 6:
+                ax.text(left + frac / 2, y, f"{frac:.0f}%", ha="center", va="center",
+                        fontsize=7.4, color=POS_INK[pos], zorder=4)
+            left += frac
+        ax.text(101.5, y, f"n={total:,}", ha="left", va="center", fontsize=6.6, color=INK3)
+
+    # The gold is evidence, not another model: rule it off rather than letting it read as a row.
+    ax.axhline(0.5, color=GRID, lw=1.0, zorder=2)
+
+    ax.set_yticks(ys)
+    ax.set_yticklabels([lab for lab, _ in rows], fontsize=8)
+    ax.set_xlim(0, 100)
+    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_xticklabels(["0", "25", "50", "75", "100%"], fontsize=7.5)
+    ax.set_xlabel("share of grounded threats placed at each LINDDUN Pro position")
+    ax.spines["left"].set_visible(False)
+    ax.tick_params(length=0)
+
+    handles = [plt.Rectangle((0, 0), 1, 1, fc=POS_RAMP[p], ec=SURFACE)
+               for p in ("S", "fl", "D")]
+    ax.legend(handles, ["S — source element", "fl — the data flow", "D — destination element"],
+              frameon=False, fontsize=7.5, ncols=3, loc="lower left",
+              bbox_to_anchor=(0.0, -0.30), handlelength=1.3)
+    ax.set_title("Where a threat is located, once all three positions are available\n"
+                 "Unmeasurable before v3: the two-position schema coerced every flow threat onto an endpoint",
+                 fontsize=8.8, color=INK, loc="left", pad=10)
+    fig.tight_layout()
+    p = OUT / "fig6_position_distribution.png"
+    fig.savefig(p, dpi=220, bbox_inches="tight")
+    plt.close(fig)
+    return p
+
+
 if __name__ == "__main__":
-    for fn in (figure1, figure2, figure3, figure4, figure5):
+    for fn in (figure1, figure2, figure3, figure4, figure5, figure6):
         print("wrote", fn().relative_to(config.ROOT))
