@@ -40,6 +40,14 @@ DEFAULT_MAX_TOKENS = 4000
 GATEWAY_RETRIES = 4
 GATEWAY_BACKOFF_SECONDS = 2
 
+# Rate-limit (429) retry budget -- see OpenAIBackend._create_with_retry. Larger than the 5xx
+# budget because a 429 is not a fault: the provider is telling us the pace it will accept, and
+# waiting is the correct response rather than a hope that the next attempt behaves differently.
+# Measured need: a 17-flow KidsTube run sends ~42k prompt+completion tokens against a 30k
+# tokens-per-minute tier, so a run CANNOT complete without waiting out at least one window.
+RATE_LIMIT_RETRIES = 8
+RATE_LIMIT_MAX_SLEEP = 65        # seconds; one TPM window plus slack, never an unbounded wait
+
 # Whether a (provider, model) deployment accepts `temperature`, learned at first use. Keyed by
 # deployment rather than held per backend instance because it IS a property of the deployment:
 # a sweep builds a fresh backend per run, and a per-instance flag would both forget what the last
@@ -207,6 +215,64 @@ class OpenAIBackend(LLMBackend):
     reachable by setting OPENAI_BASE_URL."""
     name = "openai"
 
+    @staticmethod
+    def _retry_after(err: Exception, attempt: int) -> float:
+        """How long the provider asked us to wait, or a backoff if it did not say.
+
+        OpenAI states the interval in the error body ("Please try again in 2.944s", sometimes in
+        ms) and repeats it in a retry-after header. Honouring the stated figure matters: guessing
+        low burns the remaining budget on calls that cannot succeed, and guessing high wastes the
+        window. Capped so a misparse can never park a sweep indefinitely.
+        """
+        import re
+        body = str(err)
+        m = re.search(r"try again in ([\d.]+)(ms|s)\b", body)
+        if m:
+            wait = float(m.group(1)) / (1000.0 if m.group(2) == "ms" else 1.0)
+        else:
+            hdrs = getattr(getattr(err, "response", None), "headers", None) or {}
+            raw = hdrs.get("retry-after-ms") or hdrs.get("retry-after")
+            try:
+                wait = float(raw) / (1000.0 if "retry-after-ms" in hdrs else 1.0) if raw else 0.0
+            except (TypeError, ValueError):
+                wait = 0.0
+        if wait <= 0:                                     # nothing stated: plain backoff
+            return min(GATEWAY_BACKOFF_SECONDS * attempt, RATE_LIMIT_MAX_SLEEP)
+        return min(wait + 0.5, RATE_LIMIT_MAX_SLEEP)      # +0.5s to clear the stated window edge
+
+    def _create_with_retry(self, **kwargs):
+        """Wait out a 429; retry a 5xx. Neither is a model answer.
+
+        A 429 is the provider declining to process the request AT ALL, so re-sending it cannot
+        re-roll an answer -- the objection that makes retrying a bad response unacceptable simply
+        does not apply. It is also not optional at small tiers: one KidsTube run exceeds a 30k
+        tokens-per-minute allowance on its own, so without this the run cannot finish at any
+        concurrency, and the first attempt lost two of three repeats to a single 429 after run 1
+        had already been paid for.
+
+        5xx is retried on the same measurement AzureFoundryBackend._create_with_retry documents.
+        Everything else -- any other 4xx -- is a request this code built wrong and surfaces
+        immediately.
+        """
+        import time
+        last = None
+        for attempt in range(1, RATE_LIMIT_RETRIES + 1):
+            try:
+                return self.client.chat.completions.create(**kwargs)
+            except Exception as e:
+                status = getattr(e, "status_code", None)
+                if status == 429:
+                    if attempt == RATE_LIMIT_RETRIES:
+                        raise
+                    last = e
+                    time.sleep(self._retry_after(e, attempt))
+                    continue
+                if status is None or status < 500 or attempt > GATEWAY_RETRIES:
+                    raise
+                last = e
+                time.sleep(GATEWAY_BACKOFF_SECONDS * attempt)
+        raise last                                          # unreachable; kept for the type
+
     def __init__(self):
         if not config.OPENAI_API_KEY:
             raise RuntimeError("OPENAI_API_KEY not set (see .env.example).")
@@ -241,12 +307,12 @@ class OpenAIBackend(LLMBackend):
             messages=[{"role": "user", "content": _openai_content(prompt, image)}],
         )
         try:
-            resp = self._sampled(self.client.chat.completions.create,
+            resp = self._sampled(self._create_with_retry,
                                  **kwargs, max_completion_tokens=max_tokens)
         except Exception as e:                       # openai.BadRequestError, kept SDK-agnostic
             if "max_completion_tokens" not in str(e) and "max_tokens" not in str(e):
                 raise
-            resp = self._sampled(self.client.chat.completions.create,
+            resp = self._sampled(self._create_with_retry,
                                  **kwargs, max_tokens=max_tokens)
         choice = resp.choices[0]
         for call in choice.message.tool_calls or []:

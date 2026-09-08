@@ -1215,6 +1215,40 @@ def test_dotenv_placeholder_lines_do_not_become_empty_env_vars():
                     os.environ[k] = v
 
 
+def test_rate_limit_retry_honours_the_stated_interval():
+    """A 429 is the provider declining to process the request, so waiting it out is correct.
+
+    The objection that forbids retrying a bad response -- never re-roll until the model agrees --
+    does not apply, because on a 429 no model ran. It is also not optional at small tiers: one
+    17-flow KidsTube run sends ~42k tokens against a 30k-per-minute allowance, and the first
+    attempt at this comparison lost runs 2 and 3 to a single 429 after run 1 was already paid for.
+    The wait must come from the provider's own figure; guessing low burns the retry budget on
+    calls that cannot succeed."""
+    print("\n[429: wait the interval the provider states, and cap it]")
+    from generation.llm_backend import (OpenAIBackend, RATE_LIMIT_MAX_SLEEP,
+                                        GATEWAY_BACKOFF_SECONDS)
+    ra = OpenAIBackend._retry_after
+
+    class Err(Exception):
+        def __init__(self, msg, headers=None):
+            super().__init__(msg)
+            self.response = type("R", (), {"headers": headers or {}})()
+
+    real = Err("Error code: 429 - {'error': {'message': 'Rate limit reached for gpt-4o in "
+               "organization org-X on tokens per min (TPM): Limit 30000, Used 28924, Requested "
+               "2548. Please try again in 2.944s.'}}")
+    check(abs(ra(real, 1) - 3.444) < 1e-6,
+          f"parses the seconds figure out of a real 429 body (+0.5s edge clearance): {ra(real,1)}")
+    check(abs(ra(Err("please try again in 200ms"), 1) - 0.7) < 1e-6,
+          "parses the millisecond form as milliseconds, not seconds")
+    check(abs(ra(Err("nope", {"retry-after-ms": "1500"}), 1) - 2.0) < 1e-6,
+          "falls back to the retry-after-ms header when the body does not say")
+    check(ra(Err("nope"), 3) == GATEWAY_BACKOFF_SECONDS * 3,
+          "with no figure anywhere, backs off proportionally to the attempt")
+    check(ra(Err("try again in 9999s"), 1) == RATE_LIMIT_MAX_SLEEP,
+          "a absurd or misparsed figure is capped, never an unbounded park")
+
+
 def main():
     test_dfd_files()
     test_genomic_gold_has_dfd_locations()
@@ -1259,6 +1293,7 @@ def main():
     test_pillar_edge_maps_to_every_parallel_flow()
     test_pillar_abstention_is_not_a_wrong_citation()
     test_dotenv_placeholder_lines_do_not_become_empty_env_vars()
+    test_rate_limit_retry_honours_the_stated_interval()
     print(f"\n{'='*50}\nPASSED {PASS}  FAILED {FAIL}")
     sys.exit(1 if FAIL else 0)
 
