@@ -11,7 +11,7 @@ three model deployments (135 runs, 1,701 calls) and are not comparable with v2's
 open-weight ladder is retained from v2 pending its own regeneration, and is flagged accordingly.*
 
 
-LINDDUN Pro requires analysts to reason about every dataflow, process, and store in a system's Data Flow Diagram (DFD) against seven privacy threat categories. LLMs offer obvious leverage, and recent tools show LLM-assisted LINDDUN elicitation is feasible, but surveys find the field still exploratory and short on standardized benchmarks. We argue trustworthy AI assistance in privacy engineering requires traceability that is verified: every generated threat cites a LINDDUN Pro threat-tree node, one of the methodology's three elicitation positions (source, data flow, destination), and the DFD location naming that position; all three citations are independently re-derived against a curated LINDDUN knowledge base after generation, so a fabricated node, an inapplicable position, or a nonexistent DFD location is caught deterministically rather than trusted from the model's own output. The position citation is new in this version and is not incidental: the two-position schema used previously could not express a threat located at the data flow, so between 10% and 25% of location citations were being silently coerced onto an endpoint the model did not intend, while scoring as correct. We evaluate this approach on a KidsTube video-streaming DFD along three axes: (1) consistency of our system's output across different underlying LLMs given the same DFD; (2) the effect of the input given to the same model (GPT-5.4) — a DFD alone versus a DFD plus source code; and (3) a head-to-head comparison against PILLAR's own output, both run with GPT-4o-mini, on different DFDs.
+LINDDUN Pro requires analysts to reason about every dataflow, process, and store in a system's Data Flow Diagram (DFD) against seven privacy threat categories. LLMs offer obvious leverage, and recent tools show LLM-assisted LINDDUN elicitation is feasible, but surveys find the field still exploratory and short on standardized benchmarks. We argue trustworthy AI assistance in privacy engineering requires traceability that is verified: every generated threat cites a LINDDUN Pro threat-tree node, one of the methodology's three elicitation positions (source, data flow, destination), and the DFD location naming that position; all three citations are independently re-derived against a curated LINDDUN knowledge base after generation, so a fabricated node, an inapplicable position, or a nonexistent DFD location is caught deterministically rather than trusted from the model's own output. The position citation is new in this version and is not incidental: the two-position schema used previously could not express a threat located at the data flow, so between 10% and 25% of location citations were being silently coerced onto an endpoint the model did not intend, while scoring as correct. We evaluate this approach on a KidsTube video-streaming DFD along three axes: (1) consistency of our system's output across different underlying LLMs given the same DFD; (2) the effect of the input given to the same model (GPT-5.4) — a DFD alone versus a DFD plus source code; and (3) a head-to-head comparison against PILLAR's own output, both run with GPT-4o-mini, including one export produced on a DFD redrawn to carry our element identifiers so that quality can be compared on flows both systems analysed.
 
 # **Introduction**
 
@@ -401,34 +401,69 @@ Why it should work at all: the two adapters fail in opposite directions. The ima
 
 ## **6\. Comparison with PILLAR**
 
-A PILLAR export of a KidsTube analysis was scored against our gold standard using our matcher, as reported in Table 9\.
+Two PILLAR exports of KidsTube were scored against our gold standard using our matcher. The first was produced on a DFD drawn independently in PILLAR's editor; the second was produced after that DFD was redrawn to carry our element identifiers, which converts the approximate comparison of v2 into the matched comparison v2 listed as future work. Both ran gpt-4o-mini, as did the arms of our pipeline reported against them. Scoring is by `scripts/score_pillar.py`, which applies `eval/match.py`'s rule unchanged.
 
-*Table 9\. PILLAR compared with our pipeline on the KidsTube gold standard. This is not a like-for-like comparison.*
+### **6.1 PILLAR's citation shortfall is abstention, not fabrication**
 
-|  | PILLAR | Ours (image-derived DFD) |
+PILLAR's output is a grid: one row per (edge × category), one cell per LINDDUN Pro position. A cell it declines reads *Not applicable* or *Threat not possible* — and it does so in the prose column as well as the identifier column. Across both exports, checked cell by cell, there is not one case of a written threat description without an identifier beside it. PILLAR never writes a threat it cannot cite.
+
+This distinction was not drawn in v2, and drawing it withdraws a claim. Dividing valid citations by all cells measures how often PILLAR chose to speak; v2 reported that quotient as PILLAR's citation validity and set 0.82 against our 1.00. The two quantities are not alike, and the comparison ran in our favour against a tool that can abstain per position where our schema offers no such slot. Coverage and validity are therefore reported separately in Table 9.
+
+*Table 9\. PILLAR's node citations re-derived against the official 65-node v241203 threat trees, decomposed. Shares are of all cells.*
+
+| Outcome | Run 1 | | Run 2 | |
+| :---- | ----- | ----- | ----- | ----- |
+| Exact match in the knowledge base | 214 | 0.68 | 176 | 0.70 |
+| Match after case folding (DD.1.1 against Dd.1.1) | 45 | 0.14 | 36 | 0.14 |
+| Declined — *Not applicable*, *Threat not possible*, empty | 56 | 0.18 | 40 | 0.16 |
+| Unresolvable, i.e. fabricated | 0 | 0.00 | 0 | 0.00 |
+| **Coverage** — cells in which a node was asserted | 259/315 | **0.82** | 212/252 | **0.84** |
+| **Validity** — asserted cells resolving in the knowledge base | 259/259 | **1.00** | 212/212 | **1.00** |
+
+On the citations it asserts, PILLAR is at 1.00, twice, over 471 citations. Under our own exact-match rule, without the case-folding allowance, it is 0.83; the entire gap is one systematic convention, since every case-only citation is the Data Disclosure tree written `DD` rather than `Dd`. No PILLAR citation in either export names a node that does not exist.
+
+What separates the two systems is therefore not the validity of the citations but whether that validity is known. PILLAR asserts its identifiers; ours are drawn from a closed vocabulary and re-derived against the knowledge base after generation. On gpt-4o-mini the verification layer changes no number — but no one, including PILLAR's authors, knew PILLAR stood at 1.00 until it was measured here, with a verifier PILLAR does not ship. The layer is a guarantee that holds across models rather than a result obtained on one, and § 3 supplies the case that makes the difference concrete: Qwen3.5-2B fabricated 16 threat-tree nodes with the exhaustive menu present in its prompt. A practitioner running PILLAR on a smaller or cheaper model has no mechanism that would surface such an error.
+
+A second result falls out of the same decomposition, and it corroborates § 1a from outside this pipeline. Validity is flat across the three positions; coverage is not.
+
+*Table 10\. Coverage and validity by LINDDUN Pro position. PILLAR emits one citation per position, making this the only per-position rate obtainable from a third-party tool.*
+
+| Position | Run 1 coverage | Run 2 coverage | Validity, both runs |
+| :---- | ----- | ----- | ----- |
+| S (source) | 0.92 | 0.96 | 1.00 |
+| fl (data flow) | **0.71** | **0.70** | 1.00 |
+| D (destination) | 0.83 | 0.86 | 1.00 |
+
+The data flow is the position PILLAR declines to fill roughly twice as often as the source, consistently across two runs on two different DFDs. It is the same position our own schema could not express until the three-position fix described in § 1a. Two systems of unrelated architecture find the same position hardest, which is the strongest external evidence available that the flow position is intrinsically difficult rather than an artifact of our prompt. The two coverage figures are not directly comparable — PILLAR's asks whether a grid cell was filled, ours asks what fraction of freely emitted threats sit at the flow — so the corroboration is in the ordering, not the magnitude.
+
+### **6.2 A matched comparison: the exhaustive grid trades precision for recall**
+
+Because the second export was produced on a DFD carrying our element identifiers, its edges resolve against ours by identifier and quality can be compared on flows both systems analysed. Nine of our seventeen flows qualify, carrying 28 of the 41 gold threats.
+
+*Table 11\. Both systems restricted to the nine flows PILLAR analysed, gpt-4o-mini, scored against the 28 gold threats on those flows by the same matcher.*
+
+|  | PILLAR run 2 | Ours (analyst DFD) |
 | :---- | ----- | ----- |
-| Model | gpt-4o-mini | gpt-4o-mini |
-| Input | dfd.png, via its hosted app | dfd.png, via the vision adapter |
-| Findings | 105 | 77 |
-| P / R /F1 | 0.21 / 0.54 / 0.30 | 0.35 / 0.66 / 0.46 |
-| Node identifiers resolving | 0.82 | 1.00 |
-| Citations verified after generation | no | yes |
+| Findings on those flows | 56 | 37 |
+| (flow × type) cells addressed, of 63 | 63 | 37 |
+| Precision | 0.34 | **0.43** |
+| Recall | **0.68** | 0.57 |
 
-Both systems received the same input and ran the same model. The KidsTube diagram dfd.png was supplied to PILLAR through its hosted application and to our pipeline through the vision adapter, and both ran gpt-4o-mini. Model capability and input modality are therefore controlled, which makes this the closest to a matched comparison the project has.
+The trade is structural. PILLAR walks every category on every edge, so it addresses all 63 cells by construction and cannot miss a threat type; our generator emits what it finds, and on these flows it produced no Non-repudiation and no Detecting threats at all. That exhaustiveness buys PILLAR 0.11 of recall and costs it 0.09 of precision. Neither precision figure is corrected for uncatalogued-but-valid threats, so the gap rather than the level is the meaningful quantity.
 
-The citation comparison is the defensible contrast, and it is deliberately decomposed rather than aggregated, because the majority of PILLAR's citation failures are not hallucinations. The export carries 315 node citations: 105 findings, each analysing one edge at the three positions LINDDUN Pro prescribes source, flow, and destination. Every one was re-derived against the official v241203 trees, with the outcome in Table 10\.
+The full-scenario picture inverts, and the reason is worth separating from the algorithms.
 
-*Table 10\. PILLAR's 315 node citations, re-derived against the official 65-node threat trees. Shares are of all 315\.*
+*Table 12\. Both systems over the whole KidsTube scenario, against all 41 gold threats.*
 
-| Outcome | Count | % |
+|  | PILLAR run 2 | Ours (analyst DFD) |
 | :---- | ----- | ----- |
-| Exact match in the knowledge base | 214 | 0.68 |
-| Match after case folding (DD.1.1 against Dd.1.1) | 45 | 0.14 |
-| Not an identifier at all | 56 | 0.18 |
-| Unresolvable | 0 | 0.00 |
-| Resolvable | 259 | 0.82 |
+| Flows analysed | 9 of 17 | 17 of 17 |
+| Findings | 84 | 68 |
+| P / R / F1 | 0.23 / 0.46 / 0.30 | 0.37 / 0.61 / 0.46 |
 
-The resulting claim is architectural rather than a performance ranking: PILLAR emits identifiers that largely resolve but require case folding and occasionally contain prose, and it ships them unverified, whereas ours are drawn from a deterministic closed vocabulary and re-derived after generation.
+Our F1 advantage here is very largely a coverage effect rather than better elicitation: PILLAR never saw eight of the seventeen flows, including both planned advertising flows and every flow carrying a JWT. That is not a modelling artifact but a property of the workflow, and it was observed twice. PILLAR requires the DFD to be redrawn inside its editor, and on both attempts the redrawn diagram lost flows — ten of seventeen in run 1 and nine in run 2 — while the first also introduced an ExternalEntity-to-DataStore edge that LINDDUN Pro's Table 4.1 does not define, placing 21 citations on an interaction the methodology does not cover. Our pipeline accepts the analyst's DFD as authored, in JSON, as a diagram image, or derived from source code, and analyses every flow in it.
+
+The honest summary is that neither system dominates. PILLAR recalls more where it looks, our pipeline looks everywhere and is more selective where it looks, and the citations of both resolve at 1.00 when asserted. The defensible advantages of this work are that the 1.00 is verified rather than asserted and therefore survives a change of model; that no redrawing step stands between the analyst's system model and the analysis; and that the same pipeline runs on a 2B open-weight model on a single GPU, so a DFD naming every field of personal data a system holds need never leave the organisation that owns it.
 
 ## **7\. Transfer to a second framework**
 
@@ -446,7 +481,7 @@ Every result above uses a hosted frontier model. That is an awkward recommendati
 
 To test both, we ran the full ablation on a ladder of open-weight models served locally: **Qwen3.5 at 2B, 4B, 9B and 27B parameters**, all bf16, on a single RTX PRO 6000 (96 GB) via vLLM 0.28.0. Everything else is held identical to § 1 — same five scenarios, same three grounding modes, same gold standards, same prompts, temperature 0, n=3, and the same three-position schema. That is **180 runs and roughly 2,270 model calls**, with no failed cells.
 
-*Table 12\. The Qwen3.5 ladder, mean over 5 scenarios x 3 runs per cell. The S/fl/D column gives the position distribution across all fifteen runs in that condition.*
+*Table 13\. The Qwen3.5 ladder, mean over 5 scenarios x 3 runs per cell. The S/fl/D column gives the position distribution across all fifteen runs in that condition.*
 
 | Model | Mode | n\_gen | Citation | R | F1 | S / fl / D |
 | :---- | :---- | ----: | ----: | ----: | ----: | ----: |
@@ -512,14 +547,15 @@ Two caveats travel with this table. Both retrieval and elicitation were run at c
 4. Temperature 0 reduces but does not eliminate nondeterminism on this deployment, since three identical calls agreed on 8 of 10 cited nodes, so replication remains necessary even under pinned sampling.   
 5. The model comparison is conducted on a single system, KidsTube, and nothing reported here establishes whether those orderings hold elsewhere.  
 6. The DFD-versus-source-code enrichment result is a single-system measurement on KidsTube, a conventional React/Node application; whether the recall gain from 0.80 to 0.85 generalises to other codebases, tech stacks, or systems where code and DFD structure diverge more substantially is not established.  
-7. The PILLAR comparison is conducted with both systems running on GPT-4o-mini; the quality and coverage findings are specific to that model, and only the citation-resolvability contrast is architectural and model-agnostic.  
+7. The PILLAR comparison is conducted with both systems running on GPT-4o-mini; the recall and precision findings are specific to that model. The citation finding is model-specific in a way worth stating plainly: PILLAR's 1.00 on asserted citations was obtained on a capable model, and nothing in this comparison establishes what it would be on a weaker one. Only the presence or absence of a verification layer is architectural.  
 8. The evaluation measures whether a suggestion is traceable and correct, and not whether an analyst is faster or more confident when using it; no human-subjects evaluation was conducted.
 
 # **Future Work**
 
 * Manual false-positive adjudication. Every precision figure reported here is a lower bound, because unmatched threats are counted as incorrect by default. The worklist infrastructure exists and labels each unmatched threat as spurious, valid-but-uncatalogued, or borderline. Executing it would convert the most frequently cited weakness of this evaluation into a measured quantity, and it is deliberately a human task rather than an automated one.  
 * Independent expert review of the gold standards, together with a second independent LINDDUN Pro analysis of at least one system, so that inter-analyst agreement on the gold standard itself can be reported alongside the pipeline's agreement with it.  
-* A matched comparison against PILLAR, using the same model and the same DFD reproduced in its editor, so that the recall and precision contrast becomes as defensible as the citation-resolvability contrast already is.  
+* PILLAR run on a deliberately weaker model. Its citations resolve at 1.00 on GPT-4o-mini, so the value of a verification layer cannot be demonstrated against it at that scale; the Qwen3.5-2B result suggests where the two architectures would separate.
+* Closing the threat-type gap in § 6.2. Our generator emitted no Non-repudiation and no Detecting threats on the nine shared flows, where PILLAR's exhaustive grid addresses every category by construction. Whether that is a GPT-4o-mini disposition or systematic across models is untested, and selectivity should not be claimed as a virtue until it is.  
 * Replication of the model and modality conditions at n=3, which is what would elevate the model comparison from suggestive to conclusive, together with an ablation of the remaining shared prompt element, namely the example identifier in the tool schema, which all three arms still observe.  
 * Optical character recognition over cited image regions. The silent-transcription-correction failure mode is not detected by any verifier in the system. Reading text back from the cited bounding box and comparing it with the reported label would close this gap, and would supply the deterministic detector that a closed vocabulary for pixels would in any case require.  
 * A category-level PANOPTIC tier and an auto-updating knowledge base that periodically re-scans authoritative sources, addressing the static-knowledge limitation that PriMod4AI identifies in its own design.  
