@@ -184,28 +184,47 @@ def build() -> Path:
         _figure(ax, "fig3_model_vs_modality.png", x=0.55, y=0.30, w=0.40)
         pdf.savefig(fig); plt.close(fig)
 
-        # --- 12c: source code and PILLAR ------------------------------------------------------
-        fig, ax = _slide(pdf, "Source code  (RQ2)   ·   Comparison with PILLAR  (RQ3)")
-        ax.text(0.055, 0.79, "Source code cuts both ways", fontsize=14, color=INK,
+        # --- 12c: source code (RQ2) -----------------------------------------------------------
+        # Its own slide. The two source-code results point in OPPOSITE directions, and sharing a
+        # slide with PILLAR compressed both into one line each -- which lost the finding that the
+        # enrichment arm is the one that works.
+        fig, ax = _slide(pdf, "Source code  (RQ2)",
+                         "KidsTube · gpt-5.4 · grounded · single runs")
+        ax.text(0.055, 0.77, "As a structural input — costly", fontsize=14, color=INK,
                 fontweight="bold", va="top")
         _bullets(ax, [
-            ("As structure: recall 0.67 → 0.56 — code models the system at the developer's granularity, not the analyst's", False),
-            ("As semantics over a trusted DFD: recall 0.80 → 0.85, citation stays 1.00  (n = 1 — a promising measurement, not an established effect)", False),
-            ("The two adapters fail in opposite directions: an image keeps structure and loses semantics; code keeps semantics and loses structure", False),
-        ], y=0.71, width=0.86)
-        ax.text(0.055, 0.40, "vs. PILLAR — same DFD, same model (gpt-4o-mini)",
+            ("Replacing the DFD with a code-derived one drops recall 0.67 → 0.56; citation validity stays 1.00", False),
+            ("Not a citation failure: code models the system at the developer's granularity, so some gold threats have no counterpart flow", False),
+        ], y=0.70, width=0.86)
+        ax.text(0.055, 0.50, "As a semantic layer over a trusted DFD — helpful",
                 fontsize=14, color=INK, fontweight="bold", va="top")
+        _table(ax, (["Condition", "flows enriched", "flow description", "R", "citation"],
+                    [0.0, 0.50, 0.74, 0.88, 1.0]),
+               [["Analyst DFD (baseline)", "—", "38 chars", "0.80", "1.00"],
+                ["+ source code enrichment", "14 / 17", "38 → 215 chars", "0.85", "1.00"]],
+               y=0.43, w=0.80, rh=0.055, bold_rows=(1,))
+        _bullets(ax, [
+            ("Recall +0.05 — two more gold threats — with precision, F1 and citation validity unchanged  (n = 1: promising, not established)", False),
+            ("The adapters fail in opposite directions: an image keeps structure and loses semantics; code keeps semantics and loses structure", True),
+        ], y=0.25, width=0.86, fs=12.5, gap=0.030)
+        pdf.savefig(fig); plt.close(fig)
+
+        # --- 12d: comparison with PILLAR (RQ3) ------------------------------------------------
+        fig, ax = _slide(pdf, "Comparison with PILLAR  (RQ3)",
+                         "Same DFD, same model (gpt-4o-mini) — model and modality both controlled")
         _table(ax, (["", "PILLAR", "Ours"], [0.0, 0.72, 0.98]),
-               [["P / R / F1", "0.21 / 0.54 / 0.30", "0.35 / 0.66 / 0.46"],
+               [["Findings", "105", "77"],
+                ["P / R / F1", "0.21 / 0.54 / 0.30", "0.35 / 0.66 / 0.46"],
                 ["Node ids resolving", "0.82", "1.00"],
                 ["Citations verified after generation", "no", "yes"]],
-               y=0.33, w=0.62, rh=0.052, bold_rows=(2,))
-        ax.text(0.055, 0.115,
-                "PILLAR's 315 node citations:  68% exact  ·  14% need case-folding  ·  "
-                "18% are not identifiers at all",
-                fontsize=12.5, color=INK, va="top")
-        ax.text(0.055, 0.068, "The claim is architectural, not a performance ranking.",
-                fontsize=11.5, color=INK2, va="top", style="italic")
+               y=0.74, w=0.66, rh=0.062, bold_rows=(3,))
+        ax.text(0.055, 0.40, "PILLAR's 315 node citations, re-derived against the official trees",
+                fontsize=13.5, color=INK, fontweight="bold", va="top")
+        _bullets(ax, [
+            ("68% match exactly  ·  14% resolve only after case-folding (DD.1.1 against Dd.1.1)  ·  18% are not identifiers at all", False),
+            ("Most failures are therefore not hallucinations — they are identifiers shipped without ever being checked", False),
+            ("The claim is architectural, not a performance ranking: ours are drawn from a closed vocabulary and re-derived after generation", True),
+        ], y=0.33, width=0.86, fs=12.5, gap=0.028)
         pdf.savefig(fig); plt.close(fig)
 
         # --- 12d: the position finding --------------------------------------------------------
