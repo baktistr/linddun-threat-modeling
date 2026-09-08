@@ -116,12 +116,12 @@ def figure1() -> Path:
     # reads it before generation and the verifier re-derives against it afterwards. The rag
     # arm searches the same corpus, which its own label states, so it takes no separate arrow.
     box(77, 60, 75, 11, "Knowledge base  (curated)",
-        "threat trees (65 nodes, v241203)  ·  mapping table (Table 4.1: applicable types AND positions)",
-        fc="#f4f1fb", ec=INK3, lw=1.2, bold=True, fs=7.6, subfs=5.9)
+        "LINDDUN Pro threat trees  &  mapping table",
+        fc="#f4f1fb", ec=INK3, lw=1.2, bold=True, fs=7.6, subfs=6.6)
 
     # --- Station 1: inputs ---------------------------------------------------------------
     stage(2, "Stage A — inputs", "adapter required for the lower two only")
-    for y, name, sub in ((45, "Analyst authored DFD (JSON)", "supplied as-is; no adapter"),
+    for y, name, sub in ((45, "Analyst authored DFD (JSON)", ""),
                          (31, "Source code", ""),
                          (17, "DFD image", "")):
         box(2, y, 32, 11, name, sub, fs=7.4, subfs=6.2)
@@ -137,10 +137,10 @@ def figure1() -> Path:
 
     # --- Station 3: per-flow elicitation --------------------------------------------------
     stage(77, "Stage B — elicitation")
-    box(77, 45, 36, 11, "grounded  (proposed)", "exact mapping-table lookup",
-        ec=BLUE, lw=1.4)
-    box(77, 31, 36, 11, "rag", "top-k retrieval (BM25 / TF-IDF)", ec=ORANGE, subfs=6.2)
-    box(77, 17, 36, 11, "ungrounded", "pure LLM, no knowledge base", ec=AQUA, subfs=6.2)
+    box(77, 45, 36, 11, "grounded  (proposed)", "LLM + exact mapping-table lookup",
+        ec=BLUE, lw=1.4, subfs=6.2)
+    box(77, 31, 36, 11, "rag", "LLM + top-k retrieval (BM25 / TF-IDF)", ec=ORANGE, subfs=6.2)
+    box(77, 17, 36, 11, "ungrounded", "LLM alone, no knowledge base", ec=AQUA, subfs=6.2)
     for y in (50.5, 36.5, 22.5):
         arrow(70, 39, 77, y)
     ax.text(95, 4.0, "one forced tool call per flow · temperature 0", fontsize=6.4,
@@ -150,8 +150,10 @@ def figure1() -> Path:
 
     # --- Station 4: verification ----------------------------------------------------------
     stage(120, "Stage C — verification", "no model in the loop")
-    box(120, 27, 32, 24, "verify", "every citation re-derived\nvs. KB, no model:\nnode · type\nposition · location",
-        fc="#eafaf3", ec=AQUA, lw=1.4, bold=True, subfs=6.2)
+    box(120, 27, 32, 24, "verify",
+        "re-checks every citation\nagainst the KB, no LLM:\nnode exists · type applies\n"
+        "position allowed · id matches",
+        fc="#eafaf3", ec=AQUA, lw=1.4, bold=True, subfs=6.0)
     for y in (50.5, 36.5, 22.5):
         arrow(113, y, 120, 39)
 
